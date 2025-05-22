@@ -10,6 +10,9 @@
 !.yarn/releases
 !.yarn/versions
 
+# workspace dependencies
+/components/shared/node_modules
+
 # testing
 /coverage
 

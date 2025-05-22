@@ -36,10 +36,11 @@ jobs:
         with:
           vercel-token: ${{ secrets.VERCEL_STORYBOOK_TOKEN }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_STORYBOOK }}
-          scope: production
+          scope: "hys-lee"
+          vercel-org-id: ${{ secrets.VERCEL_USER_ID }}
           # Vercel이 빌드된 디렉토리를 찾도록 publish-dir 설정
-          publish-dir: "./storybook-static-shared" # ⭐ 빌드 결과물 경로 변경
-
+          # publish-dir: "./storybook-static-shared" # ⭐ 빌드 결과물 경로 변경
+          vercel-args: "--prod ./storybook-static-shared"
 
           # Vercel 프로젝트 설정에서 빌드 명령어를 'npm run build-storybook:shared'로 직접 지정해도 됨.
           # 그러나 GitHub Actions에서 빌드하고 결과물을 배포하는 것이 일반적.
