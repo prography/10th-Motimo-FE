@@ -1,10 +1,16 @@
 import type { StorybookConfig } from '@storybook/nextjs';
 
+// 커맨드 내 환경 변수 확인 (STORYBOOK_SCOPE가 'shared'이면 공유 컴포넌트만 로드)
+const STORYBOOK_SCOPE = process.env.STORYBOOK_SCOPE;
+
 const config: StorybookConfig = {
   stories: [
+    "./Introduction.mdx",
+    "./CHANGELOG.mdx",
     // "../stories/**/*.mdx",
     // "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)"
-    '../components/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+    ...(STORYBOOK_SCOPE?(['../components/shared/**/*.stories.@(js|jsx|mjs|ts|tsx)', '../components/shared/**/*.mdx']):
+    ['../components/**/*.stories.@(js|jsx|mjs|ts|tsx)']),
   ],
   addons: [
     {

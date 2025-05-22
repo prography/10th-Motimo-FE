@@ -10,8 +10,12 @@
     "gen": "ts-node api/generator.ts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
+    "build-storybook:shared": "STORYBOOK_SCOPE=shared storybook build -o storybook-static-shared",
     "build-tokens": "npx style-dictionary build --config sd-tokens.config.mjs"
   },
+  "workspaces":[
+    "./components/shared"
+  ],
   "dependencies": {
     "next": "15.3.2",
     "react": "^19.0.0",
