@@ -13,7 +13,7 @@
     "build-storybook:shared": "STORYBOOK_SCOPE=shared storybook build -o storybook-static-shared",
     "build-tokens": "npx style-dictionary build --config sd-tokens.config.mjs"
   },
-  "workspaces":[
+  "workspaces": [
     "./components/shared"
   ],
   "dependencies": {
@@ -34,6 +34,8 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "eslint": "^9.27.0",
+    "prettier": "3.5.3",
     "storybook": "^8.6.14",
     "style-dictionary": "^5.0.0",
     "swagger-typescript-api": "^13.1.3",
