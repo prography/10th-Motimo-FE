@@ -1,36 +1,28 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Motimo: FE
 
-## Getting Started
+## 임시 내용.. Token관련
 
-First, run the development server:
+> 일단 수동으로 tailwind 토큰화한다.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- upstream의 design 브랜치에 토큰 json이 업데이트 된다.
+- `npm run build-tokens`를 통해 app/tokens.css를 업데이트 한다
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Motimo 프론트엔드 레포지토리에 오신 것을 환영합니다!
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Motimo 프론트엔드의 핵심 목표
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ 기술 스택
 
-## Learn More
+## 🚧 현재 상태 및 기여
 
-To learn more about Next.js, take a look at the following resources:
+### 시작하기
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 기여 방법
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🔗 백엔드 레포지토리
 
-## Deploy on Vercel
+## 📧 연락처
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📄 라이선스
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+이 프로젝트는 [예: MIT License]에 따라 라이선스됩니다. 자세한 내용은 `LICENSE` 파일을 참조하세요.
