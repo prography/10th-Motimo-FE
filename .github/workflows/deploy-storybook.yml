@@ -1,0 +1,46 @@
+name: Deploy Shared Storybook to Vercel
+
+on:
+  push:
+    branches:
+      - design # 여기 main으로 수정할 것.
+    paths:
+      - "components/shared/**" # shared 컴포넌트 폴더 변경 시
+      - ".storybook/**" # 스토리북 설정 변경 시 (main.ts에 조건이 있으므로)
+      - "package.json"
+      - "components/shared/package.json"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Shared Storybook # ⭐ 여기!
+        # `npm run build-storybook:shared` 스크립트를 실행하여 STORYBOOK_SCOPE=shared를 적용
+        run: npm run build-storybook:shared
+
+      - name: Deploy Storybook to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_STORYBOOK_TOKEN }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_STORYBOOK }}
+          scope: "hys-lee"
+          vercel-org-id: ${{ secrets.VERCEL_USER_ID }}
+          # Vercel이 빌드된 디렉토리를 찾도록 publish-dir 설정
+          # publish-dir: "./storybook-static-shared" # ⭐ 빌드 결과물 경로 변경
+          vercel-args: "--prod ./storybook-static-shared"
+
+          # Vercel 프로젝트 설정에서 빌드 명령어를 'npm run build-storybook:shared'로 직접 지정해도 됨.
+          # 그러나 GitHub Actions에서 빌드하고 결과물을 배포하는 것이 일반적.
