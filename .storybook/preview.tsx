@@ -9,6 +9,7 @@ import {
   Stories,
 } from "@storybook/blocks";
 const preview: Preview = {
+  tags: ["autodocs"],
   decorators: [
     (Story) => (
       <div
