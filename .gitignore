@@ -23,6 +23,9 @@
 # production
 /build
 
+# design system package
+/components/shared/dist/
+
 # misc
 .DS_Store
 *.pem
