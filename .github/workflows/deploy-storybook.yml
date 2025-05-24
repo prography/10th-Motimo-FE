@@ -3,7 +3,7 @@ name: Deploy Shared Storybook to Vercel
 on:
   push:
     branches:
-      - design # 여기 main으로 수정할 것.
+      - main
     paths:
       - "components/shared/**" # shared 컴포넌트 폴더 변경 시
       - ".storybook/**" # 스토리북 설정 변경 시 (main.ts에 조건이 있으므로)

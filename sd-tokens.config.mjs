@@ -13,7 +13,7 @@ const token2TailwindTypeMap = {
   fontFamilies: "font",
   fontWeights: "font-weight",
   lineHeights: "leading",
-  fintSizes: "font-size",
+  fontSizes: "font-size",
   letterSpacing: "tracking",
 };
 
@@ -55,7 +55,6 @@ StyleDictionary.registerParser({
   pattern: /\.json$/,
   parser: ({ filePath, contents }) => {
     const parsed = JSON.parse(contents);
-    console.log("paresd", parsed["Semantic/light"].label.inverse);
 
     const convertedParsed = Object.entries(parsed).reduce(
       (accAllTokens, [setName, tokens]) => {
