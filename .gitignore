@@ -10,9 +10,6 @@
 !.yarn/releases
 !.yarn/versions
 
-# workspace dependencies
-/components/shared/node_modules
-
 # testing
 /coverage
 
@@ -22,9 +19,6 @@
 
 # production
 /build
-
-# design system package
-/components/shared/dist/
 
 # misc
 .DS_Store
@@ -45,10 +39,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# storybook
-*storybook.log
-
-
-# local environment - vscode
-.vscode
