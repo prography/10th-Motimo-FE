@@ -1,146 +1,4 @@
 {
-  "Semantic/light": {
-    "label": {
-      "inverse": {
-        "value": "{common.white}",
-        "type": "color"
-      },
-      "normal": {
-        "value": "{gray.80}",
-        "type": "color"
-      },
-      "strong": {
-        "value": "{gray.90}",
-        "type": "color"
-      },
-      "alternative": {
-        "value": "{gray.70}",
-        "type": "color"
-      },
-      "primary": {
-        "value": "{primary.50}",
-        "type": "color"
-      },
-      "disabled": {
-        "value": "{gray.40}",
-        "type": "color"
-      },
-      "assistive": {
-        "value": "{gray.50}",
-        "type": "color"
-      }
-    },
-    "background": {
-      "normal": {
-        "value": "{gray.5}",
-        "type": "color"
-      },
-      "strong": {
-        "value": "{gray.80}",
-        "type": "color"
-      },
-      "primary": {
-        "value": "{primary.50}",
-        "type": "color"
-      },
-      "alternative": {
-        "value": "{gray.10}",
-        "type": "color"
-      }
-    },
-    "status": {
-      "negative": {
-        "value": "{red.50}",
-        "type": "color"
-      },
-      "positive": {
-        "value": "{green.50}",
-        "type": "color"
-      }
-    },
-    "gap": {
-      "2": {
-        "value": "{Number.2}",
-        "type": "dimension"
-      },
-      "4": {
-        "value": "{Number.4}",
-        "type": "dimension"
-      },
-      "8": {
-        "value": "{Number.8}",
-        "type": "dimension"
-      },
-      "12": {
-        "value": "{Number.12}",
-        "type": "dimension"
-      },
-      "16": {
-        "value": "{Number.16}",
-        "type": "dimension"
-      },
-      "20": {
-        "value": "{Number.20}",
-        "type": "dimension"
-      }
-    },
-    "padding": {
-      "2": {
-        "value": "{Number.2}",
-        "type": "dimension"
-      },
-      "4": {
-        "value": "{Number.4}",
-        "type": "dimension"
-      },
-      "8": {
-        "value": "{Number.8}",
-        "type": "dimension"
-      },
-      "12": {
-        "value": "{Number.12}",
-        "type": "dimension"
-      },
-      "16": {
-        "value": "{Number.16}",
-        "type": "dimension"
-      },
-      "20": {
-        "value": "{Number.20}",
-        "type": "dimension"
-      }
-    },
-    "radius": {
-      "2": {
-        "value": "{Number.2}",
-        "type": "dimension"
-      },
-      "4": {
-        "value": "{Number.4}",
-        "type": "dimension"
-      },
-      "8": {
-        "value": "{Number.8}",
-        "type": "dimension"
-      },
-      "12": {
-        "value": "{Number.12}",
-        "type": "dimension"
-      },
-      "16": {
-        "value": "{Number.16}",
-        "type": "dimension"
-      },
-      "20": {
-        "value": "{Number.20}",
-        "type": "dimension"
-      },
-      "round": {
-        "value": "{Number.999}",
-        "type": "dimension"
-      }
-    }
-  },
   "Primitive/light": {
     "gray": {
       "5": {
@@ -491,11 +349,159 @@
       }
     }
   },
+  "Semantic/light": {
+    "2": {
+      "value": "{Number.2}",
+      "type": "borderRadius"
+    },
+    "4": {
+      "value": "{Number.4}",
+      "type": "borderRadius"
+    },
+    "8": {
+      "value": "{Number.8}",
+      "type": "borderRadius"
+    },
+    "12": {
+      "value": "{Number.12}",
+      "type": "borderRadius"
+    },
+    "16": {
+      "value": "{Number.16}",
+      "type": "borderRadius"
+    },
+    "label": {
+      "inverse": {
+        "value": "{common.white}",
+        "type": "color"
+      },
+      "normal": {
+        "value": "{gray.80}",
+        "type": "color"
+      },
+      "strong": {
+        "value": "{gray.90}",
+        "type": "color"
+      },
+      "alternative": {
+        "value": "{gray.70}",
+        "type": "color"
+      },
+      "primary": {
+        "value": "{primary.50}",
+        "type": "color"
+      },
+      "disabled": {
+        "value": "{gray.40}",
+        "type": "color"
+      },
+      "assistive": {
+        "value": "{gray.50}",
+        "type": "color"
+      }
+    },
+    "background": {
+      "normal": {
+        "value": "{gray.5}",
+        "type": "color"
+      },
+      "strong": {
+        "value": "{gray.80}",
+        "type": "color"
+      },
+      "primary": {
+        "value": "{primary.50}",
+        "type": "color"
+      },
+      "alternative": {
+        "value": "{gray.10}",
+        "type": "color"
+      },
+      "disabled": {
+        "value": "{gray.30}",
+        "type": "color"
+      }
+    },
+    "status": {
+      "negative": {
+        "value": "{red.50}",
+        "type": "color"
+      },
+      "positive": {
+        "value": "{green.50}",
+        "type": "color"
+      }
+    },
+    "gap": {
+      "2": {
+        "value": "{Number.2}",
+        "type": "dimension"
+      },
+      "4": {
+        "value": "{Number.4}",
+        "type": "dimension"
+      },
+      "8": {
+        "value": "{Number.8}",
+        "type": "dimension"
+      },
+      "12": {
+        "value": "{Number.12}",
+        "type": "dimension"
+      },
+      "16": {
+        "value": "{Number.16}",
+        "type": "dimension"
+      },
+      "20": {
+        "value": "{Number.20}",
+        "type": "dimension"
+      }
+    },
+    "padding": {
+      "2": {
+        "value": "{Number.2}",
+        "type": "dimension"
+      },
+      "4": {
+        "value": "{Number.4}",
+        "type": "dimension"
+      },
+      "8": {
+        "value": "{Number.8}",
+        "type": "dimension"
+      },
+      "12": {
+        "value": "{Number.12}",
+        "type": "dimension"
+      },
+      "16": {
+        "value": "{Number.16}",
+        "type": "dimension"
+      },
+      "20": {
+        "value": "{Number.20}",
+        "type": "dimension"
+      }
+    },
+    "round": {
+      "value": "{Number.999}",
+      "type": "borderRadius"
+    },
+    "normal": {
+      "value": {
+        "color": "{gray.20}",
+        "width": "{Number.1}",
+        "style": "solid"
+      },
+      "type": "border"
+    }
+  },
   "$themes": [],
   "$metadata": {
     "tokenSetOrder": [
-      "Semantic/light",
-      "Primitive/light"
+      "Primitive/light",
+      "Semantic/light"
     ]
   }
 }

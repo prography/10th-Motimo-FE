@@ -1,5 +1,5 @@
-import type { StorybookConfig } from '@storybook/nextjs';
-
+import type { StorybookConfig } from "@storybook/nextjs";
+import path from "path";
 // 커맨드 내 환경 변수 확인 (STORYBOOK_SCOPE가 'shared'이면 공유 컴포넌트만 로드)
 const STORYBOOK_SCOPE = process.env.STORYBOOK_SCOPE;
 
@@ -7,25 +7,28 @@ const config: StorybookConfig = {
   stories: [
     "./Introduction.mdx",
     "./CHANGELOG.mdx",
-    // "../stories/**/*.mdx",
-    // "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)"
-    ...(STORYBOOK_SCOPE?(['../components/shared/**/*.stories.@(js|jsx|mjs|ts|tsx)', '../components/shared/**/*.mdx']):
-    ['../components/**/*.stories.@(js|jsx|mjs|ts|tsx)']),
+    ...(STORYBOOK_SCOPE
+      ? [
+          "../components/shared/**/*.stories.@(js|jsx|mjs|ts|tsx)",
+          "../components/shared/**/*.mdx",
+        ]
+      : ["../components/**/*.stories.@(js|jsx|mjs|ts|tsx)"]),
   ],
   addons: [
     {
-      name: '@storybook/addon-essentials',
+      name: "@storybook/addon-essentials",
       options: {
         docs: false,
       },
     },
-    '@storybook/addon-designs',
-    '@storybook/addon-interactions',
+    "@storybook/addon-docs",
+    "@storybook/addon-designs",
+    "@storybook/addon-interactions",
   ],
   framework: {
-    name: '@storybook/nextjs',
+    name: "@storybook/nextjs",
     options: {},
   },
-  staticDirs: ['..\\public'],
+  staticDirs: [path.resolve(__dirname, "../public")],
 };
 export default config;

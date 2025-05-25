@@ -10,6 +10,9 @@
 !.yarn/releases
 !.yarn/versions
 
+# workspace dependencies
+/components/shared/node_modules
+
 # testing
 /coverage
 
@@ -19,6 +22,9 @@
 
 # production
 /build
+
+# design system package
+/components/shared/dist/
 
 # misc
 .DS_Store

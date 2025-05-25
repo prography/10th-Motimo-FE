@@ -1,5 +1,5 @@
-import type { Preview } from '@storybook/react';
-import '../app/globals.css';
+import type { Preview } from "@storybook/react";
+import "../app/globals.css";
 import {
   Title,
   Subtitle,
@@ -7,15 +7,16 @@ import {
   Primary,
   Controls,
   Stories,
-} from '@storybook/blocks';
+} from "@storybook/blocks";
 const preview: Preview = {
+  tags: ["autodocs"],
   decorators: [
     (Story) => (
       <div
         style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
         <Story />
