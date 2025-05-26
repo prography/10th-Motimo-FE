@@ -20,7 +20,8 @@
     "next": "15.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@storybook/addon-designs": "^8.2.1",
