@@ -13,6 +13,13 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
+    ## hys-lee의 레포에서만 동작하도록 제한. (배포 관련 제한사한으로)
+    if: |
+      github.repository == 'Hys-Lee/10th-Motimo-FE' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
