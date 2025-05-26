@@ -9,6 +9,7 @@ on:
       - ".storybook/**" # 스토리북 설정 변경 시 (main.ts에 조건이 있으므로)
       - "package.json"
       - "components/shared/package.json"
+      - "./github/workflows/deploy-storybook.yml"
 
 jobs:
   deploy:
