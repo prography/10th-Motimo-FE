@@ -9,10 +9,18 @@ on:
       - ".storybook/**" # 스토리북 설정 변경 시 (main.ts에 조건이 있으므로)
       - "package.json"
       - "components/shared/package.json"
+      - ".github/workflows/deploy-storybook.yml"
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
+    ## hys-lee의 레포에서만 동작하도록 제한. (배포 관련 제한사한으로)
+    if: |
+      github.repository == 'Hys-Lee/10th-Motimo-FE' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
