@@ -1,0 +1,41 @@
+name: Chromatic UI Verification
+
+on:
+  # pull_request:
+  push:
+    branches:
+      # - main # main 브랜치로의 PR 발생 시 실행
+      - design
+
+jobs:
+  chromatic-test:
+    # if: github.repository == 'prography/10th-Motimo-FE'
+    if: github.repository == 'Hys-Lee/10th-Motimo-FE'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Chromatic이 Git 히스토리를 분석할 수 있도록 함
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18" # 프로젝트에 맞는 Node.js 버전
+
+      - name: Install dependencies
+        run: yarn install # 또는 npm install
+
+      - name: Build Storybook (선택 사항, 필요시)
+        run: yarn build-storybook # 또는 npm run build-storybook
+
+      - name: Run Chromatic
+        uses: chromaui/action@v1
+        with:
+          # 👇 Chromatic 프로젝트 토큰 (Secrets에 저장 권장)
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          # 👇 true로 설정하면 리뷰되지 않은 변경이 있을 경우 CI를 실패시킴
+          exitOnceUploaded: true # 또는 exitZeroOnChanges (리뷰 안된 변경 있어도 성공으로 처리. 원하는 동작에 따라 선택)
+          # 👇 autoAcceptChanges: 'main' (main 브랜치에서의 변경은 자동 승인 - 주의해서 사용)
+          # 원하는 동작에 따라 옵션 조정
+          # buildScriptName: 'build-storybook' # build-storybook 스크립트 이름이 다를 경우 명시
