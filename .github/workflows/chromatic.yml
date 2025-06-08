@@ -35,7 +35,4 @@ jobs:
           # 👇 Chromatic 프로젝트 토큰 (Secrets에 저장 권장)
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           # 👇 true로 설정하면 리뷰되지 않은 변경이 있을 경우 CI를 실패시킴
-          exitOnceUploaded: true # 또는 exitZeroOnChanges (리뷰 안된 변경 있어도 성공으로 처리. 원하는 동작에 따라 선택)
-          # 👇 autoAcceptChanges: 'main' (main 브랜치에서의 변경은 자동 승인 - 주의해서 사용)
-          # 원하는 동작에 따라 옵션 조정
-          # buildScriptName: 'build-storybook' # build-storybook 스크립트 이름이 다를 경우 명시
+          exitZeroOnChanges: false
