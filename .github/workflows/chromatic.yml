@@ -24,10 +24,10 @@ jobs:
           node-version: "18" # 프로젝트에 맞는 Node.js 버전
 
       - name: Install dependencies
-        run: yarn install # 또는 npm install
+        run: npm install # 또는 npm install
 
       - name: Build Storybook (선택 사항, 필요시)
-        run: yarn build-storybook # 또는 npm run build-storybook
+        run: npm run build-storybook # 또는 npm run build-storybook
 
       - name: Run Chromatic
         uses: chromaui/action@v1
