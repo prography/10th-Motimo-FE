@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 const Test = ({ children }: { children: ReactNode }) => {
   return (
     <>
-      <button>{children}</button>
+      <button className="bg-gray-300">{children}</button>
     </>
   );
 };
