@@ -14,14 +14,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Chromatic이 Git 히스토리를 분석할 수 있도록 함
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "18" # 프로젝트에 맞는 Node.js 버전
+          node-version: "20" # 프로젝트에 맞는 Node.js 버전
 
       - name: Install dependencies
         run: npm install # 또는 npm install
@@ -30,7 +30,7 @@ jobs:
         run: npm run build-storybook # 또는 npm run build-storybook
 
       - name: Run Chromatic
-        uses: chromaui/action@v1
+        uses: chromaui/action@latest
         with:
           # 👇 Chromatic 프로젝트 토큰 (Secrets에 저장 권장)
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
