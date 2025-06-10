@@ -24,6 +24,7 @@ const config: StorybookConfig = {
     "@storybook/addon-docs",
     "@storybook/addon-designs",
     "@storybook/addon-interactions",
+    "@chromatic-com/storybook",
   ],
   framework: {
     name: "@storybook/nextjs",

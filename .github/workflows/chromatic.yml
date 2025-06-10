@@ -1,13 +1,15 @@
 name: Chromatic UI Verification
 
 on:
-  pull_request:
+  # pull_request:
+  push:
     branches:
-      - main # main 브랜치로의 PR 발생 시 실행
+      # - main # main 브랜치로의 PR 발생 시 실행
+      - design
 
 jobs:
   chromatic-test:
-    if: github.repository == 'prography/10th-Motimo-FE'
+    # if: github.repository == 'prography/10th-Motimo-FE'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
