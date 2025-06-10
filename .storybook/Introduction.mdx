@@ -5,20 +5,21 @@ import { Meta } from "@storybook/blocks";
 # **MOTIMO Design System**
 
 <br />
+
 ## 1. 스토리북 둘러보기
 
 #### 배포 주소: [스토리북 배포 주소 나중에 설정]
 
 #### 사용법
 
-1.  사이드바에서 원하는 컴포넌트를 선택합니다.
-2.  **Docs**를 통해 컴포넌트 전체 정보를 한 눈에 볼 수 있습니다.
-3.  스토리별 탭은 Control, Actions, Design, Interactions, Visual tests가 존재합니다.
-4.  **Controls 탭**에서 Props 값을 확인 또는 변경해볼 수 있습니다. 각 Prop에 대한 설명도 이곳에서 볼 수 있습니다.
-5.  **Actions 탭**에서 이벤트 핸들러(콜백 함수)가 호출될 때 발생하는 동작을 기록하고 시각적으로 볼 수 있습니다.
-6.  **Design 탭**에서 실제 figma에 작성된 컴포넌트 디자인을 볼 수 있습니다. 스토리북에 등록된 컴포넌트와 비교해보세요.
-7.  **Interactions 탭**에서 각 스토리별 play함수에 등록된 상호작용 테스트 결과를 확인할 수 있습니다.
-8.  **Visual test 탭**에서 Chromatic과 연결해 컴포넌트 디자인 변경을 리뷰받을 수 있습니다. 변화가 unreviewed시 PR되지 않으니 주의하세요.
+1. 사이드바에서 원하는 컴포넌트를 선택합니다.
+2. **Docs**를 통해 컴포넌트 전체 정보를 한 눈에 볼 수 있습니다.
+3. 스토리별 탭은 Control, Actions, Design, Interactions, Visual tests가 존재합니다.
+4. **Controls 탭**에서 Props 값을 확인 또는 변경해볼 수 있습니다. 각 Prop에 대한 설명도 이곳에서 볼 수 있습니다.
+5. **Actions 탭**에서 이벤트 핸들러(콜백 함수)가 호출될 때 발생하는 동작을 기록하고 시각적으로 볼 수 있습니다.
+6. **Design 탭**에서 실제 figma에 작성된 컴포넌트 디자인을 볼 수 있습니다. 스토리북에 등록된 컴포넌트와 비교해보세요.
+7. **Interactions 탭**에서 각 스토리별 play함수에 등록된 상호작용 테스트 결과를 확인할 수 있습니다.
+8. **Visual test 탭**에서 Chromatic과 연결해 컴포넌트 디자인 변경을 리뷰받을 수 있습니다. 변화가 unreviewed시 PR되지 않으니 주의하세요.
 
 <br />
 사용을 위해선 Story작성 시 이벤트 핸들러 props에 함수를 주입하면 됩니다.
@@ -28,88 +29,88 @@ import { Meta } from "@storybook/blocks";
 
 #### 스토리 파일 작성법 (`*.stories.tsx`)
 
-- `npm run generate:story` 혹은 `npm run generate:story {컴포넌트 경로}`를 통해 컴포넌트의 스토리북 템플릿을 생성한다.
+1. `npm run generate:story` 혹은 `npm run generate:story {컴포넌트 경로}`를 통해 컴포넌트의 스토리북 템플릿을 생성한다.
 
-- **필수로, meta의 title을 스토리북 사이드바에 맞게 적절히 수정해야 한다**
+2. **필수로, meta의 title을 스토리북 사이드바에 맞게 적절히 수정해야 한다**
 
-- argTypes 필드를 직접 작성하지 않으면, 컴포넌트 props에 대한 type 및 interface를 보고 자동 등록됩니다.
+3. argTypes 필드를 직접 작성하지 않으면, 컴포넌트 props에 대한 type 및 interface를 보고 자동 등록됩니다.
 
-  ```typescript
-  interface TestProps {
-    /**discription입니다*/
-    children: ReactNode;
-  }
+```typescript
+interface TestProps {
+  /**discription입니다*/
+  children: ReactNode;
+}
 
-  const Test = ({children}:TestProps)=>{
-    ...
-  }
-  ```
+const Test = ({children}:TestProps)=>{
+  ...
+}
+```
 
-- 선택적으로 커스텀 할 수 있으며, 이를 위한 내부 코드는 아래와 같이 구성된다.
+4. 선택적으로 커스텀 할 수 있으며, 이를 위한 내부 코드는 아래와 같이 구성된다.
 
-  ```typescript
-  // Test.stories.tsx
-  import Test from "./Test";
-  import { StoryObj } from "@storybook/react";
+```typescript
+// Test.stories.tsx
+import Test from "./Test";
+import { StoryObj } from "@storybook/react";
 
-  /**
-   * 1. meta는 컴포넌트별 공통 옵션입니다.
-   */
-  const meta = {
-    title: "Components/Test", // Storybook 사이드바 경로 (프로젝트 규칙에 맞게 수정)
-    component: Test, // 컴포넌트 등록
-    parameters: {
-      // Canvas 레이아웃을 중앙으로 정렬하거나 패딩을 추가할 수 있습니다.
-      layout: "centered",
-    },
-    // Docs 탭 자동 생성을 위해 필요합니다.
-    tags: ["autodocs"],
-    // Controls Addon에서 Props를 어떻게 제어할지, 설명을 추가합니다.
-    // 모든 스토리에 적용될 기본 Props (선택 사항)
-    args: {
-      // 예시: label: '라벨',
-    },
-  } satisfies Meta<typeof Test>;
+/**
+ * 1. meta는 컴포넌트별 공통 옵션입니다.
+ */
+const meta = {
+  title: "Components/Test", // Storybook 사이드바 경로 (프로젝트 규칙에 맞게 수정)
+  component: Test, // 컴포넌트 등록
+  parameters: {
+    // Canvas 레이아웃을 중앙으로 정렬하거나 패딩을 추가할 수 있습니다.
+    layout: "centered",
+  },
+  // Docs 탭 자동 생성을 위해 필요합니다.
+  tags: ["autodocs"],
+  // Controls Addon에서 Props를 어떻게 제어할지, 설명을 추가합니다.
+  // 모든 스토리에 적용될 기본 Props (선택 사항)
+  args: {
+    // 예시: label: '라벨',
+  },
+} satisfies Meta<typeof Test>;
 
-  export default meta;
+export default meta;
 
-  type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof meta>;
 
-  /**
-   * 2. 개별 스토리 작성: 컴포넌트의 다양한 상태와 예시를 보여줍니다.
-  
-   *    기본 UI variants들을 스토리로 작성하지만, edge case들을 작성할 수도 있습니다.
-  
-   *    각 스토리에 맞는 args를 작성하는 것을 기본으로 합니다.
-   */
+/**
+ * 2. 개별 스토리 작성: 컴포넌트의 다양한 상태와 예시를 보여줍니다.
 
-  // Primary: 가장 기본적인 스토리, 필수로 존재해야 합니다.
-  //          반드시 argTypes가 존재해야 합니다. (수기로 작성하든, 비워서 자동완성 시키든)
-  export const Primary: Story = {
-    argTypes: {
-      children: {
-        control: "text",
-        description: "텍스트로 입력 될 것임.",
-        table: {
-          category: "이야호",
-        },
+ *    기본 UI variants들을 스토리로 작성하지만, edge case들을 작성할 수도 있습니다.
+
+ *    각 스토리에 맞는 args를 작성하는 것을 기본으로 합니다.
+ */
+
+// Primary: 가장 기본적인 스토리, 필수로 존재해야 합니다.
+//          반드시 argTypes가 존재해야 합니다. (수기로 작성하든, 비워서 자동완성 시키든)
+export const Primary: Story = {
+  argTypes: {
+    children: {
+      control: "text",
+      description: "텍스트로 입력 될 것임.",
+      table: {
+        category: "이야호",
       },
     },
+  },
 
-    // argTypes가 존재할 때, args는 기본값의 역할을 합니다.
-    args: {
-      children: "버튼",
-    },
-  };
+  // argTypes가 존재할 때, args는 기본값의 역할을 합니다.
+  args: {
+    children: "버튼",
+  },
+};
 
-  // UI variatns들을 스토리로 생성합니다.
-  // 추가적인 스토리 예시:
-  export const LongText: Story = {
-    args: {
-      children: "동해물과백두산이마르고닳도록하느님이보우하사우리나라만세",
-    },
-  };
-  ```
+// UI variatns들을 스토리로 생성합니다.
+// 추가적인 스토리 예시:
+export const LongText: Story = {
+  args: {
+    children: "동해물과백두산이마르고닳도록하느님이보우하사우리나라만세",
+  },
+};
+```
 
 ## 디자인 토큰
 
@@ -118,8 +119,5 @@ import { Meta } from "@storybook/blocks";
 ## 버전
 
 [0.1.0] - 2025-06-10: 스토리북 템플릿 생성 기능 추가 및 Intro 수정
+
 [0.0.1] - 2025-05-21
-
-```
-
-```
