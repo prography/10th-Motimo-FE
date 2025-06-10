@@ -9,6 +9,10 @@
 
 ## ✨ Motimo 프론트엔드 레포지토리에 오신 것을 환영합니다!
 
+> 디자인 시스템 배포 페이지
+
+<a href="10th-motimo-storybook.vercel.app">10th-motimo-storybook.vercel.app</a>
+
 ## 🚀 Motimo 프론트엔드의 핵심 목표
 
 ## 🛠️ 기술 스택
