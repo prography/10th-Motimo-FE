@@ -24,11 +24,15 @@ const config: StorybookConfig = {
     "@storybook/addon-docs",
     "@storybook/addon-designs",
     "@storybook/addon-interactions",
+    "@chromatic-com/storybook",
   ],
   framework: {
     name: "@storybook/nextjs",
     options: {},
   },
   staticDirs: [path.resolve(__dirname, "../public")],
+  typescript: {
+    reactDocgen: "react-docgen-typescript",
+  },
 };
 export default config;

@@ -1,38 +1,49 @@
-// Test.stories.tsx
-import Test from "./Test";
-import { StoryObj } from "@storybook/react";
+// plop-templates/story.tsx.hbs
+import type { Meta, StoryObj } from "@storybook/react";
+import Test from "./Test"; // 실제 컴포넌트 파일 임포트
 
-// meta는 공통 옵션.
 const meta = {
-  title: "Example/Test",
+  title: "Components/Test", // Storybook 사이드바 경로 (프로젝트 규칙에 맞게 수정)
   component: Test,
-  args: {
-    children: "asdf",
+  parameters: {
+    // Canvas 레이아웃을 중앙으로 정렬하거나 패딩을 추가할 수 있습니다.
+    layout: "centered",
   },
-};
+  // Docs 탭 자동 생성을 위해 필요합니다.
+  tags: ["autodocs"],
+  // Controls Addon에서 Props를 어떻게 제어할지, 설명을 추가합니다.
+  // argTypes: {
+  //   // 예시: backgroundColor: { control: 'color', description: '컴포넌트 배경색' },
+  // },
+  // 모든 스토리에 적용될 기본 Props (선택 사항)
+  // args: {
+  //   // 예시: label: 'Test',
+  // },
+} satisfies Meta<typeof Test>;
+
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-// Primary는 공통. argTypes를 사용해 상호작용 가능하도록 한다.
+// 가장 기본적인 Primary 스토리 (필수 권장)
 export const Primary: Story = {
-  argTypes: {
-    children: {
-      control: "text",
-      description: "보통은 텍스트를 입력하겠지",
-      table: {
-        category: "이야호",
-      },
-    },
-  },
   args: {
-    children: "버튼",
+    // Primary 스토리에만 적용될 Props
+    children: "123",
+  },
+};
+/*
+// 추가적인 스토리 예시:
+export const Secondary: Story = {
+  args: {
+    label: 'Secondary Test',
   },
 };
 
-// 기타 스토리들은 args를 기본으로 간단히 처리함
-export const Ex1: Story = {
+export const Large: Story = {
   args: {
-    children: "기본값",
+    size: 'large',
+    label: 'Large Test',
   },
 };
+*/

@@ -1,9 +1,14 @@
 import { ReactNode } from "react";
 
-const Test = ({ children }: { children: ReactNode }) => {
+interface TestProps {
+  /**discription입니다*/
+  children: ReactNode;
+}
+
+const Test = ({ children }: TestProps) => {
   return (
     <>
-      <button>{children}</button>
+      <button className="bg-gray-300">{children}</button>
     </>
   );
 };
