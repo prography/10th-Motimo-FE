@@ -1,19 +1,31 @@
 name: Chromatic UI Verification
 
 on:
-  pull_request:
-  push:
+  pull_request_target:
     branches:
       - main # main 브랜치로의 PR 발생 시 실행
+    types: [opened, synchronize, reopened] # PR이 열리거나, 업데이트되거나, 다시 열릴 때 실행
 
 jobs:
   chromatic-test:
-    if: github.repository == 'prography/10th-Motimo-FE'
+    # 레포와 PR유저 제한. Dependabot은 의존성 업데이트를 자동화하는 GitHub의 봇.
+    if: github.repository == 'prography/10th-Motimo-FE' &&
+      (
+      github.event.pull_request.user.login == 'Hys-Lee' ||
+      github.event.pull_request.user.login == 'devgony' ||
+      startsWith(github.actor, 'dependabot')
+      )
+
+    permissions:
+      contents: read # 코드 체크아웃에 필요
+      pull-requests: read # PR 정보 읽기에 필요 (pull_request_target 사용 시)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout PR code
         uses: actions/checkout@v4
         with:
+          # PR의 최신 커밋을 가져옵니다. PR_target의 위험성을 낮춥니다.
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0 # Chromatic이 Git 히스토리를 분석할 수 있도록 함
 
       - name: Setup Node.js
@@ -28,7 +40,7 @@ jobs:
         run: npm run build-storybook # 또는 npm run build-storybook
 
       - name: Run Chromatic
-        uses: chromaui/action@latest
+        uses: chromaui/action@12.2.0
         with:
           # 👇 Chromatic 프로젝트 토큰 (Secrets에 저장 권장)
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
