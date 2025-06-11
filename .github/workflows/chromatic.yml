@@ -40,7 +40,7 @@ jobs:
         run: npm run build-storybook # 또는 npm run build-storybook
 
       - name: Run Chromatic
-        uses: chromaui/action@12.2.0
+        uses: chromaui/action@v1
         with:
           # 👇 Chromatic 프로젝트 토큰 (Secrets에 저장 권장)
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
