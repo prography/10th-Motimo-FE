@@ -803,9 +803,6 @@
   },
   "$themes": [],
   "$metadata": {
-    "tokenSetOrder": [
-      "Primitive/light",
-      "Semantic/light"
-    ]
+    "tokenSetOrder": ["Primitive/light", "Semantic/light"]
   }
 }
