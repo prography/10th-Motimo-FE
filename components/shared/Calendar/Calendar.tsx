@@ -2,21 +2,14 @@ import { useState } from "react";
 import LeftArrow from "../public/Chevron_Left_MD.svg";
 import RightArrow from "../public/Chevron_Right_MD.svg";
 interface CalendarProps {
-  initDate?: Date;
+  /** selected는 외부에서 주입하는 값. 제어형 컴포넌트 방식. */
   selected?: Date;
+  /** 캘린더 날짜 클릭하면, 해당 날짜의 Date 값을 알 수 있다. */
   onChange: (date: Date) => void;
 }
 
-/**
- * @param param0
- * @returns
- */
-const Calendar = ({
-  initDate = new Date(),
-  selected,
-  onChange,
-}: CalendarProps) => {
-  const [thisDate, setThisDate] = useState(selected ?? initDate);
+const Calendar = ({ selected = new Date(), onChange }: CalendarProps) => {
+  const [thisDate, setThisDate] = useState(selected);
   const thisFirstDate = new Date(
     `${thisDate.getFullYear()}-${thisDate.getMonth() + 1}-1`,
   );
@@ -139,7 +132,7 @@ interface DateItemProps {
   onClick: CalendarProps["onChange"];
 }
 
-const chooseTextColor = (selected, disbaled) => {
+const chooseTextColor = (selected: boolean, disbaled: boolean) => {
   if (selected) return "text-label-inverse";
   if (disbaled) return "text-label-assistive";
 

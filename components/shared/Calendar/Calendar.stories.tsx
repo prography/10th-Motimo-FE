@@ -1,5 +1,6 @@
+import { useState } from "react";
 import Calendar from "./Calendar";
-import { StoryFn, StoryObj } from "@storybook/react";
+import { Meta, StoryFn, StoryObj } from "@storybook/react";
 
 // meta는 공통 옵션.
 const meta = {
@@ -23,12 +24,18 @@ const meta = {
       },
     },
   },
-};
+} satisfies Meta<typeof Calendar>;
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
+  render: () => {
+    const [date, setDate] = useState(new Date());
+    return (
+      <Calendar onChange={(newDate) => setDate(newDate)} selected={date} />
+    );
+  },
   argTypes: {
     selected: {
       description: `선택 값 주입. 제어 방식의 사용법과 같음.
@@ -47,4 +54,5 @@ export const Primary: Story = {
     },
     selected: new Date(),
   },
+  play: () => {},
 };
