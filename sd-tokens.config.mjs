@@ -44,13 +44,18 @@ StyleDictionary.registerFormat({
     return [
       "@theme {",
       ...dictionary.allTokens
-        .filter((prop) => !prop.name.includes("primitive"))
+        // .filter((prop) => !prop.name.includes("primitive"))
         .map((prop) => {
-          //test
-          console.log("prop.name, prop.type: ", prop.name, prop.type);
+          const isPrimitive = prop.name.includes("primitive");
           const nameFromPath = prop.path.slice(1).join("-");
 
-          return `  --${token2TailwindTypeMap?.[prop.type] ?? "non-mapped"}-${nameFromPath}: ${prop.value};`;
+          if (isPrimitive) {
+            console.log("prop: ", prop.name, prop.type, prop.path);
+            const middleName = prop.type === "color" ? "Color-" : "";
+            return `  --${token2TailwindTypeMap?.[prop.type] ?? "non-mapped"}-${middleName}${nameFromPath}: ${prop.value};`;
+          } else {
+            return `  --${token2TailwindTypeMap?.[prop.type] ?? "non-mapped"}-${nameFromPath}: ${prop.value};`;
+          }
         }),
       "}",
     ].join("\n");
