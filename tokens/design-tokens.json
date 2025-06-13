@@ -414,7 +414,7 @@
         "type": "color"
       },
       "alternative": {
-        "value": "{gray.10}",
+        "value": "{common.white}",
         "type": "color"
       },
       "disabled": {
@@ -803,6 +803,9 @@
   },
   "$themes": [],
   "$metadata": {
-    "tokenSetOrder": ["Primitive/light", "Semantic/light"]
+    "tokenSetOrder": [
+      "Primitive/light",
+      "Semantic/light"
+    ]
   }
 }
