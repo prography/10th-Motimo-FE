@@ -1,5 +1,6 @@
 import type { Preview } from "@storybook/react";
 import "../app/globals.css";
+import "./storybook-fonts.css";
 import {
   Title,
   Subtitle,

@@ -43,15 +43,17 @@ StyleDictionary.registerFormat({
   format: function ({ dictionary }) {
     return [
       "@theme {",
-      ...dictionary.allTokens
-        .filter((prop) => !prop.name.includes("primitive"))
-        .map((prop) => {
-          //test
-          console.log("prop.name, prop.type: ", prop.name, prop.type);
-          const nameFromPath = prop.path.slice(1).join("-");
+      ...dictionary.allTokens.map((prop) => {
+        const isPrimitive = prop.name.includes("primitive");
+        const nameFromPath = prop.path.slice(1).join("-");
 
+        if (isPrimitive) {
+          const middleName = prop.type === "color" ? "Color-" : "";
+          return `  --${token2TailwindTypeMap?.[prop.type] ?? "non-mapped"}-${middleName}${nameFromPath}: ${prop.value};`;
+        } else {
           return `  --${token2TailwindTypeMap?.[prop.type] ?? "non-mapped"}-${nameFromPath}: ${prop.value};`;
-        }),
+        }
+      }),
       "}",
     ].join("\n");
   },
