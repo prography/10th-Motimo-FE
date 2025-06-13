@@ -34,6 +34,18 @@ const token2TailwindTypeMap = {
  */
 const excludingTokenNames = ["title", "body", "caption"];
 
+const handleExceptionForMiddleName = (type) => {
+  // 예외 사항들
+  return type === "color" ? "Color-" : "";
+};
+const handleExceptionForNameFromPath = (path) => {
+  // 예외 사항들
+  if (path.includes("common")) return path.slice(2).join("-");
+
+  // 일반
+  return path.slice(1).join("-");
+};
+
 /**
  * tailwind에서 사용할 수 있도록 formatting
  */
@@ -45,10 +57,11 @@ StyleDictionary.registerFormat({
       "@theme {",
       ...dictionary.allTokens.map((prop) => {
         const isPrimitive = prop.name.includes("primitive");
-        const nameFromPath = prop.path.slice(1).join("-");
+        const nameFromPath = handleExceptionForNameFromPath(prop.path);
 
         if (isPrimitive) {
-          const middleName = prop.type === "color" ? "Color-" : "";
+          const middleName = handleExceptionForMiddleName(prop.type);
+          console.log("nameFromPath: ", nameFromPath);
           return `  --${token2TailwindTypeMap?.[prop.type] ?? "non-mapped"}-${middleName}${nameFromPath}: ${prop.value};`;
         } else {
           return `  --${token2TailwindTypeMap?.[prop.type] ?? "non-mapped"}-${nameFromPath}: ${prop.value};`;

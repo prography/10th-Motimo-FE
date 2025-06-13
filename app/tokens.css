@@ -10,8 +10,8 @@
   --color-Color-gray-80: #33363d;
   --color-Color-gray-90: #1e2124;
   --color-Color-gray-95: #111111;
-  --color-Color-common-black: #000000;
-  --color-Color-common-white: #ffffff;
+  --color-Color-black: #000000;
+  --color-Color-white: #ffffff;
   --color-Color-red-5: #fde9e8;
   --color-Color-red-10: #fbd3d0;
   --color-Color-red-20: #f8b9b5;
@@ -97,7 +97,7 @@
   --color-background-normal: #f7f7f8;
   --color-background-strong: #33363d;
   --color-background-primary: #5d5fef;
-  --color-background-alternative: #e6e8ea;
+  --color-background-alternative: #ffffff;
   --color-background-disabled: #b1b8be;
   --color-status-negative: #ea3429;
   --color-status-positive: #228738;
