@@ -54,5 +54,4 @@ export const Primary: Story = {
     },
     selected: new Date(),
   },
-  play: () => {},
 };

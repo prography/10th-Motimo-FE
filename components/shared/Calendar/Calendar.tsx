@@ -52,6 +52,8 @@ const Calendar = ({ selected = new Date(), onChange }: CalendarProps) => {
     ...nextMonthDates,
   ];
 
+  const prevCalendarDisabled = thisDate.getMonth() <= new Date().getMonth();
+
   return (
     <>
       <div className="w-80 inline-flex flex-col justify-start items-start gap-4">
@@ -67,11 +69,18 @@ const Calendar = ({ selected = new Date(), onChange }: CalendarProps) => {
           <div>
             <button
               className="w-8 h-8 p-2 inline-flex justify-center items-center gap-2"
+              disabled={prevCalendarDisabled}
               onClick={() => {
                 setThisDate((prevDate) => mutateDate("month", prevDate, -1));
               }}
             >
-              <div className="text-Color-gray-80">
+              <div
+                className={
+                  prevCalendarDisabled
+                    ? "text-Color-gray-40"
+                    : "text-Color-gray-80"
+                }
+              >
                 <LeftArrow />
               </div>
             </button>
