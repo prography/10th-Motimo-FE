@@ -1,15 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+// import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+// const geistSans = Geist({
+//   variable: "--font-geist-sans",
+//   subsets: ["latin"],
+// });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+// const geistMono = Geist_Mono({
+//   variable: "--font-geist-mono",
+//   subsets: ["latin"],
+// });
+
+export const customFont = localFont({
+  src: "../public/fonts/SUIT-Variable.woff2",
+  display: "swap",
+  variable: "--font-suit-variable",
 });
 
 export const metadata: Metadata = {
@@ -23,12 +30,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
+    <html lang="ko" className={`${customFont.className}`}>
+      <head>
+        <link
+          rel="preload"
+          href="/fonts/SUIT-Variable.woff2"
+          as="font"
+          type="font/woff2" // 폰트 파일 형식에 맞게 (woff, ttf 등)
+          crossOrigin="anonymous" // 일반적으로 폰트에는 추가하는 것이 좋음
+        />
+      </head>
+      <body className={`${customFont.variable} antialiased`}>{children}</body>
     </html>
   );
 }
