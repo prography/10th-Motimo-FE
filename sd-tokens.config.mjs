@@ -34,6 +34,18 @@ const token2TailwindTypeMap = {
  */
 const excludingTokenNames = ["title", "body", "caption"];
 
+const handleExceptionForMiddleName = (type) => {
+  // 예외 사항들
+  return type === "color" ? "Color-" : "";
+};
+const handleExceptionForNameFromPath = (path) => {
+  // 예외 사항들
+  if (path.includes("common")) return path.slice(2).join("-");
+
+  // 일반
+  return path.slice(1).join("-");
+};
+
 /**
  * tailwind에서 사용할 수 있도록 formatting
  */
@@ -43,20 +55,17 @@ StyleDictionary.registerFormat({
   format: function ({ dictionary }) {
     return [
       "@theme {",
-      ...dictionary.allTokens
-        // .filter((prop) => !prop.name.includes("primitive"))
-        .map((prop) => {
-          const isPrimitive = prop.name.includes("primitive");
-          const nameFromPath = prop.path.slice(1).join("-");
+      ...dictionary.allTokens.map((prop) => {
+        const isPrimitive = prop.name.includes("primitive");
+        const nameFromPath = handleExceptionForNameFromPath(prop.path);
 
-          if (isPrimitive) {
-            console.log("prop: ", prop.name, prop.type, prop.path);
-            const middleName = prop.type === "color" ? "Color-" : "";
-            return `  --${token2TailwindTypeMap?.[prop.type] ?? "non-mapped"}-${middleName}${nameFromPath}: ${prop.value};`;
-          } else {
-            return `  --${token2TailwindTypeMap?.[prop.type] ?? "non-mapped"}-${nameFromPath}: ${prop.value};`;
-          }
-        }),
+        if (isPrimitive) {
+          const middleName = handleExceptionForMiddleName(prop.type);
+          return `  --${token2TailwindTypeMap?.[prop.type] ?? "non-mapped"}-${middleName}${nameFromPath}: ${prop.value};`;
+        } else {
+          return `  --${token2TailwindTypeMap?.[prop.type] ?? "non-mapped"}-${nameFromPath}: ${prop.value};`;
+        }
+      }),
       "}",
     ].join("\n");
   },
