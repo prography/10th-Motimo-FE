@@ -61,7 +61,6 @@ StyleDictionary.registerFormat({
 
         if (isPrimitive) {
           const middleName = handleExceptionForMiddleName(prop.type);
-          console.log("nameFromPath: ", nameFromPath);
           return `  --${token2TailwindTypeMap?.[prop.type] ?? "non-mapped"}-${middleName}${nameFromPath}: ${prop.value};`;
         } else {
           return `  --${token2TailwindTypeMap?.[prop.type] ?? "non-mapped"}-${nameFromPath}: ${prop.value};`;
