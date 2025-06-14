@@ -2,6 +2,14 @@ import { useState } from "react";
 import TodoItem from "./TodoItem";
 import { StoryFn, StoryObj } from "@storybook/react";
 
+const description = `
+체크박스는 바텀시트랑 독립적임. 
+
+**완료/미완료 비동기 동작에는 낙관적 업뎃을 사용해야 할 듯.**
+
+네트워크 에러 등으로 에러날 때 원복 + 스낵바로 얼림 띄우기
+`;
+
 // meta는 공통 옵션.
 const meta = {
   title: "Shared/TodoItem",
@@ -17,10 +25,7 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component: `컴포넌트 설명입니다. 일단 개발 요구사항 여기에 기록함.
-        체크박스는 바텀시트랑 독립적임. 완료/미완료 비동기 동작에는 낙관적 업뎃을 사용해야 할 듯.
-        네트워크 에러 등으로 에러날 때 원복 + 스낵바로 얼림 띄우기
-        `,
+        component: description,
       },
     },
   },
@@ -28,6 +33,28 @@ const meta = {
 export default meta;
 
 type Story = StoryObj<typeof meta>;
+
+const PrimaryWrapper = ({ args }: { args: any }) => {
+  const [checked, setChecked] = useState<boolean>(args.checked);
+  const dateObj = args?.targetDate ? new Date(args.targetDate) : new Date();
+
+  const handleChecked = () => {
+    setTimeout(() => {
+      console.log("비동기 체크");
+      setChecked((prev) => !prev);
+    }, 1000);
+  };
+  return (
+    <>
+      <TodoItem
+        {...args}
+        targetDate={dateObj}
+        checked={checked}
+        onChecked={handleChecked}
+      />
+    </>
+  );
+};
 
 export const Primary: Story = {
   argTypes: {
@@ -70,14 +97,23 @@ export const Primary: Story = {
     title: "야호",
     mood: 1,
   },
-  render: (args) => {
-    const dateObj = args?.targetDate ? new Date(args.targetDate) : new Date();
-    return (
-      <>
-        <TodoItem {...args} targetDate={dateObj} />
-      </>
-    );
-  },
+  render: (args) => <PrimaryWrapper args={args} key={`${args.checked}`} />,
+  // (args) => {
+  //   const [checked, setChecked] = useState(args.checked);
+  //   const dateObj = args?.targetDate ? new Date(args.targetDate) : new Date();
+
+  //   const handleChecked = () => {
+  //     setTimeout(() => {
+  //       console.log("비동기 체크");
+  //       setChecked((prev) => !prev);
+  //     }, 1000);
+  //   };
+  //   return (
+  //     <>
+  //       <TodoItem {...args} targetDate={dateObj} checked={checked} />
+  //     </>
+  //   );
+  // },
 };
 
 // 미완료

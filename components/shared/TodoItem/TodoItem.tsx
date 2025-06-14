@@ -37,7 +37,6 @@ const TodoItem = ({
   mood,
   targetDate,
 }: TodoItemProps) => {
-  const deferredChecked = useDeferredValue(checked);
   const dateString = buildDateString(targetDate);
   const isLate = targetDate
     ? targetDate.getDate() < new Date().getDate()
@@ -57,10 +56,10 @@ const TodoItem = ({
             onClick={(e) => {
               // 기획 보니까, 취소는 바로. -> 낙관적 업뎃?
               // 체크는 결과물 제출 바텀 시트 필요?
-              onChecked(deferredChecked);
+              onChecked(checked);
             }}
           >
-            <Checkbox id="todoItem" readOnly checked={deferredChecked} />
+            <Checkbox id="todoItem" readOnly checked={checked} />
 
             <p
               className={`truncate flex-1  justify-start ${checked ? "text-label-assistive" : "text-label-normal"}   text-sm font-medium font-['SUIT_Variable'] leading-tight`}
