@@ -14,7 +14,7 @@ const ToolTip = ({ content }: ToolTipProps) => {
         </div>
         <section className="w-72 h-14 p-3 flex justify-start items-center gap-2 bg-indigo-500 rounded-lg">
           <div className="w-9 h-6">
-            <Moti />
+            <Moti width={36} height={24} />
           </div>
           <p
             className="flex items-center h-full min-w-0 flex-1 whitespace-pre justify-center text-label-inverse text-xs font-medium font-['SUIT_Variable'] leading-none"
