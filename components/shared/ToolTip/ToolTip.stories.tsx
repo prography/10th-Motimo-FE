@@ -7,7 +7,7 @@ const description = `모티 svg는 shared와 프로젝트 루트에 동일한 �
 `;
 
 const meta = {
-  title: "Components/ToolTip", // Storybook 사이드바 경로 (프로젝트 규칙에 맞게 수정)
+  title: "Shared/ToolTip", // Storybook 사이드바 경로 (프로젝트 규칙에 맞게 수정)
   component: ToolTip,
   parameters: {
     // Canvas 레이아웃을 중앙으로 정렬하거나 패딩을 추가할 수 있습니다.
