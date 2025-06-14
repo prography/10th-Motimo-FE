@@ -1,3 +1,4 @@
+import { useState } from "react";
 import TodoItem from "./TodoItem";
 import { StoryFn, StoryObj } from "@storybook/react";
 
@@ -30,21 +31,21 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   argTypes: {
-    checkedInitial: {
+    checked: {
       control: "boolean",
       description: "체크 여부",
     },
-    date: {
+    targetDate: {
       control: "date",
       description: `어제일 경우 "어제"로 표기.
       날짜가 지났을 경우 negative 색상
       `,
     },
-    moodInitial: {
-      control: "number",
-      description: `투두 제초 미완료시 감정 안보임.
-      이 부분은 감정/자료/설명 추가할 수 있는 퀵 버튼임.
+    mood: {
+      control: "select",
+      description: ` 1이 non-mood, 2가 smile로 가정.
       `,
+      options: [undefined, 1, 2, 3, 4, 5],
     },
     title: {
       control: "text",
@@ -59,9 +60,112 @@ export const Primary: Story = {
     // },
   },
   args: {
-    checkedInitial: false,
-    date: new Date(),
-    title: "",
-    moodInitial: 0,
+    onMoodClick: () => {
+      console.log("기록 전에만 동작함.");
+    },
+    onChecked: (prev) => {
+      console.log("스토리 콘솔 -  prev:", prev);
+    },
+    targetDate: new Date(),
+    title: "야호",
+    mood: 1,
+  },
+  render: (args) => {
+    const dateObj = args?.targetDate ? new Date(args.targetDate) : new Date();
+    return (
+      <>
+        <TodoItem {...args} targetDate={dateObj} />
+      </>
+    );
+  },
+};
+
+// 미완료
+export const IncompleteNonDate: Story = {
+  args: {
+    checked: false,
+    title: "미완료에, 날짜도 없음.",
+    onChecked: () => {},
+  },
+};
+export const IncompleteDate: Story = {
+  args: {
+    ...IncompleteNonDate.args,
+    title: "미완료, 날짜는 오늘.",
+    targetDate: new Date(),
+  },
+};
+export const IncompleteDateLateYesterday: Story = {
+  args: {
+    ...IncompleteNonDate.args,
+    title: "미완료에, 날짜는 어제.",
+    targetDate: new Date(new Date().setDate(new Date().getDate() - 1)),
+  },
+};
+export const IncompleteDateLate: Story = {
+  args: {
+    ...IncompleteNonDate.args,
+    title: "미완료에, 날짜는 이틀 전.",
+    targetDate: new Date(new Date().setDate(new Date().getDate() - 2)),
+  },
+};
+// 완료 [결과물 제출 전]
+export const CompleteNonSubmitNotDate: Story = {
+  args: {
+    ...IncompleteNonDate.args,
+    checked: true,
+    title: "완료 미제출, 날짜 없음",
+    mood: 1,
+  },
+};
+export const CompleteNonSubmit: Story = {
+  args: {
+    ...CompleteNonSubmitNotDate.args,
+    title: "완료 미제출, 날짜 오늘",
+    targetDate: new Date(),
+  },
+};
+export const CompleteNonSubmitLateYesterday: Story = {
+  args: {
+    ...CompleteNonSubmitNotDate.args,
+    title: "완료 미제출, 날짜 어제",
+    targetDate: IncompleteDateLateYesterday.args.targetDate,
+  },
+};
+export const CompleteNonSubmitLate: Story = {
+  args: {
+    ...CompleteNonSubmitNotDate.args,
+    title: "완료 미제출, 날짜 이틀 전",
+    targetDate: IncompleteDateLate.args.targetDate,
+  },
+};
+
+// 완료 [결과물 제출 후]
+export const CompleteSubmitNotDate: Story = {
+  args: {
+    ...CompleteNonSubmitNotDate.args,
+    title: "완료 제출, 날짜 없음",
+    mood: 2,
+  },
+};
+export const CompleteSubmit: Story = {
+  args: {
+    ...CompleteSubmitNotDate.args,
+    title: "완료 제출, 날짜 오늘",
+    targetDate: new Date(),
+  },
+};
+export const CompleteSubmitLateYesterday: Story = {
+  args: {
+    ...CompleteSubmitNotDate.args,
+    title: "완료 제출, 날짜 어제",
+    targetDate: IncompleteDateLateYesterday.args.targetDate,
+  },
+};
+export const CompleteSubmitLate: Story = {
+  args: {
+    ...CompleteSubmitNotDate.args,
+    title: "완료 제출, 날짜 이틀 전",
+    targetDate: IncompleteDateLate.args.targetDate,
   },
 };
