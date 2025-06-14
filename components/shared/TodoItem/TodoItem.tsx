@@ -108,7 +108,7 @@ const Mood = ({ moodId }: MoodProps) => {
         <>
           <NoEmo />
           <div className="w-3 h-3 left-[15px] top-[-3px] absolute bg-background-strong rounded-[666px]">
-            <Plus />
+            <Plus width={12} height={12} />
           </div>
         </>
       );
