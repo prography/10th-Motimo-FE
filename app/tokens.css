@@ -99,6 +99,7 @@
   --color-background-primary: #5d5fef;
   --color-background-alternative: #ffffff;
   --color-background-disabled: #b1b8be;
+  --color-background-assistive: #e6e8ea;
   --color-status-negative: #ea3429;
   --color-status-positive: #228738;
   --spacing-gap-2: 0.125rem;
@@ -154,4 +155,6 @@
   --non-mapped-textCase-none: none;
   --non-mapped-textDecoration-none: none;
   --spacing-paragraphIndent-0: 0px;
+  --color-line-normal: #cdd1d5;
+  --color-line-disabled: #8a949e;
 }
