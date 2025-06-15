@@ -27,6 +27,11 @@ type Story = StoryObj<typeof meta>;
 
 // 가장 기본적인 Primary 스토리 (필수 권장)
 export const Primary: Story = {
+  argTypes: {
+    children: {
+      control: "text",
+    },
+  },
   args: {
     // Primary 스토리에만 적용될 Props
     children: "123",
