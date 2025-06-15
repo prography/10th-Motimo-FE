@@ -54,3 +54,4 @@ storybook-static
 
 # local environment - vscode
 .vscode
+package-lock.json
