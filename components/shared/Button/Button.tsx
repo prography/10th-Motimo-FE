@@ -38,15 +38,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           // Variant styles
           {
             // Filled variant
-            "bg-[#9747ff] text-white hover:bg-[#8a3ff0] focus-visible:ring-[#9747ff] active:bg-[#7a35e6] disabled:bg-[#8a949e] disabled:cursor-not-allowed disabled:hover:bg-[#8a949e]":
+            "bg-[var(--color-background-primary)] text-white hover:bg-[color-mix(in_srgb,var(--color-background-primary)_90%,black)] focus-visible:ring-[var(--color-background-primary)] active:bg-[color-mix(in_srgb,var(--color-background-primary)_80%,black)] disabled:bg-[#8a949e] disabled:cursor-not-allowed disabled:hover:bg-[#8a949e]":
               variant === "filled",
 
             // Outlined variant
-            "border-2 border-[#9747ff] text-[#9747ff] bg-transparent hover:bg-[#9747ff]/10 focus-visible:ring-[#9747ff] active:bg-[#9747ff]/20 disabled:border-[#8a949e] disabled:text-[#8a949e] disabled:cursor-not-allowed disabled:hover:bg-transparent":
+            "border-2 border-[var(--color-background-primary)] text-[var(--color-background-primary)] bg-transparent hover:bg-[color-mix(in_srgb,var(--color-background-primary)_10%,transparent)] focus-visible:ring-[var(--color-background-primary)] active:bg-[color-mix(in_srgb,var(--color-background-primary)_20%,transparent)] disabled:border-[#8a949e] disabled:text-[#8a949e] disabled:cursor-not-allowed disabled:hover:bg-transparent":
               variant === "outlined",
 
             // Text variant
-            "text-[#9747ff] bg-transparent hover:bg-[#9747ff]/10 focus-visible:ring-[#9747ff] active:bg-[#9747ff]/20 disabled:text-[#8a949e] disabled:cursor-not-allowed disabled:hover:bg-transparent":
+            "text-[var(--color-background-primary)] bg-transparent hover:bg-[color-mix(in_srgb,var(--color-background-primary)_10%,transparent)] focus-visible:ring-[var(--color-background-primary)] active:bg-[color-mix(in_srgb,var(--color-background-primary)_20%,transparent)] disabled:text-[#8a949e] disabled:cursor-not-allowed disabled:hover:bg-transparent":
               variant === "text",
           },
 
