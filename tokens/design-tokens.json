@@ -420,6 +420,10 @@
       "disabled": {
         "value": "{gray.30}",
         "type": "color"
+      },
+      "assistive": {
+        "value": "{gray.10}",
+        "type": "color"
       }
     },
     "status": {
@@ -798,6 +802,16 @@
       "0": {
         "value": "0px",
         "type": "dimension"
+      }
+    },
+    "line": {
+      "normal": {
+        "value": "{gray.20}",
+        "type": "color"
+      },
+      "disabled": {
+        "value": "{gray.40}",
+        "type": "color"
       }
     }
   },
