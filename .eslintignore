@@ -1,0 +1,11 @@
+node_modules
+.next
+out
+build
+.cache
+*.config.js
+*.config.ts
+storybook-static
+storybook-static-shared
+components/shared/node_modules
+components/shared/dist
