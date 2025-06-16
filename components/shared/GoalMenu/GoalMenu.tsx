@@ -40,7 +40,9 @@ const GoalMenu = ({
           <div
             className={`h-1 left-0 top-0 absolute ${barColor}  rounded-[999px]`}
             // 혹시 100% 넘어갈까봐
-            style={{ width: `${percentage > 100 ? 100 : percentage}%` }}
+            style={{
+              width: `${percentage > 100 ? 100 : percentage < 0 ? 0 : percentage}%`,
+            }}
           ></div>
         </div>
         <div className="inline-flex justify-start items-center">

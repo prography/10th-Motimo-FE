@@ -25,7 +25,7 @@ const TextField = ({
   const [isFocus, setIsFocus] = useState(false);
   return (
     <>
-      <div className="w-80 inline-flex flex-col justify-start items-start gap-1">
+      <div className="w-80 inline-flex flex-col justify-start items-start gap-1 relative">
         <input
           type="text"
           value={value}
@@ -57,14 +57,14 @@ const TextField = ({
           {...props}
         />
         {isError && !(isFocus && value) && (
-          <div className="w-6 h-12 absolute left-74 flex items-center">
+          <div className="w-6 h-12 absolute right-3 flex items-center">
             <WarningCircleSvg />
           </div>
         )}
         {onReset && isFocus && value && (
           <button
             type="button"
-            className="w-6 h-12 absolute left-74"
+            className="w-6 h-12 absolute right-3"
             onMouseDown={(e) => e.preventDefault()}
             onClick={(e) => {
               onReset();
