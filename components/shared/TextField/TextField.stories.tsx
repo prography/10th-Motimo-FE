@@ -1,7 +1,7 @@
 // plop-templates/story.tsx.hbs
 import type { Meta, StoryObj } from "@storybook/react";
 import TextField from "./TextField"; // 실제 컴포넌트 파일 임포트
-import { Ref, useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 const meta = {
   title: "Shared/TextField", // Storybook 사이드바 경로 (프로젝트 규칙에 맞게 수정)
@@ -72,23 +72,6 @@ export const Primary: Story = {
     // Primary 스토리에만 적용될 Props
   },
   render: (args) => <Wrapper key={`${args.value}`} args={args} />,
-};
-
-const FocusWrapperFactory = (args: any) => {
-  const FocusWrapper = ({ args }: { args: any }) => {
-    const inputRef = useRef<HTMLInputElement>(null);
-    useEffect(() => {
-      if (inputRef.current !== null) {
-        (inputRef.current as HTMLInputElement).focus();
-      }
-    }, []);
-    return <TextField ref={inputRef} {...args} />;
-  };
-  return (
-    <>
-      <FocusWrapper args={args} />
-    </>
-  );
 };
 
 /** focus는 직접 입력창 클릭해 확인 가능합니다 */
