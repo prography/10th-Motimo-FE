@@ -1,4 +1,3 @@
-import Image from "next/image";
 import MotiSvg from "../public/Moti_shared.svg";
 interface BannerProps {
   title: string;

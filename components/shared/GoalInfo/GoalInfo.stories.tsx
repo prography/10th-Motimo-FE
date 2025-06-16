@@ -1,5 +1,6 @@
+import { FC } from "react";
 import GoalInfo from "./GoalInfo";
-import { StoryFn, StoryObj } from "@storybook/react";
+import { StoryObj } from "@storybook/react";
 
 // meta는 공통 옵션.
 
@@ -19,7 +20,7 @@ const meta = {
   component: GoalInfo,
   args: {},
   decorators: [
-    (Story: StoryFn) => (
+    (Story: FC) => (
       <div onClick={(e) => e.preventDefault()}>
         <Story />
       </div>

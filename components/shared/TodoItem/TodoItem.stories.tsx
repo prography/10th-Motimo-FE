@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { FC, useState } from "react";
 import TodoItem from "./TodoItem";
-import { StoryFn, StoryObj } from "@storybook/react";
+import { StoryObj } from "@storybook/react";
 
 const description = `
 체크박스는 바텀시트랑 독립적임. 
@@ -16,7 +16,7 @@ const meta = {
   component: TodoItem,
   args: {},
   decorators: [
-    (Story: StoryFn) => (
+    (Story: FC) => (
       <div onClick={(e) => e.preventDefault()}>
         <Story />
       </div>

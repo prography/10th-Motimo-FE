@@ -40,7 +40,7 @@ const TextField = ({
                 `
                 : `outline-1 outline-offset-[-1px] outline-line-normal
                     focus:outline-[1.50px] focus:outline-offset-[-1.50px] focus:outline-Color-gray-90 
-                disabled:bg-background-normal disbaled:outline-line-disabled `
+                disabled:bg-background-normal disabled:outline-line-disabled `
             }
             
             

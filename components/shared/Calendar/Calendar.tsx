@@ -119,6 +119,7 @@ const Calendar = ({ selected = new Date(), onChange }: CalendarProps) => {
 
               return (
                 <DateItem
+                  key={date.toISOString()}
                   date={date}
                   disabled={!isDateOnThisMonth}
                   selected={isSelected}
@@ -141,9 +142,9 @@ interface DateItemProps {
   onClick: CalendarProps["onChange"];
 }
 
-const chooseTextColor = (selected: boolean, disbaled: boolean) => {
+const chooseTextColor = (selected: boolean, disabled: boolean) => {
   if (selected) return "text-label-inverse";
-  if (disbaled) return "text-label-assistive";
+  if (disabled) return "text-label-assistive";
 
   //normal
   return "text-label-normal";
@@ -157,12 +158,6 @@ const DateItem = ({ date, disabled, selected, onClick }: DateItemProps) => {
 
   return (
     <>
-      {/* <button
-        
-        className={`${disabled ? "bg-gray-200" : ""} ${selected ? "bg-amber-700" : ""}`}
-      >
-        <p>{date.getDate()}</p>
-      </button> */}
       <button
         className={`${buttonColor} w-10 h-10 p-2  rounded-sm inline-flex justify-center items-center gap-2`}
         onClick={() => onClick(date)}

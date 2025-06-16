@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Calendar from "./Calendar";
-import { Meta, StoryFn, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 // meta는 공통 옵션.
 const meta = {
@@ -8,7 +8,7 @@ const meta = {
   component: Calendar,
   args: {},
   decorators: [
-    (Story: StoryFn) => (
+    (Story) => (
       <div onClick={(e) => e.preventDefault()}>
         <Story />
       </div>
