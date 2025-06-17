@@ -30,6 +30,20 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 // Primary는 공통. argTypes를 사용해 상호작용 가능하도록 한다.
+
+const Wrapper = ({ args }: { args: typeof Primary.args }) => {
+  const [selected, setSelcted] = useState(false);
+  return (
+    <>
+      <GoalMenu
+        {...args}
+        selected={selected}
+        onSelected={() => setSelcted((prev) => !prev)}
+      />
+    </>
+  );
+};
+
 export const Primary: Story = {
   argTypes: {
     goal: { control: "text", description: "목표 텍스트. 길면 ..." },
@@ -49,18 +63,7 @@ export const Primary: Story = {
       console.log("스토리북 -- onSelected누름");
     },
   },
-  render: (args) => {
-    const [selected, setSelcted] = useState(false);
-    return (
-      <>
-        <GoalMenu
-          {...args}
-          selected={selected}
-          onSelected={() => setSelcted((prev) => !prev)}
-        />
-      </>
-    );
-  },
+  render: (args) => <Wrapper args={args} />,
 };
 
 export const Unselected: Story = {

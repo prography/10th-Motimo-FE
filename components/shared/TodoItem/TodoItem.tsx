@@ -1,4 +1,5 @@
-import { useDeferredValue, useState } from "react";
+"use client";
+
 import Checkbox from "../Checkbox/Checkbox";
 import NoEmo from "../public/emotion-none.svg";
 import SmileEmo from "../public/emotion-smile.svg";
@@ -53,7 +54,7 @@ const TodoItem = ({
           <label
             className=" flex-1 self-stretch h-7 py-1 inline-flex justify-start items-center gap-1"
             htmlFor="todoItem"
-            onClick={(e) => {
+            onClick={() => {
               // 기획 보니까, 취소는 바로. -> 낙관적 업뎃?
               // 체크는 결과물 제출 바텀 시트 필요?
               onChecked(checked);
@@ -95,6 +96,8 @@ const TodoItem = ({
     </>
   );
 };
+
+export type { TodoItemProps };
 export default TodoItem;
 
 interface MoodProps {

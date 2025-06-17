@@ -1,3 +1,5 @@
+"use client";
+
 import { ButtonHTMLAttributes } from "react";
 import PlusSvg from "../public/Add_Plus.svg";
 

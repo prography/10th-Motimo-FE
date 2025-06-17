@@ -34,8 +34,8 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const PrimaryWrapper = ({ args }: { args: any }) => {
-  const [checked, setChecked] = useState<boolean>(args.checked);
+const PrimaryWrapper = ({ args }: { args: typeof Primary.args }) => {
+  const [checked, setChecked] = useState<boolean>(args.checked ?? false);
   const dateObj = args?.targetDate ? new Date(args.targetDate) : new Date();
 
   const handleChecked = () => {
@@ -96,6 +96,7 @@ export const Primary: Story = {
     targetDate: new Date(),
     title: "야호",
     mood: 1,
+    checked: false,
   },
   render: (args) => <PrimaryWrapper args={args} key={`${args.checked}`} />,
   // (args) => {

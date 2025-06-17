@@ -1,3 +1,5 @@
+"use client";
+
 import { InputHTMLAttributes } from "react";
 // import CheckSvg from "../public/check.svg";
 

@@ -29,13 +29,13 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+const Wrapper = () => {
+  const [date, setDate] = useState(new Date());
+  return <Calendar onChange={(newDate) => setDate(newDate)} selected={date} />;
+};
+
 export const Primary: Story = {
-  render: () => {
-    const [date, setDate] = useState(new Date());
-    return (
-      <Calendar onChange={(newDate) => setDate(newDate)} selected={date} />
-    );
-  },
+  render: Wrapper,
   argTypes: {
     selected: {
       description: `선택 값 주입. 제어 방식의 사용법과 같음.

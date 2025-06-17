@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import LeftArrow from "../public/Chevron_Left_MD.svg";
 import RightArrow from "../public/Chevron_Right_MD.svg";
@@ -99,7 +101,10 @@ const Calendar = ({ selected = new Date(), onChange }: CalendarProps) => {
         <div className="flex flex-col gap-y-2">
           <div className="grid grid-cols-7 h-5 content-center text-center gap-x-1.5">
             {dayOfDate.map((dayString) => (
-              <p className="w-10 text-center  justify-center text-Color-gray-80 text-xs font-medium font-['SUIT_Variable'] leading-none">
+              <p
+                key={dayString}
+                className="w-10 text-center  justify-center text-Color-gray-80 text-xs font-medium font-['SUIT_Variable'] leading-none"
+              >
                 {dayString}
               </p>
             ))}

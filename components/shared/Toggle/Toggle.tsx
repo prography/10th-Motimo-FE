@@ -1,3 +1,5 @@
+"use client";
+
 interface ToggleProps {
   isOn: boolean;
   onChange: (prevState: boolean) => void;

@@ -1,3 +1,5 @@
+"use client";
+
 import { ChangeEvent, InputHTMLAttributes, Ref, useState } from "react";
 import CloseCircleSvg from "../public/close_circle.svg";
 import WarningCircleSvg from "../public/warning_circle.svg";
@@ -66,7 +68,7 @@ const TextField = ({
             type="button"
             className="w-6 h-12 absolute right-3"
             onMouseDown={(e) => e.preventDefault()}
-            onClick={(e) => {
+            onClick={() => {
               onReset();
             }}
           >

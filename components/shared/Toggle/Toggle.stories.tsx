@@ -32,7 +32,7 @@ type Story = StoryObj<typeof meta>;
 // 가장 기본적인 Primary 스토리
 // argTypes를 Primary는 기본으로 가집니다.
 
-const Wrapper = ({ args }: { args: any }) => {
+const Wrapper = ({ args }: { args: typeof Primary.args }) => {
   const [isOn, setIsOn] = useState<boolean>(args.isOn);
   return (
     <>

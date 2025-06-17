@@ -1,3 +1,5 @@
+"use client";
+
 interface GoalMenuProps {
   goal: string;
   percentage: number;
