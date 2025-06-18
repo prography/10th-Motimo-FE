@@ -54,7 +54,8 @@ const TodoItem = ({
           <label
             className=" flex-1 self-stretch h-7 py-1 inline-flex justify-start items-center gap-1"
             htmlFor="todoItem"
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
               // 기획 보니까, 취소는 바로. -> 낙관적 업뎃?
               // 체크는 결과물 제출 바텀 시트 필요?
               onChecked(checked);
