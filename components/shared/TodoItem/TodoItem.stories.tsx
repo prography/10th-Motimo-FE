@@ -1,6 +1,7 @@
 import { FC, useState } from "react";
 import TodoItem from "./TodoItem";
 import { StoryObj } from "@storybook/react";
+import { mockDateDecorator } from "storybook-mock-date-decorator";
 
 const description = `
 체크박스는 바텀시트랑 독립적임. 
@@ -16,11 +17,14 @@ const meta = {
   component: TodoItem,
   args: {},
   decorators: [
-    (Story: FC) => (
-      <div onClick={(e) => e.preventDefault()}>
-        <Story />
-      </div>
-    ),
+    mockDateDecorator(new Date("2025-06-17")),
+    (Story: FC) => {
+      return (
+        <div onClick={(e) => e.preventDefault()}>
+          <Story />
+        </div>
+      );
+    },
   ],
   parameters: {
     docs: {
@@ -93,7 +97,7 @@ export const Primary: Story = {
     onChecked: (prev) => {
       console.log("스토리 콘솔 -  prev:", prev);
     },
-    targetDate: new Date("2025-06-17"),
+    targetDate: new Date(),
     title: "야호",
     mood: 1,
     checked: false,
@@ -129,25 +133,21 @@ export const IncompleteDate: Story = {
   args: {
     ...IncompleteNonDate.args,
     title: "미완료, 날짜는 오늘.",
-    targetDate: new Date("2025-06-17"),
+    targetDate: new Date(),
   },
 };
 export const IncompleteDateLateYesterday: Story = {
   args: {
     ...IncompleteNonDate.args,
     title: "미완료에, 날짜는 어제.",
-    targetDate: new Date(
-      new Date().setDate(new Date("2025-06-17").getDate() - 1),
-    ),
+    targetDate: new Date(new Date().setDate(new Date().getDate() - 1)),
   },
 };
 export const IncompleteDateLate: Story = {
   args: {
     ...IncompleteNonDate.args,
     title: "미완료에, 날짜는 이틀 전.",
-    targetDate: new Date(
-      new Date().setDate(new Date("2025-06-17").getDate() - 2),
-    ),
+    targetDate: new Date(new Date().setDate(new Date().getDate() - 2)),
   },
 };
 // 완료 [결과물 제출 전]
@@ -163,7 +163,7 @@ export const CompleteNonSubmit: Story = {
   args: {
     ...CompleteNonSubmitNotDate.args,
     title: "완료 미제출, 날짜 오늘",
-    targetDate: new Date("2025-06-17"),
+    targetDate: new Date(),
   },
 };
 export const CompleteNonSubmitLateYesterday: Story = {
@@ -193,7 +193,7 @@ export const CompleteSubmit: Story = {
   args: {
     ...CompleteSubmitNotDate.args,
     title: "완료 제출, 날짜 오늘",
-    targetDate: new Date("2025-06-17"),
+    targetDate: new Date(),
   },
 };
 export const CompleteSubmitLateYesterday: Story = {
