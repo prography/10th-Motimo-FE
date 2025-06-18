@@ -7,6 +7,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["./**/*.ts", "./**/*.tsx"],
+  "include": ["./**/*.ts", "./**/*.tsx", "../../types/svg.d.ts"],
   "exclude": ["node_modules", "dist"]
 }
