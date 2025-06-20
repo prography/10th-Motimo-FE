@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`${customFont.className}`}>
+    <html lang="ko" className={`${customFont.className} w-full h-full`}>
       <head>
         <link
           rel="preload"
@@ -30,7 +30,9 @@ export default function RootLayout({
           crossOrigin="anonymous" // 일반적으로 폰트에는 추가하는 것이 좋음
         />
       </head>
-      <body className={`${customFont.variable} antialiased`}>{children}</body>
+      <body className={`${customFont.variable} antialiased w-full h-full`}>
+        {children}
+      </body>
     </html>
   );
 }
