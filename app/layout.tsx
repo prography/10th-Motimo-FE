@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import { MSWComponent } from "@/components/_mocks/MSWComponent";
 
 const customFont = localFont({
   src: "../public/fonts/SUIT-Variable.woff2",
@@ -31,6 +32,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${customFont.variable} antialiased w-full h-full`}>
+        {process.env.NODE_ENV === "development" && <MSWComponent />}
         {children}
       </body>
     </html>
