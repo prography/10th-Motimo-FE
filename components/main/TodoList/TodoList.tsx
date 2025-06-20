@@ -4,10 +4,10 @@ import TodoItem, { TodoItemProps } from "@/components/shared/TodoItem/TodoItem";
 import { Fragment, memo, useState } from "react";
 import { motion, useMotionValue } from "motion/react";
 
-import UpArrowSvg from "@/public/Caret_Up_MD.svg";
+import UpArrowSvg from "@/public/images/Caret_Up_MD.svg";
 import PlusSvg from "../../shared/public/Add_Plus.svg";
-import PencilSvg from "@/public/Edit_Pencil_01.svg";
-import TrashCanSvg from "@/public/Trash_Full.svg";
+import PencilSvg from "@/public/images/Edit_Pencil_01.svg";
+import TrashCanSvg from "@/public/images/Trash_Full.svg";
 import { animate } from "motion";
 
 /** 임시 타입. 정확히는, 백엔드에서 전달해주는거 체크해야 함 */
@@ -35,7 +35,7 @@ const TodoList = ({
       <>
         <div
           data-type="type5"
-          className="w-80 p-3 bg-white rounded-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.10)] inline-flex flex-col justify-start items-center gap-2 overflow-hidden"
+          className="w-full p-3 bg-white rounded-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.10)] inline-flex flex-col justify-start items-center gap-2 overflow-hidden"
         >
           <div className="self-stretch h-8 inline-flex justify-start items-center gap-1">
             <div className="flex-1 justify-center text-label-strong text-base font-bold font-['SUIT_Variable'] leading-snug">

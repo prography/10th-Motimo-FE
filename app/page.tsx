@@ -121,9 +121,11 @@ const Main = () => {
         <div
           data-icon="false"
           data-type="main"
-          className="w-full h-full relative bg-white inline-flex flex-col flex-1 justify-start items-end gap-1"
+          className="w-full h-full relative bg-white inline-flex flex-col flex-1 justify-start  gap-1"
         >
-          <AppBar points={1000} />
+          <div className="flex justify-end w-full">
+            <AppBar points={1000} />
+          </div>
           <Banner
             title="목표는 멀어도 나는 계속 가는 중"
             tag="모티모오 ㅏ함께 한 지 1일차"

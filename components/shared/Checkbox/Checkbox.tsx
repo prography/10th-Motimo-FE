@@ -1,7 +1,6 @@
 "use client";
 
 import { InputHTMLAttributes } from "react";
-// import CheckSvg from "../public/check.svg";
 
 type CheckboxProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type">;
 const Checkbox = ({ ...props }: CheckboxProps) => {

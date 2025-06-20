@@ -1,5 +1,5 @@
 "use client";
-import RightArrowSvg from "@/public/Chevron_Right_MD.svg";
+import RightArrowSvg from "@/public/images/Chevron_Right_MD.svg";
 
 interface GoalTitleAreaProps {
   goalTitle: string;

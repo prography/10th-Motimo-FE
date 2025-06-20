@@ -1,4 +1,4 @@
-import BellSvg from "@/public/Bell.svg";
+import BellSvg from "@/public/images/Bell.svg";
 import Image from "next/image";
 
 interface AppBarProps {
