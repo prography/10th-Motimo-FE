@@ -8,9 +8,9 @@ const GoalInfo = ({ leftDateNum, leftTodoNum }: GoalInfoProps) => {
   // 혹은 밖에서 무한 쿼리 첫 페이지의 메타 데이터 사용할 수도 있음
   return (
     <>
-      <div className="w-80 h-10 px-3 py-0.5 bg-background-alternative rounded-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.10)] inline-flex justify-start items-center gap-4">
-        <div className="flex justify-start items-center gap-0.5">
-          <div className="w-5 h-5 relative overflow-hidden">
+      <div className="w-full h-10 px-3 py-0.5 bg-background-alternative rounded-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.10)] inline-flex justify-start items-center gap-4">
+        <div className="flex justify-center items-center gap-0.5">
+          <div className="w-5 h-5 relative overflow-hidden flex justify-center items-center">
             <CalendarSvg />
           </div>
           <div className="flex justify-start items-center">
