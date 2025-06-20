@@ -17,7 +17,7 @@ interface TodoListProps {
   /** 없다면, 다른 UI */
   subGoal?: string;
   /** todoCheckedLen도 낙관적 업뎃이 필요한지는 모르겠다. */
-  todoCheckedLen: number;
+  todoCheckedLen?: number;
   /** todoToalLen이 0이면 todoItemsInfo길이가 0인거긴 한데... */
   todoTotalLen: number;
   /** 길이가 0이라면, 다른 UI */
@@ -26,7 +26,7 @@ interface TodoListProps {
 
 const TodoList = ({
   subGoal,
-  todoCheckedLen,
+  todoCheckedLen = 0,
   todoTotalLen,
   todoItemsInfo,
 }: TodoListProps) => {
