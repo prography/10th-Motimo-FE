@@ -44,6 +44,7 @@
     "@types/react-dom": "^19",
     "chromatic": "^12.1.1",
     "eslint": "^9.27.0",
+    "eslint-config-next": "^15.3.4",
     "glob": "^11.0.2",
     "plop": "^4.0.1",
     "prettier": "3.5.3",
