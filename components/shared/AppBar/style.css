@@ -1,0 +1,123 @@
+.app-bar {
+  display: flex;
+  align-items: center;
+  width: 360px;
+  height: 56px;
+  background: #FFFFFF;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* Back button styles */
+.back-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.back-button:hover {
+  opacity: 0.7;
+}
+
+/* Title area styles - for back type */
+.title-area {
+  flex: 1;
+  margin-left: 20px;
+}
+
+.title-text {
+  font-family: 'SUIT Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: #000000;
+  margin: 0;
+}
+
+/* Progress area styles - for progress type */
+.progress-area {
+  flex: 1;
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.progress-bar {
+  width: 232px;
+  height: 8px;
+  background: #E6E8EA;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #5D5FEF;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+/* Right area styles - for main type */
+.right-area {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.points-chip {
+  background: #E7E7FD;
+  border-radius: 999px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.points-text {
+  font-family: 'SUIT Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: #5D5FEF;
+}
+
+.notification-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.notification-button:hover {
+  opacity: 0.7;
+}
+
+/* Type-specific adjustments */
+.app-bar.main {
+  justify-content: flex-end;
+}
+
+.app-bar.back {
+  justify-content: flex-start;
+}
+
+.app-bar.progress {
+  justify-content: flex-start;
+} 
