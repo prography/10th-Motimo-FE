@@ -1,15 +1,9 @@
-import type { StorybookConfig } from "@storybook/nextjs";
-import path from "path";
-import { fileURLToPath } from "url";
-
-// Get __dirname equivalent for ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const path = require("path");
 
 // 커맨드 내 환경 변수 확인 (STORYBOOK_SCOPE가 'shared'이면 공유 컴포넌트만 로드)
 const STORYBOOK_SCOPE = process.env.STORYBOOK_SCOPE;
 
-const config: StorybookConfig = {
+const config = {
   stories: [
     "./Introduction.mdx",
     "./CHANGELOG.mdx",
@@ -41,4 +35,5 @@ const config: StorybookConfig = {
     reactDocgen: "react-docgen-typescript",
   },
 };
-export default config;
+
+module.exports = config;
