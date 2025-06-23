@@ -1,0 +1,73 @@
+.snack-bar {
+  display: flex;
+  align-items: center;
+  width: 328px;
+  height: 40px;
+  background: #33363D;
+  border-radius: 8px;
+  padding: 8px 8px 8px 16px;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+.snack-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+}
+
+.snack-bar-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.snack-bar-text {
+  font-family: 'SUIT Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: #FFFFFF;
+  flex: 1;
+}
+
+.snack-bar-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 4px;
+}
+
+.snack-bar-button {
+  font-family: 'SUIT Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: #C7C8FA;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.2s ease;
+}
+
+.snack-bar-button:hover {
+  opacity: 0.8;
+}
+
+.snack-bar-button:focus {
+  outline: 2px solid #C7C8FA;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.snack-bar-button:focus:not(:focus-visible) {
+  outline: none;
+} 
