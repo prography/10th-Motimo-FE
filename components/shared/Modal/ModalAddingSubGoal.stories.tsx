@@ -2,12 +2,23 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import ModalAddingSubGoal from "./ModalAddingSubGoal"; // 실제 컴포넌트 파일 임포트
 
+const description = `
+비동기 동작에서 어떻게 UI처리할지 미정임 아직.
+
+열고 닫는 것은 useModal을 사용한다.
+`;
+
 const meta = {
   title: "Components/ModalAddingSubGoal", // Storybook 사이드바 경로 (프로젝트 규칙에 맞게 수정)
   component: ModalAddingSubGoal,
   parameters: {
     // Canvas 레이아웃을 중앙으로 정렬하거나 패딩을 추가할 수 있습니다.
     layout: "centered",
+    docs: {
+      description: {
+        component: description,
+      },
+    },
   },
   // Docs 탭 자동 생성을 위해 필요합니다.
   tags: ["autodocs"],
@@ -26,11 +37,18 @@ type Story = StoryObj<typeof meta>;
 // argTypes를 Primary는 기본으로 가집니다.
 export const Primary: Story = {
   argTypes: {
+    onClose: {
+      description: "useModal의 closeModal을 사용한다.",
+    },
+    onSubmit: {
+      description: "처리 미정",
+    },
     // 예시: backgroundColor: { control: 'color', description: '컴포넌트 배경색' },
   },
   args: {
     // Primary 스토리에만 적용될 Props
-    hasPortal: false,
+    onClose: () => {},
+    onSubmit: () => {},
   },
 };
 

@@ -25,7 +25,13 @@ const ModalContainer = ({
         {...backdropProps}
         className={`fixed top-0 left-0 w-full h-full flex justify-center items-center ${backdropProps?.className || ""}`}
       >
-        <section className="w-80  flex flex-col justify-between relative bg-white rounded-lg shadow-[0px_0px_10px_0px_rgba(0,0,0,0.10)] overflow-hidden">
+        <section
+          className="w-80  flex flex-col justify-between relative bg-white rounded-lg shadow-[0px_0px_10px_0px_rgba(0,0,0,0.10)] overflow-hidden"
+          onClick={
+            // backdrop에 존재하는 click event trigger로 버블링 막기
+            (e) => e.stopPropagation()
+          }
+        >
           {bodyNode && (
             <div className="flex justify-center items-center flex-1">
               {bodyNode}
