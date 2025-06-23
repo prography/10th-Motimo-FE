@@ -27,7 +27,7 @@ const TextField = ({
   const [isFocus, setIsFocus] = useState(false);
   return (
     <>
-      <div className="w-80 inline-flex flex-col justify-start items-start gap-1 relative">
+      <div className="w-full inline-flex flex-col justify-start items-start gap-1 relative">
         <input
           type="text"
           value={value}
@@ -75,11 +75,13 @@ const TextField = ({
             <CloseCircleSvg />
           </button>
         )}
-        <p
-          className={`self-stretch h-4 justify-start ${isError ? "text-status-negative" : "text-label-assistive"} text-sm font-medium font-['SUIT_Variable'] leading-tight`}
-        >
-          {description}
-        </p>
+        {description && (
+          <p
+            className={`self-stretch h-4 justify-start ${isError ? "text-status-negative" : "text-label-assistive"} text-sm font-medium font-['SUIT_Variable'] leading-tight`}
+          >
+            {description}
+          </p>
+        )}
       </div>
     </>
   );
