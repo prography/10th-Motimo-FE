@@ -1,19 +1,19 @@
 import React from "react";
 
-interface HomeIconProps extends React.SVGProps<SVGSVGElement> {
+interface ChatIconProps extends React.SVGProps<SVGSVGElement> {
   color?: string;
   className?: string;
   width?: number;
   height?: number;
 }
 
-export const HomeIcon = ({
+export const ChatIcon = ({
   color = "#8A949E",
   className,
   width = 24,
   height = 24,
   ...props
-}: HomeIconProps) => {
+}: ChatIconProps) => {
   return (
     <svg
       width={width}
@@ -24,7 +24,7 @@ export const HomeIcon = ({
       {...props}
     >
       <path
-        d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15"
+        d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"
         stroke={color}
         strokeWidth="1.5"
         strokeLinecap="round"
@@ -34,4 +34,4 @@ export const HomeIcon = ({
   );
 };
 
-export default HomeIcon;
+export default ChatIcon; 

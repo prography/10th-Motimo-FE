@@ -1,1 +1,71 @@
 /* TabBar component styles */ 
+.tab-bar {
+  display: flex;
+  width: 360px;
+  height: 56px;
+  background: #FFFFFF;
+  border-radius: 0;
+  padding: 4px 36px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  gap: 0px;
+}
+
+.tab-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0px;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+}
+
+.icon-placeholder {
+  width: 24px;
+  height: 24px;
+  /* Placeholder for non-home icons */
+}
+
+.tab-text {
+  font-family: 'SUIT Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 1.5em;
+  letter-spacing: -0.01em;
+  text-align: center;
+  color: #464C53;
+  margin-top: 0px;
+}
+
+.tab-item.active .tab-text {
+  font-weight: 600;
+  color: #1E2124;
+}
+
+.tab-item.active .icon {
+  color: #5D5FEF;
+}
+
+/* Ensure proper spacing and alignment */
+.tab-bar .tab-item:first-child {
+  margin-left: 0;
+}
+
+.tab-bar .tab-item:last-child {
+  margin-right: 0;
+} 

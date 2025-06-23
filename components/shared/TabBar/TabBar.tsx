@@ -1,66 +1,71 @@
-import PropTypes from "prop-types";
 import "./style.css";
 import { HomeIcon } from "../../icons/HomeIcon";
+import { UserIcon } from "../../icons/UserIcon";
+import { ChatIcon } from "../../icons/ChatIcon";
 
 interface TabBarProps {
-  type: "two" | "four" | "three" | "one";
+  type: "1" | "2" | "3" | "4";
   className?: string;
 }
 
 export const TabBar = ({ type, className }: TabBarProps) => {
   return (
-    <div className={`tab-bar ${className}`}>
-      <div className={`frame ${type}`}>
-        <div className="div" />
-
-        <div className="div-2">
-          {type === "one" && <>목표</>}
-
-          {["four", "three", "two"].includes(type) && <>그룹</>}
+    <div className={`tab-bar ${className ?? ""}`}>
+      {/* First Tab */}
+      <div className={`tab-item ${type === "1" ? "active" : ""}`}>
+        <div className="tab-icon">
+          {type === "1" && <HomeIcon className="icon" color="#5D5FEF" />}
+          {type === "2" && <UserIcon className="icon" color="#5D5FEF" />}
+          {(type === "3" || type === "4") && <UserIcon className="icon" color="#8A949E" />}
+        </div>
+        <div className="tab-text">
+          {type === "1" && "목표"}
+          {(type === "2" || type === "3" || type === "4") && "그룹"}
         </div>
       </div>
 
-      <div className={`frame-2 type-1-${type}`}>
-        {["four", "one", "three"].includes(type) && <div className="frame-3" />}
-
-        {type === "two" && <HomeIcon className="home" color="#8A949E" />}
-
-        <div className="div-3">
-          {type === "one" && <>그룹</>}
-
-          {["four", "three"].includes(type) && <>피드</>}
-
-          {type === "two" && <>목표</>}
+      {/* Second Tab */}
+      <div className={`tab-item ${type === "2" ? "active" : ""}`}>
+        <div className="tab-icon">
+          {type === "1" && <UserIcon className="icon" color="#8A949E" />}
+          {type === "2" && <HomeIcon className="icon" color="#8A949E" />}
+          {(type === "3" || type === "4") && <ChatIcon className="icon" color="#8A949E" />}
+        </div>
+        <div className="tab-text">
+          {type === "1" && "그룹"}
+          {type === "2" && "목표"}
+          {(type === "3" || type === "4") && "피드"}
         </div>
       </div>
 
-      <div className={`frame-4 type-4-${type}`}>
-        <div className="frame-5" />
-
-        <div className="div-4">
-          {["one", "two"].includes(type) && <>피드</>}
-
-          {["four", "three"].includes(type) && <>마이페이지</>}
+      {/* Third Tab */}
+      <div className={`tab-item ${type === "3" ? "active" : ""}`}>
+        <div className="tab-icon">
+          {type === "1" && <ChatIcon className="icon" color="#8A949E" />}
+          {type === "2" && <ChatIcon className="icon" color="#8A949E" />}
+          {type === "3" && <ChatIcon className="icon" color="#5D5FEF" />}
+          {type === "4" && <UserIcon className="icon" color="#5D5FEF" />}
+        </div>
+        <div className="tab-text">
+          {(type === "1" || type === "2") && "피드"}
+          {type === "3" && "피드"}
+          {type === "4" && "마이페이지"}
         </div>
       </div>
 
-      <div className={`frame-6 type-7-${type}`}>
-        {["one", "two"].includes(type) && <div className="frame-7" />}
-
-        {["four", "three"].includes(type) && (
-          <HomeIcon className="home" color="#8A949E" />
-        )}
-
-        <div className="div-5">
-          {["one", "two"].includes(type) && <>마이페이지</>}
-
-          {["four", "three"].includes(type) && <>목표</>}
+      {/* Fourth Tab */}
+      <div className={`tab-item ${type === "4" ? "active" : ""}`}>
+        <div className="tab-icon">
+          {type === "1" && <UserIcon className="icon" color="#8A949E" />}
+          {type === "2" && <UserIcon className="icon" color="#8A949E" />}
+          {type === "3" && <HomeIcon className="icon" color="#8A949E" />}
+          {type === "4" && <HomeIcon className="icon" color="#8A949E" />}
+        </div>
+        <div className="tab-text">
+          {(type === "1" || type === "2") && "마이페이지"}
+          {(type === "3" || type === "4") && "목표"}
         </div>
       </div>
     </div>
   );
-};
-
-TabBar.propTypes = {
-  type: PropTypes.oneOf(["two", "four", "three", "one"]),
 };

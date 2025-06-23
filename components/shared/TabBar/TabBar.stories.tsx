@@ -9,7 +9,7 @@ const meta: Meta<typeof TabBar> = {
   argTypes: {
     type: {
       control: { type: "select" },
-      options: ["one", "two", "three", "four"],
+      options: ["1", "2", "3", "4"],
     },
     className: { control: "text" },
   },
@@ -18,27 +18,27 @@ const meta: Meta<typeof TabBar> = {
 export default meta;
 type Story = StoryObj<typeof TabBar>;
 
-export const One: Story = {
+export const Type1: Story = {
   args: {
-    type: "one",
+    type: "1",
   },
 };
 
-export const Two: Story = {
+export const Type2: Story = {
   args: {
-    type: "two",
+    type: "2",
   },
 };
 
-export const Three: Story = {
+export const Type3: Story = {
   args: {
-    type: "three",
+    type: "3",
   },
 };
 
-export const Four: Story = {
+export const Type4: Story = {
   args: {
-    type: "four",
+    type: "4",
   },
 };
 // ... existing code ...
