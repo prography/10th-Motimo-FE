@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { MSWComponent } from "@/components/_mocks/MSWComponent";
+import ModalRenderer from "./_components/ModalRenderer";
 
 const customFont = localFont({
   src: "../public/fonts/SUIT-Variable.woff2",
@@ -32,6 +33,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${customFont.variable} antialiased w-full h-full`}>
+        <ModalRenderer />
         {process.env.NODE_ENV === "development" && <MSWComponent />}
         {children}
       </body>
