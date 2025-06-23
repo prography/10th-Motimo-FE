@@ -1,0 +1,63 @@
+.segmented-control {
+  display: flex;
+  width: 312px;
+  background: #F7F7F8;
+  border-radius: 999px;
+  padding: 4px;
+  gap: 4px;
+  box-sizing: border-box;
+}
+
+.segmented-item {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 8px 16px;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.segmented-item:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.segmented-item.active {
+  background: #5D5FEF;
+}
+
+.segmented-item.active:hover {
+  background: #5D5FEF;
+  opacity: 0.9;
+}
+
+.segmented-text {
+  font-family: 'SUIT Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  text-align: center;
+  color: #464C53;
+  transition: all 0.2s ease;
+}
+
+.segmented-item.active .segmented-text {
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+/* Focus styles for accessibility */
+.segmented-item:focus {
+  outline: 2px solid #5D5FEF;
+  outline-offset: 2px;
+}
+
+.segmented-item:focus:not(:focus-visible) {
+  outline: none;
+} 
