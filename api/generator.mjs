@@ -2,7 +2,10 @@ import { generateApi } from "swagger-typescript-api";
 import path from "path";
 import fs from "fs";
 
-const generate = async (domain: string, url: string) => {
+// .env 파일의 환경 변수를 로드.
+import "dotenv/config";
+
+const generate = async (domain, url) => {
   const PATH_TO_OUTPUT_DIR = path.resolve(
     process.cwd(),
     `./api/generated/${domain}`,
@@ -47,4 +50,5 @@ const generate = async (domain: string, url: string) => {
   });
 };
 
-generate("example", "https://petstore.swagger.io/v2/swagger.json");
+// generate("example", "https://petstore.swagger.io/v2/swagger.json");
+generate("motimo", process.env.SWAGGER_URL);

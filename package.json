@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "gen": "ts-node api/generator.ts",
+    "gen": "node api/generator.mjs",
     "storybook": "storybook dev",
     "build-storybook": "storybook build",
     "build-storybook:shared": "STORYBOOK_SCOPE=shared storybook build -o storybook-static-shared",
