@@ -622,40 +622,6 @@
         "type": "letterSpacing"
       }
     },
-    "paragraphSpacing": {
-      "0": {
-        "value": "0",
-        "type": "paragraphSpacing"
-      },
-      "1": {
-        "value": "0",
-        "type": "paragraphSpacing"
-      },
-      "2": {
-        "value": "0",
-        "type": "paragraphSpacing"
-      },
-      "3": {
-        "value": "0",
-        "type": "paragraphSpacing"
-      },
-      "4": {
-        "value": "0",
-        "type": "paragraphSpacing"
-      },
-      "5": {
-        "value": "0",
-        "type": "paragraphSpacing"
-      },
-      "6": {
-        "value": "0",
-        "type": "paragraphSpacing"
-      },
-      "7": {
-        "value": "0",
-        "type": "paragraphSpacing"
-      }
-    },
     "title": {
       "L(24px)": {
         "bold": {
@@ -784,18 +750,6 @@
           },
           "type": "typography"
         }
-      }
-    },
-    "textCase": {
-      "none": {
-        "value": "none",
-        "type": "textCase"
-      }
-    },
-    "textDecoration": {
-      "none": {
-        "value": "none",
-        "type": "textDecoration"
       }
     },
     "paragraphIndent": {
