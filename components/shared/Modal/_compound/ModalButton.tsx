@@ -25,7 +25,7 @@ const ModalButton = ({ color, text, ...props }: ModalButtonProps) => {
       <button
         {...props}
         type={props.type ?? `button`}
-        className={`bg-white w-80 px-2 py-3 relative rounded-lg inline-flex flex-col justify-center items-start gap-2 overflow-hidden ${props.className ?? ""}`}
+        className={`bg-white w-full px-2 py-3 relative  inline-flex flex-col justify-center items-start gap-2 overflow-hidden ${props.className ?? ""}`}
       >
         <div className="self-stretch inline-flex justify-center items-center gap-2">
           <div
