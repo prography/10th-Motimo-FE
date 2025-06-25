@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import Modal from "./Modal"; // 실제 컴포넌트 파일 임포트
 
 const meta = {
-  title: "Components/Modal", // Storybook 사이드바 경로 (프로젝트 규칙에 맞게 수정)
+  title: "Shared/Modals/_compound/Modal", // Storybook 사이드바 경로 (프로젝트 규칙에 맞게 수정)
   component: Modal,
   parameters: {
     // Canvas 레이아웃을 중앙으로 정렬하거나 패딩을 추가할 수 있습니다.
@@ -16,6 +16,16 @@ const meta = {
   args: {
     // 예시: label: 'Modal',
   },
+  // 모달 docs용 렌더 옵션 -- 이렇게 안하면 docs에선 쪼그라져 보임. w-full 때매.
+  render: (args) => {
+    return (
+      <>
+        <div style={{ minWidth: "320px", height: "300px" }}>
+          <Modal {...args} />
+        </div>
+      </>
+    );
+  },
 } satisfies Meta<typeof Modal>;
 
 export default meta;
@@ -27,14 +37,10 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
   argTypes: {
     // 예시: backgroundColor: { control: 'color', description: '컴포넌트 배경색' },
-    hasPortal: {
-      control: "boolean",
-    },
   },
   args: {
     // Primary 스토리에만 적용될 Props
     bodyNode: <>바디</>,
-    hasPortal: false,
   },
 };
 

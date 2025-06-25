@@ -3,13 +3,13 @@ import type { Meta, StoryObj } from "@storybook/react";
 import ModalAddingSubGoal from "./ModalAddingSubGoal"; // 실제 컴포넌트 파일 임포트
 
 const description = `
-비동기 동작에서 어떻게 UI처리할지 미정임 아직.
+비동기 동작은 외부에 책임을 일임한다.
 
 열고 닫는 것은 useModal을 사용한다.
 `;
 
 const meta = {
-  title: "Components/ModalAddingSubGoal", // Storybook 사이드바 경로 (프로젝트 규칙에 맞게 수정)
+  title: "Shared/Modals/ModalAddingSubGoal", // Storybook 사이드바 경로 (프로젝트 규칙에 맞게 수정)
   component: ModalAddingSubGoal,
   parameters: {
     // Canvas 레이아웃을 중앙으로 정렬하거나 패딩을 추가할 수 있습니다.
@@ -27,6 +27,16 @@ const meta = {
   args: {
     // 예시: label: 'ModalAddingSubGoal',
   },
+  // 모달 docs용 렌더 옵션 -- 이렇게 안하면 docs에선 쪼그라져 보임. w-full 때매.
+  render: (args) => {
+    return (
+      <>
+        <div style={{ minWidth: "320px", height: "300px" }}>
+          <ModalAddingSubGoal {...args} />
+        </div>
+      </>
+    );
+  },
 } satisfies Meta<typeof ModalAddingSubGoal>;
 
 export default meta;
@@ -40,15 +50,20 @@ export const Primary: Story = {
     onClose: {
       description: "useModal의 closeModal을 사용한다.",
     },
-    onSubmit: {
-      description: "처리 미정",
+    onAddSubGoal: {
+      description:
+        "컴포넌트 외부에서 비동기 동작 후 정상일 땐 close를, 비정상일 땐 에러 처리를.",
     },
     // 예시: backgroundColor: { control: 'color', description: '컴포넌트 배경색' },
   },
   args: {
     // Primary 스토리에만 적용될 Props
-    onClose: () => {},
-    onSubmit: () => {},
+    onClose: () => {
+      console.log("스토리북 -- close");
+    },
+    onAddSubGoal: async (subGoal) => {
+      console.log("스토리북 -- subGoal 일단 동기적으로: ", subGoal);
+    },
   },
 };
 

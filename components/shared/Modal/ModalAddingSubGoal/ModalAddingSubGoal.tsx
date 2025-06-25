@@ -1,16 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import TextField from "../TextField/TextField";
-import Modal from "./_compound/Modal";
+import TextField from "../../TextField/TextField";
+import Modal from "../_compound/Modal";
 
-import CloseSvg from "../public/Close_SM.svg";
+import CloseSvg from "../../public/Close_SM.svg";
 
 interface ModalAddingSubGoalProps extends ModalCommon {
-  onSubmit: (subGoal: string) => void;
+  onAddSubGoal: (subGoal: string) => Promise<void>;
 }
 
-const ModalAddingSubGoal = ({ onClose, onSubmit }: ModalAddingSubGoalProps) => {
+const ModalAddingSubGoal = ({
+  onClose,
+  onAddSubGoal,
+}: ModalAddingSubGoalProps) => {
   return (
     <>
       <Modal
@@ -35,15 +38,16 @@ const ModalAddingSubGoal = ({ onClose, onSubmit }: ModalAddingSubGoalProps) => {
                 <CloseSvg />
               </button>
             </div>
-            <Body onSubmit={onSubmit} />
+            <Body onAddSubGoal={onAddSubGoal} />
           </div>
         }
         footerNode={[
           <Modal.Button
-            onClick={() => {
-              onClose();
-            }}
+            // onClick={() => {
+            //   onClose();
+            // }}
             form="subGoalAdding"
+            type="submit"
             text="추가하기"
             color="primary"
           />,
@@ -55,16 +59,21 @@ const ModalAddingSubGoal = ({ onClose, onSubmit }: ModalAddingSubGoalProps) => {
 export default ModalAddingSubGoal;
 
 const Body = ({
-  onSubmit,
+  onAddSubGoal,
 }: {
-  onSubmit: ModalAddingSubGoalProps["onSubmit"];
+  onAddSubGoal: ModalAddingSubGoalProps["onAddSubGoal"];
 }) => {
   const [subGoal, setSubGoal] = useState("");
   return (
     <form
       id="subGoalAdding"
       className="w-full"
-      onSubmit={() => onSubmit(subGoal)}
+      onSubmit={(e) => {
+        // 새로고침 방지
+        e.preventDefault();
+
+        onAddSubGoal(subGoal);
+      }}
     >
       <TextField
         isError={false}
