@@ -1,12 +1,13 @@
 // plop-templates/story.tsx.hbs
 import type { Meta, StoryObj } from "@storybook/react";
-import TodoList from "./TodoList"; // 실제 컴포넌트 파일 임포트
+import TodoList, { TodoListProps } from "./TodoList"; // 실제 컴포넌트 파일 임포트
 import {
   Primary as TodoItemPrimary,
   CompleteNonSubmit,
   IncompleteDateLate,
   CompleteSubmitLateYesterday,
 } from "@/components/shared/TodoItem/TodoItem.stories";
+import { TodoItemProps } from "@/components/shared/TodoItem/TodoItem";
 
 const description = `
 스와이프는 상태로 만들지 않을 것 같으므로 Primary에서 확인할 것.
@@ -20,7 +21,6 @@ const description = `
 고려사항
 - 체크박스 비동기 동작으로 인해 todoCheckedLen는 어떻게 처리할지
   (낙관적? 혹은 deferred? 혹은 fallback?)
-- idx를 todo의 id대신 임시로 사용 (스와이프 1개로 제한하는 것에.)
 - todo 수정, 제출할 때 request 타입 구체적 명시, 
 `;
 
@@ -52,12 +52,42 @@ type Story = StoryObj<typeof meta>;
 // 가장 기본적인 Primary 스토리
 // argTypes를 Primary는 기본으로 가집니다.
 
-const todoItemsInfo = [
+/** 타입 변환 작업. (todoItemProps와 TodoListProps사이 괴리) */
+
+type TodoItemsInfoType = TodoListProps["todoItemsInfo"][0];
+const validTypes: (keyof TodoItemsInfoType)[] = [
+  "checked",
+  "id",
+  "mood",
+  "targetDate",
+  "title",
+];
+
+const isTodoItemsInfoType = (
+  field: string,
+): field is keyof TodoItemsInfoType => {
+  return validTypes.includes(field as keyof TodoItemsInfoType);
+};
+const convert2ValidTodoItemsInfoType = (
+  todoItemsInfo: (TodoItemProps | TodoItemsInfoType)[],
+) => {
+  return todoItemsInfo.map((info, idx) =>
+    Object.entries(info).reduce(
+      (acc, [key, value]) => {
+        if (isTodoItemsInfoType(key)) return { ...acc, [key]: value };
+        return acc;
+      },
+      { id: idx } as unknown as TodoItemsInfoType,
+    ),
+  );
+};
+
+const todoItemsInfo = convert2ValidTodoItemsInfoType([
   TodoItemPrimary.args,
   CompleteNonSubmit.args,
   IncompleteDateLate.args,
   CompleteSubmitLateYesterday.args,
-];
+]);
 
 export const Primary: Story = {
   argTypes: {
@@ -95,13 +125,13 @@ export const NotFinishedTodos: Story = {
  * 보여지는 순서가정해져 있으므로, 자세한건 figma에서 확인. 백엔드에서 소팅해줄 듯.
  */
 const todoItemsInfo4NotFinishedTodosLong: (typeof Primary.args)["todoItemsInfo"] =
-  [
+  convert2ValidTodoItemsInfoType([
     ...Primary.args.todoItemsInfo,
     TodoItemPrimary.args,
     TodoItemPrimary.args,
     TodoItemPrimary.args,
     TodoItemPrimary.args,
-  ];
+  ]);
 export const NotFinishedTodosLong: Story = {
   args: {
     ...Primary.args,
