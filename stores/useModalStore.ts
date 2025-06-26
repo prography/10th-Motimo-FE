@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode, ReactPortal } from "react";
+import { ReactNode } from "react";
 import { create } from "zustand";
 
 interface ModalStore {
