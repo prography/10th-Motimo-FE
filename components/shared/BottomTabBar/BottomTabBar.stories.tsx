@@ -1,10 +1,9 @@
-// ... existing code ...
 import type { Meta, StoryObj } from "@storybook/react";
-import { TabBar } from "./TabBar";
+import { BottomTabBar } from "./BottomTabBar";
 
-const meta: Meta<typeof TabBar> = {
-  title: "Shared/TabBar",
-  component: TabBar,
+const meta: Meta<typeof BottomTabBar> = {
+  title: "Shared/BottomTabBar",
+  component: BottomTabBar,
   tags: ["autodocs"],
   argTypes: {
     type: {
@@ -16,7 +15,7 @@ const meta: Meta<typeof TabBar> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof TabBar>;
+type Story = StoryObj<typeof BottomTabBar>;
 
 export const Type1: Story = {
   args: {
@@ -40,5 +39,4 @@ export const Type4: Story = {
   args: {
     type: "4",
   },
-};
-// ... existing code ...
+}; 
