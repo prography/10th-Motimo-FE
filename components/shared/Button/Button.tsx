@@ -26,27 +26,27 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         className={cn(
           // Base styles
-          "inline-flex items-center gap-3 font-medium rounded-lg transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+          "inline-flex items-center gap-2 font-semibold rounded-lg transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-Color-gray-90 focus-visible:ring-offset-0",
 
-          // Size variants
+          // Size variants with correct padding and font sizes from Figma
           {
-            "px-4 py-2 text-sm h-8": size === "s", // 32px height
-            "px-4 py-3 text-sm h-10": size === "m", // 40px height
-            "px-6 py-3 text-base h-12": size === "l", // 48px height
+            "px-3 py-1 text-sm h-8": size === "s", // 4px 12px, 14px font, 32px height
+            "px-4 py-2 text-base h-10": size === "m", // 8px 16px, 16px font, 40px height  
+            "px-4 py-3 text-base h-12": size === "l", // 12px 16px, 16px font, 48px height
           },
 
-          // Variant styles
+          // Variant styles using design tokens
           {
             // Filled variant
-            "bg-[var(--color-background-primary)] text-white hover:bg-[color-mix(in_srgb,var(--color-background-primary)_90%,black)] focus-visible:ring-[var(--color-background-primary)] active:bg-[color-mix(in_srgb,var(--color-background-primary)_80%,black)] disabled:bg-[#8a949e] disabled:cursor-not-allowed disabled:hover:bg-[#8a949e]":
+            "bg-Color-primary-50 text-Color-white hover:opacity-90 active:opacity-80 disabled:bg-Color-gray-20 disabled:text-Color-gray-50 disabled:cursor-not-allowed disabled:hover:opacity-100":
               variant === "filled",
 
-            // Outlined variant
-            "border-2 border-[var(--color-background-primary)] text-[var(--color-background-primary)] bg-transparent hover:bg-[color-mix(in_srgb,var(--color-background-primary)_10%,transparent)] focus-visible:ring-[var(--color-background-primary)] active:bg-[color-mix(in_srgb,var(--color-background-primary)_20%,transparent)] disabled:border-[#8a949e] disabled:text-[#8a949e] disabled:cursor-not-allowed disabled:hover:bg-transparent":
+            // Outlined variant  
+            "border-[1.5px] border-Color-primary-50 text-Color-primary-50 bg-transparent hover:bg-Color-primary-50/5 active:bg-Color-primary-50/10 disabled:border-Color-gray-40 disabled:text-Color-gray-50 disabled:cursor-not-allowed disabled:hover:bg-transparent":
               variant === "outlined",
 
             // Text variant
-            "text-[var(--color-background-primary)] bg-transparent hover:bg-[color-mix(in_srgb,var(--color-background-primary)_10%,transparent)] focus-visible:ring-[var(--color-background-primary)] active:bg-[color-mix(in_srgb,var(--color-background-primary)_20%,transparent)] disabled:text-[#8a949e] disabled:cursor-not-allowed disabled:hover:bg-transparent":
+            "text-Color-primary-50 bg-transparent hover:bg-Color-primary-50/5 active:bg-Color-primary-50/10 disabled:text-Color-gray-50 disabled:cursor-not-allowed disabled:hover:bg-transparent":
               variant === "text",
           },
 
@@ -60,7 +60,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           <span className="flex-shrink-0">
             {React.cloneElement(icon as React.ReactElement, {
               className: cn(
-                size === "s" ? "w-4 h-4" : size === "m" ? "w-4 h-4" : "w-5 h-5",
+                size === "s" ? "w-4 h-4" : size === "m" ? "w-5 h-5" : "w-5 h-5",
                 (icon as React.ReactElement).props?.className,
               ),
             })}

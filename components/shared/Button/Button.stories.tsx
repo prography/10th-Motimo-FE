@@ -29,7 +29,7 @@ const meta = {
     },
   },
   args: {
-    children: "Button",
+    children: "텍스트",
   },
 } satisfies Meta<typeof Button>;
 
@@ -38,11 +38,11 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 // 기본 스토리
-export const Primary: Story = {
+export const Default: Story = {
   args: {
     variant: "filled",
     size: "m",
-    children: "Primary Button",
+    children: "텍스트",
   },
 };
 
@@ -50,21 +50,21 @@ export const Primary: Story = {
 export const Filled: Story = {
   args: {
     variant: "filled",
-    children: "Filled Button",
+    children: "텍스트",
   },
 };
 
 export const Outlined: Story = {
   args: {
     variant: "outlined",
-    children: "Outlined Button",
+    children: "텍스트",
   },
 };
 
 export const Text: Story = {
   args: {
     variant: "text",
-    children: "Text Button",
+    children: "텍스트",
   },
 };
 
@@ -72,21 +72,21 @@ export const Text: Story = {
 export const Small: Story = {
   args: {
     size: "s",
-    children: "Small Button",
+    children: "텍스트",
   },
 };
 
 export const Medium: Story = {
   args: {
     size: "m",
-    children: "Medium Button",
+    children: "텍스트",
   },
 };
 
 export const Large: Story = {
   args: {
     size: "l",
-    children: "Large Button",
+    children: "텍스트",
   },
 };
 
@@ -94,23 +94,23 @@ export const Large: Story = {
 export const Disabled: Story = {
   args: {
     disabled: true,
-    children: "Disabled Button",
+    children: "텍스트",
   },
 };
 
-// 아이콘이 있는 버튼 (예시 아이콘)
+// 아이콘이 있는 버튼
 export const WithIcon: Story = {
   args: {
     icon: (
       <svg
-        width="16"
-        height="16"
-        viewBox="0 0 16 16"
+        width="20"
+        height="20"
+        viewBox="0 0 20 20"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M8 2V14M2 8H14"
+          d="M10 3V17M3 10H17"
           stroke="currentColor"
           strokeWidth="2"
           strokeLinecap="round"
@@ -118,33 +118,86 @@ export const WithIcon: Story = {
         />
       </svg>
     ),
-    children: "Add Item",
+    children: "텍스트",
   },
 };
 
-// 모든 변형 한 번에 보기
-export const AllVariants: Story = {
+// Figma 디자인에 따른 모든 상태 보기
+export const AllStatesAndSizes: Story = {
   render: () => (
-    <div className="flex flex-col gap-4">
-      <div className="flex gap-4 items-center">
-        <Button variant="filled" size="s">Small Filled</Button>
-        <Button variant="filled" size="m">Medium Filled</Button>
-        <Button variant="filled" size="l">Large Filled</Button>
+    <div className="flex flex-col gap-8 p-6">
+      {/* Small size (32px) */}
+      <div className="flex flex-col gap-4">
+        <h3 className="text-lg font-semibold">Small (32px)</h3>
+        <div className="flex gap-4 items-center flex-wrap">
+          <Button variant="filled" size="s">텍스트</Button>
+          <Button variant="outlined" size="s">텍스트</Button>
+          <Button variant="text" size="s">텍스트</Button>
+        </div>
+        <div className="flex gap-4 items-center flex-wrap">
+          <Button variant="filled" size="s" disabled>텍스트</Button>
+          <Button variant="outlined" size="s" disabled>텍스트</Button>
+          <Button variant="text" size="s" disabled>텍스트</Button>
+        </div>
       </div>
-      <div className="flex gap-4 items-center">
-        <Button variant="outlined" size="s">Small Outlined</Button>
-        <Button variant="outlined" size="m">Medium Outlined</Button>
-        <Button variant="outlined" size="l">Large Outlined</Button>
+
+      {/* Medium size (40px) */}
+      <div className="flex flex-col gap-4">
+        <h3 className="text-lg font-semibold">Medium (40px)</h3>
+        <div className="flex gap-4 items-center flex-wrap">
+          <Button variant="filled" size="m">텍스트</Button>
+          <Button variant="outlined" size="m">텍스트</Button>
+          <Button variant="text" size="m">텍스트</Button>
+        </div>
+        <div className="flex gap-4 items-center flex-wrap">
+          <Button variant="filled" size="m" disabled>텍스트</Button>
+          <Button variant="outlined" size="m" disabled>텍스트</Button>
+          <Button variant="text" size="m" disabled>텍스트</Button>
+        </div>
       </div>
-      <div className="flex gap-4 items-center">
-        <Button variant="text" size="s">Small Text</Button>
-        <Button variant="text" size="m">Medium Text</Button>
-        <Button variant="text" size="l">Large Text</Button>
+
+      {/* Large size (48px) */}
+      <div className="flex flex-col gap-4">
+        <h3 className="text-lg font-semibold">Large (48px)</h3>
+        <div className="flex gap-4 items-center flex-wrap">
+          <Button variant="filled" size="l">텍스트</Button>
+          <Button variant="outlined" size="l">텍스트</Button>
+          <Button variant="text" size="l">텍스트</Button>
+        </div>
+        <div className="flex gap-4 items-center flex-wrap">
+          <Button variant="filled" size="l" disabled>텍스트</Button>
+          <Button variant="outlined" size="l" disabled>텍스트</Button>
+          <Button variant="text" size="l" disabled>텍스트</Button>
+        </div>
       </div>
-      <div className="flex gap-4 items-center">
-        <Button variant="filled" disabled>Disabled Filled</Button>
-        <Button variant="outlined" disabled>Disabled Outlined</Button>
-        <Button variant="text" disabled>Disabled Text</Button>
+
+      {/* With Icons */}
+      <div className="flex flex-col gap-4">
+        <h3 className="text-lg font-semibold">With Icons</h3>
+        <div className="flex gap-4 items-center flex-wrap">
+          <Button 
+            variant="filled" 
+            size="m"
+            icon={
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M10 3V17M3 10H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+            }
+          >
+            텍스트
+          </Button>
+          <Button 
+            variant="outlined" 
+            size="m"
+            icon={
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M10 3V17M3 10H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+            }
+          >
+            텍스트
+          </Button>
+        </div>
       </div>
     </div>
   ),
