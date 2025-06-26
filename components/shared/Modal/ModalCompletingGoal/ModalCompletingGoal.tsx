@@ -28,6 +28,7 @@ const ModalCompletingGoal = ({
             onClick={() => {
               onWait();
             }}
+            key={"wait"}
             text="잠깐만요!"
             color="alternative"
           />,
@@ -35,6 +36,7 @@ const ModalCompletingGoal = ({
             onClick={() => {
               onCompleteGoal();
             }}
+            key={"success"}
             text="달성 성공!"
             color="primary"
           />,

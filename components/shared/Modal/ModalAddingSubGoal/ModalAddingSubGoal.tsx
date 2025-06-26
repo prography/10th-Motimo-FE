@@ -46,6 +46,7 @@ const ModalAddingSubGoal = ({
             // onClick={() => {
             //   onClose();
             // }}
+            key={"add"}
             form="subGoalAdding"
             type="submit"
             text="추가하기"

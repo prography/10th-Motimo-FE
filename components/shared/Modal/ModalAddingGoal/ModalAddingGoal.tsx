@@ -21,6 +21,7 @@ const ModalAddingGoal = ({ onClose, onAddGoal }: ModalAddingGoalProps) => {
             onClick={() => {
               onClose();
             }}
+            key={"cancel"}
             text="취소"
             color="alternative"
           />,
@@ -29,6 +30,7 @@ const ModalAddingGoal = ({ onClose, onAddGoal }: ModalAddingGoalProps) => {
               // 비동기 동작 추후에 처리해야 함. 아직 미정이지만.. 수정할 부분임.
               onAddGoal();
             }}
+            key={"add"}
             text="추가"
             color="primary"
           />,
