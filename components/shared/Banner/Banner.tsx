@@ -6,7 +6,7 @@ interface BannerProps {
 const Banner = ({ title, tag }: BannerProps) => {
   return (
     <>
-      <div className="w-96 px-6 py-4 bg-indigo-500 inline-flex justify-start items-center gap-3">
+      <div className="w-full px-6 py-4 bg-indigo-500 inline-flex justify-start items-center gap-3">
         <div className="min-w-0 flex-1 inline-flex flex-col justify-center items-start gap-2">
           <p className="overflow-x-hidden self-stretch justify-center text-Color-white text-base font-bold font-['SUIT_Variable'] leading-tight">
             {title}

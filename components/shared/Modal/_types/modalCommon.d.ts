@@ -1,0 +1,3 @@
+interface ModalCommon {
+  onClose: () => void;
+}

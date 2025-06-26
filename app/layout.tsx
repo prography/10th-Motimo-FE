@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import ModalRenderer from "./_components/ModalRenderer";
 
 const customFont = localFont({
   src: "../public/fonts/SUIT-Variable.woff2",
@@ -30,7 +31,10 @@ export default function RootLayout({
           crossOrigin="anonymous" // 일반적으로 폰트에는 추가하는 것이 좋음
         />
       </head>
-      <body className={`${customFont.variable} antialiased`}>{children}</body>
+      <body className={`${customFont.variable} antialiased`}>
+        <ModalRenderer />
+        {children}
+      </body>
     </html>
   );
 }

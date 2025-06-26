@@ -42,7 +42,7 @@ const PrimaryWrapper = ({ args }: { args: typeof Primary.args }) => {
   const [checked, setChecked] = useState<boolean>(args.checked ?? false);
   const dateObj = args?.targetDate ? new Date(args.targetDate) : new Date();
 
-  const handleChecked = () => {
+  const handleChecked = async () => {
     setTimeout(() => {
       console.log("비동기 체크");
       setChecked((prev) => !prev);
@@ -72,11 +72,15 @@ export const Primary: Story = {
       날짜가 지났을 경우 negative 색상
       `,
     },
-    mood: {
-      control: "select",
-      description: ` 1이 non-mood, 2가 smile로 가정.
-      `,
-      options: [undefined, 1, 2, 3, 4, 5],
+    // mood: {
+    //   control: "select",
+    //   description: ` 1이 non-mood, 2가 smile로 가정.
+    //   `,
+    //   options: [undefined, 1, 2, 3, 4, 5],
+    // },
+    reported: {
+      control: "boolean",
+      description: "제출/미제출로 변경됨.",
     },
     title: {
       control: "text",
@@ -91,15 +95,19 @@ export const Primary: Story = {
     // },
   },
   args: {
-    onMoodClick: () => {
-      console.log("기록 전에만 동작함.");
+    // onMoodClick: () => {
+    //   console.log("기록 전에만 동작함.");
+    // },
+    onReportedClick: async () => {
+      console.log("스토리 -- 제출 전에만 동작함.");
     },
-    onChecked: (prev) => {
+    onChecked: async (prev) => {
       console.log("스토리 콘솔 -  prev:", prev);
     },
     targetDate: new Date(),
     title: "야호",
-    mood: 1,
+    // mood: 1,
+    reported: false,
     checked: false,
   },
   render: (args) => <PrimaryWrapper args={args} key={`${args.checked}`} />,
@@ -126,7 +134,7 @@ export const IncompleteNonDate: Story = {
   args: {
     checked: false,
     title: "미완료에, 날짜도 없음.",
-    onChecked: () => {},
+    onChecked: async () => {},
   },
 };
 export const IncompleteDate: Story = {
@@ -156,7 +164,8 @@ export const CompleteNonSubmitNotDate: Story = {
     ...IncompleteNonDate.args,
     checked: true,
     title: "완료 미제출, 날짜 없음",
-    mood: 1,
+    // mood: 1,
+    reported: false,
   },
 };
 export const CompleteNonSubmit: Story = {
@@ -186,7 +195,8 @@ export const CompleteSubmitNotDate: Story = {
   args: {
     ...CompleteNonSubmitNotDate.args,
     title: "완료 제출, 날짜 없음",
-    mood: 2,
+    // mood: 2,
+    reported: true,
   },
 };
 export const CompleteSubmit: Story = {
