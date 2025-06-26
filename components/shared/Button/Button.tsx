@@ -25,8 +25,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         className={cn(
-          // Base styles
-          "inline-flex items-center gap-2 font-semibold rounded-lg transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-Color-gray-90 focus-visible:ring-offset-0",
+          // Base styles with correct focus ring from Figma - 1.5px thickness
+          "inline-flex items-center gap-2 font-semibold rounded-lg transition-all duration-200 outline-none focus:ring-[1.5px] focus:ring-Color-gray-90 focus:ring-offset-[3px]",
 
           // Size variants with correct padding and font sizes from Figma
           {

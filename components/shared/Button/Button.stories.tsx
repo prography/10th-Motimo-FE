@@ -98,6 +98,21 @@ export const Disabled: Story = {
   },
 };
 
+// Focused 상태 (자동으로 포커스되도록)
+export const Focused: Story = {
+  args: {
+    variant: "filled",
+    size: "s",
+    children: "텍스트",
+  },
+  play: async ({ canvasElement }) => {
+    const button = canvasElement.querySelector('button');
+    if (button) {
+      button.focus();
+    }
+  },
+};
+
 // 아이콘이 있는 버튼
 export const WithIcon: Story = {
   args: {
@@ -197,6 +212,16 @@ export const AllStatesAndSizes: Story = {
           >
             텍스트
           </Button>
+        </div>
+      </div>
+
+      {/* Focus States */}
+      <div className="flex flex-col gap-4">
+        <h3 className="text-lg font-semibold">Focus States (Tab to focus)</h3>
+        <div className="flex gap-4 items-center flex-wrap">
+          <Button variant="filled" size="s">Focus Me</Button>
+          <Button variant="outlined" size="m">Focus Me</Button>
+          <Button variant="text" size="l">Focus Me</Button>
         </div>
       </div>
     </div>
