@@ -1,0 +1,269 @@
+"use client";
+
+import { useState } from "react";
+import { ChevronLeftIcon } from "@/components/icons/ChevronLeftIcon";
+
+interface PeriodSelectionScreenProps {
+  periodType: "months" | "date";
+  monthCount: number;
+  targetDate: Date | null;
+  onPeriodTypeChange: (type: "months" | "date") => void;
+  onMonthCountChange: (count: number) => void;
+  onTargetDateChange: (date: Date | null) => void;
+  onNext: () => void;
+  onBack: () => void;
+}
+
+export default function PeriodSelectionScreen({
+  periodType,
+  monthCount,
+  targetDate,
+  onPeriodTypeChange,
+  onMonthCountChange,
+  onTargetDateChange,
+  onNext,
+  onBack,
+}: PeriodSelectionScreenProps) {
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+
+  const months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
+  const monthNumbers = Array.from({ length: 12 }, (_, i) => i + 1);
+
+  const getDaysInMonth = (month: number, year: number) => {
+    return new Date(year, month + 1, 0).getDate();
+  };
+
+  const getFirstDayOfMonth = (month: number, year: number) => {
+    return new Date(year, month, 1).getDay();
+  };
+
+  const renderCalendar = () => {
+    const daysInMonth = getDaysInMonth(currentMonth, currentYear);
+    const firstDay = getFirstDayOfMonth(currentMonth, currentYear);
+    const today = new Date();
+    const isCurrentMonth = currentMonth === today.getMonth() && currentYear === today.getFullYear();
+
+    const days = [];
+    
+    // Previous month's last days
+    const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+    const daysInPrevMonth = getDaysInMonth(prevMonth, prevYear);
+    
+    for (let i = firstDay - 1; i >= 0; i--) {
+      days.push(
+        <div key={`prev-${daysInPrevMonth - i}`} className="h-10 w-10 flex items-center justify-center">
+          <span className="text-xs font-medium text-label-disabled">
+            {daysInPrevMonth - i}
+          </span>
+        </div>
+      );
+    }
+
+    // Current month days
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(currentYear, currentMonth, day);
+      const isToday = isCurrentMonth && day === today.getDate();
+      const isPast = date < today && !isToday;
+      const isSelected = targetDate && 
+        targetDate.getDate() === day && 
+        targetDate.getMonth() === currentMonth && 
+        targetDate.getFullYear() === currentYear;
+
+      days.push(
+        <button
+          key={day}
+          onClick={() => !isPast && onTargetDateChange(new Date(currentYear, currentMonth, day))}
+          disabled={isPast}
+          className={`h-10 w-10 rounded flex items-center justify-center text-xs font-medium ${
+            isSelected
+              ? "bg-label-primary text-background-alternative"
+              : isPast
+              ? "text-label-disabled cursor-not-allowed"
+              : "text-label-normal hover:bg-background-assistive"
+          }`}
+        >
+          {day}
+        </button>
+      );
+    }
+
+    return days;
+  };
+
+  const navigateMonth = (direction: 'prev' | 'next') => {
+    if (direction === 'prev') {
+      if (currentMonth === 0) {
+        setCurrentMonth(11);
+        setCurrentYear(currentYear - 1);
+      } else {
+        setCurrentMonth(currentMonth - 1);
+      }
+    } else {
+      if (currentMonth === 11) {
+        setCurrentMonth(0);
+        setCurrentYear(currentYear + 1);
+      } else {
+        setCurrentMonth(currentMonth + 1);
+      }
+    }
+  };
+
+  const isNextEnabled = periodType === "months" || targetDate !== null;
+
+  return (
+    <div className="min-h-screen bg-background-alternative flex flex-col">
+      {/* Status Bar */}
+      <div className="flex justify-between items-end gap-[286px] px-6 py-[10px] h-[52px]">
+        <div className="text-sm font-medium text-label-normal">9:30</div>
+        <div className="flex items-center gap-4">
+          <div className="w-[46px] h-[17px]"></div>
+        </div>
+      </div>
+
+      {/* App Bar with Progress */}
+      <div className="h-14 flex items-center px-3">
+        <button onClick={onBack} className="w-6 h-6 flex items-center justify-center">
+          <ChevronLeftIcon className="w-6 h-6 text-label-normal" />
+        </button>
+        <div className="flex-1 flex justify-center">
+          <div className="w-[232px] h-2 bg-background-assistive rounded-full overflow-hidden">
+            <div className="w-full h-full bg-label-primary rounded-full"></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 px-6 pt-8">
+        {/* Title and Description */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-label-strong mb-2">
+            목표 기간을 정해주세요.
+          </h1>
+          <p className="text-base font-normal text-label-alternative leading-[1.4]">
+            목표의 성격에 따라 '개월 수'나 '완료 날짜' 중에서{"\n"}자유롭게 선택해보세요.
+          </p>
+        </div>
+
+        {/* Segmented Control */}
+        <div className="bg-background-normal rounded-full p-1 mb-8">
+          <div className="flex">
+            <button
+              onClick={() => onPeriodTypeChange("months")}
+              className={`flex-1 py-2 px-4 rounded-full font-bold text-sm ${
+                periodType === "months"
+                  ? "bg-label-primary text-background-alternative"
+                  : "text-label-alternative"
+              }`}
+            >
+              개월 수로 설정
+            </button>
+            <button
+              onClick={() => onPeriodTypeChange("date")}
+              className={`flex-1 py-2 px-4 rounded-full font-bold text-sm ${
+                periodType === "date"
+                  ? "bg-label-primary text-background-alternative"
+                  : "text-label-alternative"
+              }`}
+            >
+              완료 날짜로 설정
+            </button>
+          </div>
+        </div>
+
+        {/* Month Selector */}
+        {periodType === "months" && (
+          <div className="mb-8">
+            <div className="flex flex-col gap-0.5">
+              {monthNumbers.map((num) => (
+                <button
+                  key={num}
+                  onClick={() => onMonthCountChange(num)}
+                  className={`flex items-center justify-center py-2 px-2 ${
+                    monthCount === num
+                      ? "bg-background-normal rounded-lg"
+                      : ""
+                  }`}
+                >
+                  <span
+                    className={`font-medium ${
+                      monthCount === num
+                        ? "text-2xl text-label-normal"
+                        : Math.abs(monthCount - num) === 1
+                        ? "text-sm text-label-disabled"
+                        : "text-[22px] text-label-assistive"
+                    }`}
+                  >
+                    {num}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Calendar */}
+        {periodType === "date" && (
+          <div className="mb-8">
+            {/* Calendar Header */}
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-base font-bold text-label-strong">
+                {currentYear}년 {months[currentMonth]}
+              </h3>
+              <div className="flex gap-1">
+                <button
+                  onClick={() => navigateMonth('prev')}
+                  className="w-8 h-8 flex items-center justify-center"
+                  disabled={currentMonth === new Date().getMonth() && currentYear === new Date().getFullYear()}
+                >
+                  <ChevronLeftIcon className="w-4 h-4 text-label-normal" />
+                </button>
+                <button
+                  onClick={() => navigateMonth('next')}
+                  className="w-8 h-8 flex items-center justify-center"
+                >
+                  <ChevronLeftIcon className="w-4 h-4 text-label-normal rotate-180" />
+                </button>
+              </div>
+            </div>
+
+            {/* Week Days */}
+            <div className="grid grid-cols-7 gap-1.5 mb-2">
+              {["월", "화", "수", "목", "금", "토", "일"].map((day) => (
+                <div key={day} className="h-10 flex items-center justify-center">
+                  <span className="text-xs font-medium text-label-normal">{day}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Calendar Grid */}
+            <div className="grid grid-cols-7 gap-1.5">
+              {renderCalendar()}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Next Button */}
+      <div className="px-4 pb-14">
+        <button
+          onClick={onNext}
+          disabled={!isNextEnabled}
+          className={`w-full h-14 rounded-full font-bold text-xl ${
+            isNextEnabled
+              ? "bg-label-normal text-background-alternative"
+              : "bg-background-disabled text-label-disabled"
+          }`}
+        >
+          다음
+        </button>
+      </div>
+
+      {/* Gesture Bar */}
+      <div className="h-6 flex justify-center items-center">
+        <div className="w-[108px] h-1 bg-label-normal rounded-xl"></div>
+      </div>
+    </div>
+  );
+} 
