@@ -7,16 +7,19 @@ interface LoginScreenProps {
 export default function LoginScreen({ onNext }: LoginScreenProps) {
   const handleGoogleLogin = () => {
     // TODO: Implement Google login
+    localStorage.setItem("isLoggedIn", "true");
     onNext();
   };
 
   const handleKakaoLogin = () => {
     // TODO: Implement Kakao login
+    localStorage.setItem("isLoggedIn", "true");
     onNext();
   };
 
   const handleBrowse = () => {
     // TODO: Handle browse without login
+    localStorage.setItem("isLoggedIn", "true");
     onNext();
   };
 

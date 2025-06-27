@@ -109,7 +109,12 @@ export default function GoalInputScreen({ goal, onGoalChange, onNext, onBack }: 
       {/* Next Button */}
       <div className="px-4 pb-14">
         <button
-          onClick={onNext}
+          onClick={() => {
+            if (isNextEnabled) {
+              localStorage.setItem("userGoal", goal);
+              onNext();
+            }
+          }}
           disabled={!isNextEnabled}
           className={`w-full h-14 rounded-full font-bold text-xl ${
             isNextEnabled
