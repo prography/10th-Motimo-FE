@@ -3,32 +3,32 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">MOTIMO</h1>
-          <p className="text-lg text-gray-600 mb-8">목표 달성을 위한 온보딩 시스템</p>
+    <div className="flex flex-col items-center justify-center min-h-screen p-6">
+      <main className="flex flex-col gap-8 items-center text-center w-full">
+        <div>
+          <h1 className="text-[32px] font-bold mb-4 text-label-strong">MOTIMO</h1>
+          <p className="text-base text-label-alternative mb-8">목표 달성을 위한 온보딩 시스템</p>
         </div>
 
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
+        <ol className="list-inside list-decimal text-sm text-label-normal space-y-2 text-left w-full max-w-[280px]">
+          <li>
             온보딩 플로우를 통해 사용자의 목표를 설정합니다.
           </li>
-          <li className="tracking-[-.01em]">
+          <li>
             개월 수 또는 특정 날짜를 선택하여 목표 기간을 정할 수 있습니다.
           </li>
         </ol>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
+        <div className="flex flex-col gap-3 w-full max-w-[280px]">
           <Link
             href="/onboarding"
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
+            className="rounded-[16px] bg-label-strong text-white flex items-center justify-center h-[52px] px-5 text-base font-medium hover:bg-opacity-90 transition-opacity"
           >
             온보딩 시작하기
           </Link>
           <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            className="rounded-[16px] border border-border-default text-label-normal flex items-center justify-center h-[52px] px-5 text-base font-medium hover:bg-background-alternative transition-colors"
+            href="https://nextjs.org/docs"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -36,10 +36,11 @@ export default function Home() {
           </a>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
+      
+      <footer className="flex gap-6 flex-wrap items-center justify-center mt-auto pb-6 text-xs text-label-alternative">
         <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          className="flex items-center gap-2 hover:text-label-normal transition-colors"
+          href="https://nextjs.org/learn"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -53,8 +54,8 @@ export default function Home() {
           Learn
         </a>
         <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          className="flex items-center gap-2 hover:text-label-normal transition-colors"
+          href="https://vercel.com/templates"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -68,8 +69,8 @@ export default function Home() {
           Examples
         </a>
         <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          className="flex items-center gap-2 hover:text-label-normal transition-colors"
+          href="https://nextjs.org"
           target="_blank"
           rel="noopener noreferrer"
         >
