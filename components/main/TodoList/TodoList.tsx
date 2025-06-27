@@ -1,17 +1,19 @@
 "use client";
 
 import TodoItem from "@/components/shared/TodoItem/TodoItem";
-import { Fragment, memo, useState } from "react";
+import { Dispatch, Fragment, memo, SetStateAction, useState } from "react";
 import { motion, useMotionValue } from "motion/react";
 import { animate } from "motion";
 
-import UpArrowSvg from "@/public/Caret_Up_MD.svg";
-import DownArrowSvg from "@/public/Caret_Down_MD.svg";
+import UpArrowSvg from "@/public/images/Caret_Up_MD.svg";
+import DownArrowSvg from "@/public/images/Caret_Down_MD.svg";
 import PlusSvg from "../../shared/public/Add_Plus.svg";
-import PencilSvg from "@/public/Edit_Pencil_01.svg";
-import TrashCanSvg from "@/public/Trash_Full.svg";
+import PencilSvg from "@/public/images/Edit_Pencil_01.svg";
+import TrashCanSvg from "@/public/images/Trash_Full.svg";
 
 import { TodoItemsInfo } from "@/types/todoList";
+import useModal from "@/hooks/useModal";
+import ModalAddingSubGoal from "@/components/shared/Modal/ModalAddingSubGoal/ModalAddingSubGoal";
 
 /** api generator로부터 받은 타입을 사용 */
 
@@ -32,7 +34,8 @@ const TodoList = ({
   todoTotalLen,
   todoItemsInfo,
 }: TodoListProps) => {
-  const [isFolded, setIsFolded] = useState(true);
+  // 펼친 상태가 기본
+  const [isFolded, setIsFolded] = useState(false);
 
   if (!subGoal)
     return (
@@ -96,22 +99,38 @@ export type { TodoListProps };
  */
 
 const NoSubGoal = () => {
+  const { closeModal, openModal } = useModal();
   return (
     <>
       <div
         data-type="type5"
-        className="w-80 p-3 bg-white rounded-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.10)] inline-flex flex-col justify-start items-center gap-2 overflow-hidden"
+        className="w-full p-3 bg-white rounded-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.10)] inline-flex flex-col justify-start items-center gap-2 overflow-hidden"
       >
         <div className="self-stretch h-8 inline-flex justify-start items-center gap-1">
           <div className="flex-1 justify-center text-label-strong text-base font-bold font-['SUIT_Variable'] leading-snug">
             세부 목표를 추가해주세요.
           </div>
-          <div className="w-8 h-8 p-1.5 bg-background-primary rounded-[999px] flex justify-center items-center gap-2">
-            <div className="w-5 h-5 relative overflow-hidden">
+          <button
+            onClick={() =>
+              openModal(
+                <ModalAddingSubGoal
+                  onClose={() => closeModal()}
+                  onAddSubGoal={async (subGoal: string) => {
+                    // 대충 subgoal관련 비동기 동작
+                    // 비동기 성공적으로 끝나야 closeModal시키기
+                    // 실패 시 toast띄우기
+                  }}
+                />,
+              )
+            }
+            type="button"
+            className="w-8 h-8 p-1.5 bg-background-primary rounded-[999px] flex justify-center items-center gap-2"
+          >
+            <div className="w-5 h-5 relative overflow-hidden text-white">
               <PlusSvg width={20} height={20} />
               {/* <div className="w-2.5 h-2.5 left-[5px] top-[5px] absolute outline-[1.50px] outline-offset-[-0.75px] outline-Color-white"></div> */}
             </div>
-          </div>
+          </button>
         </div>
       </div>
     </>
@@ -151,53 +170,13 @@ const TodoArea = ({
     <>
       <div className="self-stretch h-80 flex flex-col justify-start items-start  gap-2  overflow-y-auto overflow-x-hidden">
         {todoItemsInfo.map((info) => {
-          const x = useMotionValue(0);
-
-          /**
-           * 여기에 todoItemProp에 들어갈 onChecked, onMoodClick에 대해 처리해야 하나?
-           * 그럼 Edit, Delete버튼에 대해 모달 띄우는거는?
-           *
-           * 모달 띄우는게 onMoodClick, Edit, Delete에 대해.
-           * onChecked는 바로 fetch를 보내야 하는데,
-           *
-           * =>
-           * 그냥 이 안에서 클릭 이벤트에 대한 동작을 다 넣자.
-           * 모달이 사용된다면 모달 훅이랑 함께, 모달 안에 넣을 함수도 만들자.
-           */
-
           return (
-            <Fragment key={info.id}>
-              <div className="flex items-center relative">
-                <div className="gap-1 flex  z-0 absolute right-0">
-                  <EditButton />
-                  <DeleteButton />
-                </div>
-                <motion.div
-                  className="cursor-grab active:cursor-grabbing z-10 "
-                  drag="x"
-                  style={{ x }}
-                  dragConstraints={{ left: -88, right: 0 }}
-                  dragElastic={0}
-                  dragMomentum={false}
-                  animate={{
-                    x: selectedTodoItem === info.id ? -88 : 0,
-                  }}
-                  onDragEnd={(_, dragInfo) => {
-                    const newX = dragInfo.offset.x < -30 ? -88 : 0;
-                    animate(x, newX);
-                    if (newX === -88) setSelectedTodoItem(info.id ?? null);
-                  }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 300,
-                    damping: 30,
-                  }}
-                >
-                  <OptimizedTodoItem {...info} onChecked={() => {}} />
-                </motion.div>
-              </div>
-            </Fragment>
-            // <TodoItemContainer info={info} selectedTodoItem={selectedTodoItem} />
+            <TodoItemContainer
+              key={info.id}
+              info={info}
+              selectedTodoItem={selectedTodoItem}
+              setSelectedTodoItem={setSelectedTodoItem}
+            />
           );
         })}
       </div>
@@ -206,6 +185,66 @@ const TodoArea = ({
 };
 
 /** TodoArea 재료들 */
+
+const TodoItemContainer = ({
+  info,
+  selectedTodoItem,
+  setSelectedTodoItem,
+}: {
+  info: TodoListProps["todoItemsInfo"][0];
+  selectedTodoItem: null | string;
+  setSelectedTodoItem: Dispatch<SetStateAction<typeof selectedTodoItem>>;
+}) => {
+  const x = useMotionValue(0);
+
+  /**
+   * 여기에 todoItemProp에 들어갈 onChecked, onMoodClick에 대해 처리해야 하나?
+   * 그럼 Edit, Delete버튼에 대해 모달 띄우는거는?
+   *
+   * 모달 띄우는게 onMoodClick, Edit, Delete에 대해.
+   * onChecked는 바로 fetch를 보내야 하는데,
+   *
+   * =>
+   * 그냥 이 안에서 클릭 이벤트에 대한 동작을 다 넣자.
+   * 모달이 사용된다면 모달 훅이랑 함께, 모달 안에 넣을 함수도 만들자.
+   */
+
+  return (
+    <Fragment key={info.id}>
+      <div className="flex items-center relative">
+        <div className="gap-1 flex  z-0 absolute right-0">
+          <EditButton />
+          <DeleteButton />
+        </div>
+        <motion.div
+          className="cursor-grab active:cursor-grabbing z-10 "
+          drag="x"
+          style={{ x }}
+          dragConstraints={{ left: -88, right: 0 }}
+          dragElastic={0}
+          dragMomentum={false}
+          animate={{
+            x: selectedTodoItem === info.id ? -88 : 0,
+          }}
+          onDragEnd={(_, dragInfo) => {
+            const newX = dragInfo.offset.x < -30 ? -88 : 0;
+            animate(x, newX);
+            if (newX === -88) setSelectedTodoItem(info.id ?? null);
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 300,
+            damping: 30,
+          }}
+        >
+          <OptimizedTodoItem {...info} onChecked={async () => {}} />
+        </motion.div>
+      </div>
+    </Fragment>
+    // <TodoItemContainer info={info} selectedTodoItem={selectedTodoItem} />
+  );
+};
+
 const OptimizedTodoItem = memo(TodoItem);
 
 const AllTodoFinished = () => {

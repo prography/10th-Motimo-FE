@@ -58,7 +58,7 @@ type TodoItemsInfoType = TodoListProps["todoItemsInfo"][0];
 const validTypes: (keyof TodoItemsInfoType)[] = [
   "checked",
   "id",
-  "mood",
+  "reported",
   "targetDate",
   "title",
 ];

@@ -1,6 +1,6 @@
 // import Image from "next/image";
 
-import AppBar from "@/components/main/AppBar/AppBar";
+import { AppBar } from "@/components/shared";
 import GoalInfo from "@/components/shared/GoalInfo/GoalInfo";
 import TodoList from "@/components/main/TodoList/TodoList";
 import GoalTitleArea from "@/components/main/GoalTitleArea/GoalTitleArea";
@@ -124,11 +124,11 @@ const Main = () => {
           className="w-full h-full relative bg-white inline-flex flex-col flex-1 justify-start  gap-1"
         >
           <div className="flex justify-end w-full">
-            <AppBar points={1000} />
+            <AppBar type="main" />
           </div>
           <Banner
             title="목표는 멀어도 나는 계속 가는 중"
-            tag="모티모오 ㅏ함께 한 지 1일차"
+            tag="모티모와 함께 한 지 1일차"
           />
           <GoalMenuContainer />
           <div className="w-full flex-1 p-4 bg-background-normal inline-flex flex-col justify-start items-start gap-2 ">

@@ -4,7 +4,6 @@ import localFont from "next/font/local";
 import "./globals.css";
 import ModalRenderer from "./_components/ModalRenderer";
 import { MSWComponent } from "@/components/_mocks/MSWComponent";
-import ModalRenderer from "./_components/ModalRenderer";
 
 const customFont = localFont({
   src: "../public/fonts/SUIT-Variable.woff2",
