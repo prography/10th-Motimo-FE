@@ -9,7 +9,6 @@ const meta: Meta<typeof UserProfile> = {
     },
     tags: ['autodocs'],
     argTypes: {
-        onEdit: { action: 'edit clicked' },
         onAddInterests: { action: 'add interests clicked' },
     },
 };

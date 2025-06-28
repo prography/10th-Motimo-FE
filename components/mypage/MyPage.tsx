@@ -86,7 +86,6 @@ export function MyPage({ className = "" }: MyPageProps) {
                             <UserProfile
                                 name={user.name}
                                 profileImage={user.profileImage}
-                                onEdit={() => console.log("Edit profile")}
                                 onAddInterests={() => console.log("Add interests")}
                             />
                         </div>

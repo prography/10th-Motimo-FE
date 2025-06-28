@@ -2,11 +2,11 @@
 
 import { Button } from "@/components/shared/Button/Button";
 import { UserIcon } from "@/components/icons/UserIcon";
+import { useRouter } from "next/navigation";
 
 interface UserProfileProps {
     name: string;
     profileImage?: string;
-    onEdit: () => void;
     onAddInterests: () => void;
     className?: string;
 }
@@ -14,10 +14,15 @@ interface UserProfileProps {
 export function UserProfile({
     name,
     profileImage,
-    onEdit,
     onAddInterests,
     className = ""
 }: UserProfileProps) {
+    const router = useRouter();
+
+    const handleEdit = () => {
+        router.push('/mypage/edit');
+    };
+
     return (
         <div className={`flex flex-col items-center gap-4 ${className}`}>
             {/* Profile Section */}
@@ -38,7 +43,7 @@ export function UserProfile({
 
                     {/* Edit Button */}
                     <button
-                        onClick={onEdit}
+                        onClick={handleEdit}
                         className="absolute -bottom-1 -right-1 w-6 h-6 bg-Color-white border border-Color-gray-20 rounded-full flex items-center justify-center"
                     >
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

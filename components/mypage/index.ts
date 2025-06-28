@@ -4,4 +4,5 @@ export { PointsDisplay } from './PointsDisplay';
 export { NavigationList } from './NavigationList';
 export { GuestLoginSection } from './GuestLoginSection';
 export { NotificationSetup } from './NotificationSetup';
-export { TermsOfService } from './TermsOfService'; 
+export { TermsOfService } from './TermsOfService';
+export { EditProfile } from './EditProfile'; 
