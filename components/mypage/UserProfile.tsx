@@ -63,7 +63,7 @@ export function UserProfile({
                 variant="filled"
                 size="s"
                 onClick={onAddInterests}
-                className="bg-Color-gray-10 border border-Color-gray-20"
+                className="bg-Color-gray-10 border border-Color-gray-20 text-black"
                 icon={
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                         <path
