@@ -113,7 +113,7 @@ export const GroupChatItem = ({
           <button 
             className={cn(
               "bg-[#F7F7F8] rounded-lg p-2 flex items-center gap-1 hover:bg-[#E6E8EA] transition-colors cursor-pointer",
-              isMe && !hasReaction && "order-2"
+              isMe && "order-2"
             )}
             onClick={() => onReactionClick?.(id)}
             aria-label={hasReaction ? "반응 취소" : "반응 추가"}
@@ -139,7 +139,7 @@ export const GroupChatItem = ({
           style === "photo" && "p-3 w-[248px]",
           style === "diary" && "p-3 w-[248px]", 
           style === "reaction" && "py-3 px-4 w-[248px]",
-          isMe && !hasReaction && "order-1"
+          isMe && "order-1"
         )}>
           {/* Main content */}
           <div className="flex flex-col gap-2">
