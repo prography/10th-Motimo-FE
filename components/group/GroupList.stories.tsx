@@ -47,7 +47,7 @@ const sampleGroups: GroupData[] = [
   },
 ];
 
-export const Default: Story = {
+export const Primary: Story = {
   args: {
     groups: sampleGroups,
     onJoinGroup: (groupId: string) => {

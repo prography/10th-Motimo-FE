@@ -72,7 +72,7 @@ const sampleMessages: ChatMessage[] = [
   },
 ];
 
-export const Default: Story = {
+export const Primary: Story = {
   args: {
     messages: sampleMessages,
     onReactionClick: action("reactionClicked"),
