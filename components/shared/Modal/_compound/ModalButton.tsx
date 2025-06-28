@@ -1,9 +1,11 @@
 import { ButtonHTMLAttributes } from "react";
+import { Button, ButtonProps } from "../../Button/Button";
 
 export interface ModalButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement> {
   color: "primary" | "alternative" | "negative";
   text: string;
+  disabled?: boolean;
 }
 
 const chooseTextColor = (color: ModalButtonProps["color"]) => {
@@ -19,10 +21,27 @@ const chooseTextColor = (color: ModalButtonProps["color"]) => {
   }
 };
 
-const ModalButton = ({ color, text, ...props }: ModalButtonProps) => {
+const ModalButton = ({
+  color,
+  text,
+  disabled = false,
+  ...props
+}: ModalButtonProps) => {
   return (
     <>
-      <button
+      <Button
+        className={`${chooseTextColor(color)} bg-white w-full justify-center focus:z-10 relative focus:ring-0 focus:ring-offset-0`}
+        disabled={disabled}
+        style={{
+          borderRadius: 0,
+        }}
+        variant="text"
+        size="l"
+        {...props}
+      >
+        {text}
+      </Button>
+      {/* <button
         {...props}
         type={props.type ?? `button`}
         className={`bg-white w-full px-2 py-3 relative  inline-flex flex-col justify-center items-start gap-2 overflow-hidden ${props.className ?? ""}`}
@@ -38,7 +57,7 @@ const ModalButton = ({ color, text, ...props }: ModalButtonProps) => {
           data-type="normal"
           className="w-80 h-12 left-0 top-0 absolute"
         ></div>
-      </button>
+      </button> */}
     </>
   );
 };

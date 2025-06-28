@@ -37,21 +37,27 @@ const ModalContainer = ({
               {bodyNode}
             </div>
           )}
+          <div className="w-full h-[1px] bg-background-normal"></div>
           {footerNode && (
-            <div className="flex  gap-[1px] pt-[1px] bg-background-normal">
+            <div className="flex overflow-visible">
               {footerNode.map((node, idx) => {
                 return (
-                  <div
-                    key={idx}
-                    className="flex-1"
-                    style={{
-                      position: "relative",
-                      borderBottomLeftRadius: idx === 0 ? "8px" : 0,
-                      borderBottomRightRadius:
-                        idx === footerNode.length - 1 ? "8px" : 0,
-                    }}
-                  >
-                    {node}
+                  <div key={idx} className="flex-1">
+                    {idx % 2 == 1 && (
+                      <div className="w-[1px]  bg-background-normal"></div>
+                    )}
+                    <div
+                      key={idx}
+                      className="flex-1"
+                      style={{
+                        position: "relative",
+                        borderBottomLeftRadius: idx === 0 ? "8px" : 0,
+                        borderBottomRightRadius:
+                          idx === footerNode.length - 1 ? "8px" : 0,
+                      }}
+                    >
+                      {node}
+                    </div>
                   </div>
                 );
               })}
