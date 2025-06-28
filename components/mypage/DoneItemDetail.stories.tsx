@@ -42,7 +42,7 @@ export const WithCustomData: Story = {
                             completedDate: "2025.01.15",
                             attachment: {
                                 type: "image",
-                                url: "/placeholder-image.jpg",
+                                url: "https://picsum.photos/200",
                             },
                         },
                         {

@@ -24,7 +24,7 @@ export default function DoneItemDetailPage() {
                                 completedDate: "2025.05.12",
                                 attachment: {
                                     type: "image" as const,
-                                    url: "/placeholder-image.jpg",
+                                    url: "https://picsum.photos/200",
                                 },
                             },
                             {
@@ -33,7 +33,7 @@ export default function DoneItemDetailPage() {
                                 completedDate: "2025.05.12",
                                 attachment: {
                                     type: "file" as const,
-                                    url: "/placeholder-file.pdf",
+                                    url: "https://picsum.photos/200",
                                     name: "파일명이 여기에.pdf",
                                 },
                             },
@@ -54,7 +54,7 @@ export default function DoneItemDetailPage() {
                                 completedDate: "2025.05.12",
                                 attachment: {
                                     type: "image" as const,
-                                    url: "/placeholder-image.jpg",
+                                    url: "https://picsum.photos/200",
                                 },
                             },
                             {

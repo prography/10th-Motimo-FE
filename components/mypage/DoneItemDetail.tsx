@@ -47,7 +47,7 @@ const defaultGoalDetail: DoneGoalDetail = {
                     completedDate: "2025.05.12",
                     attachment: {
                         type: "image",
-                        url: "/placeholder-image.jpg",
+                        url: "https://picsum.photos/200",
                     },
                 },
                 {
@@ -56,7 +56,7 @@ const defaultGoalDetail: DoneGoalDetail = {
                     completedDate: "2025.05.12",
                     attachment: {
                         type: "file",
-                        url: "/placeholder-file.pdf",
+                        url: "https://picsum.photos/200",
                         name: "파일명이 여기에.pdf",
                     },
                 },
@@ -77,7 +77,7 @@ const defaultGoalDetail: DoneGoalDetail = {
                     completedDate: "2025.05.12",
                     attachment: {
                         type: "image",
-                        url: "/placeholder-image.jpg",
+                        url: "https://picsum.photos/200",
                     },
                 },
                 {
