@@ -144,17 +144,8 @@
   --tracking-letterSpacing-5: -1%;
   --tracking-letterSpacing-6: -1%;
   --tracking-letterSpacing-7: -1%;
-  --non-mapped-paragraphSpacing-0: 0;
-  --non-mapped-paragraphSpacing-1: 0;
-  --non-mapped-paragraphSpacing-2: 0;
-  --non-mapped-paragraphSpacing-3: 0;
-  --non-mapped-paragraphSpacing-4: 0;
-  --non-mapped-paragraphSpacing-5: 0;
-  --non-mapped-paragraphSpacing-6: 0;
-  --non-mapped-paragraphSpacing-7: 0;
-  --non-mapped-textCase-none: none;
-  --non-mapped-textDecoration-none: none;
   --spacing-paragraphIndent-0: 0px;
   --color-line-normal: #cdd1d5;
   --color-line-disabled: #8a949e;
+  --color-line-strong: #000000;
 }
