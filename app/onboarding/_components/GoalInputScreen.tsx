@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AppBar } from "@/components/shared/AppBar/AppBar";
 import { ButtonRound } from "@/components/shared/ButtonRound/ButtonRound";
+import ToolTip from "@/components/shared/ToolTip/ToolTip";
 
 interface GoalInputScreenProps {
   goal: string;
@@ -46,7 +47,7 @@ export default function GoalInputScreen({ goal, onGoalChange, onNext, onBack }: 
 
         {/* Text Field */}
         <div className="relative mb-8">
-          <div className="relative bg-background-alternative p-2 min-h-12">
+          {/* <div className="relative bg-background-alternative p-2 min-h-12">
             <div className="flex items-stretch gap-2 p-1 min-h-8">
               {isFocused && !goal && (
                 <div className="w-[1px] bg-label-primary"></div>
@@ -63,25 +64,11 @@ export default function GoalInputScreen({ goal, onGoalChange, onNext, onBack }: 
               />
             </div>
             <div className="absolute bottom-0 left-0 w-full h-[1px] bg-line-normal"></div>
-          </div>
+          </div> */}
 
           {/* Tooltip */}
           {showTooltip && (
-            <div className="absolute top-[48px] left-4 z-10">
-              <div className="relative">
-                <div className="bg-label-primary rounded-lg p-3 max-w-[283px]">
-                  <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-label-alternative flex items-center justify-center">
-                      <div className="w-6 h-6 bg-background-normal rounded"></div>
-                    </div>
-                    <div className="text-xs font-medium text-background-alternative leading-[1.4]">
-                      올해 책 100권 읽기, 체지방 감량, 포폴 완성,{"\n"}자격증 취득, 취뽀하기 등
-                    </div>
-                  </div>
-                </div>
-                <div className="absolute -top-2 left-[134px] w-4 h-2 bg-label-primary"></div>
-              </div>
-            </div>
+              <ToolTip content="올해 책 100권 읽기, 체지방 감량, 포폴 완성,&#10;자격증 취득, 취뽀하기 등" />
           )}
 
           {/* Character Count Error */}
