@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronLeftIcon } from "@/components/icons/ChevronLeftIcon";
 import { AppBar } from "@/components/shared/AppBar/AppBar";
+import { ButtonRound } from "@/components/shared/ButtonRound/ButtonRound";
 
 interface PeriodSelectionScreenProps {
   periodType: "months" | "date";
@@ -234,17 +235,12 @@ export default function PeriodSelectionScreen({
 
       {/* Next Button */}
       <div className="px-4 pb-14">
-        <button
+        <ButtonRound
           onClick={onNext}
           disabled={!isNextEnabled}
-          className={`w-full h-14 rounded-full font-bold text-xl ${
-            isNextEnabled
-              ? "bg-label-normal text-background-alternative"
-              : "bg-background-disabled text-label-disabled"
-          }`}
         >
           다음
-        </button>
+        </ButtonRound>
       </div>
     </div>
   );

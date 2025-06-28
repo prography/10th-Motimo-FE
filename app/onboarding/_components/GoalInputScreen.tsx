@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AppBar } from "@/components/shared/AppBar/AppBar";
+import { ButtonRound } from "@/components/shared/ButtonRound/ButtonRound";
 
 interface GoalInputScreenProps {
   goal: string;
@@ -94,7 +95,7 @@ export default function GoalInputScreen({ goal, onGoalChange, onNext, onBack }: 
 
       {/* Next Button */}
       <div className="px-4 pb-14">
-        <button
+        <ButtonRound
           onClick={() => {
             if (isNextEnabled) {
               localStorage.setItem("userGoal", goal);
@@ -102,14 +103,9 @@ export default function GoalInputScreen({ goal, onGoalChange, onNext, onBack }: 
             }
           }}
           disabled={!isNextEnabled}
-          className={`w-full h-14 rounded-full font-bold text-xl ${
-            isNextEnabled
-              ? "bg-label-normal text-background-alternative"
-              : "bg-background-disabled text-label-disabled"
-          }`}
         >
           다음
-        </button>
+        </ButtonRound>
       </div>
     </div>
   );

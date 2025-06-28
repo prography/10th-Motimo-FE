@@ -19,7 +19,7 @@ export const ButtonRound = forwardRef<HTMLButtonElement, ButtonRoundProps>(
           "w-full flex items-center justify-center rounded-full font-bold text-xl transition-all duration-200",
           // Size variants
           {
-            "h-14 px-6": size === "default",
+            "h-[56px] px-6": size === "default",
           },
           // Variant styles
           {
