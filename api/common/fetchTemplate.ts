@@ -1,6 +1,6 @@
 const tmpToken = "";
 
-const templateFetch = async (
+const templateFetch = async <T>(
   apiUrl: string,
   method: "GET" | "PUT" | "PATCH" | "POST" | "DELETE",
   body?: object,
@@ -27,7 +27,7 @@ const templateFetch = async (
       else throw new Error(`HTTP 에러! status:${res.status}`);
     }
 
-    const result = await res.json();
+    const result: T = await res.json();
     return result;
   } catch (e) {
     if (onErrorCatch) onErrorCatch(e);
