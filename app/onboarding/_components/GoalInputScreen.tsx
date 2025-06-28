@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeftIcon } from "@/components/icons/ChevronLeftIcon";
+import { AppBar } from "@/components/shared/AppBar/AppBar";
 
 interface GoalInputScreenProps {
   goal: string;
@@ -25,25 +25,11 @@ export default function GoalInputScreen({ goal, onGoalChange, onNext, onBack }: 
 
   return (
     <div className="min-h-screen bg-background-alternative flex flex-col">
-      {/* Status Bar */}
-      <div className="flex justify-between items-end gap-[286px] px-6 py-[10px] h-[52px]">
-        <div className="text-sm font-medium text-label-normal">9:30</div>
-        <div className="flex items-center gap-4">
-          <div className="w-[46px] h-[17px]"></div>
-        </div>
-      </div>
-
-      {/* App Bar with Progress */}
-      <div className="h-14 flex items-center px-3">
-        <button onClick={onBack} className="w-6 h-6 flex items-center justify-center">
-          <ChevronLeftIcon className="w-6 h-6 text-label-normal" />
-        </button>
-        <div className="flex-1 flex justify-center">
-          <div className="w-[232px] h-2 bg-background-assistive rounded-full overflow-hidden">
-            <div className="w-[116px] h-full bg-label-primary rounded-full"></div>
-          </div>
-        </div>
-      </div>
+      <AppBar
+        type="progress"
+        progress={50}
+        onBackClick={onBack}
+      />
 
       {/* Content */}
       <div className="flex-1 px-6 pt-8">

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronLeftIcon } from "@/components/icons/ChevronLeftIcon";
+import { AppBar } from "@/components/shared/AppBar/AppBar";
 
 interface PeriodSelectionScreenProps {
   periodType: "months" | "date";
@@ -114,28 +115,14 @@ export default function PeriodSelectionScreen({
 
   return (
     <div className="min-h-screen bg-background-alternative flex flex-col">
-      {/* Status Bar */}
-      <div className="flex justify-between items-end gap-[286px] px-6 py-[10px] h-[52px]">
-        <div className="text-sm font-medium text-label-normal">9:30</div>
-        <div className="flex items-center gap-4">
-          <div className="w-[46px] h-[17px]"></div>
-        </div>
-      </div>
-
-      {/* App Bar with Progress */}
-      <div className="h-14 flex items-center px-3">
-        <button onClick={onBack} className="w-6 h-6 flex items-center justify-center">
-          <ChevronLeftIcon className="w-6 h-6 text-label-normal" />
-        </button>
-        <div className="flex-1 flex justify-center">
-          <div className="w-[232px] h-2 bg-background-assistive rounded-full overflow-hidden">
-            <div className="w-full h-full bg-label-primary rounded-full"></div>
-          </div>
-        </div>
-      </div>
-
+      <AppBar
+        type="progress"
+        progress={100}
+        onBackClick={onBack}
+      />
+      <div className="py-[8px]" />
       {/* Content */}
-      <div className="flex-1 px-6 pt-8">
+      <div className="flex-1 px-6">
         {/* Title and Description */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-label-strong mb-2">
