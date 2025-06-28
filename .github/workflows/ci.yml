@@ -19,28 +19,16 @@ jobs:
         with:
           node-version: '20'
       
-      - name: Configure npm for CI environment
-        run: |
-          echo "platform=linux" >> .npmrc
-          echo "arch=x64" >> .npmrc
-          echo "optional=false" >> .npmrc
-          echo "fund=false" >> .npmrc
-          echo "audit=false" >> .npmrc
-      
-      - name: Remove esbuild platform-specific packages
-        run: |
-          sed -i '/@esbuild\/win32/d' package.json || true
-          sed -i '/@esbuild\/darwin/d' package.json || true
-          sed -i '/lightningcss-win32/d' package.json || true
-          sed -i '/lightningcss-darwin/d' package.json || true
-      
-      - name: Install dependencies
+      - name: Install dependencies (skip platform-specific packages)
         env:
-          ESBUILD_BINARY_PATH: ""
+          npm_config_target_platform: linux
+          npm_config_target_arch: x64  
+          npm_config_cache: /tmp/.npm
           npm_config_optional: false
           npm_config_fund: false
           npm_config_audit: false
-        run: npm install --legacy-peer-deps --ignore-scripts
+          ESBUILD_BINARY_PATH: ""
+        run: npm install --omit=optional --ignore-scripts --force
       
       - name: Run ESLint
         run: npm run lint
