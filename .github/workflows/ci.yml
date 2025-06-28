@@ -19,8 +19,16 @@ jobs:
         with:
           node-version: '20'
       
+      - name: Remove problematic platform packages from package.json
+        run: |
+          if [ -f package.json ]; then
+            npm pkg delete optionalDependencies.@esbuild/win32-x64 || true
+            npm pkg delete optionalDependencies.@esbuild/darwin-x64 || true
+            npm pkg delete optionalDependencies.@esbuild/darwin-arm64 || true
+          fi
+      
       - name: Install dependencies
-        run: npm install --ignore-scripts --no-optional
+        run: npm install
       
       - name: Run ESLint
         run: npm run lint
