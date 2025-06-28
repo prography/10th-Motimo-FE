@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/shared/AppBar/AppBar";
 import { BottomTabBar } from "@/components/shared/BottomTabBar/BottomTabBar";
 import { UserProfile } from "./UserProfile";
@@ -13,6 +14,7 @@ interface MyPageProps {
 }
 
 export function MyPage({ className = "" }: MyPageProps) {
+    const router = useRouter();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState({
         name: "몰입한 곰돌이",
@@ -40,7 +42,7 @@ export function MyPage({ className = "" }: MyPageProps) {
         {
             label: "알림 설정",
             hasIcon: true,
-            onClick: () => console.log("Navigate to notifications")
+            onClick: () => router.push("/mypage/notifications")
         },
         {
             label: "서비스 이용약관",
