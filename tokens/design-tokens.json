@@ -766,6 +766,10 @@
       "disabled": {
         "value": "{gray.40}",
         "type": "color"
+      },
+      "strong": {
+        "value": "{common.black}",
+        "type": "color"
       }
     }
   },
