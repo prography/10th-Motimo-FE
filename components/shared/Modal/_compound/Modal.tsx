@@ -42,7 +42,7 @@ const ModalContainer = ({
             <div className="flex overflow-visible">
               {footerNode.map((node, idx) => {
                 return (
-                  <>
+                  <div key={idx} className="flex-1">
                     {idx % 2 == 1 && (
                       <div className="w-[1px]  bg-background-normal"></div>
                     )}
@@ -58,7 +58,7 @@ const ModalContainer = ({
                     >
                       {node}
                     </div>
-                  </>
+                  </div>
                 );
               })}
             </div>

@@ -1,8 +1,8 @@
 import { ButtonHTMLAttributes } from "react";
 import { Button, ButtonProps } from "../../Button/Button";
 
-export interface ModalButtonProps extends Omit<ButtonProps, "children"> {
-  // extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ModalButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement> {
   color: "primary" | "alternative" | "negative";
   text: string;
   disabled?: boolean;
@@ -30,7 +30,8 @@ const ModalButton = ({
   return (
     <>
       <Button
-        className={`${chooseTextColor(color)} bg-white w-full justify-center focus:z-10 relative`}
+        className={`${chooseTextColor(color)} bg-white w-full justify-center focus:z-10 relative focus:ring-0 focus:ring-offset-0`}
+        disabled={disabled}
         style={{
           borderRadius: 0,
         }}
