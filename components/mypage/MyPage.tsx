@@ -47,7 +47,7 @@ export function MyPage({ className = "" }: MyPageProps) {
         {
             label: "서비스 이용약관",
             hasIcon: true,
-            onClick: () => console.log("Navigate to terms")
+            onClick: () => router.push("/mypage/terms")
         },
         {
             label: "버전 정보 v1.0",
@@ -58,7 +58,7 @@ export function MyPage({ className = "" }: MyPageProps) {
         {
             label: "서비스 이용약관",
             hasIcon: true,
-            onClick: () => console.log("Navigate to terms")
+            onClick: () => router.push("/mypage/terms")
         },
         {
             label: "버전 정보 v1.0",
