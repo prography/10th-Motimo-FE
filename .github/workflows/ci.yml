@@ -19,16 +19,19 @@ jobs:
         with:
           node-version: '20'
       
-      - name: Install dependencies (skip platform-specific packages)
+      - name: Install dependencies
         env:
           npm_config_target_platform: linux
           npm_config_target_arch: x64  
           npm_config_cache: /tmp/.npm
-          npm_config_optional: false
           npm_config_fund: false
           npm_config_audit: false
-          ESBUILD_BINARY_PATH: ""
-        run: npm install --omit=optional --ignore-scripts --force
+        run: npm install --ignore-scripts --force
+        
+      - name: Install required Linux binaries
+        run: |
+          npm install lightningcss-linux-x64-gnu --save-optional --force || true
+          npm install @esbuild/linux-x64 --save-optional --force || true
       
       - name: Run ESLint
         run: npm run lint
