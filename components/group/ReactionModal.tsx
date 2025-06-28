@@ -9,6 +9,8 @@ import ReactionCool from "@/components/shared/public/reactions/Reaction_Cool.svg
 import ReactionGood from "@/components/shared/public/reactions/Reaction_Good.svg";
 import ReactionLove from "@/components/shared/public/reactions/Reaction_Love.svg";
 
+import ReactionTypes from "@/types/reactionTypes";
+
 interface ReactionModalProps extends ModalCommon {
   onLeaveReaction: (selectedType: ReactionTypes) => Promise<void>;
 }
@@ -64,8 +66,6 @@ const ReactionModal = ({ onLeaveReaction, onClose }: ReactionModalProps) => {
   );
 };
 export default ReactionModal;
-
-type ReactionTypes = "good" | "cool" | "cheerUp" | "best" | "love";
 
 const ReactionSvgs: {
   comp: ReactNode;
