@@ -18,20 +18,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
       
       - name: Install dependencies
-        env:
-          npm_config_target_platform: linux
-          npm_config_target_arch: x64  
-          npm_config_cache: /tmp/.npm
-          npm_config_fund: false
-          npm_config_audit: false
-        run: npm install --ignore-scripts --force
-        
-      - name: Install required Linux binaries
-        run: |
-          npm install lightningcss-linux-x64-gnu --save-optional --force || true
-          npm install @esbuild/linux-x64 --save-optional --force || true
+        run: npm ci
       
       - name: Run ESLint
         run: npm run lint
