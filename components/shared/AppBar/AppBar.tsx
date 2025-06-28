@@ -25,7 +25,7 @@ export const AppBar = ({
 }: AppBarProps) => {
   return (
     <div className={cn(
-      "flex items-center relative w-[360px] h-14 bg-Color-white px-3 py-2",
+      "flex items-center relative w-[360px] h-14 bg-Color-white px-3 h-[56px]",
       {
         "justify-end": type === "main",
         "justify-start": type === "back" || type === "progress",
@@ -55,7 +55,7 @@ export const AppBar = ({
       {/* Progress bar - shown for progress type */}
       {type === "progress" && (
         <div className="flex-1 ml-5 flex items-center">
-          <div className="w-[232px] h-2 bg-Color-gray-10 rounded-full overflow-hidden">
+          <div className="w-full mr-[24px] h-2 bg-Color-gray-10 rounded-full overflow-hidden">
             <div 
               className="h-full bg-Color-primary-50 rounded-full transition-all duration-300 ease-in-out" 
               style={{ width: `${progress}%` }}
