@@ -21,7 +21,7 @@ export const GroupItem = ({
   if (isJoined) {
     return (
       <div className={cn(
-        "flex flex-col justify-center gap-1 p-3 w-[328px] bg-Color-white rounded border",
+        "flex flex-col justify-center gap-1 p-3 w-[328px] bg-Color-white rounded",
         className
       )}>
         {/* Title and notification icon */}
@@ -56,7 +56,7 @@ export const GroupItem = ({
 
   return (
     <div className={cn(
-      "flex flex-col items-end gap-3 p-4 w-[328px] bg-Color-white rounded border",
+      "flex flex-col items-end gap-3 p-4 w-[328px] bg-Color-white rounded",
       className
     )}>
       {/* Goal title */}
