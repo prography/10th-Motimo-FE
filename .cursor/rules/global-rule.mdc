@@ -1,0 +1,11 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+- For every styling, use tailwind css.
+- For tokens, use [tokens.css](mdc:app/tokens.css).
+- For icon and svg, create component at components/icons.
+- Try to reuse components from components/* as much as you can.
+
+- If Component is created, add storybook files as well.
