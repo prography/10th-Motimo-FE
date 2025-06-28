@@ -111,11 +111,6 @@ export default function GoalInputScreen({ goal, onGoalChange, onNext, onBack }: 
           다음
         </button>
       </div>
-
-      {/* Gesture Bar */}
-      <div className="h-6 flex justify-center items-center">
-        <div className="w-[108px] h-1 bg-label-normal rounded-xl"></div>
-      </div>
     </div>
   );
 } 

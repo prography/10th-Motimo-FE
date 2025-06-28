@@ -83,11 +83,6 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
           </button>
         </div>
       </div>
-
-      {/* Gesture Bar */}
-      <div className="h-6 flex justify-center items-center">
-        <div className="w-[108px] h-1 bg-label-normal rounded-xl"></div>
-      </div>
     </div>
   );
 } 
