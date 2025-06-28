@@ -68,7 +68,7 @@ export default function GoalInputScreen({ goal, onGoalChange, onNext, onBack }: 
 
           {/* Tooltip */}
           {showTooltip && (
-            <div className="mt-2">
+            <div className="mt-Number-16">
               <ToolTip content={`올해 책 100권 읽기, 체지방 감량, 포폴 완성,\n자격증 취득, 취뽀하기 등`} />
             </div>
           )}
