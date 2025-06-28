@@ -1,5 +1,7 @@
 "use client";
 
+import { ButtonRound } from "@/components/shared/ButtonRound/ButtonRound";
+
 interface CompletionScreenProps {
   goal: string;
   periodType: "months" | "date";
@@ -106,12 +108,11 @@ export default function CompletionScreen({
 
       {/* Complete Button */}
       <div className="px-4 pb-14">
-        <button
+        <ButtonRound
           onClick={onComplete}
-          className="w-full h-14 bg-label-normal text-background-alternative rounded-full font-bold text-xl"
         >
           확인
-        </button>
+        </ButtonRound>
       </div>
     </div>
   );
