@@ -238,6 +238,12 @@ export interface TodoResultRs {
   fileUrl?: string;
 }
 
+export interface ErrorResponse {
+  /** @format int32 */
+  statusCode?: number;
+  message?: string;
+}
+
 export interface PointRs {
   /**
    * 사용자가 현재 획득한 포인트
@@ -422,6 +428,7 @@ export interface ApiConfig<SecurityDataType = unknown>
 
 export enum ContentType {
   Json = "application/json",
+  JsonApi = "application/vnd.api+json",
   FormData = "multipart/form-data",
   UrlEncoded = "application/x-www-form-urlencoded",
   Text = "text/plain",
@@ -881,14 +888,14 @@ export class Api<SecurityDataType extends unknown> {
      * @summary 세부 목표별 TODO 목록 조회
      * @request GET:/v1/sub-goals/{subGoalId}/todos/incomplete-or-date
      * @secure
-     * @response `200` `CustomSlice` TODO 목록 조회 성공
-     * @response `400` `(TodoRs)[]` 잘못된 요청 데이터
+     * @response `200` `(TodoRs)[]` TODO 목록 조회 성공
+     * @response `400` `ErrorResponse` 잘못된 요청 데이터
      */
     getIncompleteOrTodayTodos: (
       subGoalId: string,
       params: RequestParams = {},
     ) =>
-      this.http.request<CustomSlice, TodoRs[]>({
+      this.http.request<TodoRs[], ErrorResponse>({
         path: `/v1/sub-goals/${subGoalId}/todos/incomplete-or-date`,
         method: "GET",
         secure: true,
