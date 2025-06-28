@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { GroupChatItem } from "./GroupChatItem";
+import type { ReactionTypes } from "@/types/reactionTypes";
 
 export interface ChatMessage {
   id: string;
@@ -13,7 +14,7 @@ export interface ChatMessage {
   isChecked?: boolean;
   diaryText?: string;
   photoUrl?: string;
-  reactionType?: string;
+  reactionType?: ReactionTypes;
   timestamp?: Date;
 }
 

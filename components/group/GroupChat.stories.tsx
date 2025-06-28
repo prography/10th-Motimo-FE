@@ -67,7 +67,7 @@ const sampleMessages: ChatMessage[] = [
     style: "reaction",
     username: "박철수",
     mainText: "홍길동님의 투두에 반응을 남겼어요!",
-    reactionType: "최고!",
+    reactionType: "best",
     hasReaction: false,
   },
 ];
@@ -179,7 +179,7 @@ export const ReactionMessages: Story = {
         style: "reaction",
         username: "박철수",
         mainText: "홍길동님의 투두에 반응을 남겼어요!",
-        reactionType: "최고!",
+        reactionType: "best",
         hasReaction: false,
       },
       {
@@ -188,7 +188,7 @@ export const ReactionMessages: Story = {
         style: "reaction",
         username: "나",
         mainText: "김민수님의 투두에 반응을 남겼어요!",
-        reactionType: "좋아!",
+        reactionType: "love",
         hasReaction: true,
         reactionCount: 1,
       },
@@ -344,7 +344,7 @@ export const AllVariations: Story = {
         style: "reaction",
         username: "이름(닉네임)",
         mainText: "홍길동님의 투두에 반응을 남겼어요!",
-        reactionType: "최고!",
+        reactionType: "best",
         hasReaction: false,
       },
       {
@@ -353,7 +353,7 @@ export const AllVariations: Story = {
         style: "reaction",
         username: "이름(닉네임)",
         mainText: "홍길동님의 투두에 반응을 남겼어요!",
-        reactionType: "최고!",
+        reactionType: "cool",
         hasReaction: false,
       },
       {
@@ -362,7 +362,7 @@ export const AllVariations: Story = {
         style: "reaction",
         username: "이름(닉네임)",
         mainText: "홍길동님의 투두에 반응을 남겼어요!",
-        reactionType: "최고!",
+        reactionType: "love",
         hasReaction: true,
         reactionCount: 2,
       },
@@ -372,7 +372,7 @@ export const AllVariations: Story = {
         style: "reaction",
         username: "이름(닉네임)",
         mainText: "홍길동님의 투두에 반응을 남겼어요!",
-        reactionType: "최고!",
+        reactionType: "cheerUp",
         hasReaction: true,
         reactionCount: 2,
       },
@@ -444,6 +444,59 @@ export const Interactive = () => {
       />
     </div>
   );
+};
+
+export const AllReactionTypes: Story = {
+  args: {
+    messages: [
+      {
+        id: "1",
+        type: "member",
+        style: "reaction",
+        username: "김민수",
+        mainText: "투두에 반응을 남겼어요!",
+        reactionType: "best",
+        hasReaction: false,
+      },
+      {
+        id: "2",
+        type: "me",
+        style: "reaction",
+        username: "나",
+        mainText: "투두에 반응을 남겼어요!",
+        reactionType: "good",
+        hasReaction: false,
+      },
+      {
+        id: "3",
+        type: "member",
+        style: "reaction",
+        username: "이영희",
+        mainText: "투두에 반응을 남겼어요!",
+        reactionType: "cool",
+        hasReaction: false,
+      },
+      {
+        id: "4",
+        type: "me",
+        style: "reaction",
+        username: "나",
+        mainText: "투두에 반응을 남겼어요!",
+        reactionType: "cheerUp",
+        hasReaction: false,
+      },
+      {
+        id: "5",
+        type: "member",
+        style: "reaction",
+        username: "박철수",
+        mainText: "투두에 반응을 남겼어요!",
+        reactionType: "love",
+        hasReaction: false,
+      },
+    ],
+    onReactionClick: action("reactionClicked"),
+  },
 };
 
 export const Empty: Story = {

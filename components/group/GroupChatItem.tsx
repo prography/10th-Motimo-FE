@@ -3,6 +3,14 @@ import { HeartIcon } from "@/components/icons/HeartIcon";
 import { CheckIcon } from "@/components/icons/CheckIcon";
 import Image from "next/image";
 
+// SVG imports
+import ReactionBest from "@/components/shared/public/reactions/Reaction_Best.svg";
+import ReactionGood from "@/components/shared/public/reactions/Reaction_Good.svg";
+import ReactionCool from "@/components/shared/public/reactions/Reaction_Cool.svg";
+import ReactionCheerUp from "@/components/shared/public/reactions/Reaction_CheerUp.svg";
+import ReactionLove from "@/components/shared/public/reactions/Reaction_Love.svg";
+import ReactionTypes from "@/types/reactionTypes";
+
 interface GroupChatItemProps {
   type: "me" | "member";
   style: "todo" | "photo" | "diary" | "reaction";
@@ -14,7 +22,7 @@ interface GroupChatItemProps {
   isChecked?: boolean;
   diaryText?: string;
   photoUrl?: string;
-  reactionType?: string;
+  reactionType?: ReactionTypes;
   className?: string;
   onReactionClick?: (messageId: string) => void;
   id: string;
@@ -45,24 +53,43 @@ const ChatCheckbox = ({
 
 // Reaction illustration component
 const ReactionIllustration = ({ 
-  type = "최고!" 
+  type = "best" 
 }: { 
-  type?: string;
+  type?: ReactionTypes;
 }) => {
+  const reactionConfig = {
+    best: { 
+      Component: ReactionBest,
+      label: "최고!"
+    },
+    good: { 
+      Component: ReactionGood,
+      label: "좋아!"
+    },
+    cool: { 
+      Component: ReactionCool,
+      label: "멋져!"
+    },
+    cheerUp: { 
+      Component: ReactionCheerUp,
+      label: "화이팅!"
+    },
+    love: { 
+      Component: ReactionLove,
+      label: "사랑해!"
+    },
+  };
+
+  const config = reactionConfig[type] || reactionConfig.best;
+  const { Component, label } = config;
+
   return (
-    <div className="w-20 h-20 bg-[#75E38D] rounded-full relative overflow-hidden">
-      {/* Background image placeholder */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#75E38D] to-[#118029]" />
-      
-      {/* Text badge */}
-      <div className="absolute left-[18px] top-[6px] w-11 h-[25px] bg-[#118029] rounded-full flex items-center justify-center">
-        <span className="font-SUIT_Variable font-normal text-[13.7px] leading-[1.4] tracking-[-0.01em] text-white">
-          {type}
-        </span>
-      </div>
-      
-      {/* Illustration placeholder */}
-      <div className="absolute left-[18px] top-[37px] w-[45px] h-[43px] bg-[#118029] opacity-30" />
+    <div className="w-20 h-20 rounded-full relative overflow-hidden">
+      {/* Reaction SVG Component */}
+      <Component 
+        className="w-full h-full object-cover"
+        aria-label={label}
+      />
     </div>
   );
 };
@@ -78,7 +105,7 @@ export const GroupChatItem = ({
   isChecked = true,
   diaryText,
   photoUrl,
-  reactionType = "최고!",
+  reactionType = "best",
   className,
   onReactionClick,
   id,
