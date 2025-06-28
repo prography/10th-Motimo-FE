@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { GroupChatItem } from "./GroupChatItem";
-import type { ReactionTypes } from "@/types/reactionTypes";
+import ReactionTypes from "@/types/reactionTypes";
 
 export interface ChatMessage {
   id: string;
