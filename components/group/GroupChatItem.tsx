@@ -108,13 +108,10 @@ export const GroupChatItem = ({
         "flex items-end gap-1 w-full",
         isMe ? "justify-end" : "justify-start"
       )}>
-        {/* Icon Area - only show for me messages or when has reaction */}
-        {((isMe && style !== "reaction") || hasReaction) && (
+        {/* Icon Area for me messages - render first to appear on the left */}
+        {isMe && style !== "reaction" && (
           <button 
-            className={cn(
-              "bg-[#F7F7F8] rounded-lg p-2 flex items-center gap-1 hover:bg-[#E6E8EA] transition-colors cursor-pointer",
-              isMe && "order-2"
-            )}
+            className="bg-[#F7F7F8] rounded-lg p-2 flex items-center gap-1 hover:bg-[#E6E8EA] transition-colors cursor-pointer"
             onClick={() => onReactionClick?.(id)}
             aria-label={hasReaction ? "반응 취소" : "반응 추가"}
           >
@@ -138,8 +135,7 @@ export const GroupChatItem = ({
           style === "todo" && "py-3 px-4",
           style === "photo" && "p-3 w-[248px]",
           style === "diary" && "p-3 w-[248px]", 
-          style === "reaction" && "py-3 px-4 w-[248px]",
-          isMe && "order-1"
+          style === "reaction" && "py-3 px-4 w-[248px]"
         )}>
           {/* Main content */}
           <div className="flex flex-col gap-2">
@@ -183,19 +179,24 @@ export const GroupChatItem = ({
           </div>
         </div>
 
-        {/* Icon Area for member messages without reaction */}
-        {(!isMe && !hasReaction && style !== "reaction") && (
+        {/* Icon Area for member messages - render last to appear on the right */}
+        {!isMe && style !== "reaction" && (
           <button 
-            className="bg-[#F7F7F8] rounded-lg p-2 hover:bg-[#E6E8EA] transition-colors cursor-pointer"
+            className="bg-[#F7F7F8] rounded-lg p-2 flex items-center gap-1 hover:bg-[#E6E8EA] transition-colors cursor-pointer"
             onClick={() => onReactionClick?.(id)}
-            aria-label="반응 추가"
+            aria-label={hasReaction ? "반응 취소" : "반응 추가"}
           >
             <HeartIcon 
               width={16} 
               height={16} 
-              color="#33363D" 
-              filled={false} 
+              color={hasReaction ? "#EA3429" : "#33363D"} 
+              filled={hasReaction} 
             />
+            {hasReaction && (
+              <span className="font-SUIT_Variable font-medium text-xs leading-[1.4] tracking-[-0.01em] text-black">
+                {reactionCount}
+              </span>
+            )}
           </button>
         )}
       </div>
