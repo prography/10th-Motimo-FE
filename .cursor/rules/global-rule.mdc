@@ -14,3 +14,4 @@ alwaysApply: true
 - For icon and svg, create component at components/icons.
 - Try to reuse components from components/* as much as you can.
 - If Component is created, add storybook files as well.
+- The first example name of storybook should be `Primary` not `Default`
