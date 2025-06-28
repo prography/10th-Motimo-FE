@@ -16,7 +16,7 @@ export function MyPage({ className = "" }: MyPageProps) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState({
         name: "몰입한 곰돌이",
-        profileImage: "/placeholder-profile.jpg",
+        profileImage: "/profile-default.png",
         points: 1000
     });
 
@@ -67,18 +67,10 @@ export function MyPage({ className = "" }: MyPageProps) {
 
     return (
         <div className={`min-h-screen bg-Color-gray-5 flex flex-col ${className}`}>
-            {/* Status Bar */}
-            <div className="flex justify-between items-end gap-[286px] px-6 py-[10px] h-[52px]">
-                <div className="text-sm font-medium text-Color-gray-90">9:30</div>
-                <div className="flex items-center gap-4">
-                    <div className="w-[46px] h-[17px]"></div>
-                </div>
-            </div>
-
             {/* App Bar */}
             <AppBar
+                title="마이페이지"
                 type="main"
-                points={isLoggedIn ? `${user.points.toLocaleString()}P` : "0P"}
                 hasNotification={false}
                 onNotificationClick={() => console.log("Notification clicked")}
             />
