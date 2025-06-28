@@ -1,6 +1,7 @@
 "use client";
 
 import { ButtonRound } from "@/components/shared/ButtonRound/ButtonRound";
+import MotiCheck from "@/components/shared/public/moti-check.svg";
 
 interface CompletionScreenProps {
   goal: string;
@@ -24,7 +25,7 @@ export default function CompletionScreen({
       const today = new Date();
       const diffTime = targetDate.getTime() - today.getTime();
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      
+
       return `${targetDate.getFullYear()}년 ${targetDate.getMonth() + 1}월 ${targetDate.getDate()}일 (${diffDays}일)`;
     }
     return "";
@@ -43,45 +44,14 @@ export default function CompletionScreen({
       {/* Content */}
       <div className="flex-1 flex flex-col items-center justify-center px-6">
         {/* Check Icon Animation */}
-        <div className="relative w-[140px] h-[140px] mb-8">
-          <div className="absolute inset-0 bg-status-positive/20 rounded-full"></div>
-          <div className="absolute top-[10px] left-[43.33px] w-[53.33px] h-[53.33px] bg-status-positive rounded-full flex items-center justify-center">
-            <svg
-              width="24"
-              height="16"
-              viewBox="0 0 24 16"
-              fill="none"
-              className="text-background-alternative"
-            >
-              <path
-                d="M2 8L8 14L22 2"
-                stroke="currentColor"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="animate-pulse"
-              />
-            </svg>
-          </div>
-          
-          {/* Decorative Elements */}
-          <div className="absolute top-[97.86px] left-[39.07px] w-4 h-4 bg-orange-200 rounded-full opacity-50 blur-sm"></div>
-          <div className="absolute top-[97.86px] right-[39.07px] w-4 h-4 bg-orange-200 rounded-full opacity-50 blur-sm"></div>
-          
-          {/* Background Pattern */}
-          <div className="absolute top-[70px] left-[30px] w-20 h-15">
-            <div className="relative">
-              {/* Decorative circles and shapes */}
-              <div className="absolute w-7 h-7 bg-background-normal/30 rounded-full"></div>
-              <div className="absolute right-0 w-7 h-7 bg-background-normal/30 rounded-full"></div>
-              <div className="absolute top-2 left-8 w-20 h-12 bg-background-alternative/50 rounded-2xl"></div>
-            </div>
-          </div>
-        </div>
+        <MotiCheck
+          className="w-[140px] h-[140px] object-cover"
+          aria-label={"moti-check"}
+        />
 
         {/* Title */}
-        <h1 className="text-2xl font-bold text-label-strong text-center mb-8">
-          목표 설정이{"\n"}완료되었어요!
+        <h1 className="text-2xl font-bold text-label-strong text-center mb-8 mt-Number-16 whitespace-pre-line">
+          {`목표 설정이\n완료되었어요!`}
         </h1>
 
         {/* Goal Summary Card */}
