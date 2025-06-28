@@ -14,6 +14,7 @@ import TrashCanSvg from "@/public/images/Trash_Full.svg";
 import { TodoItemsInfo } from "@/types/todoList";
 import useModal from "@/hooks/useModal";
 import ModalAddingSubGoal from "@/components/shared/Modal/ModalAddingSubGoal/ModalAddingSubGoal";
+import useTodoList from "@/hooks/main/queries/useTodoList";
 
 /** api generator로부터 받은 타입을 사용 */
 
@@ -36,6 +37,7 @@ const TodoList = ({
 }: TodoListProps) => {
   // 펼친 상태가 기본
   const [isFolded, setIsFolded] = useState(false);
+  const {} = useTodoList();
 
   if (!subGoal)
     return (
@@ -71,21 +73,20 @@ const TodoList = ({
             </div>
           )}
         </header>
-        {
-          <div
-            className={`transition-all duration-300 grid w-full`}
-            style={{ gridTemplateRows: isFolded ? "0fr" : "1fr" }}
-          >
-            <div className="min-h-0 overflow-hidden">
-              <TodoArea
-                todoItemsInfo={todoItemsInfo}
-                hasTodoItemsInfo={hasTodoItemsInfo}
-                todoCheckedLen={todoCheckedLen}
-                todoTotalLen={todoTotalLen}
-              />
-            </div>
+
+        <div
+          className={`transition-all duration-300 grid w-full`}
+          style={{ gridTemplateRows: isFolded ? "0fr" : "1fr" }}
+        >
+          <div className="min-h-0 overflow-hidden">
+            <TodoArea
+              todoItemsInfo={todoItemsInfo}
+              hasTodoItemsInfo={hasTodoItemsInfo}
+              todoCheckedLen={todoCheckedLen}
+              todoTotalLen={todoTotalLen}
+            />
           </div>
-        }
+        </div>
       </div>
     </>
   );
