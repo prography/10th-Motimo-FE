@@ -39,16 +39,7 @@ const getTodosOnSubGoal = async (subGoalId: string) => {
     "GET",
   );
 
-  const convertedResult: TodoItemsInfo[] =
-    result?.map((todoRs) => ({
-      id: todoRs.id ?? "",
-      title: todoRs.title ?? "",
-      checked: todoRs.status === TodoRsStatusEnum.COMPLETE,
-      reported: !!todoRs.todoResultId,
-      targetDate: todoRs.date ? new Date(todoRs.date) : undefined,
-    })) ?? [];
-
-  return convertedResult;
+  return result ?? [];
 };
 
 export {
