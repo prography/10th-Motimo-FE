@@ -32,9 +32,11 @@ const ReactionModal = ({ onLeaveReaction, onClose }: ReactionModalProps) => {
             <section className="flex justify-center items-center flex-wrap gap-2">
               {ReactionSvgs.map(({ comp: ReactionSvg, type }) => {
                 const selected = selectedType === type;
-                const selectedOther = type && selectedType !== type;
+                const selectedOther = selectedType && selectedType !== type;
                 return (
                   <button
+                    key={type}
+                    onClick={() => setSelected(type)}
                     type="button"
                     className={`flex justify-center items-center w-[88px] h-[88px] relative bg-background-alternative rounded  outline-1 outline-offset-[-1px]  overflow-hidden
                      ${selected ? " outline-line-strong shadow-[0px_1px_4px_0px_rgba(0,0,0,0.10)] " : "outline-line-normal"}
