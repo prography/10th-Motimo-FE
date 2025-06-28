@@ -5,6 +5,7 @@ interface GroupItemProps {
   isJoined: boolean;
   title: string;
   lastActivityDate?: string;
+  hasNotification?: boolean;
   onJoinClick?: () => void;
   onNotificationClick?: () => void;
   className?: string;
@@ -14,6 +15,7 @@ export const GroupItem = ({
   isJoined,
   title,
   lastActivityDate,
+  hasNotification = false,
   onJoinClick,
   onNotificationClick,
   className,
@@ -34,7 +36,12 @@ export const GroupItem = ({
             onClick={onNotificationClick}
             aria-label="알림 설정"
           >
-            <BellIcon width={20} height={20} color="#33363D" />
+            <BellIcon 
+              width={20} 
+              height={20} 
+              color="#33363D"
+              hasNotification={hasNotification}
+            />
           </button>
         </div>
 

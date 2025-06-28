@@ -6,6 +6,7 @@ export interface GroupData {
   isJoined: boolean;
   title: string;
   lastActivityDate?: string;
+  hasNotification?: boolean;
 }
 
 interface GroupListProps {
@@ -32,6 +33,7 @@ export const GroupList = ({
           isJoined={group.isJoined}
           title={group.title}
           lastActivityDate={group.lastActivityDate}
+          hasNotification={group.hasNotification}
           onJoinClick={() => onJoinGroup?.(group.id)}
           onNotificationClick={() => onNotificationClick?.(group.id)}
         />

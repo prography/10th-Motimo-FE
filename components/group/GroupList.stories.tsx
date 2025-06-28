@@ -19,6 +19,7 @@ const sampleGroups: GroupData[] = [
     isJoined: true,
     title: "아 그룹명뭐로하지",
     lastActivityDate: "2025.05.12",
+    hasNotification: true,
   },
   {
     id: "2",
@@ -30,6 +31,7 @@ const sampleGroups: GroupData[] = [
     isJoined: true,
     title: "프로그래밍 스터디 그룹",
     lastActivityDate: "2025.05.15",
+    hasNotification: false,
   },
   {
     id: "4",
@@ -41,6 +43,7 @@ const sampleGroups: GroupData[] = [
     isJoined: true,
     title: "독서 클럽",
     lastActivityDate: "2025.05.10",
+    hasNotification: true,
   },
 ];
 
@@ -82,6 +85,7 @@ export const SingleJoinedGroup: Story = {
         isJoined: true,
         title: "UI/UX 디자인 스터디",
         lastActivityDate: "2025.05.18",
+        hasNotification: true,
       },
     ],
     onNotificationClick: (groupId: string) => {
@@ -111,6 +115,37 @@ export const EmptyState: Story = {
   },
 };
 
+export const WithNotifications: Story = {
+  args: {
+    groups: [
+      {
+        id: "1",
+        isJoined: true,
+        title: "알림이 있는 그룹 1",
+        lastActivityDate: "2025.05.20",
+        hasNotification: true,
+      },
+      {
+        id: "2",
+        isJoined: true,
+        title: "알림이 없는 그룹",
+        lastActivityDate: "2025.05.19",
+        hasNotification: false,
+      },
+      {
+        id: "3",
+        isJoined: true,
+        title: "알림이 있는 그룹 2",
+        lastActivityDate: "2025.05.18",
+        hasNotification: true,
+      },
+    ],
+    onNotificationClick: (groupId: string) => {
+      console.log("Notification clicked for group:", groupId);
+    },
+  },
+};
+
 export const ManyGroups: Story = {
   args: {
     groups: [
@@ -120,6 +155,7 @@ export const ManyGroups: Story = {
         isJoined: true,
         title: "운동 동기부여 그룹",
         lastActivityDate: "2025.05.20",
+        hasNotification: false,
       },
       {
         id: "7",
@@ -131,6 +167,7 @@ export const ManyGroups: Story = {
         isJoined: true,
         title: "창업 아이디어 공유",
         lastActivityDate: "2025.05.14",
+        hasNotification: true,
       },
     ],
     onJoinGroup: (groupId: string) => {
