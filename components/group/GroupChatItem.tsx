@@ -30,28 +30,12 @@ const ChatCheckbox = ({
     <div className="flex items-center gap-1 py-1">
       <div className={cn(
         "w-4 h-4 rounded-[4px] flex items-center justify-center",
-        checked ? "bg-Color-gray-80" : "border border-Color-gray-80"
+        checked ? "bg-[#33363D]" : "border border-[#33363D]"
       )}>
-        {checked && <CheckIcon width={13} height={13} />}
+        {checked && <CheckIcon width={14} height={14} color="#FFFFFF" />}
       </div>
-      <span className="font-SUIT_Variable font-normal text-sm leading-[1.5] tracking-[-0.01em] text-Color-gray-80">
+      <span className="font-SUIT_Variable font-normal text-sm leading-[1.5] tracking-[-0.01em] text-[#33363D]">
         {label}
-      </span>
-    </div>
-  );
-};
-
-// Reaction badge component
-const ReactionBadge = ({ 
-  count 
-}: { 
-  count: number;
-}) => {
-  return (
-    <div className="flex items-center gap-1 p-2">
-      <HeartIcon width={16} height={16} color="#EA3429" filled />
-      <span className="font-SUIT_Variable font-medium text-xs leading-[1.4] tracking-[-0.01em] text-Color-black">
-        {count}
       </span>
     </div>
   );
@@ -59,16 +43,24 @@ const ReactionBadge = ({
 
 // Reaction illustration component
 const ReactionIllustration = ({ 
-  type = "최고" 
+  type = "최고!" 
 }: { 
   type?: string;
 }) => {
   return (
-    <div className="w-20 h-20 bg-[#75E38D] rounded-full relative flex items-center justify-center">
-      {/* Simplified illustration - in real app would use actual graphics */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="font-bold text-sm text-Color-white">{type}</span>
+    <div className="w-20 h-20 bg-[#75E38D] rounded-full relative overflow-hidden">
+      {/* Background image placeholder */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#75E38D] to-[#118029]" />
+      
+      {/* Text badge */}
+      <div className="absolute left-[18px] top-[6px] w-11 h-[25px] bg-[#118029] rounded-full flex items-center justify-center">
+        <span className="font-SUIT_Variable font-normal text-[13.7px] leading-[1.4] tracking-[-0.01em] text-white">
+          {type}
+        </span>
       </div>
+      
+      {/* Illustration placeholder */}
+      <div className="absolute left-[18px] top-[37px] w-[45px] h-[43px] bg-[#118029] opacity-30" />
     </div>
   );
 };
@@ -84,7 +76,7 @@ export const GroupChatItem = ({
   isChecked = true,
   diaryText,
   photoUrl,
-  reactionType = "최고",
+  reactionType = "최고!",
   className,
 }: GroupChatItemProps) => {
   const isMe = type === "me";
@@ -93,45 +85,72 @@ export const GroupChatItem = ({
     <div
       className={cn(
         "flex flex-col gap-1 w-[328px]",
-        isMe && "items-end",
+        isMe ? "items-end" : "items-start",
         className
       )}
     >
       {/* Username */}
       <div className={cn(
-        "font-SUIT_Variable font-bold text-sm leading-[1.4] tracking-[-0.01em] text-Color-gray-90 w-full",
-        isMe ? "text-right" : "text-left"
+        "w-full",
+        isMe 
+          ? "font-SUIT_Variable font-bold text-sm leading-[1.4] tracking-[-0.01em] text-[#1E2124] text-right" 
+          : "font-SUIT_Variable font-bold text-sm leading-[1.4] tracking-[-0.01em] text-[#1E2124] text-left"
       )}>
         {username}
       </div>
 
-      {/* Chat container */}
+      {/* Container */}
       <div className={cn(
-        "flex gap-1 items-end w-full",
-        isMe && "flex-row-reverse"
+        "flex items-end gap-1 w-full",
+        isMe ? "justify-end" : "justify-start"
       )}>
-        {/* Message bubble */}
+        {/* Icon Area - only show for me messages or when has reaction */}
+        {((isMe && style !== "reaction") || hasReaction) && (
+          <div className={cn(
+            "bg-[#F7F7F8] rounded-lg p-2 flex items-center gap-1",
+            isMe && !hasReaction && "order-2"
+          )}>
+            <HeartIcon 
+              width={16} 
+              height={16} 
+              color={hasReaction ? "#EA3429" : "#33363D"} 
+              filled={hasReaction} 
+            />
+            {hasReaction && (
+              <span className="font-SUIT_Variable font-medium text-xs leading-[1.4] tracking-[-0.01em] text-black">
+                {reactionCount}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Message Bubble */}
         <div className={cn(
-          "bg-Color-gray-05 rounded-lg",
-          style === "todo" ? "p-3" : "p-3",
-          style === "photo" ? "max-w-[248px]" : style === "reaction" ? "max-w-[248px]" : "max-w-fit"
+          "bg-[#F7F7F8] rounded-lg",
+          style === "todo" && "py-3 px-4",
+          style === "photo" && "p-3 w-[248px]",
+          style === "diary" && "p-3 w-[248px]", 
+          style === "reaction" && "py-3 px-4 w-[248px]",
+          isMe && !hasReaction && "order-1"
         )}>
           {/* Main content */}
           <div className="flex flex-col gap-2">
-            {/* Text and checkbox */}
+            {/* Text content */}
             <div className="flex flex-col gap-1">
-              <span className="font-SUIT_Variable font-bold text-sm leading-[1.4] tracking-[-0.01em] text-Color-gray-80">
+              {/* Main text */}
+              <span className="font-SUIT_Variable font-bold text-sm leading-[1.4] tracking-[-0.01em] text-[#33363D]">
                 {mainText}
               </span>
               
+              {/* Checkbox for todo, photo, and diary styles */}
               {(style === "todo" || style === "photo" || style === "diary") && checkboxLabel && (
                 <ChatCheckbox checked={isChecked} label={checkboxLabel} />
               )}
             </div>
 
-            {/* Photo */}
+            {/* Photo for photo style */}
             {style === "photo" && photoUrl && (
-              <div className="w-[116px] h-[116px] rounded-lg border border-Color-gray-30 overflow-hidden">
+              <div className="w-[116px] h-[116px] rounded-lg border border-[#CDD1D5] overflow-hidden">
                 <Image 
                   src={photoUrl} 
                   alt="첨부 이미지" 
@@ -142,24 +161,29 @@ export const GroupChatItem = ({
               </div>
             )}
 
-            {/* Diary text */}
+            {/* Diary text for diary style */}
             {style === "diary" && diaryText && (
-              <p className="font-SUIT_Variable font-medium text-sm leading-[1.4] tracking-[-0.01em] text-Color-gray-60">
+              <p className="font-SUIT_Variable font-medium text-sm leading-[1.4] tracking-[-0.01em] text-[#464C53]">
                 {diaryText}
               </p>
             )}
 
-            {/* Reaction illustration */}
+            {/* Reaction illustration for reaction style */}
             {style === "reaction" && (
               <ReactionIllustration type={reactionType} />
             )}
           </div>
         </div>
 
-        {/* Reaction badge */}
-        {hasReaction && (
-          <div className="bg-Color-gray-05 rounded-lg">
-            <ReactionBadge count={reactionCount} />
+        {/* Icon Area for member messages without reaction */}
+        {(!isMe && !hasReaction && style !== "reaction") && (
+          <div className="bg-[#F7F7F8] rounded-lg p-2">
+            <HeartIcon 
+              width={16} 
+              height={16} 
+              color="#33363D" 
+              filled={false} 
+            />
           </div>
         )}
       </div>
