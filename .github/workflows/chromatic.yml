@@ -34,7 +34,18 @@ jobs:
           node-version: "20" # 프로젝트에 맞는 Node.js 버전
 
       - name: Install dependencies
-        run: npm install # 또는 npm install
+        env:
+          npm_config_target_platform: linux
+          npm_config_target_arch: x64  
+          npm_config_cache: /tmp/.npm
+          npm_config_fund: false
+          npm_config_audit: false
+        run: npm install --ignore-scripts --force
+        
+      - name: Install required Linux binaries
+        run: |
+          npm install lightningcss-linux-x64-gnu --save-optional --force || true
+          npm install @esbuild/linux-x64 --save-optional --force || true
 
       - name: Build Storybook (선택 사항, 필요시)
         run: npm run build-storybook # 또는 npm run build-storybook
