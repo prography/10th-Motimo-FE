@@ -37,7 +37,7 @@ export function MyPage({ className = "" }: MyPageProps) {
         {
             label: "완료한 목표/투두 보기",
             hasIcon: true,
-            onClick: () => console.log("Navigate to completed goals")
+            onClick: () => router.push("/mypage/done")
         },
         {
             label: "알림 설정",
