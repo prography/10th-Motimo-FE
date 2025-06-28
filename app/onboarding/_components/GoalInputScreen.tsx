@@ -47,7 +47,7 @@ export default function GoalInputScreen({ goal, onGoalChange, onNext, onBack }: 
 
         {/* Text Field */}
         <div className="relative mb-8">
-          {/* <div className="relative bg-background-alternative p-2 min-h-12">
+          <div className="relative bg-background-alternative p-2 min-h-12">
             <div className="flex items-stretch gap-2 p-1 min-h-8">
               {isFocused && !goal && (
                 <div className="w-[1px] bg-label-primary"></div>
@@ -64,11 +64,13 @@ export default function GoalInputScreen({ goal, onGoalChange, onNext, onBack }: 
               />
             </div>
             <div className="absolute bottom-0 left-0 w-full h-[1px] bg-line-normal"></div>
-          </div> */}
+          </div>
 
           {/* Tooltip */}
           {showTooltip && (
-              <ToolTip content="올해 책 100권 읽기, 체지방 감량, 포폴 완성,&#10;자격증 취득, 취뽀하기 등" />
+            <div className="mt-2">
+              <ToolTip content={`올해 책 100권 읽기, 체지방 감량, 포폴 완성,\n자격증 취득, 취뽀하기 등`} />
+            </div>
           )}
 
           {/* Character Count Error */}
