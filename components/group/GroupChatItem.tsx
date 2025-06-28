@@ -16,6 +16,8 @@ interface GroupChatItemProps {
   photoUrl?: string;
   reactionType?: string;
   className?: string;
+  onReactionClick?: (messageId: string) => void;
+  id: string;
 }
 
 // Checkbox component for todo items
@@ -78,6 +80,8 @@ export const GroupChatItem = ({
   photoUrl,
   reactionType = "최고!",
   className,
+  onReactionClick,
+  id,
 }: GroupChatItemProps) => {
   const isMe = type === "me";
 
@@ -106,10 +110,14 @@ export const GroupChatItem = ({
       )}>
         {/* Icon Area - only show for me messages or when has reaction */}
         {((isMe && style !== "reaction") || hasReaction) && (
-          <div className={cn(
-            "bg-[#F7F7F8] rounded-lg p-2 flex items-center gap-1",
-            isMe && !hasReaction && "order-2"
-          )}>
+          <button 
+            className={cn(
+              "bg-[#F7F7F8] rounded-lg p-2 flex items-center gap-1 hover:bg-[#E6E8EA] transition-colors cursor-pointer",
+              isMe && !hasReaction && "order-2"
+            )}
+            onClick={() => onReactionClick?.(id)}
+            aria-label={hasReaction ? "반응 취소" : "반응 추가"}
+          >
             <HeartIcon 
               width={16} 
               height={16} 
@@ -121,7 +129,7 @@ export const GroupChatItem = ({
                 {reactionCount}
               </span>
             )}
-          </div>
+          </button>
         )}
 
         {/* Message Bubble */}
@@ -177,14 +185,18 @@ export const GroupChatItem = ({
 
         {/* Icon Area for member messages without reaction */}
         {(!isMe && !hasReaction && style !== "reaction") && (
-          <div className="bg-[#F7F7F8] rounded-lg p-2">
+          <button 
+            className="bg-[#F7F7F8] rounded-lg p-2 hover:bg-[#E6E8EA] transition-colors cursor-pointer"
+            onClick={() => onReactionClick?.(id)}
+            aria-label="반응 추가"
+          >
             <HeartIcon 
               width={16} 
               height={16} 
               color="#33363D" 
               filled={false} 
             />
-          </div>
+          </button>
         )}
       </div>
     </div>

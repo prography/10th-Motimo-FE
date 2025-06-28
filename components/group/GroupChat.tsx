@@ -20,11 +20,13 @@ export interface ChatMessage {
 interface GroupChatProps {
   messages: ChatMessage[];
   className?: string;
+  onReactionClick?: (messageId: string) => void;
 }
 
 export const GroupChat = ({ 
   messages, 
-  className 
+  className,
+  onReactionClick
 }: GroupChatProps) => {
   return (
     <div className={cn(
@@ -34,6 +36,7 @@ export const GroupChat = ({
       {messages.map((message) => (
         <GroupChatItem
           key={message.id}
+          id={message.id}
           type={message.type}
           style={message.style}
           hasReaction={message.hasReaction}
@@ -45,6 +48,7 @@ export const GroupChat = ({
           diaryText={message.diaryText}
           photoUrl={message.photoUrl}
           reactionType={message.reactionType}
+          onReactionClick={onReactionClick}
         />
       ))}
     </div>

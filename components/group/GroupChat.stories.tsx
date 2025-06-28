@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { GroupChat, ChatMessage } from "./GroupChat";
+import { action } from "@storybook/addon-actions";
+import { useState } from "react";
 
 const meta: Meta<typeof GroupChat> = {
   title: "Group/GroupChat",
@@ -7,6 +9,7 @@ const meta: Meta<typeof GroupChat> = {
   tags: ["autodocs"],
   argTypes: {
     className: { control: "text" },
+    onReactionClick: { action: "reactionClicked" },
   },
 };
 
@@ -72,6 +75,7 @@ const sampleMessages: ChatMessage[] = [
 export const Default: Story = {
   args: {
     messages: sampleMessages,
+    onReactionClick: action("reactionClicked"),
   },
 };
 
@@ -100,6 +104,7 @@ export const TodoMessages: Story = {
         reactionCount: 5,
       },
     ],
+    onReactionClick: action("reactionClicked"),
   },
 };
 
@@ -130,6 +135,7 @@ export const PhotoMessages: Story = {
         reactionCount: 2,
       },
     ],
+    onReactionClick: action("reactionClicked"),
   },
 };
 
@@ -160,6 +166,7 @@ export const DiaryMessages: Story = {
         hasReaction: false,
       },
     ],
+    onReactionClick: action("reactionClicked"),
   },
 };
 
@@ -186,6 +193,7 @@ export const ReactionMessages: Story = {
         reactionCount: 1,
       },
     ],
+    onReactionClick: action("reactionClicked"),
   },
 };
 
@@ -369,11 +377,78 @@ export const AllVariations: Story = {
         reactionCount: 2,
       },
     ],
+    onReactionClick: action("reactionClicked"),
   },
+};
+
+export const Interactive = () => {
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      id: "1",
+      type: "member",
+      style: "todo",
+      username: "김민수",
+      mainText: "투두를 완료했어요!",
+      checkboxLabel: "프레이머 공부하기",
+      isChecked: true,
+      hasReaction: false,
+      reactionCount: 0,
+    },
+    {
+      id: "2",
+      type: "me",
+      style: "photo",
+      username: "나",
+      mainText: "투두 기록을 남겼어요!",
+      checkboxLabel: "요리하기",
+      isChecked: true,
+      photoUrl: "https://via.placeholder.com/116",
+      hasReaction: true,
+      reactionCount: 2,
+    },
+  ]);
+
+  const handleReactionClick = (messageId: string) => {
+    setMessages(prev => prev.map(message => {
+      if (message.id === messageId) {
+        const hasReaction = message.hasReaction;
+        const currentCount = message.reactionCount || 0;
+        
+        if (hasReaction) {
+          // 반응 제거
+          const newCount = Math.max(0, currentCount - 1);
+          return {
+            ...message,
+            hasReaction: newCount > 0,
+            reactionCount: newCount,
+          };
+        } else {
+          // 반응 추가
+          return {
+            ...message,
+            hasReaction: true,
+            reactionCount: currentCount + 1,
+          };
+        }
+      }
+      return message;
+    }));
+  };
+
+  return (
+    <div className="max-w-md mx-auto p-4">
+      <h3 className="mb-4 font-bold">💡 하트 아이콘을 클릭해보세요!</h3>
+      <GroupChat 
+        messages={messages} 
+        onReactionClick={handleReactionClick}
+      />
+    </div>
+  );
 };
 
 export const Empty: Story = {
   args: {
     messages: [],
+    onReactionClick: action("reactionClicked"),
   },
 }; 
