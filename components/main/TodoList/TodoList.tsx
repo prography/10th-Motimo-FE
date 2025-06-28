@@ -1,7 +1,15 @@
 "use client";
 
-import TodoItem from "@/components/shared/TodoItem/TodoItem";
-import { Dispatch, Fragment, memo, SetStateAction, useState } from "react";
+import {
+  Dispatch,
+  Fragment,
+  memo,
+  SetStateAction,
+  useState,
+  createContext,
+  useContext,
+} from "react";
+import { KeyedMutator } from "swr";
 import { motion, useMotionValue } from "motion/react";
 import { animate } from "motion";
 
@@ -12,9 +20,16 @@ import PencilSvg from "@/public/images/Edit_Pencil_01.svg";
 import TrashCanSvg from "@/public/images/Trash_Full.svg";
 
 import { TodoItemsInfo } from "@/types/todoList";
-import useModal from "@/hooks/useModal";
+
+import TodoItem from "@/components/shared/TodoItem/TodoItem";
 import ModalAddingSubGoal from "@/components/shared/Modal/ModalAddingSubGoal/ModalAddingSubGoal";
+
+import useModal from "@/hooks/useModal";
 import useTodoList from "@/hooks/main/queries/useTodoList";
+import useOptimisticToggle from "@/hooks/main/useOptimisticToggle";
+
+import { deleteTodo, toggleTodo } from "@/lib/main/todoFetching";
+import { createNewTodoOnSubGoal } from "@/lib/main/subGoalFetching";
 
 /** api generator로부터 받은 타입을 사용 */
 
@@ -26,23 +41,32 @@ interface TodoListProps {
   /** todoToalLen이 0이면 todoItemsInfo길이가 0인거긴 한데... */
   todoTotalLen: number;
   /** 길이가 0이라면, 다른 UI */
-  todoItemsInfo: TodoItemsInfo[];
+  initTodoItemsInfo?: TodoItemsInfo[];
+  /** subGoal의 id */
+  subGoalId: string;
 }
+
+const TodoListContext = createContext<KeyedMutator<TodoItemsInfo[]> | null>(
+  null,
+);
 
 const TodoList = ({
   subGoal,
   todoCheckedLen = 0,
   todoTotalLen,
-  todoItemsInfo,
+  initTodoItemsInfo,
+  subGoalId,
 }: TodoListProps) => {
   // 펼친 상태가 기본
   const [isFolded, setIsFolded] = useState(false);
-  const {} = useTodoList();
+  const { data: todoItemsInfo, mutate } = useTodoList(subGoalId);
 
   if (!subGoal)
     return (
       <>
-        <NoSubGoal />
+        <TodoListContext.Provider value={mutate}>
+          <NoSubGoal subGoalId={subGoalId} />
+        </TodoListContext.Provider>
       </>
     );
   const hasTodoItemsInfo = todoItemsInfo.length > 0;
@@ -79,12 +103,14 @@ const TodoList = ({
           style={{ gridTemplateRows: isFolded ? "0fr" : "1fr" }}
         >
           <div className="min-h-0 overflow-hidden">
-            <TodoArea
-              todoItemsInfo={todoItemsInfo}
-              hasTodoItemsInfo={hasTodoItemsInfo}
-              todoCheckedLen={todoCheckedLen}
-              todoTotalLen={todoTotalLen}
-            />
+            <TodoListContext.Provider value={mutate}>
+              <TodoArea
+                todoItemsInfo={todoItemsInfo}
+                hasTodoItemsInfo={hasTodoItemsInfo}
+                todoCheckedLen={todoCheckedLen}
+                todoTotalLen={todoTotalLen}
+              />
+            </TodoListContext.Provider>
           </div>
         </div>
       </div>
@@ -99,8 +125,13 @@ export type { TodoListProps };
  * - TodoArea
  */
 
-const NoSubGoal = () => {
+interface NoSubGoalProps {
+  subGoalId: string;
+}
+
+const NoSubGoal = ({ subGoalId }: NoSubGoalProps) => {
   const { closeModal, openModal } = useModal();
+  const mutate = useContext(TodoListContext);
   return (
     <>
       <div
@@ -117,9 +148,14 @@ const NoSubGoal = () => {
                 <ModalAddingSubGoal
                   onClose={() => closeModal()}
                   onAddSubGoal={async (subGoal: string) => {
-                    // 대충 subgoal관련 비동기 동작
-                    // 비동기 성공적으로 끝나야 closeModal시키기
-                    // 실패 시 toast띄우기
+                    // mutateResult가 네트워크 fail에서는 undefined가 나와야 함.
+                    const mutateResult = await createNewTodoOnSubGoal(
+                      subGoalId,
+                      {
+                        title: subGoal,
+                      },
+                    );
+                    if (mutateResult) closeModal();
                   }}
                 />,
               )
@@ -144,7 +180,7 @@ const TodoArea = ({
   todoCheckedLen,
   todoTotalLen,
 }: {
-  todoItemsInfo: TodoListProps["todoItemsInfo"];
+  todoItemsInfo: TodoItemsInfo[];
   hasTodoItemsInfo: boolean;
   todoCheckedLen: number;
   todoTotalLen: number;
@@ -192,12 +228,15 @@ const TodoItemContainer = ({
   selectedTodoItem,
   setSelectedTodoItem,
 }: {
-  info: TodoListProps["todoItemsInfo"][0];
+  info: TodoItemsInfo;
   selectedTodoItem: null | string;
   setSelectedTodoItem: Dispatch<SetStateAction<typeof selectedTodoItem>>;
 }) => {
   const x = useMotionValue(0);
-
+  const mutate = useContext(TodoListContext);
+  const [checked, toggleChecekdOptimistically] = useOptimisticToggle(
+    info.checked ?? false,
+  );
   /**
    * 여기에 todoItemProp에 들어갈 onChecked, onMoodClick에 대해 처리해야 하나?
    * 그럼 Edit, Delete버튼에 대해 모달 띄우는거는?
@@ -214,8 +253,17 @@ const TodoItemContainer = ({
     <Fragment key={info.id}>
       <div className="flex items-center relative">
         <div className="gap-1 flex  z-0 absolute right-0">
-          <EditButton />
-          <DeleteButton />
+          <EditButton
+            onEdit={() => {
+              /** 임시. 여기에 바텀 시트 관련 들어가야 함 */
+            }}
+          />
+          <DeleteButton
+            onDelete={async () => {
+              await deleteTodo(info.id);
+              mutate && mutate();
+            }}
+          />
         </div>
         <motion.div
           className="cursor-grab active:cursor-grabbing z-10 "
@@ -238,7 +286,15 @@ const TodoItemContainer = ({
             damping: 30,
           }}
         >
-          <OptimizedTodoItem {...info} onChecked={async () => {}} />
+          <OptimizedTodoItem
+            {...info}
+            checked={checked}
+            onChecked={async () => {
+              await toggleTodo(info.id);
+              toggleChecekdOptimistically();
+              mutate && mutate();
+            }}
+          />
         </motion.div>
       </div>
     </Fragment>
@@ -303,32 +359,52 @@ const NoTodo = () => {
 
 /** 재료들 */
 
-const EditButton = () => {
+interface EditButtonProps {
+  /** 밖에서 처리하도록 하기 */
+  onEdit: () => void;
+}
+
+const EditButton = ({ onEdit }: EditButtonProps) => {
   return (
     <>
-      <div className="w-10 h-14 px-1 py-2 bg-background-strong rounded-lg inline-flex flex-col justify-center items-center gap-0.5">
+      <button
+        onClick={() => {
+          onEdit();
+        }}
+        type="button"
+        className="w-10 h-14 px-1 py-2 bg-background-strong rounded-lg inline-flex flex-col justify-center items-center gap-0.5"
+      >
         <div className="w-5 h-5 relative overflow-hidden">
           <PencilSvg />
         </div>
         <div className="justify-center text-label-inverse text-xs font-medium font-['SUIT_Variable'] leading-none">
           수정
         </div>
-      </div>
+      </button>
     </>
   );
 };
 
-const DeleteButton = () => {
+interface DeleteButtonProps {
+  /** 밖에서 처리하도록 하기 */
+  onDelete: () => Promise<void>;
+}
+
+const DeleteButton = ({ onDelete }: DeleteButtonProps) => {
   return (
     <>
-      <div className="w-10 h-14 px-1 py-2 bg-status-negative rounded-lg inline-flex flex-col justify-center items-center gap-0.5">
+      <button
+        onClick={() => onDelete()}
+        type="button"
+        className="w-10 h-14 px-1 py-2 bg-status-negative rounded-lg inline-flex flex-col justify-center items-center gap-0.5"
+      >
         <div className="w-5 h-5 relative overflow-hidden">
           <TrashCanSvg />
         </div>
         <div className="justify-center text-label-inverse text-xs font-medium font-['SUIT_Variable'] leading-none">
           삭제
         </div>
-      </div>
+      </button>
     </>
   );
 };
