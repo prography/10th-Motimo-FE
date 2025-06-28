@@ -7,6 +7,7 @@ import { Button } from "../shared/Button/Button";
 import TextField from "../shared/TextField/TextField";
 import { EditIcon } from "../icons/EditIcon";
 import { PlusIcon } from "../icons/PlusIcon";
+import ModalDeletingAccount from "../shared/Modal/ModalDeletingAccount/ModalDeletingAccount";
 
 interface EditProfileProps {
     initialName?: string;
@@ -28,6 +29,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
     const router = useRouter();
     const [name, setName] = useState(initialName);
     const [bio, setBio] = useState(initialBio);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const handleBack = () => {
         router.back();
@@ -41,9 +43,18 @@ export const EditProfile: React.FC<EditProfileProps> = ({
     };
 
     const handleDeleteAccount = () => {
+        setShowDeleteModal(true);
+    };
+
+    const handleConfirmDeleteAccount = () => {
         if (onDeleteAccount) {
             onDeleteAccount();
         }
+        setShowDeleteModal(false);
+    };
+
+    const handleCloseDeleteModal = () => {
+        setShowDeleteModal(false);
     };
 
     const handleAddInterests = () => {
@@ -53,15 +64,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
     };
 
     return (
-        <div className="flex flex-col bg-Color-white w-[360px] h-[800px] relative">
-            {/* Status bar */}
-            <div className="flex justify-between items-end px-6 py-2.5 h-[52px]">
-                <span className="text-sm font-medium text-Color-black">9:30</span>
-                <div className="flex items-center gap-4">
-                    {/* Wifi, Signal, Battery icons would go here */}
-                </div>
-            </div>
-
+        <div className="flex flex-col bg-Color-white w-[360px] h-screen relative">
             {/* AppBar */}
             <div className="flex items-center px-3 h-14 bg-Color-white relative">
                 <button
@@ -127,7 +130,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
                         onChange={(e) => setName(e.target.value)}
                         placeholder="홍길동"
                         isError={false}
-                        className="w-full"
+                        className="w-full text-Color-gray-90 placeholder:text-Color-gray-70"
                     />
                 </div>
 
@@ -141,7 +144,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
                         onChange={(e) => setBio(e.target.value)}
                         placeholder="본인을 소개하는 문구를 작성해주세요."
                         isError={false}
-                        className="w-full"
+                        className="w-full text-Color-gray-90 placeholder:text-Color-gray-70"
                     />
                 </div>
             </div>
@@ -164,7 +167,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
             </div>
 
             {/* Account Delete Button */}
-            <div className="mt-auto mb-6 px-4">
+            <div className="mt-auto mb-4 px-4">
                 <button
                     className="w-full h-10 flex items-center justify-center text-sm font-medium text-Color-gray-60 hover:text-Color-status-negative transition-colors"
                     onClick={handleDeleteAccount}
@@ -173,10 +176,13 @@ export const EditProfile: React.FC<EditProfileProps> = ({
                 </button>
             </div>
 
-            {/* Gesture bar */}
-            <div className="absolute bottom-0 left-0 right-0 h-6 flex items-center justify-center">
-                <div className="w-[108px] h-1 bg-Color-black rounded-full opacity-30"></div>
-            </div>
+            {/* Delete Account Modal */}
+            {showDeleteModal && (
+                <ModalDeletingAccount
+                    onClose={handleCloseDeleteModal}
+                    onDeleteAccount={handleConfirmDeleteAccount}
+                />
+            )}
         </div>
     );
 }; 
