@@ -1,14 +1,72 @@
 "use client";
 
+import { useState, useEffect } from "react";
+
 interface LoginScreenProps {
   onNext: () => void;
 }
 
 export default function LoginScreen({ onNext }: LoginScreenProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  // OAuth 콜백 처리 (리다이렉트 방식)
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    const error = urlParams.get('error');
+    const token = urlParams.get('token');
+    const state = urlParams.get('state');
+
+    if (error) {
+      console.error('OAuth 인증 오류:', error);
+      alert('로그인에 실패했습니다. 다시 시도해주세요.');
+      setIsLoading(false);
+      return;
+    }
+
+    if (code || token) {
+      // State 파라미터 검증 (CSRF 보호)
+      const savedState = localStorage.getItem("oauth_state");
+      if (state && savedState && state !== savedState) {
+        console.error('State 파라미터가 일치하지 않습니다.');
+        alert('보안 오류가 발생했습니다. 다시 시도해주세요.');
+        setIsLoading(false);
+        return;
+      }
+
+      // 인증 성공
+      localStorage.setItem("isLoggedIn", "true");
+      if (code) {
+        localStorage.setItem("oauth_code", code);
+      }
+      if (token) {
+        localStorage.setItem("auth_token", token);
+      }
+
+      // 임시 데이터 정리
+      localStorage.removeItem("oauth_state");
+
+      // URL 파라미터 제거
+      window.history.replaceState({}, document.title, window.location.pathname);
+
+      // 다음 단계로 진행
+      onNext();
+    }
+  }, [onNext]);
+
   const handleGoogleLogin = () => {
-    // TODO: Implement Google login
-    localStorage.setItem("isLoggedIn", "true");
-    onNext();
+    setIsLoading(true);
+
+    // 현재 페이지 상태 저장 (인증 후 돌아올 때 사용)
+    const currentStep = "login";
+    localStorage.setItem("oauth_return_step", currentStep);
+
+    // CSRF 보호를 위한 state 파라미터 생성
+    const state = Math.random().toString(36).substring(2, 15);
+    localStorage.setItem("oauth_state", state);
+
+    // Google OAuth 인증 페이지로 리다이렉트 (현대적인 방식)
+    window.location.href = `http://motimo.kro.kr:8080/oauth2/authorize/google?state=${state}`;
   };
 
   const handleKakaoLogin = () => {
@@ -55,12 +113,19 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
           {/* Google Login */}
           <button
             onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-2 py-[15px] px-4 bg-background-alternative border border-line-normal rounded-lg"
+            disabled={isLoading}
+            className="w-full flex items-center justify-center gap-2 py-[15px] px-4 bg-background-alternative border border-line-normal rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <div className="w-6 h-6 bg-gray-300 rounded flex items-center justify-center">
-              G
-            </div>
-            <span className="text-sm font-semibold text-label-normal">Google로 시작하기</span>
+            {isLoading ? (
+              <div className="w-6 h-6 border-2 border-label-normal border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              <div className="w-6 h-6 bg-gray-300 rounded flex items-center justify-center">
+                G
+              </div>
+            )}
+            <span className="text-sm font-semibold text-label-normal">
+              {isLoading ? "로그인 중..." : "Google로 시작하기"}
+            </span>
           </button>
 
           {/* Kakao Login */}
