@@ -155,7 +155,10 @@ const NoSubGoal = ({ subGoalId }: NoSubGoalProps) => {
                         title: subGoal,
                       },
                     );
-                    if (mutateResult) closeModal();
+                    if (mutateResult) {
+                      mutate && mutate();
+                      closeModal();
+                    }
                   }}
                 />,
               )
