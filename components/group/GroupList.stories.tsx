@@ -53,18 +53,12 @@ export const Default: Story = {
     onJoinGroup: (groupId: string) => {
       console.log("Join group:", groupId);
     },
-    onNotificationClick: (groupId: string) => {
-      console.log("Notification clicked for group:", groupId);
-    },
   },
 };
 
 export const JoinedGroupsOnly: Story = {
   args: {
     groups: sampleGroups.filter(group => group.isJoined),
-    onNotificationClick: (groupId: string) => {
-      console.log("Notification clicked for group:", groupId);
-    },
   },
 };
 
@@ -88,9 +82,6 @@ export const SingleJoinedGroup: Story = {
         hasNotification: true,
       },
     ],
-    onNotificationClick: (groupId: string) => {
-      console.log("Notification clicked for group:", groupId);
-    },
   },
 };
 
@@ -140,9 +131,6 @@ export const WithNotifications: Story = {
         hasNotification: true,
       },
     ],
-    onNotificationClick: (groupId: string) => {
-      console.log("Notification clicked for group:", groupId);
-    },
   },
 };
 
@@ -172,9 +160,6 @@ export const ManyGroups: Story = {
     ],
     onJoinGroup: (groupId: string) => {
       console.log("Join group:", groupId);
-    },
-    onNotificationClick: (groupId: string) => {
-      console.log("Notification clicked for group:", groupId);
     },
   },
 }; 

@@ -7,7 +7,6 @@ interface GroupItemProps {
   lastActivityDate?: string;
   hasNotification?: boolean;
   onJoinClick?: () => void;
-  onNotificationClick?: () => void;
   className?: string;
 }
 
@@ -17,7 +16,6 @@ export const GroupItem = ({
   lastActivityDate,
   hasNotification = false,
   onJoinClick,
-  onNotificationClick,
   className,
 }: GroupItemProps) => {
   if (isJoined) {
@@ -31,18 +29,14 @@ export const GroupItem = ({
           <span className="flex-1 font-SUIT_Variable font-bold text-base leading-[1.2] tracking-[-0.01em] text-Color-black">
             {title}
           </span>
-          <button 
-            className="flex justify-center items-center gap-2 p-2.5 w-8 h-8 bg-Color-gray-05 rounded"
-            onClick={onNotificationClick}
-            aria-label="알림 설정"
-          >
+          <div className="flex justify-center items-center gap-2 p-2.5 w-8 h-8 bg-Color-gray-05 rounded">
             <BellIcon 
               width={20} 
               height={20} 
               color="#33363D"
               hasNotification={hasNotification}
             />
-          </button>
+          </div>
         </div>
 
         {/* Last activity date */}

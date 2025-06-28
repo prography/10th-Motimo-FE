@@ -12,14 +12,12 @@ export interface GroupData {
 interface GroupListProps {
   groups: GroupData[];
   onJoinGroup?: (groupId: string) => void;
-  onNotificationClick?: (groupId: string) => void;
   className?: string;
 }
 
 export const GroupList = ({
   groups,
   onJoinGroup,
-  onNotificationClick,
   className,
 }: GroupListProps) => {
   return (
@@ -35,7 +33,6 @@ export const GroupList = ({
           lastActivityDate={group.lastActivityDate}
           hasNotification={group.hasNotification}
           onJoinClick={() => onJoinGroup?.(group.id)}
-          onNotificationClick={() => onNotificationClick?.(group.id)}
         />
       ))}
       
