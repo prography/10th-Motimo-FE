@@ -1,9 +1,10 @@
-import { templateFetch } from "@/api/common/fetchTemplate";
+import { templateFetch } from "@/lib/common/fetchTemplate";
 import {
   GoalCreateRq,
   GoalDetailRs,
   GoalListRs,
   GoalUpdateRq,
+  GoalWithSubGoalTodoRs,
 } from "@/api/generated/motimo/Api";
 
 const updateGoal = async (goalId: string, newGoalInfo: GoalUpdateRq) => {
@@ -42,7 +43,7 @@ const getGoal = async (goalId: string) => {
 };
 
 const getGoalWithSubGoalTodo = async (goalId: string) => {
-  const result = await templateFetch(
+  const result = await templateFetch<GoalWithSubGoalTodoRs>(
     `/v1/goals/${goalId}/sub-goals/all`,
     "GET",
   );

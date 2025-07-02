@@ -1,5 +1,5 @@
 import { date2StringWithSpliter } from "@/utils/date2String";
-import { templateFetch } from "../../api/common/fetchTemplate";
+import { templateFetch } from "../common/fetchTemplate";
 import { TodoRs } from "../../api/generated/motimo/Api";
 
 /** todo */
