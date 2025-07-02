@@ -7,6 +7,7 @@ import {
   Dispatch,
   SetStateAction,
   useContext,
+  useEffect,
 } from "react";
 
 import TextField from "../../TextField/TextField";
@@ -20,15 +21,20 @@ import { Button } from "../../Button/Button";
 import Calendar from "../../Calendar/Calendar";
 
 type TodoInfoForSubmission = {
+  /** id값이 존재한다면 수정, 없다면 추가로 봐야 함. */
+  id?: string;
   todo: string;
   date: Date;
-  subGoal: string;
+  subGoalTitle: string;
+  subGoalId: string;
 };
 
 type TodoInfo = {
+  id?: TodoInfoForSubmission["todo"];
   todo: TodoInfoForSubmission["todo"];
   date?: TodoInfoForSubmission["date"];
-  subGoal?: TodoInfoForSubmission["subGoal"];
+  subGoalTitle?: TodoInfoForSubmission["subGoalTitle"];
+  subGoalId?: TodoInfoForSubmission["subGoalId"];
 };
 
 const TodoInfoContext = createContext<{
@@ -38,13 +44,17 @@ const TodoInfoContext = createContext<{
 
 interface TodoBottomSheetProps {
   initTodoInfo?: {
+    initTodoId?: string;
     initTodo?: string;
     initDate?: Date;
-    initSubGoal?: string;
+    initSubGoalTitle?: string;
+    initSubGoalId?: string;
   };
-  subGoals: { title: string }[];
+  subGoals: { title: string; id: string }[];
   onSubmitTodo: (todoInfo: TodoInfoForSubmission) => Promise<boolean>;
   openModal: boolean;
+  isActivated: boolean;
+  setIsActivated: (newState: boolean) => void;
 }
 
 const TodoBottomSheet = ({
@@ -52,13 +62,20 @@ const TodoBottomSheet = ({
   subGoals,
   onSubmitTodo,
   openModal,
+  isActivated,
+  setIsActivated,
 }: TodoBottomSheetProps) => {
   const [todoInfo, setTodoInfo] = useState<TodoInfo>({
+    id: initTodoInfo?.initTodoId,
     todo: initTodoInfo?.initTodo ?? "",
     date: initTodoInfo?.initDate,
-    subGoal: initTodoInfo?.initSubGoal,
+    subGoalTitle: initTodoInfo?.initSubGoalTitle,
   });
-  const [isActivated, setIsActivated] = useState(false);
+
+  //test
+  console.log("todoInfo 초기값은 과연?: ", todoInfo);
+
+  // const [isActivated, setIsActivated] = useState(false);
   const [visibleSelect, setVisibleSelect] = useState(false);
   const [showDate, setShowDate] = useState(false);
 
@@ -67,11 +84,21 @@ const TodoBottomSheet = ({
     setVisibleSelect(false);
     setShowDate(false);
     setTodoInfo({
+      id: "",
       todo: "",
       date: undefined,
-      subGoal: undefined,
+      subGoalTitle: undefined,
     });
   };
+
+  useEffect(() => {
+    setTodoInfo({
+      id: initTodoInfo?.initTodoId,
+      todo: initTodoInfo?.initTodo ?? "",
+      date: initTodoInfo?.initDate,
+      subGoalTitle: initTodoInfo?.initSubGoalTitle,
+    });
+  }, [initTodoInfo]);
 
   return (
     <>
@@ -110,7 +137,7 @@ const TodoBottomSheet = ({
                       className="w-auto h-auto relative flex items-center"
                       onSubmit={async (e) => {
                         e.preventDefault();
-                        if (todoInfo.date && todoInfo.subGoal) {
+                        if (todoInfo.date && todoInfo.subGoalTitle) {
                           const submitRes = await onSubmitTodo(
                             todoInfo as TodoInfoForSubmission,
                           );
@@ -121,7 +148,13 @@ const TodoBottomSheet = ({
                       }}
                     >
                       <TextField
-                        onFocus={() => setIsActivated(true)}
+                        onClick={(e) => {
+                          // if (e.target.id !== "buttomSheetTodoTextField")
+                          //   return;
+                          console.log("설마 이거?", e);
+                          setIsActivated(true);
+                        }}
+                        id="buttomSheetTodoTextField"
                         isError={false}
                         value={todoInfo.todo}
                         placeholder="투두를 추가해보세요!"
@@ -171,7 +204,8 @@ const TodoBottomSheet = ({
                             }}
                           >
                             <p className="flex-1 flex justify-start text-label-strong text-xs font-medium font-['SUIT_Variable'] leading-none">
-                              {todoInfo.subGoal ?? "세부 목표를 선택해주세요"}
+                              {todoInfo.subGoalTitle ??
+                                "세부 목표를 선택해주세요"}
                             </p>
                             <div className="w-4 h-4 relative overflow-hidden"></div>
                             <ArrowDownSvg />
@@ -191,6 +225,8 @@ const TodoBottomSheet = ({
 };
 export default TodoBottomSheet;
 
+export type { TodoInfoForSubmission };
+
 interface BottomSheetSelectListProps {
   subGoals: TodoBottomSheetProps["subGoals"];
   setVisibleSelect: Dispatch<SetStateAction<boolean>>;
@@ -205,8 +241,8 @@ const BottomSheetSelectList = ({
   return (
     <>
       <ul className="absolute right-4 bottom-2    z-20 w-43 h-28 p-4 bg-background-alternative rounded-lg inline-flex flex-col justify-start items-center gap-3 overflow-y-auto ">
-        {subGoals.map(({ title: subGoalTitle }) => {
-          const isSelected = nullabeTodoInfo?.todoInfo.subGoal === subGoalTitle;
+        {subGoals.map(({ title: subGoalTitle, id: subGoalId }) => {
+          const isSelected = nullabeTodoInfo?.todoInfo.subGoalId === subGoalId;
           return (
             <li
               key={subGoalTitle}
@@ -215,6 +251,7 @@ const BottomSheetSelectList = ({
                   nullabeTodoInfo.setTodoInfo((prev) => ({
                     ...prev,
                     subGoal: subGoalTitle,
+                    subGoalId: subGoalId,
                   }));
 
                 // select 끄기
