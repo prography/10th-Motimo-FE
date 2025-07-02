@@ -250,7 +250,7 @@ const BottomSheetSelectList = ({
                 nullabeTodoInfo &&
                   nullabeTodoInfo.setTodoInfo((prev) => ({
                     ...prev,
-                    subGoal: subGoalTitle,
+                    subGoalTitle: subGoalTitle,
                     subGoalId: subGoalId,
                   }));
 

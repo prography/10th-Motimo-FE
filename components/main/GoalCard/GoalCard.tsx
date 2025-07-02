@@ -81,7 +81,7 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
         }))}
         openModal={goalWithSubGoalTodo?.subGoals.length > 0}
         onSubmitTodo={async (newTodoInfo) => {
-          const isCreating = newTodoInfo.id ? true : false;
+          const isCreating = newTodoInfo.id ? false : true;
           let fetchRes;
           if (isCreating) {
             fetchRes = await createNewTodoOnSubGoal(newTodoInfo.subGoalId, {
