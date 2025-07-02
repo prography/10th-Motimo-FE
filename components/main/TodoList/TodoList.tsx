@@ -30,6 +30,8 @@ import useOptimisticToggle from "@/hooks/main/useOptimisticToggle";
 
 import { deleteTodo, toggleTodo } from "@/lib/main/todoFetching";
 import { createNewTodoOnSubGoal } from "@/lib/main/subGoalFetching";
+import { TodoRs } from "@/api/generated/motimo/Api";
+import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
 
 /** api generator로부터 받은 타입을 사용 */
 
@@ -46,9 +48,11 @@ interface TodoListProps {
   subGoalId: string;
 }
 
-const TodoListContext = createContext<KeyedMutator<TodoItemsInfo[]> | null>(
-  null,
-);
+const TodoListContext = createContext<{
+  subGoalTitle?: string;
+  subGoalId?: string;
+  mutate?: KeyedMutator<TodoRs[]>;
+} | null>(null);
 
 const TodoList = ({
   subGoal,
@@ -59,12 +63,17 @@ const TodoList = ({
 }: TodoListProps) => {
   // 펼친 상태가 기본
   const [isFolded, setIsFolded] = useState(false);
-  const { data: todoItemsInfo, mutate } = useTodoList(subGoalId);
+  const { data: todoItemsInfo, mutate } = useTodoList(subGoalId, {
+    fallbackData: initTodoItemsInfo,
+  });
+
+  //test
+  console.log("todoItemsInfos in toodlist: ", todoItemsInfo);
 
   if (!subGoal)
     return (
       <>
-        <TodoListContext.Provider value={mutate}>
+        <TodoListContext.Provider value={{ mutate }}>
           <NoSubGoal subGoalId={subGoalId} />
         </TodoListContext.Provider>
       </>
@@ -73,7 +82,7 @@ const TodoList = ({
   return (
     <>
       <div
-        className={` w-80  px-3 py-4 bg-white rounded-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.10)] inline-flex flex-col justify-start items-center gap-${isFolded ? 0 : 2} overflow-hidden`}
+        className={` w-full  px-3 py-4 bg-white rounded-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.10)] inline-flex flex-col justify-start items-center gap-${isFolded ? 0 : 2} overflow-hidden`}
       >
         {/**  TodoList Header */}
         <header className="self-stretch h-8 inline-flex justify-start items-center gap-1">
@@ -103,7 +112,9 @@ const TodoList = ({
           style={{ gridTemplateRows: isFolded ? "0fr" : "1fr" }}
         >
           <div className="min-h-0 overflow-hidden">
-            <TodoListContext.Provider value={mutate}>
+            <TodoListContext.Provider
+              value={{ mutate, subGoalId, subGoalTitle: subGoal }}
+            >
               <TodoArea
                 todoItemsInfo={todoItemsInfo}
                 hasTodoItemsInfo={hasTodoItemsInfo}
@@ -131,7 +142,8 @@ interface NoSubGoalProps {
 
 const NoSubGoal = ({ subGoalId }: NoSubGoalProps) => {
   const { closeModal, openModal } = useModal();
-  const mutate = useContext(TodoListContext);
+  const contextContent = useContext(TodoListContext);
+  const mutate = contextContent?.mutate;
   return (
     <>
       <div
@@ -236,10 +248,13 @@ const TodoItemContainer = ({
   setSelectedTodoItem: Dispatch<SetStateAction<typeof selectedTodoItem>>;
 }) => {
   const x = useMotionValue(0);
-  const mutate = useContext(TodoListContext);
+  const contextContent = useContext(TodoListContext);
+  const { mutate, subGoalId, subGoalTitle } = contextContent || {};
+
   const [checked, toggleChecekdOptimistically] = useOptimisticToggle(
     info.checked ?? false,
   );
+  const { setIsActive } = useActiveTodoBottomSheet();
   /**
    * 여기에 todoItemProp에 들어갈 onChecked, onMoodClick에 대해 처리해야 하나?
    * 그럼 Edit, Delete버튼에 대해 모달 띄우는거는?
@@ -254,11 +269,21 @@ const TodoItemContainer = ({
 
   return (
     <Fragment key={info.id}>
-      <div className="flex items-center relative">
+      <div className="flex items-center relative w-full">
         <div className="gap-1 flex  z-0 absolute right-0">
           <EditButton
             onEdit={() => {
               /** 임시. 여기에 바텀 시트 관련 들어가야 함 */
+              const initTodoInfo = {
+                date: info?.targetDate ?? new Date(),
+                subGoalId: subGoalId ?? "",
+                subGoalTitle: subGoalTitle ?? "",
+                todo: info?.title,
+                id: info?.id,
+              };
+              //test
+              console.log("edit버튼 속 inittodoinfo: ");
+              setIsActive(true, initTodoInfo);
             }}
           />
           <DeleteButton
@@ -269,7 +294,7 @@ const TodoItemContainer = ({
           />
         </div>
         <motion.div
-          className="cursor-grab active:cursor-grabbing z-10 "
+          className="cursor-grab active:cursor-grabbing z-10 w-full"
           drag="x"
           style={{ x }}
           dragConstraints={{ left: -88, right: 0 }}
@@ -310,7 +335,7 @@ const OptimizedTodoItem = memo(TodoItem);
 const AllTodoFinished = () => {
   return (
     <>
-      <div className="self-stretch py-6 bg-background-normal rounded-lg inline-flex flex-col justify-center items-center gap-3 overflow-hidden">
+      <div className="w-full self-stretch py-6 bg-background-normal rounded-lg inline-flex flex-col justify-center items-center gap-3 overflow-hidden">
         <div className="flex flex-col justify-start items-center gap-0.5">
           <div className="text-center justify-center text-label-alternative text-sm font-bold font-['SUIT_Variable'] leading-tight">
             투두를 모두 완료했어요!
