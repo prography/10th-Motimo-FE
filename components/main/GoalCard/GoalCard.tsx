@@ -66,14 +66,9 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
       </div>
 
       <TodoBottomSheet
+        // isActivated={true}
         isActivated={isActive}
-        initTodoInfo={{
-          initDate: initContent?.date,
-          initSubGoalId: initContent?.subGoalId,
-          initSubGoalTitle: initContent?.subGoalTitle,
-          initTodo: initContent?.todo,
-          initTodoId: initContent?.id,
-        }}
+        initTodoInfo={initContent}
         setIsActivated={setIsActive}
         subGoals={goalWithSubGoalTodo?.subGoals.map((subGoalInfo) => ({
           id: subGoalInfo.subGoalId,

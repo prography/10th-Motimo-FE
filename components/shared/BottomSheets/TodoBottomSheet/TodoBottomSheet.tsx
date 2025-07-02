@@ -43,13 +43,7 @@ const TodoInfoContext = createContext<{
 } | null>(null);
 
 interface TodoBottomSheetProps {
-  initTodoInfo?: {
-    initTodoId?: string;
-    initTodo?: string;
-    initDate?: Date;
-    initSubGoalTitle?: string;
-    initSubGoalId?: string;
-  };
+  initTodoInfo?: undefined | TodoInfoForSubmission;
   subGoals: { title: string; id: string }[];
   onSubmitTodo: (todoInfo: TodoInfoForSubmission) => Promise<boolean>;
   openModal: boolean;
@@ -66,14 +60,14 @@ const TodoBottomSheet = ({
   setIsActivated,
 }: TodoBottomSheetProps) => {
   const [todoInfo, setTodoInfo] = useState<TodoInfo>({
-    id: initTodoInfo?.initTodoId,
-    todo: initTodoInfo?.initTodo ?? "",
-    date: initTodoInfo?.initDate,
-    subGoalTitle: initTodoInfo?.initSubGoalTitle,
+    id: initTodoInfo?.id,
+    todo: initTodoInfo?.todo ?? "",
+    date: initTodoInfo?.date,
+    subGoalTitle: initTodoInfo?.subGoalTitle,
+    subGoalId: initTodoInfo?.subGoalId,
   });
 
   //test
-  console.log("todoInfo 초기값은 과연?: ", todoInfo);
 
   // const [isActivated, setIsActivated] = useState(false);
   const [visibleSelect, setVisibleSelect] = useState(false);
@@ -93,10 +87,11 @@ const TodoBottomSheet = ({
 
   useEffect(() => {
     setTodoInfo({
-      id: initTodoInfo?.initTodoId,
-      todo: initTodoInfo?.initTodo ?? "",
-      date: initTodoInfo?.initDate,
-      subGoalTitle: initTodoInfo?.initSubGoalTitle,
+      id: initTodoInfo?.id,
+      todo: initTodoInfo?.todo ?? "",
+      date: initTodoInfo?.date,
+      subGoalTitle: initTodoInfo?.subGoalTitle ?? "",
+      subGoalId: initTodoInfo?.subGoalId ?? "",
     });
   }, [initTodoInfo]);
 
@@ -149,9 +144,6 @@ const TodoBottomSheet = ({
                     >
                       <TextField
                         onClick={(e) => {
-                          // if (e.target.id !== "buttomSheetTodoTextField")
-                          //   return;
-                          console.log("설마 이거?", e);
                           setIsActivated(true);
                         }}
                         id="buttomSheetTodoTextField"

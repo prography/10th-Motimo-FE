@@ -10,7 +10,7 @@ interface ActiveTodoBottomSheetStore {
 const useActiveTodoBottomSheet = create<ActiveTodoBottomSheetStore>((set) => ({
   isActive: false,
   initContent: undefined,
-  setIsActive: (newState, initContent) =>
+  setIsActive: (newState, initContent = undefined) =>
     set({
       isActive: newState,
       initContent: initContent,
