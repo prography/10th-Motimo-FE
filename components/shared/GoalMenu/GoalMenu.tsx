@@ -62,3 +62,4 @@ const GoalMenu = ({
   );
 };
 export default GoalMenu;
+export type { GoalMenuProps };

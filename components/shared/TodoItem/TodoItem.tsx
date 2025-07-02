@@ -46,13 +46,13 @@ const TodoItem = ({
   return (
     <>
       <div
-        className="w-72 h-16 pl-2 pr-3 py-2 bg-Color-gray-5 rounded-lg 
+        className="w-full h-16 pl-2 pr-3 py-2 bg-Color-gray-5 rounded-lg 
        inline-flex justify-start items-center
        gap-2"
       >
         <div className="flex-1 min-w-0 inline-flex flex-col justify-start items-start">
           <label
-            className=" flex-1 self-stretch h-7 py-1 inline-flex justify-start items-center gap-1"
+            className="  h-7 py-1 inline-flex justify-start items-center gap-1"
             htmlFor="todoItem"
             onClick={(e) => {
               e.preventDefault();
@@ -64,7 +64,7 @@ const TodoItem = ({
             <Checkbox id="todoItem" readOnly checked={checked} />
 
             <p
-              className={`truncate flex-1  justify-start ${checked ? "text-label-assistive" : "text-label-normal"}   text-sm font-medium font-['SUIT_Variable'] leading-tight`}
+              className={`truncate   justify-start ${checked ? "text-label-assistive" : "text-label-normal"}   text-sm font-medium font-['SUIT_Variable'] leading-tight`}
               style={{ lineHeight: "normal" }}
             >
               {title}
