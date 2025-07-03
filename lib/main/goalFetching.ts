@@ -9,7 +9,6 @@ import {
 } from "@/api/generated/motimo/Api";
 
 const updateGoal = async (goalId: string, newGoalInfo: GoalUpdateRq) => {
-  templateFetch;
   // error처리 아직 안함. toast처리 해야 함
   const result = await templateFetch(`/v1/goals/${goalId}`, "PUT", newGoalInfo);
 
