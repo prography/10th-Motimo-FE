@@ -5,6 +5,7 @@ import {
   GoalListRs,
   GoalUpdateRq,
   GoalWithSubGoalTodoRs,
+  SubGoalCreateRq,
 } from "@/api/generated/motimo/Api";
 
 const updateGoal = async (goalId: string, newGoalInfo: GoalUpdateRq) => {
@@ -25,6 +26,18 @@ const getAllGoals = async () => {
 const createNewGoal = async (newGoalInfo: GoalCreateRq) => {
   const result = await templateFetch(`/v1/goals`, "POST", newGoalInfo);
 
+  return result;
+};
+
+const createNewSubGoalOnGoal = async (
+  goalId: string,
+  newSubGoal: SubGoalCreateRq,
+) => {
+  const result = await templateFetch(
+    `/v1/goals/${goalId}/subGoal`,
+    "POST",
+    newSubGoal,
+  );
   return result;
 };
 
@@ -55,6 +68,7 @@ export {
   updateGoal,
   getAllGoals,
   createNewGoal,
+  createNewSubGoalOnGoal,
   toggleGoalCompletion,
   getGoal,
   getGoalWithSubGoalTodo,

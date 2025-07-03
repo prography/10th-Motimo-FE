@@ -195,7 +195,6 @@ export const handlers = [
   http.put("/v1/goals/:id", async ({ request, params }) => {
     if (!params.id) {
       // 1초 딜레이
-      await delay(1000);
 
       return createErrorResponse();
     }
@@ -213,7 +212,6 @@ export const handlers = [
     }
 
     // 1초 딜레이
-    await delay(1000);
 
     return HttpResponse.json({
       id: updatedGoal.id,
@@ -222,7 +220,7 @@ export const handlers = [
 
   http.get("/v1/goals", async () => {
     // 1초 딜레이
-    // await delay(1000);
+    //
 
     return HttpResponse.json({
       goals: myMainDB.goals,
@@ -234,7 +232,7 @@ export const handlers = [
     console.log("newGoal: ", newGoal);
 
     // 1초 딜레이
-    await delay(1000);
+
     const newId = `골${myMainDB.goals.length + 1}`;
     myMainDB.goals.push({
       ...(newGoal as (typeof myMainDB.goals)[0]),
@@ -245,6 +243,32 @@ export const handlers = [
 
     return HttpResponse.json({
       id: newId,
+    });
+  }),
+
+  http.post("/v1/goals/:goalId/subGoal", async ({ request, params }) => {
+    const newSubGoal = await request.json();
+    console.log("newSubGoal: ", newSubGoal);
+
+    // 1초 딜레이
+    const newSubGoalId = `서브골${myMainDB.subGoals.length + 1}`;
+    myMainDB.subGoals.push({
+      ...(newSubGoal as (typeof myMainDB.subGoals)[0]),
+      id: newSubGoalId,
+      isCompleted: false,
+      todos: [],
+    });
+    // goal에 suvgoal등록하기
+    const targetId = params.goalId as string;
+    const found = myMainDB.goals.findIndex((goal) => goal.id === targetId);
+    if (found === -1) {
+      throw new Error("못찾음");
+    }
+
+    myMainDB.goals[found].subGoals.push(newSubGoalId);
+
+    return HttpResponse.json({
+      id: newSubGoalId,
     });
   }),
 
@@ -259,7 +283,6 @@ export const handlers = [
     }
 
     // 1초 딜레이
-    await delay(1000);
 
     return HttpResponse.json({
       id: targetId,
@@ -276,7 +299,6 @@ export const handlers = [
     }
 
     // 1초 딜레이
-    await delay(1000);
 
     return HttpResponse.json({
       ...myMainDB.goals[found],
@@ -290,6 +312,10 @@ export const handlers = [
     if (found === -1) {
       throw new Error("못찾음");
     }
+
+    //test
+    console.log(myMainDB);
+
     const allSubGoals = myMainDB.goals[found].subGoals.reduce(
       (acc: object[], subGoalId) => {
         const subGoalInfo = myMainDB.subGoals.find(

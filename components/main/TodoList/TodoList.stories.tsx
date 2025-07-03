@@ -54,7 +54,7 @@ type Story = StoryObj<typeof meta>;
 
 /** 타입 변환 작업. (todoItemProps와 TodoListProps사이 괴리) */
 
-type TodoItemsInfoType = TodoListProps["todoItemsInfo"][0];
+type TodoItemsInfoType = NonNullable<TodoListProps["initTodoItemsInfo"]>[0];
 const validTypes: (keyof TodoItemsInfoType)[] = [
   "checked",
   "id",
@@ -97,7 +97,8 @@ export const Primary: Story = {
     subGoal: "세부 목표입니다",
     todoCheckedLen: 2,
     todoTotalLen: todoItemsInfo.length,
-    todoItemsInfo: todoItemsInfo,
+    initTodoItemsInfo: todoItemsInfo,
+
     // Primary 스토리에만 적용될 Props
   },
 };
@@ -106,14 +107,16 @@ export const NoSubGoal: Story = {
   args: {
     ...Primary.args,
     subGoal: undefined,
+    goalId: "골아이디",
   },
 };
-const todoItemsInfo4NoTotalTodo: (typeof Primary.args)["todoItemsInfo"] = [];
+const todoItemsInfo4NoTotalTodo: (typeof Primary.args)["initTodoItemsInfo"] =
+  [];
 export const NoTotalTodo: Story = {
   args: {
     ...Primary.args,
     todoTotalLen: todoItemsInfo4NoTotalTodo.length,
-    todoItemsInfo: todoItemsInfo4NoTotalTodo,
+    initTodoItemsInfo: todoItemsInfo4NoTotalTodo,
   },
 };
 export const NotFinishedTodos: Story = {
@@ -124,9 +127,9 @@ export const NotFinishedTodos: Story = {
 /** 높이 312px안에서 투두 스크롤 가능해야함.
  * 보여지는 순서가정해져 있으므로, 자세한건 figma에서 확인. 백엔드에서 소팅해줄 듯.
  */
-const todoItemsInfo4NotFinishedTodosLong: (typeof Primary.args)["todoItemsInfo"] =
+const todoItemsInfo4NotFinishedTodosLong: (typeof Primary.args)["initTodoItemsInfo"] =
   convert2ValidTodoItemsInfoType([
-    ...Primary.args.todoItemsInfo,
+    ...(Primary.args.initTodoItemsInfo ?? []),
     TodoItemPrimary.args,
     TodoItemPrimary.args,
     TodoItemPrimary.args,
@@ -135,7 +138,7 @@ const todoItemsInfo4NotFinishedTodosLong: (typeof Primary.args)["todoItemsInfo"]
 export const NotFinishedTodosLong: Story = {
   args: {
     ...Primary.args,
-    todoItemsInfo: todoItemsInfo4NotFinishedTodosLong,
+    initTodoItemsInfo: todoItemsInfo4NotFinishedTodosLong,
     todoTotalLen: todoItemsInfo4NotFinishedTodosLong.length,
   },
 };
