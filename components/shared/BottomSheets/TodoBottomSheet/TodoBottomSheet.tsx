@@ -46,7 +46,7 @@ interface TodoBottomSheetProps {
   initTodoInfo?: undefined | TodoInfoForSubmission;
   subGoals: { title: string; id: string }[];
   onSubmitTodo: (todoInfo: TodoInfoForSubmission) => Promise<boolean>;
-  openModal: boolean;
+  openBottomSheet: boolean;
   isActivated: boolean;
   setIsActivated: (newState: boolean) => void;
 }
@@ -55,7 +55,7 @@ const TodoBottomSheet = ({
   initTodoInfo,
   subGoals,
   onSubmitTodo,
-  openModal,
+  openBottomSheet,
   isActivated,
   setIsActivated,
 }: TodoBottomSheetProps) => {
@@ -67,9 +67,6 @@ const TodoBottomSheet = ({
     subGoalId: initTodoInfo?.subGoalId,
   });
 
-  //test
-
-  // const [isActivated, setIsActivated] = useState(false);
   const [visibleSelect, setVisibleSelect] = useState(false);
   const [showDate, setShowDate] = useState(false);
 
@@ -97,7 +94,7 @@ const TodoBottomSheet = ({
 
   return (
     <>
-      <Drawer.Root open={openModal} defaultOpen={false}>
+      <Drawer.Root open={openBottomSheet} defaultOpen={false}>
         <Drawer.Portal>
           {isActivated && (
             <Drawer.Overlay
@@ -132,7 +129,7 @@ const TodoBottomSheet = ({
                       className="w-auto h-auto relative flex items-center"
                       onSubmit={async (e) => {
                         e.preventDefault();
-                        if (todoInfo.date && todoInfo.subGoalTitle) {
+                        if (todoInfo.subGoalTitle) {
                           const submitRes = await onSubmitTodo(
                             todoInfo as TodoInfoForSubmission,
                           );
@@ -217,7 +214,7 @@ const TodoBottomSheet = ({
 };
 export default TodoBottomSheet;
 
-export type { TodoInfoForSubmission };
+export type { TodoInfoForSubmission, TodoBottomSheetProps };
 
 interface BottomSheetSelectListProps {
   subGoals: TodoBottomSheetProps["subGoals"];

@@ -52,7 +52,7 @@ const TodoItem = ({
       >
         <div className="flex-1 min-w-0 inline-flex flex-col justify-start items-start">
           <label
-            className="  h-7 py-1 inline-flex justify-start items-center gap-1"
+            className="max-w-full  h-7 py-1 inline-flex justify-start items-center gap-1"
             htmlFor="todoItem"
             onClick={(e) => {
               e.preventDefault();

@@ -40,7 +40,12 @@ export const Primary: Story = {
   },
   args: {
     // Primary 스토리에만 적용될 Props
-    subGoals: [{ title: "1" }, { title: "2" }],
+    isActivated: true,
+    setIsActivated: () => {},
+    subGoals: [
+      { title: "1", id: "1" },
+      { title: "2", id: "2" },
+    ],
     onSubmitTodo: async () => true,
     openModal: false,
   },

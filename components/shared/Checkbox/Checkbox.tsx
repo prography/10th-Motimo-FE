@@ -8,6 +8,7 @@ const Checkbox = ({ ...props }: CheckboxProps) => {
     <>
       <input
         className={`
+          shrink-0
          ${`appearance-none w-4 h-4 relative bg-background-alternative rounded outline-[1.50px] outline-offset-[-1.50px]  outline-Color-gray-20 overflow-hidden 
           hover:outline-Color-gray-40
             checked:bg-center

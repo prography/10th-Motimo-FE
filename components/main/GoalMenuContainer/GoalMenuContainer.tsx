@@ -19,7 +19,7 @@ const GoalMenuContainer = ({}: GoalMenuContainerProps) => {
 
   useEffect(() => {
     updateGoalId(goalMenuInfoList[selectedGoalIdx]?.goalId ?? null);
-  }, [selectedGoalIdx]);
+  }, [goalMenuInfoList[selectedGoalIdx]?.goalId, updateGoalId]);
 
   const goalNum = goalMenuInfoList.length;
   return (
