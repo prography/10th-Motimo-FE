@@ -7,14 +7,16 @@ import { GoalWithSubGoalTodoRs } from "@/api/generated/motimo/Api";
 import GoalTitleArea from "../GoalTitleArea/GoalTitleArea";
 import GoalInfo from "@/components/shared/GoalInfo/GoalInfo";
 import TodoBottomSheet, {
+  TodoBottomSheetProps,
   TodoInfoForSubmission,
 } from "@/components/shared/BottomSheets/TodoBottomSheet/TodoBottomSheet";
 import useTodoList from "@/hooks/main/queries/useTodoList";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createNewGoal } from "@/lib/main/goalFetching";
 import { createNewTodoOnSubGoal } from "@/lib/main/subGoalFetching";
 import { updateTodo } from "@/lib/main/todoFetching";
 import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
+import useModal from "@/hooks/useModal";
 
 interface GoalCardProps {
   initSubGoalTodo?: GoalWithSubGoalTodoRs;
@@ -28,6 +30,7 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
   const [newTodo, setNewTodo] = useState<TodoInfoForSubmission | null>(null);
   const { mutate } = useTodoList(newTodo?.subGoalId ?? "");
   const { isActive, setIsActive, initContent } = useActiveTodoBottomSheet();
+  const { isOpened: isModalOpened } = useModal();
 
   // GoalInfo props 계산
   const goalLeftDate = Math.floor(
@@ -49,9 +52,10 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
   );
   const goalLeftTodoNum = totalTodoLenInGoal - checkedTodoLenInGoal;
 
+  // 투두 추가/변경에서 refetch
   useEffect(() => {
     mutate();
-  }, [newTodo]);
+  }, [newTodo, mutate]);
 
   return (
     <>
@@ -62,19 +66,26 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
           {goalWithSubGoalTodo?.subGoals?.map((subGoalInfo) => {
             return <TodoList {...subGoalInfo} key={subGoalInfo.subGoalId} />;
           })}
+          <TodoList
+            key={"new"}
+            todoTotalLen={0}
+            goalId={goalId ? goalId : undefined}
+          />
         </section>
       </div>
 
       <TodoBottomSheet
-        // isActivated={true}
         isActivated={isActive}
         initTodoInfo={initContent}
         setIsActivated={setIsActive}
         subGoals={goalWithSubGoalTodo?.subGoals.map((subGoalInfo) => ({
-          id: subGoalInfo.subGoalId,
+          id: subGoalInfo.subGoalId ?? "",
           title: subGoalInfo.subGoal ?? "",
         }))}
-        openModal={goalWithSubGoalTodo?.subGoals.length > 0}
+        // modal이 등장하면 bottomSheet는 닫기.
+        openBottomSheet={
+          !isModalOpened && goalWithSubGoalTodo?.subGoals.length > 0
+        }
         onSubmitTodo={async (newTodoInfo) => {
           const isCreating = newTodoInfo.id ? false : true;
           let fetchRes;
