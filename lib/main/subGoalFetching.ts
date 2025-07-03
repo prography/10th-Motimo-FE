@@ -2,14 +2,14 @@ import {
   TodoRs,
   TodoRsStatusEnum,
   TodoUpdateRq,
-  SubGoalCreateRq,
+  TodoCreateRq,
 } from "../../api/generated/motimo/Api";
 import { templateFetch } from "../common/fetchTemplate";
 import { TodoItemsInfo } from "@/types/todoList";
 
 const createNewTodoOnSubGoal = async (
   subGoalId: string,
-  newTodo: SubGoalCreateRq,
+  newTodo: TodoCreateRq,
 ) => {
   // error처리 아직 안함. toast처리 해야 함
   const result = await templateFetch(
