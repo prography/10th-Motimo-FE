@@ -19,7 +19,7 @@ const generate = async (domain, url) => {
   generateApi({
     output: PATH_TO_OUTPUT_DIR,
     url,
-    httpClientType: "axios", // or "fetch"
+    httpClientType: "fetch",
     defaultResponseAsSuccess: false,
     generateClient: true,
     generateRouteTypes: false,
