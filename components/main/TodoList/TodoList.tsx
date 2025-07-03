@@ -8,6 +8,7 @@ import {
   useState,
   createContext,
   useContext,
+  useOptimistic,
 } from "react";
 import { KeyedMutator } from "swr";
 import { motion, useMotionValue } from "motion/react";
@@ -41,9 +42,9 @@ interface TodoListProps {
   /** 없다면, 다른 UI */
   subGoal?: string;
   /** todoCheckedLen도 낙관적 업뎃이 필요한지는 모르겠다. */
-  todoCheckedLen?: number;
+  initTodoCheckedLen?: number;
   /** todoToalLen이 0이면 todoItemsInfo길이가 0인거긴 한데... */
-  todoTotalLen: number;
+  initTodoTotalLen: number;
   /** 길이가 0이라면, 다른 UI */
   initTodoItemsInfo?: TodoItemsInfo[];
   /** subGoal의 id */
@@ -56,12 +57,13 @@ const TodoListContext = createContext<{
   subGoalTitle?: string;
   subGoalId?: string;
   mutate?: KeyedMutator<TodoRs[]>;
+  updateOptimisticCheckedLen?: (action: number) => void;
 } | null>(null);
 
 const TodoList = ({
   subGoal,
-  todoCheckedLen = 0,
-  todoTotalLen,
+  initTodoCheckedLen = 0,
+  initTodoTotalLen,
   initTodoItemsInfo,
   subGoalId,
   goalId,
@@ -71,9 +73,18 @@ const TodoList = ({
   const { data: todoItemsInfo, mutate } = useTodoList(subGoalId ?? "", {
     fallbackData: initTodoItemsInfo,
   });
+  const todoCheckedLen =
+    todoItemsInfo?.filter((todoItem) => todoItem.checked).length ??
+    initTodoCheckedLen;
 
-  //test
-  console.log("todoItemsInfos in toodlist: ", todoItemsInfo);
+  const [optimisticCheckedLen, updateOptimisticCheckedLen] = useOptimistic(
+    todoCheckedLen,
+    (cur: number, delta: number) => {
+      return cur + delta;
+    },
+  );
+
+  const todoTotalLen = todoItemsInfo ? todoItemsInfo.length : initTodoTotalLen;
 
   if (!subGoal || !subGoalId)
     return (
@@ -81,7 +92,7 @@ const TodoList = ({
         <NoSubGoal goalId={goalId} />
       </>
     );
-  const hasTodoItemsInfo = todoItemsInfo.length > 0;
+  const hasTodoItemsInfo = todoItemsInfo ? todoItemsInfo.length > 0 : false;
   return (
     <>
       <div
@@ -104,7 +115,7 @@ const TodoList = ({
           {hasTodoItemsInfo && (
             <div className="flex justify-end items-center gap-0.5">
               <div className="justify-center text-label-alternative text-sm font-medium font-['SUIT_Variable'] leading-tight">
-                {`${todoCheckedLen}/${todoTotalLen}`}
+                {`${optimisticCheckedLen}/${todoTotalLen}`}
               </div>
             </div>
           )}
@@ -116,10 +127,15 @@ const TodoList = ({
         >
           <div className="min-h-0 overflow-hidden">
             <TodoListContext.Provider
-              value={{ mutate, subGoalId, subGoalTitle: subGoal }}
+              value={{
+                mutate,
+                subGoalId,
+                subGoalTitle: subGoal,
+                updateOptimisticCheckedLen,
+              }}
             >
               <TodoArea
-                todoItemsInfo={todoItemsInfo}
+                todoItemsInfo={todoItemsInfo ?? []}
                 hasTodoItemsInfo={hasTodoItemsInfo}
                 todoCheckedLen={todoCheckedLen}
                 todoTotalLen={todoTotalLen}
@@ -251,7 +267,8 @@ const TodoItemContainer = ({
 }) => {
   const x = useMotionValue(0);
   const contextContent = useContext(TodoListContext);
-  const { mutate, subGoalId, subGoalTitle } = contextContent || {};
+  const { mutate, subGoalId, subGoalTitle, updateOptimisticCheckedLen } =
+    contextContent || {};
 
   const [checked, toggleChecekdOptimistically] = useOptimisticToggle(
     info.checked ?? false,
@@ -299,6 +316,7 @@ const TodoItemContainer = ({
             onChecked={async () => {
               await toggleTodo(info.id);
               toggleChecekdOptimistically();
+              updateOptimisticCheckedLen && updateOptimisticCheckedLen(1);
               mutate && mutate();
             }}
           />
@@ -314,8 +332,6 @@ const TodoItemContainer = ({
                 todo: info?.title,
                 id: info?.id,
               };
-              //test
-              console.log("edit버튼 속 inittodoinfo: ");
               setIsActive(true, initTodoInfo);
             }}
           />
@@ -438,59 +454,3 @@ const DeleteButton = ({ onDelete }: DeleteButtonProps) => {
     </>
   );
 };
-
-// const TodoItemContainer = ({
-//   info,
-//   selectedTodoItem,
-// }: {
-//   info: TmpTodoItemsInfo;
-//   /** todo의 id. 아무것도 선택 안되면 null */
-//   selectedTodoItem: null | number;
-// }) => {
-//   //   const [dragXOffset, setDragXOffset] = useState(0);
-//   //   //tset
-//   //   console.log("dragXOffset: ", dragXOffset);
-
-//   /**
-//    * 여기에 todoItemProp에 들어갈 onChecked, onMoodClick에 대해 처리해야 하나?
-//    * 그럼 Edit, Delete버튼에 대해 모달 띄우는거는?
-//    *
-//    * 모달 띄우는게 onMoodClick, Edit, Delete에 대해.
-//    * onChecked는 바로 fetch를 보내야 하는데,
-//    *
-//    * =>
-//    * 그냥 이 안에서 클릭 이벤트에 대한 동작을 다 넣자.
-//    * 모달이 사용된다면 모달 훅이랑 함께, 모달 안에 넣을 함수도 만들자.
-//    */
-
-//   const x = useMotionValue(0);
-//   return (
-//     <>
-//       <div className="flex items-center relative">
-//         <div className="gap-1 flex  z-0 absolute right-0">
-//           <EditButton />
-//           <DeleteButton />
-//         </div>
-//         <motion.div
-//           className="cursor-grab active:cursor-grabbing z-10 "
-//           drag="x"
-//           style={{ x }}
-//           dragConstraints={{ left: -88, right: 0 }}
-//           dragElastic={0}
-//           dragMomentum={false}
-//           onDragEnd={(_, info) => {
-//             const newX = info.offset.x < -30 ? -88 : 0;
-//             animate(x, newX);
-//           }}
-//           transition={{
-//             type: "spring",
-//             stiffness: 300,
-//             damping: 30,
-//           }}
-//         >
-//           <OptimizedTodoItem {...info} key={info.title} />
-//         </motion.div>
-//       </div>
-//     </>
-//   );
-// };

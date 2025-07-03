@@ -15,9 +15,6 @@ type NewTodoItemsInfo = Omit<TodoItemsInfo, "reported"> & {
 const useTodoList = (subGoalId: string, options?: SWRConfiguration) => {
   const { data, error, mutate } = useSWR(subGoalId, getTodosOnSubGoal, options);
 
-  //test
-  console.log("data in useTodoList: ", data);
-
   const convertedResult: TodoItemsInfo[] | undefined = data?.map((todoRs) => ({
     id: todoRs.id ?? "",
     title: todoRs.title ?? "",
