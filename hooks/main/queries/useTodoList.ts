@@ -18,14 +18,13 @@ const useTodoList = (subGoalId: string, options?: SWRConfiguration) => {
   //test
   console.log("data in useTodoList: ", data);
 
-  const convertedResult: TodoItemsInfo[] =
-    data?.map((todoRs) => ({
-      id: todoRs.id ?? "",
-      title: todoRs.title ?? "",
-      checked: todoRs.status === TodoRsStatusEnum.COMPLETE,
-      reported: !!todoRs.todoResultId,
-      targetDate: todoRs.date ? new Date(todoRs.date) : undefined,
-    })) ?? [];
+  const convertedResult: TodoItemsInfo[] | undefined = data?.map((todoRs) => ({
+    id: todoRs.id ?? "",
+    title: todoRs.title ?? "",
+    checked: todoRs.status === TodoRsStatusEnum.COMPLETE,
+    reported: !!todoRs.todoResultId,
+    targetDate: todoRs.date ? new Date(todoRs.date) : undefined,
+  }));
 
   // const mutateWithConversion = (
   //   newTodoItemsInfo: NewTodoItemsInfo[],
