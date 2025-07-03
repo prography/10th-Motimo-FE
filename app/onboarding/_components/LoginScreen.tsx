@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { API_BASE_URL, OAUTH_ENDPOINTS, FRONTEND_BASE_URL } from "@/lib/constants";
 
 interface LoginScreenProps {
   onNext: () => void;
@@ -85,11 +86,11 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
       console.log(`
 🔧 백엔드 CORS 설정 (Spring Boot):
 
-@CrossOrigin(
-    origins = "http://localhost:3000",
-    allowCredentials = true,
-    exposedHeaders = {"Authorization", "Refresh-Token", "Access-Token"}
-)
+ @CrossOrigin(
+     origins = "${FRONTEND_BASE_URL}",
+     allowCredentials = true,
+     exposedHeaders = {"Authorization", "Refresh-Token", "Access-Token"}
+ )
 @GetMapping("/api/auth/google/callback")
 public ResponseEntity<?> googleCallback(@RequestParam String code, HttpServletResponse response) {
     // 1. OAuth code로 토큰 획득
@@ -121,7 +122,7 @@ public ResponseEntity<?> googleCallback(@RequestParam String code, HttpServletRe
 }
       `);
 
-      const response = await fetch(`http://motimo.kro.kr:8080/api/auth/google/callback?code=${code}`, {
+             const response = await fetch(`${OAUTH_ENDPOINTS.GOOGLE_CALLBACK}?code=${code}`, {
         method: 'GET',
         credentials: 'include', // 크로스 도메인 쿠키 포함
         headers: {
@@ -215,12 +216,12 @@ public ResponseEntity<?> googleCallback(@RequestParam String code, HttpServletRe
     console.log('현재 URL:', window.location.href);
     console.log('현재 쿠키:', document.cookie);
 
-    // postMessage 이벤트 리스너 추가 (중간 페이지에서 토큰 전달용)
-    const handleMessage = (event: MessageEvent) => {
-      // 보안을 위해 origin 검증
-      if (event.origin !== 'http://motimo.kro.kr:8080') {
-        return;
-      }
+         // postMessage 이벤트 리스너 추가 (중간 페이지에서 토큰 전달용)
+     const handleMessage = (event: MessageEvent) => {
+       // 보안을 위해 origin 검증
+       if (event.origin !== API_BASE_URL) {
+         return;
+       }
 
       console.log('📨 postMessage로 데이터 수신:', event.data);
 
@@ -323,9 +324,9 @@ public ResponseEntity<?> googleCallback(@RequestParam String code, HttpServletRe
     // 또는
     headers.set("Access-Token", accessToken);
     
-    // 3. CORS 설정 (중요!)
-    headers.set("Access-Control-Allow-Origin", "http://localhost:3000");
-    headers.set("Access-Control-Expose-Headers", "Authorization,Refresh-Token,Access-Token");
+         // 3. CORS 설정 (중요!)
+     headers.set("Access-Control-Allow-Origin", "${FRONTEND_BASE_URL}");
+     headers.set("Access-Control-Expose-Headers", "Authorization,Refresh-Token,Access-Token");
     
     return ResponseEntity.ok()
         .headers(headers)
@@ -482,16 +483,16 @@ public ResponseEntity<?> googleCallback(@RequestParam String code, HttpServletRe
     return new Promise((resolve) => {
       console.log('🔄 iframe을 통한 쿠키 토큰 가져오기 시도...');
 
-      // 백엔드에서 쿠키를 읽어서 반환하는 엔드포인트 호출
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.src = 'http://motimo.kro.kr:8080/api/oauth/get-tokens'; // 백엔드에서 구현 필요
+             // 백엔드에서 쿠키를 읽어서 반환하는 엔드포인트 호출
+       const iframe = document.createElement('iframe');
+       iframe.style.display = 'none';
+       iframe.src = OAUTH_ENDPOINTS.GET_TOKENS; // 백엔드에서 구현 필요
 
       iframe.onload = () => {
         try {
           // iframe에서 postMessage로 토큰 전달받기
-          const handleIframeMessage = (event: MessageEvent) => {
-            if (event.origin !== 'http://motimo.kro.kr:8080') return;
+                     const handleIframeMessage = (event: MessageEvent) => {
+             if (event.origin !== API_BASE_URL) return;
 
             console.log('📨 iframe으로부터 토큰 수신:', event.data);
 
@@ -546,12 +547,12 @@ public ResponseEntity<?> googleCallback(@RequestParam String code, HttpServletRe
     localStorage.setItem("oauth_return_step", currentStep);
 
     // CSRF 보호를 위한 state 파라미터 생성
-    const state = Math.random().toString(36).substring(2, 15);
-    localStorage.setItem("oauth_state", state);
+    // const state = Math.random().toString(36).substring(2, 15);
+    // localStorage.setItem("oauth_state", state);
 
-    // Google OAuth 인증 페이지로 리다이렉트 (기본 방식으로 복원)
-    const redirect_uri = "http://localhost:3000/onboarding";
-    window.location.href = `http://motimo.kro.kr:8080/oauth2/authorize/google?redirect_uri=${redirect_uri}&state=${state}`;
+         // Google OAuth 인증 페이지로 리다이렉트 (기본 방식으로 복원)
+     const redirect_uri = `${FRONTEND_BASE_URL}/onboarding`;
+     window.location.href = `${OAUTH_ENDPOINTS.GOOGLE_AUTHORIZE}?redirect_uri=${redirect_uri}`;
   };
 
   const handleKakaoLogin = () => {
