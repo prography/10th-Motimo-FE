@@ -24,7 +24,7 @@ const Main = () => {
         <div
           data-icon="false"
           data-type="main"
-          className="w-full h-full relative bg-white inline-flex flex-col flex-1 justify-start  gap-1"
+          className="w-full h-full relative bg-white inline-flex flex-col flex-1 justify-start  gap-1 pb-14"
         >
           <MainHeader daysOfServiceUse={tmpDaysOfServiceUse} />
           {/* <div className="flex justify-end w-full">

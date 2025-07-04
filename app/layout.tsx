@@ -6,6 +6,7 @@ import ModalRenderer from "./_components/ModalRenderer";
 import { MSWComponent } from "@/components/_mocks/MSWComponent";
 
 import { SWRConfig } from "swr";
+import { BottomTabBar } from "@/components/shared";
 
 const customFont = localFont({
   src: "../public/fonts/SUIT-Variable.woff2",
@@ -24,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`${customFont.className} w-full `}>
+    <html lang="ko" className={`${customFont.className} w-full h-full`}>
       <head>
         <link
           rel="preload"
@@ -34,14 +35,13 @@ export default function RootLayout({
           crossOrigin="anonymous" // 일반적으로 폰트에는 추가하는 것이 좋음
         />
       </head>
-      <body
-        className={`${customFont.variable} antialiased w-full h-full pb-20`}
-      >
+      <body className={`${customFont.variable} antialiased w-full h-full`}>
         <ModalRenderer />
-        {/* {process.env.NODE_ENV === "development" && <MSWComponent />} */}
+        {process.env.NODE_ENV === "development" && <MSWComponent />}
         {/* <SWRConfig value={{ dedupingInterval: 5000 }}> */}
         {children}
         {/* </SWRConfig> */}
+        <BottomTabBar className="fixed z-40 bottom-0 w-full" type="1" />
       </body>
     </html>
   );

@@ -174,7 +174,7 @@ const NoSubGoal = ({ goalId }: NoSubGoalProps) => {
             세부 목표를 추가해주세요.
           </div>
           <button
-            onClick={() =>
+            onClick={() => {
               openModal(
                 <ModalAddingSubGoal
                   onClose={() => closeModal()}
@@ -191,8 +191,8 @@ const NoSubGoal = ({ goalId }: NoSubGoalProps) => {
                     }
                   }}
                 />,
-              )
-            }
+              );
+            }}
             type="button"
             className="w-8 h-8 p-1.5 bg-background-primary rounded-[999px] flex justify-center items-center gap-2"
           >
@@ -314,9 +314,10 @@ const TodoItemContainer = ({
             {...info}
             checked={checked}
             onChecked={async () => {
-              await toggleTodo(info.id);
               toggleChecekdOptimistically();
               updateOptimisticCheckedLen && updateOptimisticCheckedLen(1);
+
+              await toggleTodo(info.id);
               mutate && mutate();
             }}
           />

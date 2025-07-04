@@ -42,14 +42,38 @@ const TodoInfoContext = createContext<{
   setTodoInfo: Dispatch<SetStateAction<TodoInfo>>;
 } | null>(null);
 
-interface TodoBottomSheetProps {
+type TodoBottomSheetProps = {
   initTodoInfo?: undefined | TodoInfoForSubmission;
   subGoals: { title: string; id: string }[];
   onSubmitTodo: (todoInfo: TodoInfoForSubmission) => Promise<boolean>;
   openBottomSheet: boolean;
   isActivated: boolean;
   setIsActivated: (newState: boolean) => void;
-}
+} & {
+  hasBottomTabBar: boolean;
+};
+
+const makeDefaultTodoBottomSheetInfo = (
+  subGoals: TodoBottomSheetProps["subGoals"],
+  initTodoInfo?: TodoBottomSheetProps["initTodoInfo"],
+) => {
+  if (initTodoInfo) {
+    return {
+      id: initTodoInfo?.id,
+      todo: initTodoInfo?.todo ?? "",
+      date: initTodoInfo?.date,
+      subGoalTitle: initTodoInfo?.subGoalTitle ?? subGoals?.[0]?.title,
+      subGoalId: initTodoInfo?.subGoalId ?? subGoals?.[0]?.id,
+    };
+  }
+  return {
+    id: "",
+    todo: "",
+    date: undefined,
+    subGoalTitle: subGoals[0]?.title ?? "",
+    subGoalId: subGoals[0]?.id ?? "",
+  };
+};
 
 const TodoBottomSheet = ({
   initTodoInfo,
@@ -58,14 +82,11 @@ const TodoBottomSheet = ({
   openBottomSheet,
   isActivated,
   setIsActivated,
+  hasBottomTabBar,
 }: TodoBottomSheetProps) => {
-  const [todoInfo, setTodoInfo] = useState<TodoInfo>({
-    id: initTodoInfo?.id,
-    todo: initTodoInfo?.todo ?? "",
-    date: initTodoInfo?.date,
-    subGoalTitle: initTodoInfo?.subGoalTitle,
-    subGoalId: initTodoInfo?.subGoalId,
-  });
+  const [todoInfo, setTodoInfo] = useState<TodoInfo>(
+    makeDefaultTodoBottomSheetInfo(subGoals, initTodoInfo),
+  );
 
   const [visibleSelect, setVisibleSelect] = useState(false);
   const [showDate, setShowDate] = useState(false);
@@ -74,23 +95,12 @@ const TodoBottomSheet = ({
     setIsActivated(false);
     setVisibleSelect(false);
     setShowDate(false);
-    setTodoInfo({
-      id: "",
-      todo: "",
-      date: undefined,
-      subGoalTitle: undefined,
-    });
+    setTodoInfo(makeDefaultTodoBottomSheetInfo(subGoals));
   };
 
   useEffect(() => {
-    setTodoInfo({
-      id: initTodoInfo?.id,
-      todo: initTodoInfo?.todo ?? "",
-      date: initTodoInfo?.date,
-      subGoalTitle: initTodoInfo?.subGoalTitle ?? "",
-      subGoalId: initTodoInfo?.subGoalId ?? "",
-    });
-  }, [initTodoInfo]);
+    setTodoInfo(makeDefaultTodoBottomSheetInfo(subGoals, initTodoInfo));
+  }, [initTodoInfo, openBottomSheet]);
 
   return (
     <>
@@ -107,7 +117,10 @@ const TodoBottomSheet = ({
 
           <TodoInfoContext.Provider value={{ todoInfo, setTodoInfo }}>
             <Drawer.Content
-              className={`z-20 pl-4 pr-4  bg-white flex flex-col justify-start fixed bottom-0 left-0 right-0 max-h-[82vh] rounded-t-[10px]`}
+              // bottom tab bar에 따라 위치 바뀌도록  ${hasBottomTabBar ? "pb-14" : "pb-0"}
+              className={`
+                ${hasBottomTabBar ? "bottom-14" : "bottom-0"}
+               z-20 pl-4 pr-4  bg-white flex flex-col justify-start fixed   left-0 right-0 max-h-[82vh] rounded-t-[10px]`}
             >
               {showDate ? (
                 <BottomSheetDate setShowDate={setShowDate} />
@@ -193,8 +206,7 @@ const TodoBottomSheet = ({
                             }}
                           >
                             <p className="flex-1 flex justify-start text-label-strong text-xs font-medium font-['SUIT_Variable'] leading-none">
-                              {todoInfo.subGoalTitle ??
-                                "세부 목표를 선택해주세요"}
+                              {todoInfo.subGoalTitle}
                             </p>
                             <div className="w-4 h-4 relative overflow-hidden"></div>
                             <ArrowDownSvg />
