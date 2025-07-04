@@ -5,7 +5,7 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "filled" | "outlined" | "text";
   size?: "s" | "m" | "l";
-  icon?: React.ReactNode;
+  icon?: React.ReactElement<{ className?: string }>;
   children: React.ReactNode;
 }
 
@@ -58,10 +58,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {icon && (
           <span className="flex-shrink-0">
-            {React.cloneElement(icon as React.ReactElement, {
+            {React.cloneElement(icon, {
               className: cn(
                 size === "s" ? "w-4 h-4" : size === "m" ? "w-5 h-5" : "w-5 h-5",
-                (icon as React.ReactElement).props?.className,
+                icon.props.className,
               ),
             })}
           </span>
