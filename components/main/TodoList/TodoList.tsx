@@ -288,7 +288,7 @@ const TodoItemContainer = ({
 
   return (
     <Fragment key={info.id}>
-      <div className="flex items-center relative w-full overflow-x-hidden">
+      <div className="flex items-center relative w-full overflow-hidden">
         <motion.div
           className="cursor-grab active:cursor-grabbing  w-full z-10"
           drag="x"

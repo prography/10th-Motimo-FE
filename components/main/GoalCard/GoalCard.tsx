@@ -17,6 +17,7 @@ import { createNewTodoOnSubGoal } from "@/lib/main/subGoalFetching";
 import { updateTodo } from "@/lib/main/todoFetching";
 import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
 import useModal from "@/hooks/useModal";
+import { date2StringWithSpliter } from "@/utils/date2String";
 
 interface GoalCardProps {
   initSubGoalTodo?: GoalWithSubGoalTodoRs;
@@ -85,8 +86,7 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
         }))}
         // modal이 등장하면 bottomSheet는 닫기.
         openBottomSheet={
-          // !isModalOpened &&
-          goalWithSubGoalTodo?.subGoals.length > 0
+          !isModalOpened && goalWithSubGoalTodo?.subGoals.length > 0
         }
         onSubmitTodo={async (newTodoInfo) => {
           const isCreating = newTodoInfo.id ? false : true;
@@ -94,6 +94,9 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
           if (isCreating) {
             fetchRes = await createNewTodoOnSubGoal(newTodoInfo.subGoalId, {
               title: newTodoInfo.todo,
+              date: newTodoInfo?.date
+                ? date2StringWithSpliter(newTodoInfo?.date, "-")
+                : undefined,
             });
           } else {
             fetchRes = await updateTodo(newTodoInfo.id ?? "", {
