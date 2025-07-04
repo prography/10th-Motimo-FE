@@ -188,10 +188,10 @@ export function CupertinoPicker<T>({
             <div
                 ref={scrollRef}
                 className={`h-full overflow-y-auto scrollbar-hide touch-pan-y select-none ${disabled
-                        ? 'cursor-not-allowed opacity-50'
-                        : isDragging
-                            ? 'cursor-grabbing'
-                            : 'cursor-grab'
+                    ? 'cursor-not-allowed opacity-50'
+                    : isDragging
+                        ? 'cursor-grabbing'
+                        : 'cursor-grab'
                     }`}
                 onScroll={handleScroll}
                 onTouchStart={handleTouchStart}
@@ -225,8 +225,8 @@ export function CupertinoPicker<T>({
                         >
                             <span
                                 className={`font-medium transition-all duration-200 z-10 relative ${isSelected
-                                        ? "text-2xl font-extrabold text-gray-900"
-                                        : "text-lg text-gray-400/60"
+                                    ? "text-2xl font-extrabold text-gray-900"
+                                    : "text-lg text-gray-400/60"
                                     }`}
                                 style={{
                                     textShadow: isSelected

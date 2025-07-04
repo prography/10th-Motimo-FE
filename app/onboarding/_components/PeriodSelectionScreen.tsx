@@ -132,7 +132,7 @@ export default function PeriodSelectionScreen({
             목표 기간을 정해주세요.
           </h1>
           <p className="text-base font-normal text-label-alternative leading-[1.4]">
-            목표의 성격에 따라 '개월 수'나 '완료 날짜' 중에서{"\n"}자유롭게 선택해보세요.
+            {`목표의 성격에 따라 '개월 수'나 '완료 날짜' 중에서\n자유롭게 선택해보세요.`}
           </p>
         </div>
 
