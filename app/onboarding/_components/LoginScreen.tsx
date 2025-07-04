@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { GoogleIcon, KakaoIcon } from "@/components/icons";
-import MOTIMO_LOGO_BLACK from "@/components/shared/public/MOTIMO_LOGO_BLACK.svg";
 import {
   API_BASE_URL,
   OAUTH_ENDPOINTS,
@@ -189,10 +188,11 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
 
                 {/* Logo Icon */}
                 <div className="flex justify-center">
-                  <MOTIMO_LOGO_BLACK
-                    size={219}
-                    className="w-[219px] h-[36px]"
-                  />
+                  <div className="w-[219px] h-[36px] bg-label-normal rounded flex items-center justify-center">
+                    <span className="text-background-alternative font-bold text-lg">
+                      MOTIMO
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
