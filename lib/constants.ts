@@ -4,9 +4,7 @@ export const API_BASE_URL = "http://motimo.kro.kr:8080";
 
 // OAuth 관련 상수
 export const OAUTH_ENDPOINTS = {
-  GOOGLE_CALLBACK: `${API_BASE_URL}/api/auth/google/callback`,
   GOOGLE_AUTHORIZE: `${API_BASE_URL}/oauth2/authorize/google`,
-  GET_TOKENS: `${API_BASE_URL}/api/oauth/get-tokens`,
 } as const;
 
 // 기타 상수
