@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChevronLeftIcon } from "@/components/icons/ChevronLeftIcon";
 import { AppBar } from "@/components/shared/AppBar/AppBar";
 import { ButtonRound } from "@/components/shared/ButtonRound/ButtonRound";
+import { CupertinoPicker } from "@/components/shared/CupertinoPicker/CupertinoPicker";
 
 interface PeriodSelectionScreenProps {
   periodType: "months" | "date";
@@ -40,6 +41,8 @@ export default function PeriodSelectionScreen({
     return new Date(year, month, 1).getDay();
   };
 
+
+
   const renderCalendar = () => {
     const daysInMonth = getDaysInMonth(currentMonth, currentYear);
     const firstDay = getFirstDayOfMonth(currentMonth, currentYear);
@@ -47,12 +50,12 @@ export default function PeriodSelectionScreen({
     const isCurrentMonth = currentMonth === today.getMonth() && currentYear === today.getFullYear();
 
     const days = [];
-    
+
     // Previous month's last days
     const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
     const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
     const daysInPrevMonth = getDaysInMonth(prevMonth, prevYear);
-    
+
     for (let i = firstDay - 1; i >= 0; i--) {
       days.push(
         <div key={`prev-${daysInPrevMonth - i}`} className="h-10 w-10 flex items-center justify-center">
@@ -68,9 +71,9 @@ export default function PeriodSelectionScreen({
       const date = new Date(currentYear, currentMonth, day);
       const isToday = isCurrentMonth && day === today.getDate();
       const isPast = date < today && !isToday;
-      const isSelected = targetDate && 
-        targetDate.getDate() === day && 
-        targetDate.getMonth() === currentMonth && 
+      const isSelected = targetDate &&
+        targetDate.getDate() === day &&
+        targetDate.getMonth() === currentMonth &&
         targetDate.getFullYear() === currentYear;
 
       days.push(
@@ -78,13 +81,12 @@ export default function PeriodSelectionScreen({
           key={day}
           onClick={() => !isPast && onTargetDateChange(new Date(currentYear, currentMonth, day))}
           disabled={isPast}
-          className={`h-10 w-10 rounded flex items-center justify-center text-xs font-medium ${
-            isSelected
-              ? "bg-label-primary text-background-alternative"
-              : isPast
+          className={`h-10 w-10 rounded flex items-center justify-center text-xs font-medium ${isSelected
+            ? "bg-label-primary text-background-alternative"
+            : isPast
               ? "text-label-disabled cursor-not-allowed"
               : "text-label-normal hover:bg-background-assistive"
-          }`}
+            }`}
         >
           {day}
         </button>
@@ -139,21 +141,19 @@ export default function PeriodSelectionScreen({
           <div className="flex">
             <button
               onClick={() => onPeriodTypeChange("months")}
-              className={`flex-1 py-2 px-4 rounded-full font-bold text-sm ${
-                periodType === "months"
-                  ? "bg-label-primary text-background-alternative"
-                  : "text-label-alternative"
-              }`}
+              className={`flex-1 py-2 px-4 rounded-full font-bold text-sm ${periodType === "months"
+                ? "bg-label-primary text-background-alternative"
+                : "text-label-alternative"
+                }`}
             >
               개월 수로 설정
             </button>
             <button
               onClick={() => onPeriodTypeChange("date")}
-              className={`flex-1 py-2 px-4 rounded-full font-bold text-sm ${
-                periodType === "date"
-                  ? "bg-label-primary text-background-alternative"
-                  : "text-label-alternative"
-              }`}
+              className={`flex-1 py-2 px-4 rounded-full font-bold text-sm ${periodType === "date"
+                ? "bg-label-primary text-background-alternative"
+                : "text-label-alternative"
+                }`}
             >
               완료 날짜로 설정
             </button>
@@ -163,31 +163,14 @@ export default function PeriodSelectionScreen({
         {/* Month Selector */}
         {periodType === "months" && (
           <div className="mb-8">
-            <div className="flex flex-col gap-0.5">
-              {monthNumbers.map((num) => (
-                <button
-                  key={num}
-                  onClick={() => onMonthCountChange(num)}
-                  className={`flex items-center justify-center py-2 px-2 ${
-                    monthCount === num
-                      ? "bg-background-normal rounded-lg"
-                      : ""
-                  }`}
-                >
-                  <span
-                    className={`font-medium ${
-                      monthCount === num
-                        ? "text-2xl text-label-normal"
-                        : Math.abs(monthCount - num) === 1
-                        ? "text-sm text-label-disabled"
-                        : "text-[22px] text-label-assistive"
-                    }`}
-                  >
-                    {num}
-                  </span>
-                </button>
-              ))}
-            </div>
+            <CupertinoPicker
+              items={monthNumbers}
+              selectedValue={monthCount}
+              onValueChange={onMonthCountChange}
+              renderItem={(num) => `${num}개월`}
+              height={200}
+              itemHeight={40}
+            />
           </div>
         )}
 
