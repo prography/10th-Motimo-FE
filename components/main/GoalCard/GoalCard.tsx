@@ -43,11 +43,11 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
   );
 
   const totalTodoLenInGoal = goalWithSubGoalTodo.subGoals.reduce(
-    (acc, subGoal) => acc + subGoal.todoTotalLen,
+    (acc, subGoal) => acc + subGoal.initTodoTotalLen,
     0,
   );
   const checkedTodoLenInGoal = goalWithSubGoalTodo.subGoals.reduce(
-    (acc, subGoal) => acc + (subGoal.todoCheckedLen ?? 0),
+    (acc, subGoal) => acc + (subGoal.initTodoCheckedLen ?? 0),
     0,
   );
   const goalLeftTodoNum = totalTodoLenInGoal - checkedTodoLenInGoal;
@@ -59,7 +59,7 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
 
   return (
     <>
-      <div className="w-full flex-1 p-4 bg-background-normal inline-flex flex-col justify-start items-start gap-2 ">
+      <div className="w-full flex-1 p-4 pb-38 bg-background-normal inline-flex flex-col justify-start items-start gap-2 ">
         <GoalTitleArea goalTitle={goalWithSubGoalTodo.title ?? ""} />
         <GoalInfo leftDateNum={goalLeftDate} leftTodoNum={goalLeftTodoNum} />
         <section className="flex flex-col gap-4 w-full">
@@ -68,13 +68,14 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
           })}
           <TodoList
             key={"new"}
-            todoTotalLen={0}
+            initTodoTotalLen={0}
             goalId={goalId ? goalId : undefined}
           />
         </section>
       </div>
 
       <TodoBottomSheet
+        hasBottomTabBar={true}
         isActivated={isActive}
         initTodoInfo={initContent}
         setIsActivated={setIsActive}
@@ -84,7 +85,8 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
         }))}
         // modal이 등장하면 bottomSheet는 닫기.
         openBottomSheet={
-          !isModalOpened && goalWithSubGoalTodo?.subGoals.length > 0
+          // !isModalOpened &&
+          goalWithSubGoalTodo?.subGoals.length > 0
         }
         onSubmitTodo={async (newTodoInfo) => {
           const isCreating = newTodoInfo.id ? false : true;

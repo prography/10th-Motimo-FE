@@ -28,11 +28,12 @@ const useGoalWithSubGoalTodo = (goalId: string, options?: SWRConfiguration) => {
 
       return {
         subGoalId: subGoalInfo.id ?? "",
-        todoTotalLen: todosInSubGoal.length,
+        initTodoTotalLen: todosInSubGoal.length,
         initTodoItemsInfo: todosInSubGoal,
         subGoal: subGoalInfo.title,
-        todoCheckedLen: todosInSubGoal.filter((todoInfo) => todoInfo.checked)
-          .length,
+        initTodoCheckedLen: todosInSubGoal.filter(
+          (todoInfo) => todoInfo.checked,
+        ).length,
       };
     }) ?? [];
 
