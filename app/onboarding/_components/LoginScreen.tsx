@@ -154,7 +154,7 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
     <div className="min-h-screen bg-background-normal flex flex-col">
       {/* Status Bar */}
       <div className="flex justify-between items-end gap-[286px] px-6 py-[10px] h-[52px]">
-        <div className="text-sm font-medium text-label-normal">9:30</div>
+        {/* <div className="text-sm font-medium text-label-normal">9:30</div> */}
         <div className="flex items-center gap-4">
           {/* Wifi, Signal, Battery icons would go here */}
           <div className="w-[46px] h-[17px]"></div>
