@@ -10,16 +10,19 @@ const templateFetch = async <T>(
   try {
     const res = await fetch(
       apiUrl,
-      method === "PUT" || method === "POST" || method === "PATCH"
-        ? {
-            method: method,
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${process.env.NEXT_TMP_BAERER}`,
-            },
-            body: JSON.stringify(body),
-          }
-        : undefined,
+
+      {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMP_BAERER}`,
+        },
+
+        body:
+          method === "PUT" || method === "POST" || method === "PATCH"
+            ? JSON.stringify(body)
+            : undefined,
+      },
     );
     if (!res.ok) {
       if (onFetchNonOk) onFetchNonOk(res);

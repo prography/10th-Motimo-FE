@@ -38,8 +38,7 @@ export default function RootLayout({
         className={`${customFont.variable} antialiased w-full h-full pb-20`}
       >
         <ModalRenderer />
-        {process.env.NODE_ENV === "development" && <MSWComponent />}
-        {/* <MSWComponent /> */}
+        {/* {process.env.NODE_ENV === "development" && <MSWComponent />} */}
         {/* <SWRConfig value={{ dedupingInterval: 5000 }}> */}
         {children}
         {/* </SWRConfig> */}
