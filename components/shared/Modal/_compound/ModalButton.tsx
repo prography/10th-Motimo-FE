@@ -1,8 +1,8 @@
 import { ButtonHTMLAttributes } from "react";
 import { Button, ButtonProps } from "../../Button/Button";
 
-export interface ModalButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ModalButtonProps extends Omit<ButtonProps, "children"> {
+  // extends ButtonHTMLAttributes<HTMLButtonElement> {
   color: "primary" | "alternative" | "negative";
   text: string;
   disabled?: boolean;

@@ -12,6 +12,8 @@ const EXCLUDED_PATTERNS = [
   `**/*${STORY_FILE_SUFFIX}`,
   "**/*.test.{tsx,jsx}",
   "**/*.spec.{tsx,jsx}",
+  "icons/*.tsx", // svg 컴포넌트화 한 거라.
+  "group/*.tsx", // 컴포넌트 제작 완료한 곳이라.
   // 필요시 다른 제외 패턴 추가
 ];
 // --- 설정 끝 ---
