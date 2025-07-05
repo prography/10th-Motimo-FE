@@ -95,8 +95,8 @@ export const Primary: Story = {
   },
   args: {
     subGoal: "세부 목표입니다",
-    todoCheckedLen: 2,
-    todoTotalLen: todoItemsInfo.length,
+    initTodoCheckedLen: 2,
+    initTodoTotalLen: todoItemsInfo.length,
     initTodoItemsInfo: todoItemsInfo,
 
     // Primary 스토리에만 적용될 Props
@@ -115,7 +115,7 @@ const todoItemsInfo4NoTotalTodo: (typeof Primary.args)["initTodoItemsInfo"] =
 export const NoTotalTodo: Story = {
   args: {
     ...Primary.args,
-    todoTotalLen: todoItemsInfo4NoTotalTodo.length,
+    initTodoTotalLen: todoItemsInfo4NoTotalTodo.length,
     initTodoItemsInfo: todoItemsInfo4NoTotalTodo,
   },
 };
@@ -139,13 +139,13 @@ export const NotFinishedTodosLong: Story = {
   args: {
     ...Primary.args,
     initTodoItemsInfo: todoItemsInfo4NotFinishedTodosLong,
-    todoTotalLen: todoItemsInfo4NotFinishedTodosLong.length,
+    initTodoTotalLen: todoItemsInfo4NotFinishedTodosLong.length,
   },
 };
 export const FinishedTodos: Story = {
   args: {
     ...Primary.args,
-    todoCheckedLen: Primary.args.todoTotalLen,
+    initTodoCheckedLen: Primary.args.initTodoTotalLen,
   },
 };
 
