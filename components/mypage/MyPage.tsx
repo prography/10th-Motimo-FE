@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useSafeRouter } from "../../hooks/useSafeRouter";
 import { AppBar } from "@/components/shared/AppBar/AppBar";
 import { BottomTabBar } from "@/components/shared/BottomTabBar/BottomTabBar";
 import { UserProfile } from "./UserProfile";
@@ -14,7 +14,7 @@ interface MyPageProps {
 }
 
 export function MyPage({ className = "" }: MyPageProps) {
-    const router = useRouter();
+    const router = useSafeRouter();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState({
         name: "몰입한 곰돌이",

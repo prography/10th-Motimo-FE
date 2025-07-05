@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
+import { useSafeRouter } from "../../hooks/useSafeRouter";
 import { AppBar } from "../shared/AppBar/AppBar";
 
 interface DoneGoal {
@@ -45,7 +45,7 @@ export const DoneItems: React.FC<DoneItemsProps> = ({
     goals = defaultGoals,
     className = "",
 }) => {
-    const router = useRouter();
+    const router = useSafeRouter();
 
     const handleBack = () => {
         router.back();
@@ -92,7 +92,7 @@ interface DoneGoalCardProps {
 }
 
 const DoneGoalCard: React.FC<DoneGoalCardProps> = ({ goal }) => {
-    const router = useRouter();
+    const router = useSafeRouter();
 
     const handleClick = () => {
         router.push(`/mypage/done/${goal.id}`);

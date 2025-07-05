@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useSafeRouter } from "../../hooks/useSafeRouter";
 import { AppBar } from "../shared/AppBar/AppBar";
 import { Button } from "../shared/Button/Button";
 import TextField from "../shared/TextField/TextField";
@@ -26,7 +26,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
     onDeleteAccount,
     onAddInterests,
 }) => {
-    const router = useRouter();
+    const router = useSafeRouter();
     const [name, setName] = useState(initialName);
     const [bio, setBio] = useState(initialBio);
     const [showDeleteModal, setShowDeleteModal] = useState(false);

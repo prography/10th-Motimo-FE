@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
 import { AppBar } from "../shared/AppBar/AppBar";
 import { CheckIcon } from "../icons/CheckIcon";
+import { useSafeRouter } from "../../hooks/useSafeRouter";
 
 interface CompletedTodo {
     id: string;
@@ -94,7 +94,7 @@ export const DoneItemDetail: React.FC<DoneItemDetailProps> = ({
     goalDetail = defaultGoalDetail,
     className = "",
 }) => {
-    const router = useRouter();
+    const router = useSafeRouter();
 
     const handleBack = () => {
         router.back();

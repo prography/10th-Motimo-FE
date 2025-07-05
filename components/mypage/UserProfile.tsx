@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/shared/Button/Button";
 import { UserIcon } from "@/components/icons/UserIcon";
-import { useRouter } from "next/navigation";
+import { useSafeRouter } from "../../hooks/useSafeRouter";
 
 interface UserProfileProps {
     name: string;
@@ -17,7 +17,7 @@ export function UserProfile({
     onAddInterests,
     className = ""
 }: UserProfileProps) {
-    const router = useRouter();
+    const router = useSafeRouter();
 
     const handleEdit = () => {
         router.push('/mypage/edit');
