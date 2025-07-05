@@ -111,9 +111,9 @@ export function MyPage({ className = "" }: MyPageProps) {
             <BottomTabBar type="4" />
 
             {/* Gesture Bar */}
-            <div className="h-6 flex justify-center items-center">
+            {/* <div className="h-6 flex justify-center items-center">
                 <div className="w-[108px] h-1 bg-Color-gray-90 rounded-full"></div>
-            </div>
+            </div> */}
         </div>
     );
 } 
