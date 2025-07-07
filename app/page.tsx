@@ -1,9 +1,19 @@
 "use client";
 
+import { AppBar } from "@/components/shared";
+import GoalInfo from "@/components/shared/GoalInfo/GoalInfo";
+import TodoList from "@/components/main/TodoList/TodoList";
+import GoalTitleArea from "@/components/main/GoalTitleArea/GoalTitleArea";
+
+import GoalMenuContainer from "@/components/main/GoalMenuContainer/GoalMenuContainer";
+import Banner from "@/components/shared/Banner/Banner";
+import GoalCard from "@/components/main/GoalCard/GoalCard";
+import MainHeader from "@/components/main/MainHeader/MainHeader";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function Home() {
+export default function Main() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null); // null = loading
   const router = useRouter();
 
@@ -13,7 +23,7 @@ export default function Home() {
       // 더미 상태: localStorage에서 로그인 정보 확인
       const loginStatus = localStorage.getItem("isLoggedIn");
       const hasCompletedOnboarding = localStorage.getItem("hasCompletedOnboarding");
-      
+
       if (!loginStatus || loginStatus !== "true" || !hasCompletedOnboarding) {
         // 로그인하지 않았거나 온보딩을 완료하지 않은 경우
         router.replace("/onboarding");
@@ -37,51 +47,38 @@ export default function Home() {
     );
   }
 
-  // 로그인된 사용자를 위한 메인 대시보드
-  return (
-    <div className="flex flex-col min-h-screen p-6">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold text-label-strong">MOTIMO</h1>
-        <button
-          onClick={() => {
-            localStorage.removeItem("isLoggedIn");
-            localStorage.removeItem("hasCompletedOnboarding");
-            router.replace("/onboarding");
-          }}
-          className="text-sm text-label-alternative underline"
-        >
-          로그아웃
-        </button>
-      </div>
+  /**
+   * 포인트랑 알람 개수 fetch해오고, Goals에 대해 fetch해오기
+   */
 
-      <div className="flex-1 flex flex-col items-center justify-center text-center">
-        <h2 className="text-xl font-semibold text-label-strong mb-4">
-          환영합니다! 🎉
-        </h2>
-        <p className="text-label-alternative mb-8">
-          온보딩이 완료되었습니다.<br />
-          이곳에 메인 대시보드가 표시됩니다.
-        </p>
-        
-        <div className="w-full max-w-[280px] space-y-4">
-          <div className="p-4 bg-background-alternative rounded-lg border border-static-white">
-            <h3 className="font-medium text-label-strong mb-2">설정된 목표</h3>
-            <p className="text-sm text-label-alternative">
-              {typeof window !== 'undefined' ? localStorage.getItem("userGoal") || "목표가 설정되지 않았습니다" : ""}
-            </p>
+  // 이 부분도 fetch해와야 함.
+  const tmpDaysOfServiceUse = 1;
+
+  return (
+    <>
+      <section className="w-full h-full">
+        <div
+          data-icon="false"
+          data-type="main"
+          className="w-full h-full relative bg-white inline-flex flex-col flex-1 justify-start  gap-1"
+        >
+          <MainHeader daysOfServiceUse={tmpDaysOfServiceUse} />
+          {/* <div className="flex justify-end w-full">
+            <AppBar type="main" />
           </div>
-          
-          <button
-            onClick={() => {
-              localStorage.removeItem("hasCompletedOnboarding");
-              router.replace("/onboarding");
-            }}
-            className="w-full py-3 px-4 bg-background-alternative text-label-normal rounded-lg border border-static-white hover:bg-background-elevated transition-colors"
-          >
-            온보딩 다시 진행하기
-          </button>
+          <Banner
+            title="목표는 멀어도 나는 계속 가는 중"
+            tag="모티모와 함께 한 지 1일차"
+          /> */}
+          <GoalMenuContainer />
+          {/* <div className="w-full flex-1 p-4 bg-background-normal inline-flex flex-col justify-start items-start gap-2 ">
+            <GoalTitleArea goalTitle="6개월 안에 책 50권 읽기" />
+            <GoalInfo leftDateNum={180} leftTodoNum={0} />
+            <TodoList initTodoItemsInfo={[]} todoTotalLen={0} />
+          </div> */}
+          <GoalCard />
         </div>
-      </div>
-    </div>
+      </section>
+    </>
   );
-}
+};
