@@ -7,6 +7,8 @@ alwaysApply: true
 
 - For every styling, use tailwind css.
 - For tokens, use [tokens.css](mdc:app/tokens.css).
+- If there is Appbar (time, wifi, battery, ..), Home Indicator and so on.. just ignore for now. We are building desktop web browser version first.
+- Ignore Home Indicator (GestureBar)
 
 # Component
 
@@ -14,4 +16,4 @@ alwaysApply: true
 - For icon and svg, create component at components/icons.
 - Try to reuse components from components/* as much as you can.
 - If Component is created, add storybook files as well.
-- The first example name of storybook should be `Primary` not `Default`
+- The `Default` example of storybook should be named `Primary`
