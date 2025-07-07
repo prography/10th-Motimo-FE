@@ -56,10 +56,7 @@ export const BottomTabBar = ({ type, className }: BottomTabBarProps) => {
 
         return (
           <Link href={tab.href} key={tab.id}>
-            <div
-              key={tab.id}
-              className="flex flex-col items-center justify-center w-12 h-12"
-            >
+            <div className="flex flex-col items-center justify-center w-12 h-12">
               <div className="flex items-center justify-center w-8 h-8 mb-0">
                 <IconComponent
                   className="w-6 h-6"
