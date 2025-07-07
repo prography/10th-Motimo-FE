@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "../utils/utils";
 import { HomeIcon } from "../../icons/HomeIcon";
 import { UserIcon } from "../../icons/UserIcon";
 import { ChatIcon } from "../../icons/ChatIcon";
