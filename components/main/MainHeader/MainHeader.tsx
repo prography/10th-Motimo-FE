@@ -18,7 +18,9 @@ const MainHeader = ({ daysOfServiceUse }: MainHeaderProps) => {
   return (
     <>
       <div className="flex justify-end w-full">
-        <AppBar type="main" points={points} />
+        <div className="fixed top-0 z-20">
+          <AppBar type="main" points={points} />
+        </div>
       </div>
       <Banner
         title={cheerPhrase}

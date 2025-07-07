@@ -111,7 +111,7 @@ const TodoBottomSheet = ({
               onClick={() => {
                 resetBottomSheet();
               }}
-              className="fixed inset-0 bg-black/20 z-10"
+              className="fixed inset-0 bg-black/20 z-20"
             />
           )}
 
@@ -120,7 +120,7 @@ const TodoBottomSheet = ({
               // bottom tab bar에 따라 위치 바뀌도록  ${hasBottomTabBar ? "pb-14" : "pb-0"}
               className={`
                 ${hasBottomTabBar ? "bottom-14" : "bottom-0"}
-               z-20 pl-4 pr-4  bg-white flex flex-col justify-start fixed   left-0 right-0 max-h-[82vh] rounded-t-[10px]`}
+               z-30 pl-4 pr-4  bg-white flex flex-col justify-start fixed   left-0 right-0 max-h-[82vh] rounded-t-[10px]`}
             >
               {showDate ? (
                 <BottomSheetDate setShowDate={setShowDate} />
