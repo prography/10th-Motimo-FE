@@ -1,6 +1,6 @@
 "use client";
 
-import { AppBar } from "@/components/shared";
+import { AppBar, BottomTabBar } from "@/components/shared";
 import GoalInfo from "@/components/shared/GoalInfo/GoalInfo";
 import TodoList from "@/components/main/TodoList/TodoList";
 import GoalTitleArea from "@/components/main/GoalTitleArea/GoalTitleArea";
@@ -24,6 +24,9 @@ export default function Main() {
       const loginStatus = localStorage.getItem("isLoggedIn");
       const hasCompletedOnboarding = localStorage.getItem("hasCompletedOnboarding");
 
+      console.log("📌loginStatus", loginStatus);
+      console.log("📌hasCompletedOnboarding", hasCompletedOnboarding);
+      console.log("📌loginStatus", loginStatus);
       if (!loginStatus || loginStatus !== "true" || !hasCompletedOnboarding) {
         // 로그인하지 않았거나 온보딩을 완료하지 않은 경우
         router.replace("/onboarding");
@@ -79,6 +82,7 @@ export default function Main() {
           <GoalCard />
         </div>
       </section>
+      <BottomTabBar className="fixed z-40 bottom-0" type="1" />
     </>
   );
 };

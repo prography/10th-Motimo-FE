@@ -35,14 +35,15 @@ export default function RootLayout({
           crossOrigin="anonymous" // 일반적으로 폰트에는 추가하는 것이 좋음
         />
       </head>
-      <body className={`${customFont.variable} antialiased w-full h-full`}>
-        <ModalRenderer />
-        {/* {process.env.NODE_ENV === "development" && <MSWComponent />} */}
-        <MSWComponent />
-        {/* <SWRConfig value={{ dedupingInterval: 5000 }}> */}
-        {children}
-        {/* </SWRConfig> */}
-        <BottomTabBar className="fixed z-40 bottom-0 w-full" type="1" />
+      <body className={`${customFont.variable} antialiased bg-background-alternative`}>
+        <div className="w-[360px] mx-auto min-h-screen bg-background-normal">
+          <ModalRenderer />
+          {/* {process.env.NODE_ENV === "development" && <MSWComponent />} */}
+          <MSWComponent />
+          {/* <SWRConfig value={{ dedupingInterval: 5000 }}> */}
+          {children}
+          {/* </SWRConfig> */}
+        </div>
       </body>
     </html>
   );

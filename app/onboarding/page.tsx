@@ -62,6 +62,7 @@ export default function OnboardingPage() {
             targetDate={onboardingData.targetDate}
             onComplete={() => {
               // Navigate to main app
+              localStorage.setItem("hasCompletedOnboarding", "true");
               window.location.href = "/";
             }}
           />
