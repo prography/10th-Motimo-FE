@@ -45,23 +45,63 @@ interface AuthActions {
 
 type AuthStore = AuthState & AuthActions;
 
-const initialState: AuthState = {
-  accessToken: null,
-  refreshToken: null,
-  authToken: null,
-  oauthCode: null,
-  oauthState: null,
-  oauthReturnStep: null,
-  isLoggedIn: false,
-  hasCompletedOnboarding: false,
-  userGoal: null,
+// localStorage에서 초기 상태 동기적으로 읽기
+const getInitialState = (): AuthState => {
+  if (typeof window === "undefined") {
+    // SSR 환경에서는 기본값 반환
+    return {
+      accessToken: null,
+      refreshToken: null,
+      authToken: null,
+      oauthCode: null,
+      oauthState: null,
+      oauthReturnStep: null,
+      isLoggedIn: false,
+      hasCompletedOnboarding: false,
+      userGoal: null,
+    };
+  }
+
+  // 클라이언트에서 localStorage에서 persist된 데이터 읽기
+  const persistedData = localStorage.getItem("auth-storage");
+  if (persistedData) {
+    try {
+      const parsed = JSON.parse(persistedData);
+      return {
+        accessToken: parsed.state?.accessToken || null,
+        refreshToken: parsed.state?.refreshToken || null,
+        authToken: parsed.state?.authToken || null,
+        oauthCode: null, // 임시 데이터는 persist 하지 않음
+        oauthState: null,
+        oauthReturnStep: null,
+        isLoggedIn: parsed.state?.isLoggedIn || false,
+        hasCompletedOnboarding: parsed.state?.hasCompletedOnboarding || false,
+        userGoal: parsed.state?.userGoal || null,
+      };
+    } catch (error) {
+      console.error("Failed to parse persisted auth data:", error);
+    }
+  }
+
+  // 기본값 반환
+  return {
+    accessToken: null,
+    refreshToken: null,
+    authToken: null,
+    oauthCode: null,
+    oauthState: null,
+    oauthReturnStep: null,
+    isLoggedIn: false,
+    hasCompletedOnboarding: false,
+    userGoal: null,
+  };
 };
 
 const useAuthStore = create<AuthStore>()(
   persist(
     (set) => ({
-      // Initial state
-      ...initialState,
+      // 초기 상태를 localStorage에서 동기적으로 읽기
+      ...getInitialState(),
 
       // Token setters
       setAccessToken: (token) => set({ accessToken: token }),
@@ -95,21 +135,32 @@ const useAuthStore = create<AuthStore>()(
         oauthReturnStep: null,
       }),
 
-      reset: () => set(initialState),
+      reset: () => set({
+        accessToken: null,
+        refreshToken: null,
+        authToken: null,
+        oauthCode: null,
+        oauthState: null,
+        oauthReturnStep: null,
+        isLoggedIn: false,
+        hasCompletedOnboarding: false,
+        userGoal: null,
+      }),
     }),
     {
-      name: "auth-storage", // name of the item in localStorage
+      name: "auth-storage",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
-        // Only persist necessary fields
+        // persist할 필드만 선택
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,
         authToken: state.authToken,
         isLoggedIn: state.isLoggedIn,
         hasCompletedOnboarding: state.hasCompletedOnboarding,
         userGoal: state.userGoal,
-        // Exclude temporary OAuth data from persistence
+        // OAuth 임시 데이터는 제외
       }),
+      skipHydration: true, // 자동 hydration 건너뛰기
     }
   )
 );

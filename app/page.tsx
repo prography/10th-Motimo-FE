@@ -1,6 +1,6 @@
 "use client";
 
-import { AppBar, BottomTabBar } from "@/components/shared";
+import { AppBar } from "@/components/shared";
 import GoalInfo from "@/components/shared/GoalInfo/GoalInfo";
 import TodoList from "@/components/main/TodoList/TodoList";
 import GoalTitleArea from "@/components/main/GoalTitleArea/GoalTitleArea";
@@ -10,22 +10,31 @@ import Banner from "@/components/shared/Banner/Banner";
 import GoalCard from "@/components/main/GoalCard/GoalCard";
 import MainHeader from "@/components/main/MainHeader/MainHeader";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useAuthStore from "@/stores/useAuthStore";
+import dynamic from "next/dynamic";
+
+// 클라이언트에서만 렌더링되는 BottomTabBar (SSR 제외)
+const BottomTabBar = dynamic(
+  () =>
+    import("@/components/shared/BottomTabBar/BottomTabBar").then((mod) => ({
+      default: mod.BottomTabBar,
+    })),
+  { ssr: false },
+);
 
 export default function Main() {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null); // null = loading
+  // const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null); // null = loading
   const router = useRouter();
-  const { isLoggedIn: authIsLoggedIn, hasCompletedOnboarding } = useAuthStore();
+  const { isLoggedIn, hasCompletedOnboarding, setIsLoggedIn } = useAuthStore();
 
   useEffect(() => {
-    // 더미 로그인 상태 체크 (실제로는 localStorage, 쿠키, 또는 서버 API 호출)
     const checkLoginStatus = () => {
-      console.log("📌loginStatus", authIsLoggedIn);
+      console.log("📌loginStatus", isLoggedIn);
       console.log("📌hasCompletedOnboarding", hasCompletedOnboarding);
 
-      if (!authIsLoggedIn || !hasCompletedOnboarding) {
+      if (!isLoggedIn || !hasCompletedOnboarding) {
         // 로그인하지 않았거나 온보딩을 완료하지 않은 경우
         router.replace("/onboarding");
       } else {
@@ -34,7 +43,7 @@ export default function Main() {
     };
 
     checkLoginStatus();
-  }, [router, authIsLoggedIn, hasCompletedOnboarding]);
+  }, [router, isLoggedIn, hasCompletedOnboarding]);
 
   // 로그인 상태 확인 중일 때 로딩 화면
   if (isLoggedIn === null) {

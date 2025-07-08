@@ -3,12 +3,21 @@
 import { useState, useEffect } from "react";
 import { useSafeRouter } from "../../hooks/useSafeRouter";
 import { AppBar } from "@/components/shared/AppBar/AppBar";
-import { BottomTabBar } from "@/components/shared/BottomTabBar/BottomTabBar";
 import { UserProfile } from "./UserProfile";
 import { PointsDisplay } from "./PointsDisplay";
 import { NavigationList } from "./NavigationList";
 import { GuestLoginSection } from "./GuestLoginSection";
 import useAuthStore from "@/stores/useAuthStore";
+import dynamic from "next/dynamic";
+
+// 클라이언트에서만 렌더링되는 BottomTabBar (SSR 제외)
+const BottomTabBar = dynamic(
+  () =>
+    import("@/components/shared/BottomTabBar/BottomTabBar").then((mod) => ({
+      default: mod.BottomTabBar,
+    })),
+  { ssr: false },
+);
 
 interface MyPageProps {
   className?: string;
