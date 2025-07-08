@@ -12,22 +12,20 @@ import MainHeader from "@/components/main/MainHeader/MainHeader";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import useAuthStore from "@/stores/useAuthStore";
 
 export default function Main() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null); // null = loading
   const router = useRouter();
+  const { isLoggedIn: authIsLoggedIn, hasCompletedOnboarding } = useAuthStore();
 
   useEffect(() => {
     // 더미 로그인 상태 체크 (실제로는 localStorage, 쿠키, 또는 서버 API 호출)
     const checkLoginStatus = () => {
-      // 더미 상태: localStorage에서 로그인 정보 확인
-      const loginStatus = localStorage.getItem("isLoggedIn");
-      const hasCompletedOnboarding = localStorage.getItem("hasCompletedOnboarding");
-
-      console.log("📌loginStatus", loginStatus);
+      console.log("📌loginStatus", authIsLoggedIn);
       console.log("📌hasCompletedOnboarding", hasCompletedOnboarding);
-      console.log("📌loginStatus", loginStatus);
-      if (!loginStatus || loginStatus !== "true" || !hasCompletedOnboarding) {
+
+      if (!authIsLoggedIn || !hasCompletedOnboarding) {
         // 로그인하지 않았거나 온보딩을 완료하지 않은 경우
         router.replace("/onboarding");
       } else {
@@ -36,7 +34,7 @@ export default function Main() {
     };
 
     checkLoginStatus();
-  }, [router]);
+  }, [router, authIsLoggedIn, hasCompletedOnboarding]);
 
   // 로그인 상태 확인 중일 때 로딩 화면
   if (isLoggedIn === null) {
@@ -85,4 +83,4 @@ export default function Main() {
       <BottomTabBar className="fixed z-40 bottom-0" type="1" />
     </>
   );
-};
+}

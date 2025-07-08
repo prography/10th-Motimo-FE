@@ -5,6 +5,7 @@ import LoginScreen from "./_components/LoginScreen";
 import GoalInputScreen from "./_components/GoalInputScreen";
 import PeriodSelectionScreen from "./_components/PeriodSelectionScreen";
 import CompletionScreen from "./_components/CompletionScreen";
+import useAuthStore from "@/stores/useAuthStore";
 
 export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -14,17 +15,18 @@ export default function OnboardingPage() {
     monthCount: 3,
     targetDate: null as Date | null,
   });
+  const { setHasCompletedOnboarding } = useAuthStore();
 
   const updateOnboardingData = (data: Partial<typeof onboardingData>) => {
-    setOnboardingData(prev => ({ ...prev, ...data }));
+    setOnboardingData((prev) => ({ ...prev, ...data }));
   };
 
   const nextStep = () => {
-    setCurrentStep(prev => prev + 1);
+    setCurrentStep((prev) => prev + 1);
   };
 
   const prevStep = () => {
-    setCurrentStep(prev => prev - 1);
+    setCurrentStep((prev) => prev - 1);
   };
 
   const renderStep = () => {
@@ -46,9 +48,15 @@ export default function OnboardingPage() {
             periodType={onboardingData.periodType}
             monthCount={onboardingData.monthCount}
             targetDate={onboardingData.targetDate}
-            onPeriodTypeChange={(periodType: "months" | "date") => updateOnboardingData({ periodType })}
-            onMonthCountChange={(monthCount: number) => updateOnboardingData({ monthCount })}
-            onTargetDateChange={(targetDate: Date | null) => updateOnboardingData({ targetDate })}
+            onPeriodTypeChange={(periodType: "months" | "date") =>
+              updateOnboardingData({ periodType })
+            }
+            onMonthCountChange={(monthCount: number) =>
+              updateOnboardingData({ monthCount })
+            }
+            onTargetDateChange={(targetDate: Date | null) =>
+              updateOnboardingData({ targetDate })
+            }
             onNext={nextStep}
             onBack={prevStep}
           />
@@ -62,7 +70,7 @@ export default function OnboardingPage() {
             targetDate={onboardingData.targetDate}
             onComplete={() => {
               // Navigate to main app
-              localStorage.setItem("hasCompletedOnboarding", "true");
+              setHasCompletedOnboarding(true);
               window.location.href = "/";
             }}
           />
@@ -73,8 +81,6 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background-normal">
-      {renderStep()}
-    </div>
+    <div className="min-h-screen bg-background-normal">{renderStep()}</div>
   );
-} 
+}

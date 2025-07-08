@@ -8,7 +8,8 @@ import {
   OAUTH_ENDPOINTS,
   FRONTEND_BASE_URL,
 } from "@/lib/constants";
-import MotimoLogoBlack from "@/components/shared/public/MOTIMO_LOGO_BLACK.svg"
+import MotimoLogoBlack from "@/components/shared/public/MOTIMO_LOGO_BLACK.svg";
+import useAuthStore from "@/stores/useAuthStore";
 
 interface LoginScreenProps {
   onNext: () => void;
@@ -16,6 +17,17 @@ interface LoginScreenProps {
 
 export default function LoginScreen({ onNext }: LoginScreenProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const {
+    oauthState,
+    setOauthState,
+    setOauthCode,
+    setOauthReturnStep,
+    setAuthToken,
+    setAccessToken,
+    setRefreshToken,
+    login,
+    clearOauthData,
+  } = useAuthStore();
 
   // OAuth 콜백 처리 (URL 파라미터 방식)
   useEffect(() => {
@@ -60,8 +72,7 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
       console.log("인증 성공! 토큰 처리 시작...");
 
       // State 파라미터 검증 (CSRF 보호)
-      const savedState = localStorage.getItem("oauth_state");
-      if (state && savedState && state !== savedState) {
+      if (state && oauthState && state !== oauthState) {
         console.error("State 파라미터가 일치하지 않습니다.");
         alert("보안 오류가 발생했습니다. 다시 시도해주세요.");
         setIsLoading(false);
@@ -69,69 +80,79 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
       }
 
       // 인증 성공
-      localStorage.setItem("isLoggedIn", "true");
+      login();
 
       // OAuth code 저장
       if (code) {
-        localStorage.setItem("oauth_code", code);
+        setOauthCode(code);
         console.log("OAuth code 저장됨:", code);
       }
 
       // 기존 token 파라미터 저장
       if (token) {
-        localStorage.setItem("auth_token", token);
+        setAuthToken(token);
         console.log("Auth token 저장됨:", token);
       }
 
       // URL 파라미터에서 토큰 저장
       if (accessTokenFromUrl) {
-        localStorage.setItem("access_token", accessTokenFromUrl);
+        setAccessToken(accessTokenFromUrl);
         console.log("✅ Access Token 저장됨:", accessTokenFromUrl);
       }
 
       if (refreshTokenFromUrl) {
-        localStorage.setItem("refresh_token", refreshTokenFromUrl);
+        setRefreshToken(refreshTokenFromUrl);
         console.log("✅ Refresh Token 저장됨:", refreshTokenFromUrl);
       }
 
       // 임시 데이터 정리
-      localStorage.removeItem("oauth_state");
+      clearOauthData();
 
       // URL 파라미터 제거 (토큰 정보 포함)
-      window.history.replaceState(
-        {},
-        document.title,
-        window.location.pathname,
-      );
+      window.history.replaceState({}, document.title, window.location.pathname);
 
-      console.log("현재 로컬스토리지 상태:");
-      console.log("- isLoggedIn:", localStorage.getItem("isLoggedIn"));
-      console.log("- oauth_code:", localStorage.getItem("oauth_code"));
-      console.log("- auth_token:", localStorage.getItem("auth_token"));
-      console.log("- access_token:", localStorage.getItem("access_token"));
-      console.log("- refresh_token:", localStorage.getItem("refresh_token"));
+      console.log("현재 auth store 상태:");
+      const authState = useAuthStore.getState();
+      console.log("- isLoggedIn:", authState.isLoggedIn);
+      console.log("- oauth_code:", authState.oauthCode);
+      console.log("- auth_token:", authState.authToken);
+      console.log("- access_token:", authState.accessToken);
+      console.log("- refresh_token:", authState.refreshToken);
 
       // 다음 단계로 진행
       onNext();
     } else {
       console.log("❌ 인증 토큰을 찾을 수 없음 - 일반 페이지 로드");
-      console.log("💡 백엔드에서 리다이렉트 시 URL 파라미터로 토큰을 포함시켜야 합니다:");
-      console.log(`예: ${FRONTEND_BASE_URL}/onboarding?access_token=...&refresh_token=...`);
+      console.log(
+        "💡 백엔드에서 리다이렉트 시 URL 파라미터로 토큰을 포함시켜야 합니다:",
+      );
+      console.log(
+        `예: ${FRONTEND_BASE_URL}/onboarding?access_token=...&refresh_token=...`,
+      );
     }
 
     console.log("=== OAuth 콜백 처리 완료 ===");
-  }, [onNext]);
+  }, [
+    onNext,
+    oauthState,
+    login,
+    setOauthCode,
+    setAuthToken,
+    setAccessToken,
+    setRefreshToken,
+    clearOauthData,
+  ]);
 
   const handleGoogleLogin = () => {
     setIsLoading(true);
 
     // 현재 페이지 상태 저장 (인증 후 돌아올 때 사용)
     const currentStep = "login";
-    localStorage.setItem("oauth_return_step", currentStep);
+    setOauthReturnStep(currentStep);
 
     // CSRF 보호를 위한 state 파라미터 생성
     const state = Math.random().toString(36).substring(2, 15);
-    localStorage.setItem("oauth_state", state);
+    setOauthState(state);
 
     // Google OAuth 인증 페이지로 리다이렉트
     const redirect_uri = `${FRONTEND_BASE_URL}/onboarding`;
@@ -140,13 +161,13 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
 
   const handleKakaoLogin = () => {
     // TODO: Implement Kakao login
-    localStorage.setItem("isLoggedIn", "true");
+    login();
     onNext();
   };
 
   const handleBrowse = () => {
     // TODO: Handle browse without login
-    localStorage.setItem("isLoggedIn", "true");
+    login();
     onNext();
   };
 
@@ -189,9 +210,7 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
 
                 {/* Logo Icon */}
                 <div className="flex justify-center">
-                  <MotimoLogoBlack
-                    className="w-[219px] h-[36px]"
-                  />
+                  <MotimoLogoBlack className="w-[219px] h-[36px]" />
                 </div>
               </div>
             </div>

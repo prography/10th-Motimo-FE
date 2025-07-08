@@ -5,7 +5,7 @@ import { HomeIcon } from "../../icons/HomeIcon";
 import { UserIcon } from "../../icons/UserIcon";
 import { ChatIcon } from "../../icons/ChatIcon";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import useAuthStore from "@/stores/useAuthStore";
 
 interface BottomTabBarProps {
   type: "1" | "2" | "3" | "4";
@@ -13,11 +13,7 @@ interface BottomTabBarProps {
 }
 
 export const BottomTabBar = ({ type, className }: BottomTabBarProps) => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null); // null = loading
-  useEffect(() => {
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
-    setIsLoggedIn(isLoggedIn === "true");
-  }, []);
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
   // Define the tab configuration with consistent order
   const tabs = [
@@ -53,46 +49,47 @@ export const BottomTabBar = ({ type, className }: BottomTabBarProps) => {
 
   return (
     <>
-      {isLoggedIn && <div
-        className={cn(
-          "flex items-center justify-between",
-          "w-[360px] h-14 bg-Color-white px-9 py-1",
-          className,
-        )}
-      >
-        {tabs.map((tab) => {
-          const isActive = tab.activeInTypes.includes(type);
-          const IconComponent = tab.icon;
+      {isLoggedIn && (
+        <div
+          className={cn(
+            "flex items-center justify-between",
+            "w-[360px] h-14 bg-Color-white px-9 py-1",
+            className,
+          )}
+        >
+          {tabs.map((tab) => {
+            const isActive = tab.activeInTypes.includes(type);
+            const IconComponent = tab.icon;
 
-          return (
-            <Link href={tab.href} key={tab.id}>
-              <div
-                key={tab.id}
-                className="flex flex-col items-center justify-center w-12 h-12"
-              >
-                <div className="flex items-center justify-center w-8 h-8 mb-0">
-                  <IconComponent
-                    className="w-6 h-6"
-                    color={isActive ? "#5D5FEF" : "#8A949E"}
-                  />
-                </div>
+            return (
+              <Link href={tab.href} key={tab.id}>
                 <div
-                  className={cn(
-                    "text-[11px] leading-[1.5] tracking-[-0.01em] text-center mt-0",
-                    "font-SUIT_Variable",
-                    isActive
-                      ? "font-semibold text-Color-gray-90"
-                      : "font-medium text-Color-gray-70",
-                  )}
+                  key={tab.id}
+                  className="flex flex-col items-center justify-center w-12 h-12"
                 >
-                  {tab.label}
+                  <div className="flex items-center justify-center w-8 h-8 mb-0">
+                    <IconComponent
+                      className="w-6 h-6"
+                      color={isActive ? "#5D5FEF" : "#8A949E"}
+                    />
+                  </div>
+                  <div
+                    className={cn(
+                      "text-[11px] leading-[1.5] tracking-[-0.01em] text-center mt-0",
+                      "font-SUIT_Variable",
+                      isActive
+                        ? "font-semibold text-Color-gray-90"
+                        : "font-medium text-Color-gray-70",
+                    )}
+                  >
+                    {tab.label}
+                  </div>
                 </div>
-              </div>
-            </Link>
-          );
-        })}
-      </div>
-      }
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </>
   );
 };
