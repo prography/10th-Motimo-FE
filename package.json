@@ -16,8 +16,7 @@
     "build-storybook:shared": "STORYBOOK_SCOPE=shared storybook build -o storybook-static-shared",
     "build-tokens": "npx style-dictionary build --config sd-tokens.config.mjs",
     "plop": "plop",
-    "generate:story": "plop story",
-    "export": "next build"
+    "generate:story": "plop story"
   },
   "workspaces": [
     "./components/shared"
