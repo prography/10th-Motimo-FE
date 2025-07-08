@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { GroupPage, PendingGroup } from "@/components/group";
+import { GroupData, GroupPage, PendingGroup } from "@/components/group";
 import useAuthStore from "@/stores/useAuthStore";
 import { useState } from "react";
 
@@ -15,24 +15,42 @@ const BottomTabBar = dynamic(
 );
 
 // Mock data for pending groups
-const mockPendingGroups: PendingGroup[] = [
+const pendingGroups: GroupData[] = [
   {
-    id: 1,
-    goalName: "6개월 안에 책 50권 읽기",
-    memberCount: 5,
+    hasNotification: true,
+    id: "1",
+    isJoined: true,
+    lastActivityDate: "2025.05.12",
+    title: "아 그룹명뭐로하지",
   },
   {
-    id: 2,
-    goalName: "3개월 안에 10kg 감량하기",
-    memberCount: 8,
+    id: "2",
+    isJoined: false,
+    title: "목표 이름이 여기에",
+  },
+  {
+    hasNotification: false,
+    id: "3",
+    isJoined: true,
+    lastActivityDate: "2025.05.15",
+    title: "프로그래밍 스터디 그룹",
+  },
+  {
+    id: "4",
+    isJoined: false,
+    title: "건강한 생활 만들기",
+  },
+  {
+    hasNotification: true,
+    id: "5",
+    isJoined: true,
+    lastActivityDate: "2025.05.10",
+    title: "독서 클럽",
   },
 ];
 
 export default function GroupRoute() {
-  const { isLoggedIn } = useAuthStore();
-  const [pendingGroups] = useState(mockPendingGroups);
   const [joinedGroups] = useState([]); // 현재는 빈 배열
-
   const handleJoinGroup = (groupId: number) => {
     console.log(`Joining group ${groupId}`);
     // TODO: Implement group join logic
@@ -48,7 +66,7 @@ export default function GroupRoute() {
       <GroupPage
         pendingGroups={pendingGroups}
         joinedGroups={joinedGroups}
-        onJoinGroup={handleJoinGroup}
+        onJoinGroup={() => {}}
         onNotificationClick={handleNotificationClick}
       />
 

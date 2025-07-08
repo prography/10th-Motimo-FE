@@ -21,10 +21,7 @@ export const GroupList = ({
   className,
 }: GroupListProps) => {
   return (
-    <div className={cn(
-      "flex flex-col gap-4 w-full",
-      className
-    )}>
+    <div className={cn("flex flex-col gap-4", className)}>
       {groups.map((group) => (
         <GroupItem
           key={group.id}
@@ -35,7 +32,7 @@ export const GroupList = ({
           onJoinClick={() => onJoinGroup?.(group.id)}
         />
       ))}
-      
+
       {groups.length === 0 && (
         <div className="flex items-center justify-center h-32 text-Color-gray-60">
           <span className="font-SUIT_Variable font-medium text-sm">
@@ -45,4 +42,4 @@ export const GroupList = ({
       )}
     </div>
   );
-}; 
+};
