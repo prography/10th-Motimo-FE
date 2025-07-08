@@ -12,6 +12,7 @@ import GoalMenuContainer from "@/components/main/GoalMenuContainer/GoalMenuConta
 import Banner from "@/components/shared/Banner/Banner";
 import GoalCard from "@/components/main/GoalCard/GoalCard";
 import MainHeader from "@/components/main/MainHeader/MainHeader";
+import { BottomTabBar } from "@/components/shared";
 
 export default function Main() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null); // null = loading
@@ -62,6 +63,9 @@ export default function Main() {
             <TodoList initTodoItemsInfo={[]} todoTotalLen={0} />
           </div> */}
           <GoalCard />
+          <div>
+            <BottomTabBar className="bottom-0 fixed z-40" type="1" />
+          </div>
         </div>
       </section>
     </>

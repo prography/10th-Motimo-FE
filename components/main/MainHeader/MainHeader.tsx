@@ -17,7 +17,9 @@ const MainHeader = ({ daysOfServiceUse }: MainHeaderProps) => {
 
   return (
     <>
-      <div className="flex justify-end w-full">
+      <div
+        className="flex justify-end w-full h-14" // Banner 여유 공간 확보
+      >
         <div className="fixed top-0 z-20">
           <AppBar type="main" points={points} />
         </div>

@@ -5,9 +5,6 @@ import "./globals.css";
 import ModalRenderer from "./_components/ModalRenderer";
 import { MSWComponent } from "@/components/_mocks/MSWComponent";
 
-import { SWRConfig } from "swr";
-import { BottomTabBar } from "@/components/shared";
-
 const customFont = localFont({
   src: "../public/fonts/SUIT-Variable.woff2",
   display: "swap",
