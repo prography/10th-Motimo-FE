@@ -446,7 +446,7 @@ const DeleteButton = ({ onDelete }: DeleteButtonProps) => {
         type="button"
         className="w-10 h-14 px-1 py-2 bg-status-negative rounded-lg inline-flex flex-col justify-center items-center gap-0.5"
       >
-        <div className="w-5 h-5 relative overflow-hidden">
+        <div className="w-5 h-5 relative overflow-hidden text-white">
           <TrashCanSvg />
         </div>
         <div className="justify-center text-label-inverse text-xs font-medium font-['SUIT_Variable'] leading-none">
