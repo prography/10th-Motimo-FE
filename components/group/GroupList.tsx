@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { GroupItem } from "./GroupItem";
+import { JoinedGroupRs } from "@/api/generated/motimo/Api";
 
 export interface GroupData {
   id: string;
@@ -10,26 +11,30 @@ export interface GroupData {
 }
 
 interface GroupListProps {
-  groups: GroupData[];
+  groups: JoinedGroupRs[];
   onJoinGroup?: (groupId: string) => void;
   className?: string;
+  isJoined: boolean;
 }
 
 export const GroupList = ({
   groups,
   onJoinGroup,
   className,
+  isJoined,
 }: GroupListProps) => {
   return (
     <div className={cn("flex flex-col gap-4", className)}>
-      {groups.map((group) => (
+      {groups.map((group, i) => (
         <GroupItem
-          key={group.id}
-          isJoined={group.isJoined}
-          title={group.title}
-          lastActivityDate={group.lastActivityDate}
-          hasNotification={group.hasNotification}
-          onJoinClick={() => onJoinGroup?.(group.id)}
+          key={`${group.title}-${i}`}
+          isJoined={isJoined}
+          title={group.title ?? ""}
+          lastActivityDate={group.lastActiveDate}
+          hasNotification={group.isNotificationActive}
+          onJoinClick={() => {
+            // todo: move to join random group page
+          }}
         />
       ))}
 

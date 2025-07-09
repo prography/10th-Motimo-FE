@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { GroupData, GroupPage, PendingGroup } from "@/components/group";
 import useAuthStore from "@/stores/useAuthStore";
 import { useState } from "react";
+import useGroupsMe from "@/hooks/main/queries/useGroupsMe";
 
 // 클라이언트에서만 렌더링되는 BottomTabBar (SSR 제외)
 const BottomTabBar = dynamic(
@@ -50,7 +51,8 @@ const pendingGroups: GroupData[] = [
 ];
 
 export default function GroupRoute() {
-  const [joinedGroups] = useState([]); // 현재는 빈 배열
+  // const [joinedGroups] = useState([]); // 현재는 빈 배열
+  const { data: joinedGroups } = useGroupsMe();
   const handleJoinGroup = (groupId: number) => {
     console.log(`Joining group ${groupId}`);
     // TODO: Implement group join logic
@@ -65,8 +67,8 @@ export default function GroupRoute() {
     <>
       <GroupPage
         pendingGroups={pendingGroups}
-        joinedGroups={joinedGroups}
-        onJoinGroup={() => {}}
+        joinedGroups={joinedGroups ?? []}
+        onJoinGroup={() => { }}
         onNotificationClick={handleNotificationClick}
       />
 

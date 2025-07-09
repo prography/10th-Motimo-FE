@@ -2,10 +2,11 @@ import { AppBar } from "@/components/shared/AppBar/AppBar";
 import { GroupEmptyState } from "./GroupEmptyState";
 import { PendingGroupList, PendingGroup } from "./PendingGroupList";
 import { GroupData, GroupList } from "./GroupList";
+import { JoinedGroupRs } from "@/api/generated/motimo/Api";
 
 interface GroupPageProps {
   pendingGroups: GroupData[];
-  joinedGroups: GroupData[]; // 추후 타입 정의
+  joinedGroups: JoinedGroupRs[]; // 추후 타입 정의
   onJoinGroup: () => void;
   onNotificationClick?: () => void;
   className?: string;
@@ -40,7 +41,7 @@ export function GroupPage({
                 참여 중인 그룹 ({joinedGroups.length})
               </h1>
             </div>
-            <GroupList groups={joinedGroups} onJoinGroup={onJoinGroup} />
+            <GroupList groups={joinedGroups} onJoinGroup={onJoinGroup} isJoined={true} />
           </div>
         )}
 
@@ -52,7 +53,7 @@ export function GroupPage({
               참여 대기 중인 목표 ({pendingGroups.length})
             </h1>
           </div>
-          <GroupList groups={pendingGroups} onJoinGroup={onJoinGroup} />
+          <GroupList groups={pendingGroups} onJoinGroup={onJoinGroup} isJoined={false} />
         </div>
       </div>
     </div>
