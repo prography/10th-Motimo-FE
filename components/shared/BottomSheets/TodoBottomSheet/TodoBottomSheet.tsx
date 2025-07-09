@@ -99,8 +99,6 @@ const TodoBottomSheet = ({
     setShowDate(false);
     setTodoInfo(makeDefaultTodoBottomSheetInfo(subGoals));
     inputRef.current && (inputRef.current as HTMLInputElement).blur();
-    //test
-    console.log("inputRef.current: ", inputRef.current);
   };
 
   useEffect(() => {

@@ -36,7 +36,7 @@ export default function RootLayout({
         className={`${customFont.variable} antialiased bg-background-alternative`}
       >
         <div className="w-[360px] mx-auto min-h-screen bg-background-normal">
-          {process.env.NODE_ENV === "development" && <MSWComponent />}
+          {/* {process.env.NODE_ENV === "development" && <MSWComponent />} */}
           <ModalRenderer />
           {children}
         </div>
