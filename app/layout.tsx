@@ -5,9 +5,6 @@ import "./globals.css";
 import ModalRenderer from "./_components/ModalRenderer";
 import { MSWComponent } from "@/components/_mocks/MSWComponent";
 
-import { SWRConfig } from "swr";
-import { BottomTabBar } from "@/components/shared";
-
 const customFont = localFont({
   src: "../public/fonts/SUIT-Variable.woff2",
   display: "swap",
@@ -41,11 +38,7 @@ export default function RootLayout({
         <div className="w-[360px] mx-auto min-h-screen bg-background-normal">
           {/* {process.env.NODE_ENV === "development" && <MSWComponent />} */}
           <ModalRenderer />
-          {/* {process.env.NODE_ENV === "development" && <MSWComponent />} */}
-          <MSWComponent />
-          {/* <SWRConfig value={{ dedupingInterval: 5000 }}> */}
           {children}
-          {/* </SWRConfig> */}
         </div>
       </body>
     </html>
