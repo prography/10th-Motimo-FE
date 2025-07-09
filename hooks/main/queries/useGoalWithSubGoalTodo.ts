@@ -9,14 +9,14 @@ import useSWR, { SWRConfiguration } from "swr";
 import { TodoListProps } from "@/components/main/TodoList/TodoList";
 
 type ConvertedGoalWithSubGoalTodo = Omit<GoalWithSubGoalTodoRs, "subGoals"> & {
-  subGoals: TodoListProps[];
+  subGoals?: TodoListProps[];
 };
 
 const useGoalWithSubGoalTodo = (goalId: string, options?: SWRConfiguration) => {
   const { data, mutate } = useSWR(goalId, getGoalWithSubGoalTodo, options);
 
-  const convertedSubGoals: TodoListProps[] =
-    data?.subGoals?.map((subGoalInfo) => {
+  const convertedSubGoals: TodoListProps[] | undefined = data?.subGoals?.map(
+    (subGoalInfo) => {
       const todosInSubGoal: TodoItemsInfo[] =
         subGoalInfo.todos?.map((todoInfo) => ({
           id: todoInfo.id ?? "",
@@ -35,7 +35,8 @@ const useGoalWithSubGoalTodo = (goalId: string, options?: SWRConfiguration) => {
           (todoInfo) => todoInfo.checked,
         ).length,
       };
-    }) ?? [];
+    },
+  );
 
   const convertedData: ConvertedGoalWithSubGoalTodo = {
     ...data,
