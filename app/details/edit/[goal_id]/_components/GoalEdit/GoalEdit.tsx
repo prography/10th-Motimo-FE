@@ -10,7 +10,7 @@ import TrashBin from "@/public/images/Trash_Full.svg";
 
 import { useContext, useState } from "react";
 import useModal from "@/hooks/useModal";
-import { EditContext } from "../../page";
+import { EditContext } from "../EditBody/EditBody";
 import { date2StringWithSpliter } from "@/utils/date2String";
 
 interface GoalEditProps {
@@ -34,9 +34,9 @@ const GoalEdit = (
   const [openBottomSheet, setOpenBottomSheet] = useState(false);
 
   const durationSettingBtnText =
-    editContents?.durationType === date
+    editContents?.durationType === "month"
       ? `개월 수 - ${editContents?.durationValue ?? " "}개월`
-      : `완료 날짜 - ${editContents?.durationValue ? date2StringWithSpliter(editContents?.durationValue, "-") : ""}`;
+      : `완료 날짜 - ${editContents?.durationValue ? date2StringWithSpliter(editContents?.durationValue as Date, "-") : ""}`;
 
   return (
     <>
@@ -82,14 +82,17 @@ const GoalEdit = (
                 <TrashBin />
               </div>
             }
+            type="button"
             size="s"
             variant="text"
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
               openModal(
                 <ModalDeletingGoal
                   onClose={closeModal}
                   onDeleteGoal={async () => {
-                    console.log("삭제");
+                    console.log("api넣어야 함");
+                    closeModal();
                   }}
                 />,
               );
@@ -101,6 +104,7 @@ const GoalEdit = (
           </Button>
         </div>
       </main>
+
       <GoalDurationBottomSheet
         openBottomSheet={openBottomSheet}
         setopenBottomSheet={setOpenBottomSheet}
