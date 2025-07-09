@@ -9,9 +9,12 @@ import TodoList from "@/components/main/TodoList/TodoList";
 import SubGoalEditItem from "@/components/details/SubGoalEditItem/SubGoalEditItem";
 import ModalAddingSubGoal from "@/components/shared/Modal/ModalAddingSubGoal/ModalAddingSubGoal";
 import ModalDeletingSubGoal from "@/components/shared/Modal/ModalDeletingSubGoal/ModalDeletingSubGoal";
-import { EditContext } from "../../page";
-
-const SubGoalEdit = () => {
+import { EditContext } from "../EditBody/EditBody";
+import ModalUpdatingSubGoal from "@/components/details/Modals/ModalUpdatingSubGoal/ModalUpdatingSubGoal";
+interface SubGoalEditProps {
+  goalId: string;
+}
+const SubGoalEdit = ({ goalId }: SubGoalEditProps) => {
   const nullableContext = useContext(EditContext);
   const { editContents, setEditContents } = nullableContext || {};
   const { openModal, closeModal } = useModal();
@@ -19,7 +22,7 @@ const SubGoalEdit = () => {
   return (
     <>
       <main>
-        <TodoList initTodoTotalLen={0} />
+        <TodoList initTodoTotalLen={0} goalId={goalId} />
         <section>
           <Reorder.Group
             onReorder={(newOrderedSubGoals) => {
@@ -47,9 +50,10 @@ const SubGoalEdit = () => {
                   subGoalTitle={currentSubGoalInfo.title}
                   onEdit={() => {
                     openModal(
-                      <ModalAddingSubGoal
+                      <ModalUpdatingSubGoal
+                        initSubGoal={currentSubGoalInfo.title}
                         onClose={closeModal}
-                        onAddSubGoal={async (newSubGoalTitle) => {
+                        onUpdateSubGoal={async (newSubGoalTitle) => {
                           // 비동기 안쓰긴 함.
 
                           // 이름 바뀐 부분 수정해 새로 만들기
@@ -89,6 +93,7 @@ const SubGoalEdit = () => {
                               ...prev,
                               subGoals: newSubGoals,
                             }));
+                          closeModal();
                         }}
                       />,
                     );
