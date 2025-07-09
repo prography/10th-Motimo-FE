@@ -8,15 +8,15 @@ import {
   SetStateAction,
   useContext,
   useEffect,
+  useRef,
 } from "react";
-
-import TextField from "../../TextField/TextField";
 
 import CheckSvg from "../../public/check.svg";
 import ArrowDownSvg from "../../public/Carrot_Down_MD.svg";
 import CalendarSvg from "../../public/Calendar.svg";
 import PaperPlaneSvg from "../../public/Paper_Plane.svg";
 
+import TextField from "../../TextField/TextField";
 import { Button } from "../../Button/Button";
 import Calendar from "../../Calendar/Calendar";
 
@@ -24,7 +24,7 @@ type TodoInfoForSubmission = {
   /** id값이 존재한다면 수정, 없다면 추가로 봐야 함. */
   id?: string;
   todo: string;
-  date: Date;
+  date?: Date; //test
   subGoalTitle: string;
   subGoalId: string;
 };
@@ -91,11 +91,16 @@ const TodoBottomSheet = ({
   const [visibleSelect, setVisibleSelect] = useState(false);
   const [showDate, setShowDate] = useState(false);
 
+  const inputRef = useRef(null);
+
   const resetBottomSheet = () => {
     setIsActivated(false);
     setVisibleSelect(false);
     setShowDate(false);
     setTodoInfo(makeDefaultTodoBottomSheetInfo(subGoals));
+    inputRef.current && (inputRef.current as HTMLInputElement).blur();
+    //test
+    console.log("inputRef.current: ", inputRef.current);
   };
 
   useEffect(() => {
@@ -119,10 +124,15 @@ const TodoBottomSheet = ({
             <div className="flex justify-center w-[100vw] relative">
               <Drawer.Content
                 // bottom tab bar에 따라 위치 바뀌도록  ${hasBottomTabBar ? "pb-14" : "pb-0"}
+                // style={{ height: "auto !important" }}
                 className={`
-                ${hasBottomTabBar ? "bottom-14" : "bottom-0"}
+                ${
+                  hasBottomTabBar ? "bottom-14" : "bottom-0"
+                  // hasBottomTabBar ? "pb-14" : "pb-0"
+                }
+                h-auto
                 w-[360px]
-               z-30 pl-4 pr-4  bg-white flex flex-col justify-start fixed    max-h-[82vh] rounded-t-[10px]`}
+               z-30 pl-4 pr-4  bg-white flex flex-col justify-start fixed  rounded-t-[10px]`}
               >
                 {showDate ? (
                   <BottomSheetDate setShowDate={setShowDate} />
@@ -137,13 +147,15 @@ const TodoBottomSheet = ({
                       </div>
                     )}
                     <Drawer.Title className="invisible"></Drawer.Title>
-                    <section className="w-full h-full pt-3 pb-3 gap-2 flex flex-col justify-start">
+                    <section className="w-full h-auto pt-3 pb-3 gap-2 flex flex-col justify-start">
                       {/** title은 접근성 에러 때문에 넣고 invisible 설정함 */}
 
                       <form
                         className="w-auto h-auto relative flex items-center"
+                        // ref={inputRef}
                         onSubmit={async (e) => {
                           e.preventDefault();
+                          e.stopPropagation();
                           if (todoInfo.subGoalTitle) {
                             const submitRes = await onSubmitTodo(
                               todoInfo as TodoInfoForSubmission,
@@ -155,8 +167,9 @@ const TodoBottomSheet = ({
                         }}
                       >
                         <TextField
+                          ref={inputRef}
                           onClick={(e) => {
-                            setIsActivated(true);
+                            todoInfo.id || setIsActivated(true);
                           }}
                           id="buttomSheetTodoTextField"
                           isError={false}
@@ -179,8 +192,11 @@ const TodoBottomSheet = ({
                         </button>
                       </form>
                       <div
-                        className="grid transition-all duration-300"
+                        className={`grid transition-all translate-z-0  transform-3d duration-300 ease-out  overflow-hidden
+                          //  ${isActivated ? "h-[32px] " : "h-[0px] "}`}
                         style={{
+                          // maxHeight: isActivated ? "auto" : "0",
+                          // height: isActivated ? "auto" : "0",
                           gridTemplateRows: isActivated ? "1fr" : "0fr",
                         }}
                       >
