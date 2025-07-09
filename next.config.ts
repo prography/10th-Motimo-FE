@@ -51,9 +51,9 @@ const nextConfig: NextConfig = {
       ? async () => {
           return [
             {
-              source: "/v1/:path",
+              source: "/v1/:path*",
               // destination: "http://localhost:8080/v1/:path",
-              destination: "http://motimo.kro.kr:8080/v1/:path",
+              destination: "http://motimo.kro.kr:8080/v1/:path*",
             },
           ];
         }

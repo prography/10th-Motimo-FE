@@ -9,6 +9,7 @@ import {
   createContext,
   useContext,
   useOptimistic,
+  startTransition,
 } from "react";
 import { KeyedMutator } from "swr";
 import { motion, useMotionValue } from "motion/react";
@@ -314,12 +315,13 @@ const TodoItemContainer = ({
             {...info}
             checked={checked}
             onChecked={async () => {
-              toggleChecekdOptimistically();
+              startTransition(async () => {
+                toggleChecekdOptimistically();
+                await toggleTodo(info.id);
+                mutate && mutate();
+              });
               // updateOptimisticCheckedLen &&
               //   updateOptimisticCheckedLen(checked ? -1 : +1);
-
-              await toggleTodo(info.id);
-              mutate && mutate();
             }}
           />
         </motion.div>
@@ -328,7 +330,7 @@ const TodoItemContainer = ({
             onEdit={() => {
               /** 임시. 여기에 바텀 시트 관련 들어가야 함 */
               const initTodoInfo = {
-                date: info?.targetDate ?? new Date(),
+                date: info?.targetDate,
                 subGoalId: subGoalId ?? "",
                 subGoalTitle: subGoalTitle ?? "",
                 todo: info?.title,
