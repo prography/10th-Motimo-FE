@@ -10,16 +10,19 @@ interface UpdateTodoBody {
 }
 
 const updateTodo = async (todoId: string, body: UpdateTodoBody) => {
-  await templateFetch(`/v1/todos/${todoId}`, "PUT", {
+  const res = await templateFetch(`/v1/todos/${todoId}`, "PUT", {
     ...body,
     date: body.date ? date2StringWithSpliter(body.date, "-") : undefined,
   });
+  return res;
 };
 const toggleTodo = async (todoId: string) => {
-  await templateFetch(`/v1/todos/${todoId}/completion`, "PATCH");
+  const res = await templateFetch(`/v1/todos/${todoId}/completion`, "PATCH");
+  return res;
 };
 const deleteTodo = async (todoId: string) => {
-  await templateFetch(`/v1/todos/${todoId}`, "DELETE");
+  const res = await templateFetch(`/v1/todos/${todoId}`, "DELETE");
+  return res;
 };
 
 /** todoResult */
@@ -32,10 +35,12 @@ const getTodoResult = async (todoId: string) => {
   return todoResult ?? {};
 };
 const postTodoResult = async (todoId: string) => {
-  await templateFetch(`/v1/todos/${todoId}/result`, "POST");
+  const res = await templateFetch(`/v1/todos/${todoId}/result`, "POST");
+  return res;
 };
 const deleteTodoResult = async (todoResultId: string) => {
-  await templateFetch(`/v1/todos/result/${todoResultId}`, "DELETE");
+  const res = await templateFetch(`/v1/todos/result/${todoResultId}`, "DELETE");
+  return res;
 };
 
 /** */
