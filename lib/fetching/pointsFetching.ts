@@ -1,5 +1,5 @@
 import { PointRs } from "@/api/generated/motimo/Api";
-import { templateFetch } from "../common/fetchTemplate";
+import { templateFetch } from "./template/fetchTemplate";
 
 const getPoints = async () => {
   // error처리 아직 안함. toast처리 해야 함

@@ -30,9 +30,9 @@ import useTodoList from "@/hooks/main/queries/useTodoList";
 import useOptimisticToggle from "@/hooks/main/useOptimisticToggle";
 import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
 
-import { deleteTodo, toggleTodo } from "@/lib/main/todoFetching";
+import { deleteTodo, toggleTodo } from "@/lib/fetching/todoFetching";
 // import { createNewTodoOnSubGoal } from "@/lib/main/subGoalFetching";
-import { createNewSubGoalOnGoal } from "@/lib/main/goalFetching";
+import { createNewSubGoalOnGoal } from "@/lib/fetching/goalFetching";
 import { TodoRs } from "@/api/generated/motimo/Api";
 import useGoalWithSubGoalTodo from "@/hooks/main/queries/useGoalWithSubGoalTodo";
 

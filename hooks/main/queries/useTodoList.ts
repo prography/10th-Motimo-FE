@@ -1,7 +1,7 @@
 "use client";
 
 import { TodoRs, TodoRsStatusEnum } from "@/api/generated/motimo/Api";
-import { getTodosOnSubGoal } from "@/lib/main/subGoalFetching";
+import { getTodosOnSubGoal } from "@/lib/fetching/subGoalFetching";
 import { TodoItemsInfo } from "@/types/todoList";
 import { date2StringWithSpliter } from "@/utils/date2String";
 import useSWR, { SWRConfiguration } from "swr";

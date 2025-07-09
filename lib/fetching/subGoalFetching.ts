@@ -4,7 +4,7 @@ import {
   TodoUpdateRq,
   TodoCreateRq,
 } from "../../api/generated/motimo/Api";
-import { templateFetch } from "../common/fetchTemplate";
+import { templateFetch } from "./template/fetchTemplate";
 import { TodoItemsInfo } from "@/types/todoList";
 
 const createNewTodoOnSubGoal = async (

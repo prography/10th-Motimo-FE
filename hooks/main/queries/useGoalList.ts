@@ -2,7 +2,7 @@
 
 import { GoalListRs } from "@/api/generated/motimo/Api";
 import { GoalMenuInfo } from "@/components/main/GoalMenuContainer/GoalMenuContainer";
-import { getAllGoals } from "@/lib/main/goalFetching";
+import { getAllGoals } from "@/lib/fetching/goalFetching";
 import useSWR, { SWRConfiguration } from "swr";
 
 const useGoalList = (options?: SWRConfiguration) => {

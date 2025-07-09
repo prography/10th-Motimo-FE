@@ -1,4 +1,4 @@
-import { templateFetch } from "@/lib/common/fetchTemplate";
+import { templateFetch } from "@/lib/fetching/template/fetchTemplate";
 import {
   GoalCreateRq,
   GoalDetailRs,

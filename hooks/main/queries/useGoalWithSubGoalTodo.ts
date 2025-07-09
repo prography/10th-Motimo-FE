@@ -2,7 +2,7 @@ import {
   GoalWithSubGoalTodoRs,
   TodoRsStatusEnum,
 } from "@/api/generated/motimo/Api";
-import { getGoalWithSubGoalTodo } from "@/lib/main/goalFetching";
+import { getGoalWithSubGoalTodo } from "@/lib/fetching/goalFetching";
 import { TodoItemsInfo } from "@/types/todoList";
 import useSWR, { SWRConfiguration } from "swr";
 

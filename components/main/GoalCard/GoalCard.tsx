@@ -12,9 +12,9 @@ import TodoBottomSheet, {
 } from "@/components/shared/BottomSheets/TodoBottomSheet/TodoBottomSheet";
 import useTodoList from "@/hooks/main/queries/useTodoList";
 import { useEffect, useRef, useState } from "react";
-import { createNewGoal } from "@/lib/main/goalFetching";
-import { createNewTodoOnSubGoal } from "@/lib/main/subGoalFetching";
-import { updateTodo } from "@/lib/main/todoFetching";
+import { createNewGoal } from "@/lib/fetching/goalFetching";
+import { createNewTodoOnSubGoal } from "@/lib/fetching/subGoalFetching";
+import { updateTodo } from "@/lib/fetching/todoFetching";
 import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
 import useModal from "@/hooks/useModal";
 import { date2StringWithSpliter } from "@/utils/date2String";

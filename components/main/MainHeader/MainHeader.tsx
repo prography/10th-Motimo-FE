@@ -1,8 +1,8 @@
 "use client";
 import { AppBar } from "@/components/shared";
 import Banner from "@/components/shared/Banner/Banner";
-import { getCheerComment } from "@/lib/main/cheersFetching";
-import { getPoints } from "@/lib/main/pointsFetching";
+import { getCheerComment } from "@/lib/fetching/cheersFetching";
+import { getPoints } from "@/lib/fetching/pointsFetching";
 import useSWR from "swr";
 
 interface MainHeaderProps {
