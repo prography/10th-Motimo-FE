@@ -1,3 +1,5 @@
+import useAuthStore from "@/stores/useAuthStore";
+
 const tmpToken = "";
 
 const templateFetch = async <T>(
@@ -8,7 +10,7 @@ const templateFetch = async <T>(
   onErrorCatch?: (error: unknown) => void,
 ) => {
   try {
-    const token = localStorage.getItem("access_token");
+    const token = useAuthStore.getState().accessToken;
     const res = await fetch(
       apiUrl,
 
