@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   webpack: (config) => {
     // Find the existing rule that handles SVG
     const fileLoaderRule = config.module.rules.find((rule: any) =>
-      rule.test?.test?.(".svg")
+      rule.test?.test?.(".svg"),
     );
 
     config.module.rules.push(
@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
         issuer: fileLoaderRule.issuer,
         resourceQuery: { not: [...fileLoaderRule.resourceQuery.not, /url/] }, // exclude if *.svg?url
         use: ["@svgr/webpack"],
-      }
+      },
     );
 
     // Modify the file loader rule to ignore *.svg
@@ -46,14 +46,18 @@ const nextConfig: NextConfig = {
       },
     },
   },
-  rewrites: async () => {
-    return [
-      {
-        source: "/v1/:path*",
-        destination: "http://localhost:8080/v1/:path*",
-      },
-    ];
-  },
+  rewrites:
+    process.env.NODE_ENV === "development"
+      ? async () => {
+          return [
+            {
+              source: "/v1/:path*",
+              // destination: "http://localhost:8080/v1/:path",
+              destination: "http://motimo.kro.kr:8080/v1/:path*",
+            },
+          ];
+        }
+      : undefined,
 };
 
 export default nextConfig;

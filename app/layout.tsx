@@ -35,8 +35,11 @@ export default function RootLayout({
           crossOrigin="anonymous" // 일반적으로 폰트에는 추가하는 것이 좋음
         />
       </head>
-      <body className={`${customFont.variable} antialiased bg-background-alternative`}>
+      <body
+        className={`${customFont.variable} antialiased bg-background-alternative`}
+      >
         <div className="w-[360px] mx-auto min-h-screen bg-background-normal">
+          {/* {process.env.NODE_ENV === "development" && <MSWComponent />} */}
           <ModalRenderer />
           {/* {process.env.NODE_ENV === "development" && <MSWComponent />} */}
           <MSWComponent />

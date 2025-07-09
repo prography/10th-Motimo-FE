@@ -9,6 +9,7 @@ import {
   createContext,
   useContext,
   useOptimistic,
+  startTransition,
 } from "react";
 import { KeyedMutator } from "swr";
 import { motion, useMotionValue } from "motion/react";
@@ -96,7 +97,7 @@ const TodoList = ({
   return (
     <>
       <div
-        className={` w-full  px-3 py-4 bg-white rounded-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.10)] inline-flex flex-col justify-start items-center gap-${isFolded ? 0 : 2} overflow-hidden`}
+        className={` w-full  px-3 py-4 bg-white rounded-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.10)] inline-flex flex-col justify-start items-center ${isFolded ? "gap-0" : "gap-2"} overflow-hidden`}
       >
         {/**  TodoList Header */}
         <header className="self-stretch h-8 inline-flex justify-start items-center gap-1">
@@ -288,7 +289,7 @@ const TodoItemContainer = ({
 
   return (
     <Fragment key={info.id}>
-      <div className="flex items-center relative w-full overflow-hidden">
+      <div className="flex items-center relative w-full overflow-hidden min-h-14">
         <motion.div
           className="cursor-grab active:cursor-grabbing  w-full z-10"
           drag="x"
@@ -314,11 +315,13 @@ const TodoItemContainer = ({
             {...info}
             checked={checked}
             onChecked={async () => {
-              toggleChecekdOptimistically();
-              updateOptimisticCheckedLen && updateOptimisticCheckedLen(1);
-
-              await toggleTodo(info.id);
-              mutate && mutate();
+              startTransition(async () => {
+                toggleChecekdOptimistically();
+                await toggleTodo(info.id);
+                mutate && mutate();
+              });
+              // updateOptimisticCheckedLen &&
+              //   updateOptimisticCheckedLen(checked ? -1 : +1);
             }}
           />
         </motion.div>
@@ -327,7 +330,7 @@ const TodoItemContainer = ({
             onEdit={() => {
               /** 임시. 여기에 바텀 시트 관련 들어가야 함 */
               const initTodoInfo = {
-                date: info?.targetDate ?? new Date(),
+                date: info?.targetDate,
                 subGoalId: subGoalId ?? "",
                 subGoalTitle: subGoalTitle ?? "",
                 todo: info?.title,

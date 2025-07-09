@@ -34,7 +34,7 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
   argTypes: {
     // 예시: backgroundColor: { control: 'color', description: '컴포넌트 배경색' },
-    openModal: {
+    openBottomSheet: {
       control: "boolean",
     },
   },
@@ -47,7 +47,8 @@ export const Primary: Story = {
       { title: "2", id: "2" },
     ],
     onSubmitTodo: async () => true,
-    openModal: false,
+    openBottomSheet: false,
+    hasBottomTabBar: false,
   },
 };
 

@@ -4,7 +4,6 @@ import { AppBar } from "@/components/shared";
 import GoalInfo from "@/components/shared/GoalInfo/GoalInfo";
 import TodoList from "@/components/main/TodoList/TodoList";
 import GoalTitleArea from "@/components/main/GoalTitleArea/GoalTitleArea";
-
 import GoalMenuContainer from "@/components/main/GoalMenuContainer/GoalMenuContainer";
 import Banner from "@/components/shared/Banner/Banner";
 import GoalCard from "@/components/main/GoalCard/GoalCard";
@@ -45,23 +44,6 @@ export default function Main() {
     checkLoginStatus();
   }, [router, isLoggedIn, hasCompletedOnboarding]);
 
-  // 로그인 상태 확인 중일 때 로딩 화면
-  if (isLoggedIn === null) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-label-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-label-alternative">로딩 중...</p>
-        </div>
-      </div>
-    );
-  }
-
-  /**
-   * 포인트랑 알람 개수 fetch해오고, Goals에 대해 fetch해오기
-   */
-
-  // 이 부분도 fetch해와야 함.
   const tmpDaysOfServiceUse = 1;
 
   return (

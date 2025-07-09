@@ -123,7 +123,7 @@ const Reported = ({ reported }: { reported: TodoItemProps["reported"] }) => {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <g clip-path="url(#clip0_54490_10219)">
+        <g clipPath="url(#clip0_54490_10219)">
           <path
             d="M0 12C0 5.37258 5.37258 0 12 0C18.6274 0 24 5.37258 24 12C24 18.6274 18.6274 24 12 24C5.37258 24 0 18.6274 0 12Z"
             fill="#E6E8EA"
@@ -131,9 +131,9 @@ const Reported = ({ reported }: { reported: TodoItemProps["reported"] }) => {
           <path
             d="M6 12H12M12 12H18M12 12V18M12 12V6"
             stroke="#8A949E"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </g>
         <defs>

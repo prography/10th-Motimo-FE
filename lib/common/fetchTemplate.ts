@@ -8,6 +8,7 @@ const templateFetch = async <T>(
   onErrorCatch?: (error: unknown) => void,
 ) => {
   try {
+    const token = localStorage.getItem("access_token");
     const res = await fetch(
       apiUrl,
 
@@ -15,7 +16,7 @@ const templateFetch = async <T>(
         method: method,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMP_BAERER}`,
+          Authorization: `Bearer ${token}`,
         },
 
         body:
