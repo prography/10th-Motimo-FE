@@ -46,6 +46,18 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  rewrites:
+    process.env.NODE_ENV === "development"
+      ? async () => {
+          return [
+            {
+              source: "/v1/:path*",
+              // destination: "http://localhost:8080/v1/:path",
+              destination: "http://motimo.kro.kr:8080/v1/:path*",
+            },
+          ];
+        }
+      : undefined,
 };
 
 export default nextConfig;

@@ -16,15 +16,15 @@ export default function OnboardingPage() {
   });
 
   const updateOnboardingData = (data: Partial<typeof onboardingData>) => {
-    setOnboardingData(prev => ({ ...prev, ...data }));
+    setOnboardingData((prev) => ({ ...prev, ...data }));
   };
 
   const nextStep = () => {
-    setCurrentStep(prev => prev + 1);
+    setCurrentStep((prev) => prev + 1);
   };
 
   const prevStep = () => {
-    setCurrentStep(prev => prev - 1);
+    setCurrentStep((prev) => prev - 1);
   };
 
   const renderStep = () => {
@@ -46,9 +46,15 @@ export default function OnboardingPage() {
             periodType={onboardingData.periodType}
             monthCount={onboardingData.monthCount}
             targetDate={onboardingData.targetDate}
-            onPeriodTypeChange={(periodType: "months" | "date") => updateOnboardingData({ periodType })}
-            onMonthCountChange={(monthCount: number) => updateOnboardingData({ monthCount })}
-            onTargetDateChange={(targetDate: Date | null) => updateOnboardingData({ targetDate })}
+            onPeriodTypeChange={(periodType: "months" | "date") =>
+              updateOnboardingData({ periodType })
+            }
+            onMonthCountChange={(monthCount: number) =>
+              updateOnboardingData({ monthCount })
+            }
+            onTargetDateChange={(targetDate: Date | null) =>
+              updateOnboardingData({ targetDate })
+            }
             onNext={nextStep}
             onBack={prevStep}
           />
@@ -62,7 +68,8 @@ export default function OnboardingPage() {
             targetDate={onboardingData.targetDate}
             onComplete={() => {
               // Navigate to main app
-              window.location.href = "/";
+              localStorage.setItem("hasCompletedOnboarding", "true");
+              // window.location.href = "/";
             }}
           />
         );
@@ -72,8 +79,6 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background-normal">
-      {renderStep()}
-    </div>
+    <div className="min-h-screen bg-background-normal">{renderStep()}</div>
   );
-} 
+}

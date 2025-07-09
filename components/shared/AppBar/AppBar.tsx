@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "../utils/utils";
 import { BellIcon } from "../../icons/BellIcon";
 import { ChevronLeftIcon } from "../../icons/ChevronLeftIcon";
 
@@ -24,14 +24,16 @@ export const AppBar = ({
   className,
 }: AppBarProps) => {
   return (
-    <div className={cn(
-      "flex items-center relative w-[360px] h-14 bg-Color-white px-3 h-[56px]",
-      {
-        "justify-end": type === "main",
-        "justify-start": type === "back" || type === "progress",
-      },
-      className
-    )}>
+    <div
+      className={cn(
+        "flex items-center relative w-[360px] h-14 bg-Color-white px-3 h-[56px]",
+        {
+          "justify-end": type === "main",
+          "justify-start": type === "back" || type === "progress",
+        },
+        className,
+      )}
+    >
       {/* Back button - shown for back and progress types */}
       {(type === "back" || type === "progress") && (
         <button
@@ -44,12 +46,13 @@ export const AppBar = ({
       )}
 
       {/* Title - shown for back type */}
-      {title && <div className="flex-1 ml-5">
-        <h1 className="font-SUIT_Variable font-bold text-base leading-[1.2] tracking-[-0.02em] text-Color-black m-0">
-          {title}
-        </h1>
-      </div>
-      }
+      {title && (
+        <div className="flex-1 ml-5">
+          <h1 className="font-SUIT_Variable font-bold text-base leading-[1.2] tracking-[-0.02em] text-Color-black m-0">
+            {title}
+          </h1>
+        </div>
+      )}
 
       {/* Progress bar - shown for progress type */}
       {type === "progress" && (
@@ -66,12 +69,13 @@ export const AppBar = ({
       {/* Right area - shown for main type */}
       {type === "main" && (
         <div className="flex items-center gap-1 ml-auto">
-          {points && <div className="bg-Color-primary-5 rounded-full px-2 py-2 flex items-center justify-center">
-            <span className="font-SUIT_Variable font-bold text-xs leading-[1.2] tracking-[-0.02em] text-Color-primary-50">
-              {points}
-            </span>
-          </div>
-          }
+          {points && (
+            <div className="bg-Color-primary-5 rounded-full px-2 py-2 flex items-center justify-center">
+              <span className="font-SUIT_Variable font-bold text-xs leading-[1.2] tracking-[-0.02em] text-Color-primary-50">
+                {points}
+              </span>
+            </div>
+          )}
           <button
             className="flex items-center justify-center w-10 h-10 bg-transparent border-none cursor-pointer p-2 hover:opacity-70"
             onClick={onNotificationClick}
@@ -83,4 +87,4 @@ export const AppBar = ({
       )}
     </div>
   );
-}; 
+};

@@ -78,7 +78,9 @@ const Body = ({
     >
       <TextField
         isError={false}
-        onChange={(e) => setSubGoal(e.target.value)}
+        onChange={(e) => {
+          setSubGoal(e.target.value);
+        }}
         value={subGoal}
       />
     </form>
