@@ -1,0 +1,60 @@
+import { AppBar } from "@/components/shared/AppBar/AppBar";
+import { GroupEmptyState } from "./GroupEmptyState";
+import { PendingGroupList, PendingGroup } from "./PendingGroupList";
+import { GroupData, GroupList } from "./GroupList";
+
+interface GroupPageProps {
+  pendingGroups: GroupData[];
+  joinedGroups: GroupData[]; // 추후 타입 정의
+  onJoinGroup: () => void;
+  onNotificationClick?: () => void;
+  className?: string;
+}
+
+export function GroupPage({
+  pendingGroups,
+  joinedGroups,
+  onJoinGroup,
+  onNotificationClick,
+  className = "",
+}: GroupPageProps) {
+  return (
+    <div className={`min-h-screen bg-Color-gray-5 flex flex-col ${className}`}>
+      {/* App Bar */}
+      <AppBar
+        title="그룹"
+        type="main"
+        hasNotification={true}
+        onNotificationClick={onNotificationClick}
+      />
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col items-center">
+        {/* Empty State - No joined groups */}
+        {joinedGroups.length === 0 ? (
+          <GroupEmptyState />
+        ) : (
+          <div className="w-full px-4">
+            <div className="py-4">
+              <h1 className="text-xl font-bold text-Color-gray-90 font-SUIT leading-[1.2em] tracking-[-0.01em]">
+                참여 중인 그룹 ({joinedGroups.length})
+              </h1>
+            </div>
+            <GroupList groups={joinedGroups} onJoinGroup={onJoinGroup} />
+          </div>
+        )}
+
+        {/* Pending Groups Section */}
+        {/* <PendingGroupList groups={pendingGroups} onJoinGroup={onJoinGroup} /> */}
+        <div className="w-full px-4">
+          <div className="py-4">
+            <h1 className="text-xl font-bold text-Color-gray-90 font-SUIT leading-[1.2em] tracking-[-0.01em]">
+              참여 대기 중인 목표 ({pendingGroups.length})
+            </h1>
+          </div>
+          <GroupList groups={pendingGroups} onJoinGroup={onJoinGroup} />
+        </div>
+      </div>
+    </div>
+  );
+}
