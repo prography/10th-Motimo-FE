@@ -31,6 +31,10 @@ body {
   color: var(--foreground);
 
   font-family: var(--font-suit-varialbe), Arial, Helvetica, sans-serif;
+
+  /* 스크롤바 layout shift안되게 수정 */
+  width: 100vw;
+  overflow-x: hidden;
 }
 
 /* Utility class to hide scrollbar */

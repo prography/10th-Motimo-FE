@@ -46,13 +46,13 @@ const TodoItem = ({
   return (
     <>
       <div
-        className="w-72 h-16 pl-2 pr-3 py-2 bg-Color-gray-5 rounded-lg 
+        className="w-full h-16 pl-2 pr-3 py-2 bg-Color-gray-5 rounded-lg 
        inline-flex justify-start items-center
        gap-2"
       >
         <div className="flex-1 min-w-0 inline-flex flex-col justify-start items-start">
           <label
-            className=" flex-1 self-stretch h-7 py-1 inline-flex justify-start items-center gap-1"
+            className="max-w-full  h-7 py-1 inline-flex justify-start items-center gap-1"
             htmlFor="todoItem"
             onClick={(e) => {
               e.preventDefault();
@@ -64,7 +64,7 @@ const TodoItem = ({
             <Checkbox id="todoItem" readOnly checked={checked} />
 
             <p
-              className={`truncate flex-1  justify-start ${checked ? "text-label-assistive" : "text-label-normal"}   text-sm font-medium font-['SUIT_Variable'] leading-tight`}
+              className={`truncate   justify-start ${checked ? "text-label-assistive" : "text-label-normal"}   text-sm font-medium font-['SUIT_Variable'] leading-tight`}
               style={{ lineHeight: "normal" }}
             >
               {title}
@@ -107,7 +107,7 @@ const Reported = ({ reported }: { reported: TodoItemProps["reported"] }) => {
     return (
       <>
         <div className="self-stretch flex justify-center items-center  h-6 w-6 relative bg-background-primary rounded-[999px] overflow-hidden">
-          <div className="w-5 h-5 flex justify-center items-center overflow-hidden">
+          <div className="w-5 h-5 flex justify-center items-center overflow-hidden text-white">
             <CheckSvg />
           </div>
         </div>
@@ -123,7 +123,7 @@ const Reported = ({ reported }: { reported: TodoItemProps["reported"] }) => {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <g clip-path="url(#clip0_54490_10219)">
+        <g clipPath="url(#clip0_54490_10219)">
           <path
             d="M0 12C0 5.37258 5.37258 0 12 0C18.6274 0 24 5.37258 24 12C24 18.6274 18.6274 24 12 24C5.37258 24 0 18.6274 0 12Z"
             fill="#E6E8EA"
@@ -131,9 +131,9 @@ const Reported = ({ reported }: { reported: TodoItemProps["reported"] }) => {
           <path
             d="M6 12H12M12 12H18M12 12V18M12 12V6"
             stroke="#8A949E"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </g>
         <defs>
