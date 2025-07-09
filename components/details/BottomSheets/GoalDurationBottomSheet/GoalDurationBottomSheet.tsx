@@ -15,7 +15,7 @@ interface GoalDurationBottomSheetProps {
   onEdit: (durationInfo: {
     type: "month" | "date";
     value: number | Date;
-  }) => Promise<void>;
+  }) => void;
 }
 
 const GoalDurationBottomSheet = ({

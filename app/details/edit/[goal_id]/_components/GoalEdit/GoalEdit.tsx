@@ -8,23 +8,36 @@ import GoalDurationBottomSheet from "@/components/details/BottomSheets/GoalDurat
 
 import TrashBin from "@/public/images/Trash_Full.svg";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import useModal from "@/hooks/useModal";
+import { EditContext } from "../../page";
+import { date2StringWithSpliter } from "@/utils/date2String";
 
 interface GoalEditProps {
-  initGoalTitle: string;
-  initDurationValue?: unknown;
-  initDurationType?: unknown;
+  // initGoalTitle: string;
+  // // initDurationValue?: unknown;
+  // // initDurationType?: unknown;
 }
 
-const GoalEdit = ({
-  initDurationValue,
-  initDurationType,
-  initGoalTitle,
-}: GoalEditProps) => {
-  const [goalTitle, setGoalTitle] = useState(initGoalTitle);
+const GoalEdit = (
+  {
+    // initDurationValue,
+    // initDurationType,
+    // initGoalTitle,
+  }: GoalEditProps,
+) => {
+  // const [goalTitle, setGoalTitle] = useState(initGoalTitle);
+  const nullableContext = useContext(EditContext);
+  const { editContents, setEditContents } = nullableContext || {};
+
   const { closeModal, openModal } = useModal();
   const [openBottomSheet, setOpenBottomSheet] = useState(false);
+
+  const durationSettingBtnText =
+    editContents?.durationType === date
+      ? `개월 수 - ${editContents?.durationValue ?? " "}개월`
+      : `완료 날짜 - ${editContents?.durationValue ? date2StringWithSpliter(editContents?.durationValue, "-") : ""}`;
+
   return (
     <>
       <main>
@@ -33,8 +46,14 @@ const GoalEdit = ({
           <TextField
             name=""
             isError={false}
-            value={goalTitle}
-            onChange={(e) => setGoalTitle(e.target.value)}
+            value={editContents?.goalTitle ?? ""}
+            onChange={(e) =>
+              setEditContents &&
+              setEditContents((prev) => ({
+                ...prev,
+                goalTitle: e.target.value,
+              }))
+            }
           />
         </section>
         <section className="w-80 h-10 inline-flex justify-start items-center gap-4">
@@ -51,7 +70,8 @@ const GoalEdit = ({
             className="h-8 px-3 py-2 bg-background-assistive rounded flex justify-center items-center gap-2"
           >
             <p className="justify-start text-neutral-900 text-sm font-normal font-['Pretendard'] leading-none">
-              {`${initDurationType} - ${initDurationValue}`}
+              {/* {`${initDurationType} - ${initDurationValue}`} */}
+              {durationSettingBtnText}
             </p>
           </button>
         </section>
@@ -85,7 +105,12 @@ const GoalEdit = ({
         openBottomSheet={openBottomSheet}
         setopenBottomSheet={setOpenBottomSheet}
         onEdit={async ({ type, value }) => {
-          console.log("duration type, value: ", type, value);
+          setEditContents &&
+            setEditContents((prev) => ({
+              ...prev,
+              durationType: type,
+              durationValue: value,
+            }));
           // 닫기
           setOpenBottomSheet(false);
         }}
