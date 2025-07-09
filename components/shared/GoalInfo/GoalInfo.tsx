@@ -9,8 +9,8 @@ const GoalInfo = ({ leftDateNum, leftTodoNum }: GoalInfoProps) => {
   return (
     <>
       <div className="w-full min-w-80 h-10 px-3 py-0.5 bg-background-alternative rounded-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.10)] inline-flex justify-start items-center gap-4">
-        <div className="flex justify-start items-center gap-0.5">
-          <div className="w-5 h-5 relative overflow-hidden">
+        <div className="flex justify-center items-center gap-0.5">
+          <div className="w-5 h-5 relative overflow-hidden flex justify-center items-center">
             <CalendarSvg />
           </div>
           <div className="flex justify-start items-center">

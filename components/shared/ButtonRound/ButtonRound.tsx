@@ -1,7 +1,8 @@
-import { cn } from "@/lib/utils";
+import { cn } from "../utils/utils";
 import { forwardRef } from "react";
 
-interface ButtonRoundProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonRoundProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   variant?: "primary";
   size?: "default";
@@ -9,7 +10,17 @@ interface ButtonRoundProps extends React.ButtonHTMLAttributes<HTMLButtonElement>
 }
 
 export const ButtonRound = forwardRef<HTMLButtonElement, ButtonRoundProps>(
-  ({ children, variant = "primary", size = "default", className, disabled, ...props }, ref) => {
+  (
+    {
+      children,
+      variant = "primary",
+      size = "default",
+      className,
+      disabled,
+      ...props
+    },
+    ref,
+  ) => {
     return (
       <button
         ref={ref}
@@ -24,12 +35,12 @@ export const ButtonRound = forwardRef<HTMLButtonElement, ButtonRoundProps>(
           // Variant styles
           {
             // Primary variant
-            "bg-label-normal text-background-alternative hover:bg-label-normal/90": 
+            "bg-label-normal text-background-alternative hover:bg-label-normal/90":
               variant === "primary" && !disabled,
-            "bg-background-disabled text-label-disabled cursor-not-allowed": 
+            "bg-background-disabled text-label-disabled cursor-not-allowed":
               variant === "primary" && disabled,
           },
-          className
+          className,
         )}
         {...props}
       >
@@ -38,7 +49,7 @@ export const ButtonRound = forwardRef<HTMLButtonElement, ButtonRoundProps>(
         </span>
       </button>
     );
-  }
+  },
 );
 
-ButtonRound.displayName = "ButtonRound"; 
+ButtonRound.displayName = "ButtonRound";

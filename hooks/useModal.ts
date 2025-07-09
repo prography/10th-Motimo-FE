@@ -17,6 +17,7 @@ import { ReactNode } from "react";
 
 const useModal = () => {
   const setOpenedModal = useModalStore((state) => state.updateModal);
+  const isOpened = useModalStore((state) => (state.Modal ? true : false));
 
   const openModal = (ModalComponent: ReactNode) => {
     setOpenedModal(ModalComponent);
@@ -25,7 +26,7 @@ const useModal = () => {
     setOpenedModal(null);
   };
 
-  return { openModal, closeModal };
+  return { openModal, closeModal, isOpened };
 };
 
 export default useModal;

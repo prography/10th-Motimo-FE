@@ -2,6 +2,7 @@
 
 import { ButtonRound } from "@/components/shared/ButtonRound/ButtonRound";
 import MotiCheck from "@/components/shared/public/moti-check.svg";
+import Link from "next/link";
 
 interface CompletionScreenProps {
   goal: string;
@@ -67,7 +68,9 @@ export default function CompletionScreen({
 
             {/* Period */}
             <div className="space-y-1">
-              <h3 className="text-base font-bold text-label-normal">목표 날짜</h3>
+              <h3 className="text-base font-bold text-label-normal">
+                목표 날짜
+              </h3>
               <p className="text-sm font-medium text-label-strong">
                 {formatPeriod()}
               </p>
@@ -78,12 +81,10 @@ export default function CompletionScreen({
 
       {/* Complete Button */}
       <div className="px-4 pb-14">
-        <ButtonRound
-          onClick={onComplete}
-        >
-          확인
-        </ButtonRound>
+        <Link href={"/"}>
+          <ButtonRound onClick={onComplete}>확인</ButtonRound>
+        </Link>
       </div>
     </div>
   );
-} 
+}
