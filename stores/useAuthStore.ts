@@ -124,4 +124,9 @@ const useAuthStore = create<AuthStore>()(
   ),
 );
 
+// 클라이언트에서 즉시 hydration 실행
+if (typeof window !== "undefined") {
+  useAuthStore.persist.rehydrate();
+}
+
 export default useAuthStore;
