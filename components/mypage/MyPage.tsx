@@ -11,7 +11,6 @@ import useAuthStore from "@/stores/useAuthStore";
 import dynamic from "next/dynamic";
 import { useApiQuery } from "@/api/useApiQuery";
 import { useMyProfile } from "@/api/hooks";
-import { SWRConfig } from "swr/dist/_internal";
 
 // 클라이언트에서만 렌더링되는 BottomTabBar (SSR 제외)
 const BottomTabBar = dynamic(
