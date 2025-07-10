@@ -1,7 +1,6 @@
 import { SWRConfiguration } from "swr";
 import { useApiQuery } from "./useApiQuery";
 
-// 아래 내용은 Example로 보고 직접 유사 패턴으로 사용하셔도 되고, 그대로 가져다가 편하게 사용하셔도 됩니다.
 export const useQuery = {
   // Todo API
   myTodos: (config?: SWRConfiguration) =>
