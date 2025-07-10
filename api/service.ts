@@ -1,20 +1,9 @@
 import { Api, HttpClient } from "./generated/motimo/Api";
 import useAuthStore from "../stores/useAuthStore";
 
-// Extract base URL from SWAGGER_URL environment variable
-const getBaseUrl = () => {
-  const swaggerUrl = process.env.SWAGGER_URL || "";
-  if (swaggerUrl) {
-    // Extract base URL (e.g., "http://158.179.175.134:8080" from "http://158.179.175.134:8080/v3/api-docs/...")
-    const url = new URL(swaggerUrl);
-    return `${url.protocol}//${url.host}`;
-  }
-  return ""; // fallback to empty string for proxy
-};
-
 // HTTP 클라이언트 생성 시 인증 헤더를 자동으로 추가하는 securityWorker 설정
 const httpClient = new HttpClient({
-  baseUrl: getBaseUrl(),
+  baseUrl: process.env.NEXT_PUBLIC_API_URL || "",
   securityWorker: () => {
     const token = useAuthStore.getState().accessToken;
 
