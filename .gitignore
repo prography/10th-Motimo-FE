@@ -52,3 +52,6 @@ storybook-static
 # local environment - vscode
 .vscode
 package-lock.json
+
+# Local environment variables
+.env.local
