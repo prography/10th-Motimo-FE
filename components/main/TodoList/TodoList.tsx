@@ -27,15 +27,14 @@ import TodoItem from "@/components/shared/TodoItem/TodoItem";
 import ModalAddingSubGoal from "@/components/shared/Modal/ModalAddingSubGoal/ModalAddingSubGoal";
 
 import useModal from "@/hooks/useModal";
-import useTodoList from "@/hooks/main/queries/useTodoList";
+import { useSubGoalTodos, useGoalWithSubGoals } from "@/service";
 import useOptimisticToggle from "@/hooks/main/useOptimisticToggle";
 import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
 
 import { deleteTodo, toggleTodo } from "@/lib/main/todoFetching";
 // import { createNewTodoOnSubGoal } from "@/lib/main/subGoalFetching";
 import { createNewSubGoalOnGoal } from "@/lib/main/goalFetching";
-import { TodoRs } from "@/api/generated/motimo/Api";
-import useGoalWithSubGoalTodo from "@/hooks/main/queries/useGoalWithSubGoalTodo";
+import { TodoRs, TodoRsStatusEnum } from "@/api/generated/motimo/Api";
 
 /** api generator로부터 받은 타입을 사용 */
 
@@ -71,9 +70,21 @@ const TodoList = ({
 }: TodoListProps) => {
   // 펼친 상태가 기본
   const [isFolded, setIsFolded] = useState(false);
-  const { data: todoItemsInfo, mutate } = useTodoList(subGoalId ?? "", {
+  const { data: rawTodoData, mutate } = useSubGoalTodos(subGoalId ?? "", {
     fallbackData: initTodoItemsInfo,
   });
+
+  // Convert raw todo data to the format expected by the component
+  const todoItemsInfo: TodoItemsInfo[] | undefined = rawTodoData?.map(
+    (todoRs) => ({
+      id: todoRs.id ?? "",
+      title: todoRs.title ?? "",
+      checked: todoRs.status === TodoRsStatusEnum.COMPLETE,
+      reported: !!todoRs.todoResultId,
+      targetDate: todoRs.date ? new Date(todoRs.date) : undefined,
+    }),
+  );
+
   const todoCheckedLen =
     todoItemsInfo?.filter((todoItem) => todoItem.checked).length ??
     initTodoCheckedLen;
@@ -162,7 +173,7 @@ interface NoSubGoalProps {
 
 const NoSubGoal = ({ goalId }: NoSubGoalProps) => {
   const { closeModal, openModal } = useModal();
-  const { mutate } = useGoalWithSubGoalTodo(goalId ?? "");
+  const { mutate } = useGoalWithSubGoals(goalId ?? "");
 
   return (
     <>

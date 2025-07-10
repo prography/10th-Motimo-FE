@@ -1,6 +1,6 @@
 "use client";
 import GoalMenu, { GoalMenuProps } from "@/components/shared/GoalMenu/GoalMenu";
-import useGoalList from "@/hooks/main/queries/useGoalList";
+import { useGoals } from "@/service";
 import useGoalStore from "@/stores/useGoalStore";
 import { useEffect, useState } from "react";
 
@@ -18,7 +18,16 @@ interface GoalMenuContainerProps {
 }
 
 const GoalMenuContainer = ({}: GoalMenuContainerProps) => {
-  const { data: goalMenuInfoList, mutate } = useGoalList();
+  const { data: rawGoalData, mutate } = useGoals();
+
+  // Convert raw goal data to the format expected by the component
+  const goalMenuInfoList: GoalMenuInfo[] =
+    rawGoalData?.goals?.map((goalInfo) => ({
+      goal: goalInfo.title ?? "",
+      percentage: goalInfo.progress ?? 0,
+      goalId: goalInfo.id ?? "",
+    })) ?? [];
+
   const [selectedGoalIdx, setSelectedGoalIdx] = useState(0);
   const { updateGoalId } = useGoalStore();
   const { openModal, closeModal } = useModal();
