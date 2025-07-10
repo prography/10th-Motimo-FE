@@ -1,7 +1,7 @@
 import { SWRConfiguration } from "swr";
 import { useApiQuery } from "./useApiQuery";
 
-// Convenience hooks for common patterns
+// 아래 내용은 Example로 보고 직접 유사 패턴으로 사용하셔도 되고, 그대로 가져다가 편하게 사용하셔도 됩니다.
 export const useQuery = {
   // Todo API
   myTodos: (config?: SWRConfiguration) =>
@@ -104,6 +104,3 @@ export const useGroupChat = useQuery.groupChat;
 export const useJoinedGroups = useQuery.joinedGroups;
 export const usePoints = useQuery.points;
 export const useCheerPhrase = useQuery.cheerPhrase;
-
-// Re-export useApiQuery for direct usage
-export { useApiQuery } from "./useApiQuery";
