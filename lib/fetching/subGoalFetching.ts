@@ -22,7 +22,7 @@ const createNewTodoOnSubGoal = async (
   return result;
 };
 
-const toggleCompletionTodoOnSubGoal = async (subGoalId: string) => {
+const toggleSubGoalCompletion = async (subGoalId: string) => {
   // error처리 아직 안함. toast처리 해야 함
   const result = await templateFetch(
     `/v1/sub-goals/${subGoalId}/completion/toggle`,
@@ -42,8 +42,4 @@ const getTodosOnSubGoal = async (subGoalId: string) => {
   return result ?? [];
 };
 
-export {
-  createNewTodoOnSubGoal,
-  getTodosOnSubGoal,
-  toggleCompletionTodoOnSubGoal,
-};
+export { createNewTodoOnSubGoal, getTodosOnSubGoal, toggleSubGoalCompletion };
