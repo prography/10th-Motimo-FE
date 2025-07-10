@@ -2,10 +2,10 @@ import { AppBar } from "@/components/shared/AppBar/AppBar";
 import { GroupEmptyState } from "./GroupEmptyState";
 import { PendingGroupList, PendingGroup } from "./PendingGroupList";
 import { GroupData, GroupList } from "./GroupList";
-import { JoinedGroupRs } from "@/api/generated/motimo/Api";
+import { GoalNotInGroupRs, JoinedGroupRs } from "@/api/generated/motimo/Api";
 
 interface GroupPageProps {
-  pendingGroups: GroupData[];
+  pendingGroups: GoalNotInGroupRs[];
   joinedGroups: JoinedGroupRs[]; // 추후 타입 정의
   onJoinGroup: () => void;
   onNotificationClick?: () => void;
