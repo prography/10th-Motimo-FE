@@ -2,7 +2,7 @@
 
 import useGoalStore from "@/stores/useGoalStore";
 import TodoList from "../TodoList/TodoList";
-import { useGoalWithSubGoals, useSubGoalTodos } from "@/service";
+import { useGoalWithSubGoals, useSubGoalTodos } from "@/api/hooks";
 import {
   GoalWithSubGoalTodoRs,
   TodoRsStatusEnum,

@@ -9,7 +9,7 @@ import { NavigationList } from "./NavigationList";
 import { GuestLoginSection } from "./GuestLoginSection";
 import useAuthStore from "@/stores/useAuthStore";
 import dynamic from "next/dynamic";
-import { useApiQuery, useMyProfile } from "@/service";
+import { useApiQuery, useMyProfile } from "@/api/hooks";
 import { SWRConfig } from "swr/dist/_internal";
 
 // 클라이언트에서만 렌더링되는 BottomTabBar (SSR 제외)

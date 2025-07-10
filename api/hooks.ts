@@ -1,45 +1,11 @@
-import { Api, HttpClient } from "./api/generated/motimo/Api";
-import useAuthStore from "./stores/useAuthStore";
 import useSWR, { SWRConfiguration } from "swr";
-
-// HTTP 클라이언트 생성 시 인증 헤더를 자동으로 추가하는 securityWorker 설정
-const httpClient = new HttpClient({
-  baseUrl: "",
-  securityWorker: () => {
-    const token = useAuthStore.getState().accessToken;
-
-    if (token) {
-      return {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        format: "json",
-      };
-    }
-
-    return {};
-  },
-});
-
-// API 클라이언트 인스턴스 생성
-export const api = new Api(httpClient);
-
-// API 클라이언트 타입 정의
-type ApiClient = typeof api;
-type ApiGroup = keyof ApiClient;
-type ApiMethod<T extends ApiGroup> = keyof ApiClient[T];
-
-// API 메서드의 반환 타입 추출
-type ApiMethodReturnType<
-  T extends ApiGroup,
-  M extends ApiMethod<T>,
-> = ApiClient[T][M] extends (...args: any[]) => Promise<infer R> ? R : never;
-
-// API 메서드의 파라미터 타입 추출
-type ApiMethodParams<
-  T extends ApiGroup,
-  M extends ApiMethod<T>,
-> = ApiClient[T][M] extends (...args: infer P) => any ? P : never;
+import {
+  api,
+  ApiGroup,
+  ApiMethod,
+  ApiMethodReturnType,
+  ApiMethodParams,
+} from "./service";
 
 // SWR Key 타입
 type SWRKey = readonly unknown[];
@@ -75,7 +41,6 @@ export function useApiQuery<
           }
 
           // params가 배열이면 spread, 아니면 그대로 전달
-
           return Array.isArray(params) && params.length > 0
             ? methodFunction(...params)
             : methodFunction();
@@ -187,5 +152,3 @@ export const useGroupChat = useQuery.groupChat;
 export const useJoinedGroups = useQuery.joinedGroups;
 export const usePoints = useQuery.points;
 export const useCheerPhrase = useQuery.cheerPhrase;
-
-export default api;

@@ -1,6 +1,6 @@
 "use client";
 import GoalMenu, { GoalMenuProps } from "@/components/shared/GoalMenu/GoalMenu";
-import { useGoals } from "@/service";
+import { useGoals } from "@/api/hooks";
 import useGoalStore from "@/stores/useGoalStore";
 import { useEffect, useState } from "react";
 

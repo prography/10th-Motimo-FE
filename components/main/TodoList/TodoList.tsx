@@ -27,7 +27,7 @@ import TodoItem from "@/components/shared/TodoItem/TodoItem";
 import ModalAddingSubGoal from "@/components/shared/Modal/ModalAddingSubGoal/ModalAddingSubGoal";
 
 import useModal from "@/hooks/useModal";
-import { useSubGoalTodos, useGoalWithSubGoals } from "@/service";
+import { useSubGoalTodos, useGoalWithSubGoals } from "@/api/hooks";
 import useOptimisticToggle from "@/hooks/main/useOptimisticToggle";
 import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
 
