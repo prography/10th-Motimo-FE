@@ -103,7 +103,7 @@ export default function JoinRandomGroupPage() {
                 </p>
 
                 {/* Goal Info Card */}
-                <div className="w-full max-w-[328px] bg-Color-gray-5 rounded-lg p-4 mb-12">
+                <div className="w-full max-w-[328px] bg-Color-gray-5 rounded-lg p-4 mb-12 text-center">
                     <div className="space-y-4">
                         {/* Selected Goal */}
                         <div className="space-y-1">
@@ -128,7 +128,7 @@ export default function JoinRandomGroupPage() {
                 </div>
 
                 {/* Join Button */}
-                <div className="w-full max-w-[328px] mt-auto pb-8">
+                <div className="w-full max-w-[328px] pb-8">
                     <Button
                         variant="filled"
                         size="l"
