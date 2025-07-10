@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import PlusSvg from "@/components/shared/public/Add_Plus.svg";
 import useModal from "@/hooks/useModal";
 import ModalAddingGoal from "@/components/shared/Modal/ModalAddingGoal/ModalAddingGoal";
-import { createNewGoal } from "@/lib/main/goalFetching";
 
 type GoalMenuInfo = Pick<GoalMenuProps, "goal" | "percentage"> & {
   goalId: string;

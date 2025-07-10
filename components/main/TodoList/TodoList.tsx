@@ -31,9 +31,7 @@ import { useSubGoalTodos, useGoalWithSubGoals } from "@/api/hooks";
 import useOptimisticToggle from "@/hooks/main/useOptimisticToggle";
 import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
 
-import { deleteTodo, toggleTodo } from "@/lib/main/todoFetching";
-// import { createNewTodoOnSubGoal } from "@/lib/main/subGoalFetching";
-import { createNewSubGoalOnGoal } from "@/lib/main/goalFetching";
+import { todoApi, goalApi } from "@/api/service";
 import { TodoRs, TodoRsStatusEnum } from "@/api/generated/motimo/Api";
 
 /** api generator로부터 받은 타입을 사용 */
@@ -194,7 +192,7 @@ const NoSubGoal = ({ goalId }: NoSubGoalProps) => {
                     // mutateResult가 네트워크 fail에서는 undefined가 나와야 함.
                     if (!goalId) return;
 
-                    const mutateResult = await createNewSubGoalOnGoal(goalId, {
+                    const mutateResult = await goalApi.addSubGoal(goalId, {
                       title: subGoal,
                     });
                     if (mutateResult) {
@@ -328,7 +326,7 @@ const TodoItemContainer = ({
             onChecked={async () => {
               startTransition(async () => {
                 toggleChecekdOptimistically();
-                await toggleTodo(info.id);
+                await todoApi.toggleTodoCompletion(info.id);
                 mutate && mutate();
               });
               // updateOptimisticCheckedLen &&
@@ -352,7 +350,7 @@ const TodoItemContainer = ({
           />
           <DeleteButton
             onDelete={async () => {
-              await deleteTodo(info.id);
+              await todoApi.deleteById(info.id);
               mutate && mutate();
             }}
           />

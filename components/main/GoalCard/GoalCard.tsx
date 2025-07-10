@@ -16,9 +16,7 @@ import TodoBottomSheet, {
 import { TodoListProps } from "../TodoList/TodoList";
 import { TodoItemsInfo } from "@/types/todoList";
 import { useEffect, useRef, useState } from "react";
-import { createNewGoal } from "@/lib/main/goalFetching";
-import { createNewTodoOnSubGoal } from "@/lib/main/subGoalFetching";
-import { updateTodo } from "@/lib/main/todoFetching";
+import { goalApi, subGoalApi, todoApi } from "@/api/service";
 import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
 import useModal from "@/hooks/useModal";
 import { date2StringWithSpliter } from "@/utils/date2String";
@@ -128,15 +126,17 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
           const isCreating = newTodoInfo.id ? false : true;
           let fetchRes;
           if (isCreating) {
-            fetchRes = await createNewTodoOnSubGoal(newTodoInfo.subGoalId, {
+            fetchRes = await subGoalApi.createTodo(newTodoInfo.subGoalId, {
               title: newTodoInfo.todo,
               date: newTodoInfo?.date
                 ? date2StringWithSpliter(newTodoInfo?.date, "-")
                 : undefined,
             });
           } else {
-            fetchRes = await updateTodo(newTodoInfo.id ?? "", {
-              date: newTodoInfo.date,
+            fetchRes = await todoApi.updateTodo(newTodoInfo.id ?? "", {
+              date: newTodoInfo.date
+                ? date2StringWithSpliter(newTodoInfo.date, "-")
+                : undefined,
               title: newTodoInfo.todo,
             });
           }
