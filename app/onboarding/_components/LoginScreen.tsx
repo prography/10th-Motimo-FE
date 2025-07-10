@@ -8,7 +8,7 @@ import {
   OAUTH_ENDPOINTS,
   FRONTEND_BASE_URL,
 } from "@/lib/constants";
-import MotimoLogoBlack from "@/components/shared/public/MOTIMO_LOGO_BLACK.svg"
+import MotimoLogoBlack from "@/components/shared/public/MOTIMO_LOGO_BLACK.svg";
 
 interface LoginScreenProps {
   onNext: () => void;
@@ -98,11 +98,7 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
       localStorage.removeItem("oauth_state");
 
       // URL 파라미터 제거 (토큰 정보 포함)
-      window.history.replaceState(
-        {},
-        document.title,
-        window.location.pathname,
-      );
+      window.history.replaceState({}, document.title, window.location.pathname);
 
       console.log("현재 로컬스토리지 상태:");
       console.log("- isLoggedIn:", localStorage.getItem("isLoggedIn"));
@@ -115,8 +111,12 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
       onNext();
     } else {
       console.log("❌ 인증 토큰을 찾을 수 없음 - 일반 페이지 로드");
-      console.log("💡 백엔드에서 리다이렉트 시 URL 파라미터로 토큰을 포함시켜야 합니다:");
-      console.log(`예: ${FRONTEND_BASE_URL}/onboarding?access_token=...&refresh_token=...`);
+      console.log(
+        "💡 백엔드에서 리다이렉트 시 URL 파라미터로 토큰을 포함시켜야 합니다:",
+      );
+      console.log(
+        `예: ${FRONTEND_BASE_URL}/onboarding?access_token=...&refresh_token=...`,
+      );
     }
 
     console.log("=== OAuth 콜백 처리 완료 ===");
@@ -134,7 +134,7 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
     localStorage.setItem("oauth_state", state);
 
     // Google OAuth 인증 페이지로 리다이렉트
-    const redirect_uri = `${FRONTEND_BASE_URL}/onboarding`;
+    const redirect_uri = `${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/onboarding`;
     window.location.href = `${OAUTH_ENDPOINTS.GOOGLE_AUTHORIZE}?redirect_uri=${redirect_uri}&state=${state}`;
   };
 
@@ -189,9 +189,7 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
 
                 {/* Logo Icon */}
                 <div className="flex justify-center">
-                  <MotimoLogoBlack
-                    className="w-[219px] h-[36px]"
-                  />
+                  <MotimoLogoBlack className="w-[219px] h-[36px]" />
                 </div>
               </div>
             </div>
