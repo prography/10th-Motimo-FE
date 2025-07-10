@@ -1,7 +1,7 @@
 import { AppBar } from "@/components/shared/AppBar/AppBar";
 import { GroupEmptyState } from "./GroupEmptyState";
 import { PendingGroupList, PendingGroup } from "./PendingGroupList";
-import { GroupData, GroupList } from "./GroupList";
+import { GroupList } from "./GroupList";
 import { GoalNotInGroupRs, JoinedGroupRs } from "@/api/generated/motimo/Api";
 
 interface GroupPageProps {
