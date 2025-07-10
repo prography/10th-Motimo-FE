@@ -155,7 +155,7 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
     setOauthState(state);
 
     // Google OAuth 인증 페이지로 리다이렉트
-    const redirect_uri = `${FRONTEND_BASE_URL}/onboarding`;
+    const redirect_uri = `${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/onboarding`;
     window.location.href = `${OAUTH_ENDPOINTS.GOOGLE_AUTHORIZE}?redirect_uri=${redirect_uri}&state=${state}`;
   };
 
