@@ -15,7 +15,7 @@ const ModalAddingGoal = ({ onClose, onAddGoal }: ModalAddingGoalProps) => {
             onClose();
           },
         }}
-        bodyNode={<Body />}
+        bodyNode={<ModalBody />}
         footerNode={[
           <Modal.Button
             onClick={() => {
@@ -41,7 +41,7 @@ const ModalAddingGoal = ({ onClose, onAddGoal }: ModalAddingGoalProps) => {
 };
 export default ModalAddingGoal;
 
-const Body = () => {
+const ModalBody = () => {
   return (
     <div className="flex justify-center items-center p-6">
       <div className="justify-start text-label-strong text-base font-bold font-['SUIT_Variable'] leading-tight">
