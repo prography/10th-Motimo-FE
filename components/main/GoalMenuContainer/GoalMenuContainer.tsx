@@ -52,7 +52,7 @@ const GoalMenuContainer = ({}: GoalMenuContainerProps) => {
             </div>
           </button>
         </div>
-        <div className="flex gap-2 justify-start">
+        <div className="flex gap-2 justify-start overflow-x-hidden">
           {goalMenuInfoList.map((goalMenuInfo, idx) => (
             <GoalMenu
               key={goalMenuInfo.goalId}
