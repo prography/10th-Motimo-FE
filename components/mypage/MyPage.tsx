@@ -9,6 +9,8 @@ import { NavigationList } from "./NavigationList";
 import { GuestLoginSection } from "./GuestLoginSection";
 import useAuthStore from "@/stores/useAuthStore";
 import dynamic from "next/dynamic";
+import { useApiQuery } from "@/api/useApiQuery";
+import { useMyProfile } from "@/api/hooks";
 
 // 클라이언트에서만 렌더링되는 BottomTabBar (SSR 제외)
 const BottomTabBar = dynamic(
@@ -26,11 +28,7 @@ interface MyPageProps {
 export function MyPage({ className = "" }: MyPageProps) {
   const router = useSafeRouter();
   const { isLoggedIn, login } = useAuthStore();
-  const [user, setUser] = useState({
-    name: "몰입한 곰돌이",
-    profileImage: "/profile-default.png",
-    points: 1000,
-  });
+  const { data: user, isLoading, error } = useMyProfile();
 
   const handleLogin = () => {
     login();
@@ -89,14 +87,14 @@ export function MyPage({ className = "" }: MyPageProps) {
             {/* User Information Section */}
             <div className="bg-Color-white px-4 py-5">
               <UserProfile
-                name={user.name}
-                profileImage={user.profileImage}
+                name={user?.nickname ?? ""}
+                profileImage={user?.profileImageUrl}
                 onAddInterests={() => console.log("Add interests")}
               />
             </div>
 
-            {/* Points Display */}
-            <PointsDisplay points={user.points} />
+            {/* TODO: Points Display */}
+            <PointsDisplay points={0} />
 
             {/* Navigation List */}
             <NavigationList items={navigationItems} />
