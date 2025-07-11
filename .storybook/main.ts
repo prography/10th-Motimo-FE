@@ -57,6 +57,18 @@ const config = {
       },
     ];
 
+    // Mock Next.js navigation module
+    if (!config.resolve) {
+      config.resolve = {};
+    }
+    if (!config.resolve.alias) {
+      config.resolve.alias = {};
+    }
+    config.resolve.alias["next/navigation"] = path.resolve(
+      __dirname,
+      "nextjs-mock.ts",
+    );
+
     return config;
   },
 };
