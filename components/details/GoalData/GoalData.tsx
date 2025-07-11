@@ -1,12 +1,9 @@
 import { AppBar } from "@/components/shared";
-import RightArrowSvg from "@/components/shared/public/Chevron_Right_MD.svg";
-import { UserIcon } from "@/components/icons";
-import Link from "next/link";
+
 interface GoalDataProps {
   goalId: string;
-  groupId?: string;
 }
-const GoalData = ({ goalId, groupId }: GoalDataProps) => {
+const GoalData = ({ goalId }: GoalDataProps) => {
   const dDay = 180;
   const goalName = "";
   const progress = 30;
@@ -24,33 +21,6 @@ const GoalData = ({ goalId, groupId }: GoalDataProps) => {
           </p>
         </div>
         <AppBar type="progress" progress={progress} />
-        {groupId && (
-          <>
-            <div className="self-stretch h-10 px-2 py-0.5 bg-Color-primary-5 rounded-lg inline-flex justify-start items-center gap-1">
-              <div
-                data-property-1="Users_Group"
-                className="w-5 h-5 relative overflow-hidden"
-              >
-                <>
-                  <UserIcon color="#5d5fef " />
-                </>
-              </div>
-              <div className="flex-1 flex justify-start items-center gap-0.5">
-                <p className="justify-center text-label-normal text-xs font-semibold font-['SUIT_Variable'] leading-none">
-                  그룹으로 이동
-                </p>
-              </div>
-              <button
-                type="button"
-                className="w-6 h-6 relative overflow-hidden text-label-assistive"
-              >
-                <Link href={`/group/${groupId}`}>
-                  <RightArrowSvg />
-                </Link>
-              </button>
-            </div>
-          </>
-        )}
       </section>
     </>
   );
