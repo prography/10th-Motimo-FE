@@ -28,7 +28,9 @@ const config = {
   ],
   framework: {
     name: "@storybook/nextjs",
-    options: {},
+    options: {
+      nextConfigPath: "../next.config.ts",
+    },
   },
   staticDirs: [path.resolve(__dirname, "../public")],
   typescript: {
