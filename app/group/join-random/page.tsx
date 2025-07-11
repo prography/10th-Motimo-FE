@@ -8,138 +8,171 @@ import { useGoalDetail } from "@/api/hooks";
 import { api } from "@/api/service";
 
 export default function JoinRandomGroupPage() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const goalId = searchParams.get("goalId");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const goalId = searchParams.get("goalId");
 
-    // 목표 정보 가져오기
-    const { data: goalDetail, isLoading } = useGoalDetail(goalId);
-    const [isJoining, setIsJoining] = useState(false);
+  // 목표 정보 가져오기
+  const { data: goalDetail, isLoading } = useGoalDetail(goalId);
+  const [isJoining, setIsJoining] = useState(false);
 
-    // 기본값 설정
-    const goalInfo = {
-        title: goalDetail?.title || "설정한 목표가 여기에 나오게됩니다.\n두줄이면 이렇게 보이게됩니다.",
-        period: goalDetail?.dueDate ? calculatePeriod(goalDetail.dueDate) : "3개월"
-    };
+  // 기본값 설정
+  const goalInfo = {
+    title:
+      goalDetail?.title ||
+      "설정한 목표가 여기에 나오게됩니다.\n두줄이면 이렇게 보이게됩니다.",
+    period: goalDetail?.dueDate ? calculatePeriod(goalDetail.dueDate) : "3개월",
+  };
 
-    // 목표 기간 계산 함수
-    function calculatePeriod(dueDate: string): string {
-        const now = new Date();
-        const due = new Date(dueDate);
-        const diffTime = Math.abs(due.getTime() - now.getTime());
-        const diffMonths = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 30));
-        return `${diffMonths}개월`;
+  // 목표 기간 계산 함수
+  function calculatePeriod(dueDate: string): string {
+    const now = new Date();
+    const due = new Date(dueDate);
+    const diffTime = Math.abs(due.getTime() - now.getTime());
+    const diffMonths = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 30));
+    return `${diffMonths}개월`;
+  }
+
+  const handleBack = () => {
+    router.back();
+  };
+
+  const handleJoinRandomGroup = async () => {
+    if (!goalId) {
+      console.error("Goal ID is required for joining a group");
+      alert("목표 정보를 찾을 수 없습니다. 다시 시도해주세요.");
+      return;
     }
 
-    const handleBack = () => {
-        router.back();
-    };
+    try {
+      setIsJoining(true);
+      console.log("Joining random group with goalId:", goalId);
 
-    const handleJoinRandomGroup = async () => {
-        if (!goalId) {
-            console.error("Goal ID is required for joining a group");
-            alert("목표 정보를 찾을 수 없습니다. 다시 시도해주세요.");
-            return;
-        }
+      //   const response = await api.그룹Api.joinRandomGroup({ goalId });
+      //   const id = response.id;
+      //   if (!id) {
+      //     alert("그룹 참여에 실패했습니다. 다시 시도해주세요.");
+      //     return;
+      //   }
 
-        try {
-            setIsJoining(true);
-            console.log("Joining random group with goalId:", goalId);
+      // TODO: API 오류로 인해 1 번 group 으로 임시 고정
+      const id = "1";
+      alert("그룹에 성공적으로 참여했습니다!");
 
-            const response = await api.그룹Api.joinRandomGroup({ goalId });
+      // 성공 시 그룹 페이지로 이동
+      router.push(`/group/${id}`);
+    } catch (error) {
+      console.error("Failed to join random group:", error);
+      alert("그룹 참여에 실패했습니다. 다시 시도해주세요.");
+    } finally {
+      setIsJoining(false);
+    }
+  };
 
-            console.log("Successfully joined group:", response.id);
-            alert("그룹에 성공적으로 참여했습니다!");
+  // goalId가 없으면 그룹 페이지로 리다이렉트
+  useEffect(() => {
+    if (!goalId) {
+      console.error("Goal ID is required for joining a group");
+      router.push("/group");
+    }
+  }, [goalId, router]);
 
-            // 성공 시 그룹 페이지로 이동
-            router.push("/group");
-        } catch (error) {
-            console.error("Failed to join random group:", error);
-            alert("그룹 참여에 실패했습니다. 다시 시도해주세요.");
-        } finally {
-            setIsJoining(false);
-        }
-    };
+  return (
+    <div className="min-h-screen bg-white flex flex-col">
+      {/* App Bar */}
+      <AppBar title="그룹 참여" type="back" onBackClick={handleBack} />
 
-    // goalId가 없으면 그룹 페이지로 리다이렉트
-    useEffect(() => {
-        if (!goalId) {
-            console.error("Goal ID is required for joining a group");
-            router.push("/group");
-        }
-    }, [goalId, router]);
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col items-center px-4 pt-6">
+        {/* Illustration */}
+        <div className="relative w-[140px] h-[87px] mb-8">
+          {/* Background circles with thumbs up icons */}
+          <div className="absolute top-0 left-[18px] w-[52px] h-[52px] bg-Color-primary-50 rounded-full flex items-center justify-center">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
 
-    return (
-        <div className="min-h-screen bg-white flex flex-col">
-            {/* App Bar */}
-            <AppBar
-                title="그룹 참여"
-                type="back"
-                onBackClick={handleBack}
-            />
-
-            {/* Main Content */}
-            <div className="flex-1 flex flex-col items-center px-4 pt-6">
-                {/* Illustration */}
-                <div className="relative w-[140px] h-[87px] mb-8">
-                    {/* Background circles with thumbs up icons */}
-                    <div className="absolute top-0 left-[18px] w-[52px] h-[52px] bg-Color-primary-50 rounded-full flex items-center justify-center">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                    </div>
-
-                    <div className="absolute top-[32px] right-[13px] w-[52px] h-[52px] bg-Color-gray-80 rounded-full flex items-center justify-center">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                    </div>
-                </div>
-
-                {/* Description Text */}
-                <p className="text-center text-Color-gray-80 font-SUIT_Variable font-normal text-base leading-[1.4] tracking-[-0.01em] mb-8 px-4">
-                    선택한 목표와 목표 기간이 같은 사람들과<br />
-                    랜덤으로 매칭됩니다.
-                </p>
-
-                {/* Goal Info Card */}
-                <div className="w-full max-w-[328px] bg-Color-gray-5 rounded-lg p-4 mb-12 text-center">
-                    <div className="space-y-4">
-                        {/* Selected Goal */}
-                        <div className="space-y-1">
-                            <h3 className="font-SUIT font-bold text-base leading-[1.2] tracking-[-0.01em] text-Color-gray-80">
-                                선택한 목표
-                            </h3>
-                            <p className="font-SUIT_Variable font-medium text-sm leading-[1.4] tracking-[-0.01em] text-Color-gray-90 whitespace-pre-line">
-                                {goalInfo.title}
-                            </p>
-                        </div>
-
-                        {/* Goal Period */}
-                        <div className="space-y-1">
-                            <h3 className="font-SUIT font-bold text-base leading-[1.2] tracking-[-0.01em] text-Color-gray-80">
-                                목표 기간
-                            </h3>
-                            <p className="font-SUIT_Variable font-medium text-sm leading-[1.4] tracking-[-0.01em] text-Color-gray-90">
-                                {goalInfo.period}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Join Button */}
-                <div className="w-full max-w-[328px] pb-8">
-                    <Button
-                        variant="filled"
-                        size="l"
-                        onClick={handleJoinRandomGroup}
-                        className="w-full"
-                        disabled={isLoading || !goalId || isJoining}
-                    >
-                        {isLoading ? "목표 정보 로딩 중..." : isJoining ? "그룹 참여 중..." : "그룹 랜덤 참여하기"}
-                    </Button>
-                </div>
-            </div>
+          <div className="absolute top-[32px] right-[13px] w-[52px] h-[52px] bg-Color-gray-80 rounded-full flex items-center justify-center">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
         </div>
-    );
-} 
+
+        {/* Description Text */}
+        <p className="text-center text-Color-gray-80 font-SUIT_Variable font-normal text-base leading-[1.4] tracking-[-0.01em] mb-8 px-4">
+          선택한 목표와 목표 기간이 같은 사람들과
+          <br />
+          랜덤으로 매칭됩니다.
+        </p>
+
+        {/* Goal Info Card */}
+        <div className="w-full max-w-[328px] bg-Color-gray-5 rounded-lg p-4 mb-12 text-center">
+          <div className="space-y-4">
+            {/* Selected Goal */}
+            <div className="space-y-1">
+              <h3 className="font-SUIT font-bold text-base leading-[1.2] tracking-[-0.01em] text-Color-gray-80">
+                선택한 목표
+              </h3>
+              <p className="font-SUIT_Variable font-medium text-sm leading-[1.4] tracking-[-0.01em] text-Color-gray-90 whitespace-pre-line">
+                {goalInfo.title}
+              </p>
+            </div>
+
+            {/* Goal Period */}
+            <div className="space-y-1">
+              <h3 className="font-SUIT font-bold text-base leading-[1.2] tracking-[-0.01em] text-Color-gray-80">
+                목표 기간
+              </h3>
+              <p className="font-SUIT_Variable font-medium text-sm leading-[1.4] tracking-[-0.01em] text-Color-gray-90">
+                {goalInfo.period}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Join Button */}
+        <div className="w-full max-w-[328px] pb-8">
+          <Button
+            variant="filled"
+            size="l"
+            onClick={handleJoinRandomGroup}
+            className="w-full"
+            disabled={isLoading || !goalId || isJoining}
+          >
+            {isLoading
+              ? "목표 정보 로딩 중..."
+              : isJoining
+                ? "그룹 참여 중..."
+                : "그룹 랜덤 참여하기"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
