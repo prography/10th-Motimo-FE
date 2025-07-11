@@ -22,7 +22,6 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
     setOauthState,
     setOauthCode,
     setOauthReturnStep,
-    setAuthToken,
     setAccessToken,
     setRefreshToken,
     login,
@@ -88,12 +87,6 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
         console.log("OAuth code 저장됨:", code);
       }
 
-      // 기존 token 파라미터 저장
-      if (token) {
-        setAuthToken(token);
-        console.log("Auth token 저장됨:", token);
-      }
-
       // URL 파라미터에서 토큰 저장
       if (accessTokenFromUrl) {
         setAccessToken(accessTokenFromUrl);
@@ -115,7 +108,6 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
       const authState = useAuthStore.getState();
       console.log("- isLoggedIn:", authState.isLoggedIn);
       console.log("- oauth_code:", authState.oauthCode);
-      console.log("- auth_token:", authState.authToken);
       console.log("- access_token:", authState.accessToken);
       console.log("- refresh_token:", authState.refreshToken);
 
@@ -137,7 +129,6 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
     oauthState,
     login,
     setOauthCode,
-    setAuthToken,
     setAccessToken,
     setRefreshToken,
     clearOauthData,
