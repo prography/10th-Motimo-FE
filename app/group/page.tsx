@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { GroupData, GroupPage, PendingGroup } from "@/components/group";
+import { GroupPage, PendingGroup } from "@/components/group";
 import { useGoals, useGoalsNotInGroup, useJoinedGroups } from "@/api/hooks";
 
 // 클라이언트에서만 렌더링되는 BottomTabBar (SSR 제외)
@@ -29,7 +29,7 @@ export default function GroupRoute() {
       <GroupPage
         pendingGroups={pendingGroups ?? []}
         joinedGroups={joinedGroups ?? []}
-        onJoinGroup={() => { }}
+        onJoinGroup={() => {}}
         onNotificationClick={handleNotificationClick}
       />
 

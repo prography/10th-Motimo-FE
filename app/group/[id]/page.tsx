@@ -1,5 +1,6 @@
 "use client";
 
+import { use } from "react";
 import { AppBar } from "@/components/shared/AppBar/AppBar";
 import { GroupChat, SystemMessage } from "@/components/group";
 import { UsersGroupIcon } from "@/components/icons";
@@ -45,12 +46,13 @@ const mockMessages: ChatMessage[] = [
 ];
 
 interface GroupDetailPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function GroupDetailPage({ params }: GroupDetailPageProps) {
+  const { id } = use(params);
   const router = useSafeRouter();
 
   const handleBackClick = () => {
@@ -85,7 +87,7 @@ export default function GroupDetailPage({ params }: GroupDetailPageProps) {
         </button>
 
         <h1 className="flex-1 ml-5 font-SUIT_Variable font-bold text-xl leading-[1.2] tracking-[-0.01em] text-black truncate">
-          &quot;내 목표명&quot;의 그룹 (길면...처리)
+          {`"내 목표명"의 그룹 (길면...처리)`}
         </h1>
 
         <div className="flex items-center justify-center w-10 h-10 rounded-full">
