@@ -12,7 +12,7 @@ import EditInfo from "@/components/details/EditInfo/EditInfo";
 import { EditContents } from "./_components/EditBody/EditBody";
 
 const makeInitEditContents = (
-  serverData: ConvertedGoalWithSubGoalTodo,
+  serverData: Partial<ConvertedGoalWithSubGoalTodo>,
 ): EditContents => ({
   durationType: "date",
   durationValue: serverData.dueDate ? new Date(serverData.dueDate) : undefined,

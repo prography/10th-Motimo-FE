@@ -1,3 +1,5 @@
+"use client";
+
 import RightArrowSvg from "@/components/shared/public/Chevron_Right_MD.svg";
 import LeftArrowSvg from "@/components/shared/public/Chevron_Left_MD.svg";
 import TodoItem from "@/components/shared/TodoItem/TodoItem";
@@ -8,10 +10,11 @@ import { toggleSubGoalCompletion } from "@/lib/fetching/subGoalFetching";
 import Checkbox from "@/components/shared/Checkbox/Checkbox";
 import useModal from "@/hooks/useModal";
 import ModalIncompletingSubGoal from "../Modals/ModalIncompletingSubGoal/ModalIncompletingSubGoal";
+import { useState } from "react";
 interface ListCardProps {
   subGoalInfo: {
-    name: string;
-    id: string;
+    name?: string;
+    id?: string;
     idx: number;
     totalSubGoalsLen: number;
   };
@@ -31,7 +34,9 @@ const ListCard = ({
 }: ListCardProps) => {
   // 이 안에서도 subGoal에대한 todod들 가져오는 fetch있어야 함.
 
-  const { data: fetchedTodoItemsInfo, mutate } = useTodoList(subGoalInfo.id);
+  const { data: fetchedTodoItemsInfo, mutate } = useTodoList(
+    subGoalInfo.id ?? "",
+  );
 
   const [subGoalCompleted, setSubGoalCompleted] = useState(false);
 
@@ -63,7 +68,7 @@ const ListCard = ({
             </div>
           </button>
           <p className="self-stretch text-center justify-center text-label-strong text-base font-medium font-['SUIT_Variable'] leading-snug">
-            {subGoalInfo.name}
+            {subGoalInfo.name ?? ""}
           </p>
 
           <button
@@ -86,9 +91,9 @@ const ListCard = ({
         </section>
         {isTodoAllChecked && (
           <>
-            <div class="w-80 h-12 px-3 py-0.5 bg-background-alternative rounded-lg  outline-1 outline-offset-[-1px] outline-Color-primary-50 inline-flex justify-start items-center gap-1">
-              <div class="flex-1 flex justify-start items-center gap-0.5">
-                <div class="justify-center text-label-normal text-sm font-semibold font-['SUIT_Variable'] leading-tight">
+            <div className="w-80 h-12 px-3 py-0.5 bg-background-alternative rounded-lg  outline-1 outline-offset-[-1px] outline-Color-primary-50 inline-flex justify-start items-center gap-1">
+              <div className="flex-1 flex justify-start items-center gap-0.5">
+                <div className="justify-center text-label-normal text-sm font-semibold font-['SUIT_Variable'] leading-tight">
                   세부 목표 완료
                 </div>
               </div>
@@ -96,7 +101,9 @@ const ListCard = ({
                 checked={subGoalCompleted}
                 onClick={async () => {
                   if (!subGoalCompleted) {
-                    const res = await toggleSubGoalCompletion();
+                    const res = await toggleSubGoalCompletion(
+                      subGoalInfo.id ?? "",
+                    );
                     if (res) setSubGoalCompleted(!subGoalCompleted);
                     applyOnGoalData();
                   } else {
@@ -105,7 +112,9 @@ const ListCard = ({
                       <ModalIncompletingSubGoal
                         onClose={() => closeModal()}
                         onIncompleteSubGoal={async () => {
-                          const res = await toggleSubGoalCompletion();
+                          const res = await toggleSubGoalCompletion(
+                            subGoalInfo.id ?? "",
+                          );
                           if (res) {
                             setSubGoalCompleted(!subGoalCompleted);
                             applyOnGoalData();

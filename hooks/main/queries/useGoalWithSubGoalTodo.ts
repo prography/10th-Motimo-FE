@@ -38,7 +38,7 @@ const useGoalWithSubGoalTodo = (goalId: string, options?: SWRConfiguration) => {
     },
   );
 
-  const convertedData: ConvertedGoalWithSubGoalTodo = {
+  const convertedData: Partial<ConvertedGoalWithSubGoalTodo> = {
     ...data,
     subGoals: convertedSubGoals,
   };
