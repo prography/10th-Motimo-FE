@@ -3,11 +3,12 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { AppBar } from "@/components/shared/AppBar/AppBar";
 import { Button } from "@/components/shared/Button/Button";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useGoalDetail } from "@/api/hooks";
 import { api } from "@/api/service";
 
-export default function JoinRandomGroupPage() {
+// Component that uses useSearchParams
+function JoinRandomGroupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const goalId = searchParams.get("goalId");
@@ -174,5 +175,28 @@ export default function JoinRandomGroupPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Loading component for Suspense fallback
+function LoadingPage() {
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-Color-primary-50 mx-auto mb-4"></div>
+        <p className="text-Color-gray-80 font-SUIT_Variable font-normal text-base">
+          로딩 중...
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// Main page component wrapped in Suspense
+export default function JoinRandomGroupPage() {
+  return (
+    <Suspense fallback={<LoadingPage />}>
+      <JoinRandomGroupContent />
+    </Suspense>
   );
 }
