@@ -49,11 +49,16 @@ const nextConfig: NextConfig = {
   rewrites:
     process.env.NODE_ENV === "development"
       ? async () => {
+          // Check if we should use local API server
+          const useLocalApi = process.env.USE_LOCAL_API === "true";
+          const apiDestination = useLocalApi
+            ? "http://localhost:8080/v1/:path*"
+            : "http://motimo.kro.kr:8080/v1/:path*";
+
           return [
             {
               source: "/v1/:path*",
-              // destination: "http://localhost:8080/v1/:path",
-              destination: "http://motimo.kro.kr:8080/v1/:path*",
+              destination: apiDestination,
             },
           ];
         }

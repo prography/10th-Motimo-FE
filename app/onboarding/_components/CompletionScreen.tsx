@@ -3,22 +3,17 @@
 import { ButtonRound } from "@/components/shared/ButtonRound/ButtonRound";
 import MotiCheck from "@/components/shared/public/moti-check.svg";
 import Link from "next/link";
+import useOnboardingStore from "@/stores/useOnboardingStore";
 
 interface CompletionScreenProps {
-  goal: string;
-  periodType: "months" | "date";
-  monthCount: number;
-  targetDate: Date | null;
   onComplete: () => void;
 }
 
 export default function CompletionScreen({
-  goal,
-  periodType,
-  monthCount,
-  targetDate,
   onComplete,
 }: CompletionScreenProps) {
+  const { goal, periodType, monthCount, targetDate } = useOnboardingStore();
+
   const formatPeriod = () => {
     if (periodType === "months") {
       return `${monthCount}개월`;
