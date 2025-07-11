@@ -80,6 +80,11 @@ export default function OnboardingPage() {
     }
   };
 
+  const { hasCompletedOnboarding } = useAuthStore();
+  if (hasCompletedOnboarding) {
+    window.location.href = "/";
+  }
+
   return (
     <div className="min-h-screen bg-background-normal">{renderStep()}</div>
   );
