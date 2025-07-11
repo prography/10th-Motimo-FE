@@ -5,6 +5,7 @@ import LoginScreen from "./_components/LoginScreen";
 import GoalInputScreen from "./_components/GoalInputScreen";
 import PeriodSelectionScreen from "./_components/PeriodSelectionScreen";
 import CompletionScreen from "./_components/CompletionScreen";
+import useAuthStore from "@/stores/useAuthStore";
 
 export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -14,6 +15,7 @@ export default function OnboardingPage() {
     monthCount: 3,
     targetDate: null as Date | null,
   });
+  const { setHasCompletedOnboarding } = useAuthStore();
 
   const updateOnboardingData = (data: Partial<typeof onboardingData>) => {
     setOnboardingData((prev) => ({ ...prev, ...data }));
@@ -68,8 +70,8 @@ export default function OnboardingPage() {
             targetDate={onboardingData.targetDate}
             onComplete={() => {
               // Navigate to main app
-              localStorage.setItem("hasCompletedOnboarding", "true");
-              // window.location.href = "/";
+              setHasCompletedOnboarding(true);
+              window.location.href = "/";
             }}
           />
         );

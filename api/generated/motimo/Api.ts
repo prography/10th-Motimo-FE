@@ -23,6 +23,12 @@ export interface TodoUpdateRq {
   date?: string;
 }
 
+export interface ErrorResponse {
+  /** @format int32 */
+  statusCode?: number;
+  message?: string;
+}
+
 export interface TodoIdRs {
   /**
    * 투두 아이디
@@ -39,17 +45,34 @@ export interface GoalUpdateRq {
    * @example "자격증 따기"
    */
   title: string;
+  /** 개월 수로 기간 설정 여부 */
+  isPeriodByMonth: boolean;
+  /**
+   * 목표 개월 수
+   * @format int32
+   * @min 1
+   * @max 12
+   */
+  month?: number;
   /**
    * 목표 완료 날짜
    * @format date
    */
-  dueDate: string;
-  /** 세부 목표 목록 */
+  dueDate?: string;
+  /** 수정/생성할 세부 목표 목록 */
   subGoals?: SubGoalUpdateRq[];
+  /**
+   * 삭제할 세부 목표 아이디 목록
+   * @uniqueItems true
+   */
+  deletedSubGoalIds?: string[];
 }
 
 export interface SubGoalUpdateRq {
-  /** 수정할 세부 목표 아이디 */
+  /**
+   * 수정할 세부 목표 아이디 / 새로 생성이면 null
+   * @format uuid
+   */
   id?: string;
   /**
    * 세부 목표 이름
@@ -59,12 +82,10 @@ export interface SubGoalUpdateRq {
    */
   title: string;
   /**
-   * 세부 목표 중요도 (상: 1, 하:3)
+   * 세부 목표 순서
    * @format int32
-   * @min 1
-   * @max 3
    */
-  importance?: number;
+  order: number;
 }
 
 export interface GoalIdRs {
@@ -111,6 +132,30 @@ export interface TodoCreateRq {
   date?: string;
 }
 
+export interface GroupJoinRq {
+  /**
+   * 그룹에 가입할 목표 아이디
+   * @format uuid
+   */
+  goalId?: string;
+}
+
+export interface GroupIdRs {
+  /**
+   * 가입된 그룹 아이디
+   * @format uuid
+   */
+  id?: string;
+}
+
+export interface GroupMessageIdRs {
+  /**
+   * 영향을 받은 그룹 채팅 아이디
+   * @format uuid
+   */
+  id?: string;
+}
+
 export interface GoalCreateRq {
   /**
    * 목표 이름
@@ -145,13 +190,14 @@ export interface SubGoalCreateRq {
    * @example "책 한 권 읽기"
    */
   title: string;
+}
+
+export interface SubGoalIdRs {
   /**
-   * 세부 목표 중요도 (상: 1, 하:3)
-   * @format int32
-   * @min 1
-   * @max 3
+   * 생성/수정된 세부 목표 아이디
+   * @format uuid
    */
-  importance?: number;
+  id?: string;
 }
 
 export interface TokenReissueRq {
@@ -163,17 +209,51 @@ export interface TokenResponse {
   refreshToken?: string;
 }
 
-export interface SubGoalIdRs {
+export interface UserRs {
   /**
-   * 생성/수정된 세부 목표 아이디
+   * 유저 Id
    * @format uuid
+   * @example "0197157f-aea4-77bb-8581-3213eb5bd2ae"
    */
   id?: string;
+  /** 유저 이메일 */
+  email?: string;
+  /** 유저 닉네임 */
+  nickname?: string;
+  /** 유저 프로필 이미지 url */
+  profileImageUrl?: string;
+  /**
+   * 유저 생성 날짜
+   * @format date-time
+   */
+  createdAt?: string;
 }
 
-export interface CustomSlice {
-  content?: object[];
-  hasNext?: boolean;
+export interface TodoResultRs {
+  /**
+   * 투두 결과 Id
+   * @format uuid
+   * @example "0197157f-aea4-77bb-8581-3213eb5bd2ae"
+   */
+  todoResultId?: string;
+  /**
+   * 투두 Id
+   * @format uuid
+   * @example "0197157f-aea4-77bb-8581-3213eb5bd2ae"
+   */
+  todoId?: string;
+  /**
+   * 투두 진행 후 감정
+   * @example "뿌듯"
+   */
+  emotion?: TodoResultRsEmotionEnum;
+  /**
+   * 투두 설명
+   * @example "영단어 10개 이상 외우기를 했다."
+   */
+  content?: string;
+  /** 투두 관련 파일 url */
+  fileUrl?: string;
 }
 
 export interface TodoRs {
@@ -211,39 +291,6 @@ export interface TodoRs {
   createdAt?: string;
 }
 
-export interface TodoResultRs {
-  /**
-   * 투두 결과 Id
-   * @format uuid
-   * @example "0197157f-aea4-77bb-8581-3213eb5bd2ae"
-   */
-  todoResultId?: string;
-  /**
-   * 투두 Id
-   * @format uuid
-   * @example "0197157f-aea4-77bb-8581-3213eb5bd2ae"
-   */
-  todoId?: string;
-  /**
-   * 투두 진행 후 감정
-   * @example "뿌듯"
-   */
-  emotion?: TodoResultRsEmotionEnum;
-  /**
-   * 투두 설명
-   * @example "영단어 10개 이상 외우기를 했다."
-   */
-  content?: string;
-  /** 투두 관련 파일 url */
-  fileUrl?: string;
-}
-
-export interface ErrorResponse {
-  /** @format int32 */
-  statusCode?: number;
-  message?: string;
-}
-
 export interface PointRs {
   /**
    * 사용자가 현재 획득한 포인트
@@ -251,6 +298,89 @@ export interface PointRs {
    * @example 1000
    */
   point?: number;
+}
+
+export interface GroupMemberRs {
+  /**
+   * 사용자 아이디
+   * @format uuid
+   */
+  userId?: string;
+  /** 사용자 닉네임 */
+  nickname?: string;
+  /**
+   * 마지막 접속일
+   * @format date-time
+   */
+  lastOnlineDate?: string;
+  /** 찌르기 활성화 여부 */
+  isActivePoke?: boolean;
+}
+
+export interface CustomSliceGroupMessageItemRs {
+  content?: GroupMessageItemRs[];
+  hasNext?: boolean;
+}
+
+export interface GroupMessageItemRs {
+  /** 메세지 타입 (TODO, ENTER) */
+  messageType?: GroupMessageItemRsMessageTypeEnum;
+  /**
+   * 보낸 사용자 아이디
+   * @format uuid
+   */
+  senderId?: string;
+  /** 보낸 사용자 닉네임 */
+  senderName?: string;
+  /** 메세지 내용 */
+  message?: MessageContentRs;
+  /**
+   * 리액션 갯수
+   * @format int32
+   */
+  reactionCount?: number;
+  /** 로그인한 사용자 리액션 여부 */
+  hasReacted?: boolean;
+}
+
+export type MessageContentRs = SimpleMessageContentRs | TodoMessageContentRs;
+
+export interface SimpleMessageContentRs {
+  /**
+   * 링크된 아이디
+   * @format uuid
+   */
+  targetId?: string;
+  /** 기본적인 내용 */
+  content?: string;
+}
+
+export interface TodoMessageContentRs {
+  /**
+   * 투두 아이디
+   * @format uuid
+   */
+  targetId?: string;
+  /** 완료한 투두 제목 */
+  todoTitle?: string;
+  /** 투두 감정 */
+  emotion?: TodoMessageContentRsEmotionEnum;
+  /** 투두 내용 */
+  content?: string;
+  /** 제출한 파일 링크 */
+  fileUrl?: string;
+}
+
+export interface JoinedGroupRs {
+  /** 그룹 이름 (현재는 목표와 동일) */
+  title?: string;
+  /**
+   * 그룹 마지막 활동 날짜
+   * @format date-time
+   */
+  lastActiveDate?: string;
+  /** 알림 활성화 여부 */
+  isNotificationActive?: boolean;
 }
 
 export interface GoalItemRs {
@@ -347,6 +477,16 @@ export interface SubGoalRs {
   todos?: TodoRs[];
 }
 
+export interface GoalNotInGroupRs {
+  /**
+   * 목표 아이디
+   * @format uuid
+   */
+  id?: string;
+  /** 목표 제목 */
+  title?: string;
+}
+
 export interface CheerPhraseRs {
   /**
    * 응원 문구
@@ -367,6 +507,17 @@ export enum TodoResultRqEmotionEnum {
 }
 
 /**
+ * 투두 진행 후 감정
+ * @example "뿌듯"
+ */
+export enum TodoResultRsEmotionEnum {
+  PROUD = "PROUD",
+  REGRETFUL = "REGRETFUL",
+  IMMERSED = "IMMERSED",
+  GROWN = "GROWN",
+}
+
+/**
  * 투두 상태
  * @example "COMPLETE"
  */
@@ -375,11 +526,14 @@ export enum TodoRsStatusEnum {
   INCOMPLETE = "INCOMPLETE",
 }
 
-/**
- * 투두 진행 후 감정
- * @example "뿌듯"
- */
-export enum TodoResultRsEmotionEnum {
+/** 메세지 타입 (TODO, ENTER) */
+export enum GroupMessageItemRsMessageTypeEnum {
+  ENTER = "ENTER",
+  TODO = "TODO",
+}
+
+/** 투두 감정 */
+export enum TodoMessageContentRsEmotionEnum {
   PROUD = "PROUD",
   REGRETFUL = "REGRETFUL",
   IMMERSED = "IMMERSED",
@@ -659,16 +813,16 @@ export class Api<SecurityDataType extends unknown> {
      * @request PUT:/v1/todos/{todoId}
      * @secure
      * @response `204` `TodoIdRs` 투두 내용 수정 성공
-     * @response `401` `TodoIdRs` 인증되지 않은 사용자
-     * @response `403` `TodoIdRs` 투두 수정에 대한 권한이 없는 사용자
-     * @response `404` `TodoIdRs` 투두를 찾을 수 없음
+     * @response `401` `void` 인증되지 않은 사용자
+     * @response `403` `ErrorResponse` 투두 수정에 대한 권한이 없는 사용자
+     * @response `404` `ErrorResponse` 투두를 찾을 수 없음
      */
     updateTodo: (
       todoId: string,
       data: TodoUpdateRq,
       params: RequestParams = {},
     ) =>
-      this.http.request<TodoIdRs, TodoIdRs>({
+      this.http.request<TodoIdRs, void | ErrorResponse>({
         path: `/v1/todos/${todoId}`,
         method: "PUT",
         body: data,
@@ -687,11 +841,11 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      * @response `204` `void` TODO 삭제 성공
      * @response `401` `void` 인증되지 않은 사용자
-     * @response `403` `void` 투두 삭제에 대한 권한이 없는 사용자
-     * @response `404` `void` TODO를 찾을 수 없음
+     * @response `403` `ErrorResponse` 투두 삭제에 대한 권한이 없는 사용자
+     * @response `404` `ErrorResponse` TODO를 찾을 수 없음
      */
     deleteById: (todoId: string, params: RequestParams = {}) =>
-      this.http.request<void, void>({
+      this.http.request<void, void | ErrorResponse>({
         path: `/v1/todos/${todoId}`,
         method: "DELETE",
         secure: true,
@@ -707,11 +861,11 @@ export class Api<SecurityDataType extends unknown> {
      * @request GET:/v1/todos/{todoId}/result
      * @secure
      * @response `200` `TodoResultRs` TODO 결과 조회 성공
-     * @response `204` `TodoResultRs` 결과 없음
-     * @response `404` `TodoResultRs` TODO를 찾을 수 없음
+     * @response `204` `void` 결과 없음
+     * @response `404` `ErrorResponse` TODO를 찾을 수 없음
      */
     getTodoResult: (todoId: string, params: RequestParams = {}) =>
-      this.http.request<TodoResultRs, TodoResultRs>({
+      this.http.request<TodoResultRs, ErrorResponse>({
         path: `/v1/todos/${todoId}/result`,
         method: "GET",
         secure: true,
@@ -727,9 +881,9 @@ export class Api<SecurityDataType extends unknown> {
      * @request POST:/v1/todos/{todoId}/result
      * @secure
      * @response `200` `TodoResultIdRs` TODO 결과 제출 성공
-     * @response `400` `TodoResultIdRs` 잘못된 요청 데이터
-     * @response `401` `TodoResultIdRs` 인증되지 않은 사용자
-     * @response `404` `TodoResultIdRs` TODO를 찾을 수 없음
+     * @response `400` `ErrorResponse` 잘못된 요청 데이터
+     * @response `401` `void` 인증되지 않은 사용자
+     * @response `404` `ErrorResponse` TODO를 찾을 수 없음
      */
     upsertTodoResult: (
       todoId: string,
@@ -740,7 +894,7 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<TodoResultIdRs, TodoResultIdRs>({
+      this.http.request<TodoResultIdRs, ErrorResponse | void>({
         path: `/v1/todos/${todoId}/result`,
         method: "POST",
         body: data,
@@ -758,14 +912,34 @@ export class Api<SecurityDataType extends unknown> {
      * @request PATCH:/v1/todos/{todoId}/completion
      * @secure
      * @response `204` `TodoIdRs` TODO 완료 상태 변경 성공
-     * @response `401` `TodoIdRs` 인증되지 않은 사용자
-     * @response `403` `TodoIdRs` 투두 수정에 대한 권한이 없는 사용자
-     * @response `404` `TodoIdRs` TODO를 찾을 수 없음
+     * @response `401` `void` 인증되지 않은 사용자
+     * @response `403` `ErrorResponse` 투두 수정에 대한 권한이 없는 사용자
+     * @response `404` `ErrorResponse` TODO를 찾을 수 없음
      */
     toggleTodoCompletion: (todoId: string, params: RequestParams = {}) =>
-      this.http.request<TodoIdRs, TodoIdRs>({
+      this.http.request<TodoIdRs, void | ErrorResponse>({
         path: `/v1/todos/${todoId}/completion`,
         method: "PATCH",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description 로그인한 사용자의 TODO 목록을 조회합니다.
+     *
+     * @tags 투두 API
+     * @name GetMyTodos
+     * @summary 나의 TODO 목록 조회
+     * @request GET:/v1/todos/me
+     * @secure
+     * @response `200` `(TodoRs)[]` TODO 목록 조회 성공
+     * @response `400` `ErrorResponse` 잘못된 요청 데이터
+     * @response `401` `void` 인증되지 않은 사용자
+     */
+    getMyTodos: (params: RequestParams = {}) =>
+      this.http.request<TodoRs[], ErrorResponse | void>({
+        path: `/v1/todos/me`,
+        method: "GET",
         secure: true,
         ...params,
       }),
@@ -780,11 +954,11 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      * @response `204` `void` TODO 결과 삭제 성공
      * @response `401` `void` 인증되지 않은 사용자
-     * @response `403` `void` 투두 결과 삭제에 대한 권한이 없는 사용자
-     * @response `404` `void` TODO 결과를 찾을 수 없음
+     * @response `403` `ErrorResponse` 투두 결과 삭제에 대한 권한이 없는 사용자
+     * @response `404` `ErrorResponse` TODO 결과를 찾을 수 없음
      */
     deleteTodoResultById: (todoResultId: string, params: RequestParams = {}) =>
-      this.http.request<void, void>({
+      this.http.request<void, void | ErrorResponse>({
         path: `/v1/todos/result/${todoResultId}`,
         method: "DELETE",
         secure: true,
@@ -793,18 +967,40 @@ export class Api<SecurityDataType extends unknown> {
   };
   목표Api = {
     /**
+     * @description 목표 상세 정보를 조회합니다.
+     *
+     * @tags 목표 API
+     * @name GetGoalDetail
+     * @summary 목표 상세 API
+     * @request GET:/v1/goals/{goalId}
+     * @secure
+     * @response `200` `GoalDetailRs` OK
+     */
+    getGoalDetail: (goalId: string, params: RequestParams = {}) =>
+      this.http.request<GoalDetailRs, any>({
+        path: `/v1/goals/${goalId}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
      * @description 목표를 수정합니다.
      *
      * @tags 목표 API
      * @name UpdateGoal
      * @summary 목표 수정 API
-     * @request PUT:/v1/goals/{id}
+     * @request PUT:/v1/goals/{goalId}
      * @secure
      * @response `200` `GoalIdRs` OK
      */
-    updateGoal: (id: string, data: GoalUpdateRq, params: RequestParams = {}) =>
+    updateGoal: (
+      goalId: string,
+      data: GoalUpdateRq,
+      params: RequestParams = {},
+    ) =>
       this.http.request<GoalIdRs, any>({
-        path: `/v1/goals/${id}`,
+        path: `/v1/goals/${goalId}`,
         method: "PUT",
         body: data,
         secure: true,
@@ -851,6 +1047,29 @@ export class Api<SecurityDataType extends unknown> {
       }),
 
     /**
+     * No description
+     *
+     * @tags 목표 API
+     * @name AddSubGoal
+     * @request POST:/v1/goals/{goalId}/subGoal
+     * @secure
+     * @response `200` `SubGoalIdRs` OK
+     */
+    addSubGoal: (
+      goalId: string,
+      data: SubGoalCreateRq,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<SubGoalIdRs, any>({
+        path: `/v1/goals/${goalId}/subGoal`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
      * @description 목표를 완료합니다.
      *
      * @tags 목표 API
@@ -859,31 +1078,14 @@ export class Api<SecurityDataType extends unknown> {
      * @request PATCH:/v1/goals/{goalId}/completion
      * @secure
      * @response `200` `GoalIdRs` 완료 처리 성공
-     * @response `400` `GoalIdRs` 목표 완료 조건이 충족되지 않음
-     * @response `403` `GoalIdRs` 완료 처리 권한 없음
-     * @response `404` `GoalIdRs` 목표를 찾을 수 없음
+     * @response `400` `ErrorResponse` 목표 완료 조건이 충족되지 않음
+     * @response `403` `ErrorResponse` 완료 처리 권한 없음
+     * @response `404` `ErrorResponse` 목표를 찾을 수 없음
      */
     goalComplete: (goalId: string, params: RequestParams = {}) =>
-      this.http.request<GoalIdRs, GoalIdRs>({
+      this.http.request<GoalIdRs, ErrorResponse>({
         path: `/v1/goals/${goalId}/completion`,
         method: "PATCH",
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags 목표 API
-     * @name GetGoalDetail
-     * @request GET:/v1/goals/{goalId}
-     * @secure
-     * @response `200` `GoalDetailRs` OK
-     */
-    getGoalDetail: (goalId: string, params: RequestParams = {}) =>
-      this.http.request<GoalDetailRs, any>({
-        path: `/v1/goals/${goalId}`,
-        method: "GET",
         secure: true,
         ...params,
       }),
@@ -892,15 +1094,33 @@ export class Api<SecurityDataType extends unknown> {
      * @description 목표에 해당하는 세부 목표와 투두 목록을 조회합니다.
      *
      * @tags 목표 API
-     * @name GetTodoListByGoal
+     * @name GetGoalWithSubGoalAndTodo
      * @summary 목표 투두 목록 API
      * @request GET:/v1/goals/{goalId}/sub-goals/all
      * @secure
      * @response `200` `GoalWithSubGoalTodoRs` OK
      */
-    getTodoListByGoal: (goalId: string, params: RequestParams = {}) =>
+    getGoalWithSubGoalAndTodo: (goalId: string, params: RequestParams = {}) =>
       this.http.request<GoalWithSubGoalTodoRs, any>({
         path: `/v1/goals/${goalId}/sub-goals/all`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description 그룹에 참여하지 않은 목표를 조회합니다.
+     *
+     * @tags 목표 API
+     * @name GetGoalNotJoinGroup
+     * @summary 그룹에 참여하지 않은 목표 목록 API
+     * @request GET:/v1/goals/not-joined-group
+     * @secure
+     * @response `200` `(GoalNotInGroupRs)[]` OK
+     */
+    getGoalNotJoinGroup: (params: RequestParams = {}) =>
+      this.http.request<GoalNotInGroupRs[], any>({
+        path: `/v1/goals/not-joined-group`,
         method: "GET",
         secure: true,
         ...params,
@@ -916,17 +1136,40 @@ export class Api<SecurityDataType extends unknown> {
      * @request POST:/v1/sub-goals/{subGoalId}/todo
      * @secure
      * @response `201` `TodoIdRs` TODO 생성 성공
-     * @response `400` `TodoIdRs` 잘못된 요청 데이터
-     * @response `401` `TodoIdRs` 인증되지 않은 사용자
+     * @response `400` `ErrorResponse` 잘못된 요청 데이터
+     * @response `401` `void` 인증되지 않은 사용자
      */
     createTodo: (
       subGoalId: string,
       data: TodoCreateRq,
       params: RequestParams = {},
     ) =>
-      this.http.request<TodoIdRs, TodoIdRs>({
+      this.http.request<TodoIdRs, ErrorResponse | void>({
         path: `/v1/sub-goals/${subGoalId}/todo`,
         method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 세부 목표 API
+     * @name UpdateSubGoal
+     * @request PATCH:/v1/sub-goals/{subGoalId}
+     * @secure
+     * @response `200` `SubGoalIdRs` OK
+     */
+    updateSubGoal: (
+      subGoalId: string,
+      data: SubGoalUpdateRq,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<SubGoalIdRs, any>({
+        path: `/v1/sub-goals/${subGoalId}`,
+        method: "PATCH",
         body: data,
         secure: true,
         type: ContentType.Json,
@@ -942,11 +1185,11 @@ export class Api<SecurityDataType extends unknown> {
      * @request PATCH:/v1/sub-goals/{subGoalId}/completion/toggle
      * @secure
      * @response `200` `SubGoalIdRs` 완료/취소 처리 성공
-     * @response `403` `SubGoalIdRs` 완료 처리 권한 없음
-     * @response `404` `SubGoalIdRs` 세부 목표를 찾을 수 없음
+     * @response `403` `ErrorResponse` 완료 처리 권한 없음
+     * @response `404` `ErrorResponse` 세부 목표를 찾을 수 없음
      */
     subGoalCompleteToggle: (subGoalId: string, params: RequestParams = {}) =>
-      this.http.request<SubGoalIdRs, SubGoalIdRs>({
+      this.http.request<SubGoalIdRs, ErrorResponse>({
         path: `/v1/sub-goals/${subGoalId}/completion/toggle`,
         method: "PATCH",
         secure: true,
@@ -971,6 +1214,154 @@ export class Api<SecurityDataType extends unknown> {
       this.http.request<TodoRs[], ErrorResponse>({
         path: `/v1/sub-goals/${subGoalId}/todos/incomplete-or-date`,
         method: "GET",
+        secure: true,
+        ...params,
+      }),
+  };
+  그룹Api = {
+    /**
+     * @description 랜덤으로 그룹에 가입합니다.
+     *
+     * @tags 그룹 API
+     * @name JoinRandomGroup
+     * @summary 랜덤 그룹 가입 API
+     * @request POST:/v1/groups/random-join
+     * @secure
+     * @response `200` `GroupIdRs` OK
+     */
+    joinRandomGroup: (data: GroupJoinRq, params: RequestParams = {}) =>
+      this.http.request<GroupIdRs, any>({
+        path: `/v1/groups/random-join`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * @description 그룹 리액션을 생성합니다.
+     *
+     * @tags 그룹 API
+     * @name CreateGroupReaction
+     * @summary 그룹 리액션 API
+     * @request POST:/v1/groups/message/{messageId}/reaction
+     * @secure
+     * @response `200` `GroupMessageIdRs` OK
+     */
+    createGroupReaction: (
+      messageId: string,
+      query: {
+        type: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<GroupMessageIdRs, any>({
+        path: `/v1/groups/message/${messageId}/reaction`,
+        method: "POST",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description 그룹 멤버 목록을 조회합니다.
+     *
+     * @tags 그룹 API
+     * @name GetGroupMembers
+     * @summary 그룹 멤버 조회 API
+     * @request GET:/v1/groups/{groupId}/members
+     * @secure
+     * @response `200` `(GroupMemberRs)[]` OK
+     */
+    getGroupMembers: (groupId: string, params: RequestParams = {}) =>
+      this.http.request<GroupMemberRs[], any>({
+        path: `/v1/groups/${groupId}/members`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description 그룹 채팅을 조회합니다.
+     *
+     * @tags 그룹 API
+     * @name GetGroupChat
+     * @summary 그룹 채팅 조회 API
+     * @request GET:/v1/groups/{groupId}/chats
+     * @secure
+     * @response `200` `CustomSliceGroupMessageItemRs` OK
+     */
+    getGroupChat: (
+      groupId: string,
+      query: {
+        /** @format int32 */
+        page: number;
+        /** @format int32 */
+        size: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<CustomSliceGroupMessageItemRs, any>({
+        path: `/v1/groups/${groupId}/chats`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description 참여중인 그룹을 조회합니다.
+     *
+     * @tags 그룹 API
+     * @name GetJoinedGroup
+     * @summary 참여중인 그룹 목록 API
+     * @request GET:/v1/groups/me
+     * @secure
+     * @response `200` `(JoinedGroupRs)[]` OK
+     */
+    getJoinedGroup: (params: RequestParams = {}) =>
+      this.http.request<JoinedGroupRs[], any>({
+        path: `/v1/groups/me`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description 그룹에서 나가게 됩니다.
+     *
+     * @tags 그룹 API
+     * @name ExitGroup
+     * @summary 그룹 나가기 API
+     * @request DELETE:/v1/groups/{groupId}/members/me
+     * @secure
+     * @response `200` `void` OK
+     */
+    exitGroup: (groupId: string, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/v1/groups/${groupId}/members/me`,
+        method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+  };
+  찌르기Api = {
+    /**
+     * @description 특정 사용자에게 찌르기 알람을 보냅니다.
+     *
+     * @tags 찌르기 API
+     * @name SendPokeNotification
+     * @summary 찌르기 API
+     * @request POST:/v1/groups/members/{targetUserId}/poke
+     * @secure
+     * @response `204` `void` 알림 보내기 성공
+     * @response `400` `void` 찌르기 알림 횟수 초과
+     */
+    sendPokeNotification: (targetUserId: string, params: RequestParams = {}) =>
+      this.http.request<void, void>({
+        path: `/v1/groups/members/${targetUserId}/poke`,
+        method: "POST",
         secure: true,
         ...params,
       }),
@@ -1016,20 +1407,19 @@ export class Api<SecurityDataType extends unknown> {
   };
   사용자Api = {
     /**
-     * @description 로그인한 사용자의 TODO 목록을 조회합니다.
+     * @description 로그인한 사용자의 정보를 조회합니다.
      *
      * @tags 사용자 API
-     * @name GetMyTodos
-     * @summary 나의 TODO 목록 조회
-     * @request GET:/v1/users/me/todos
+     * @name GetMyProfile
+     * @summary 내 정보 조회
+     * @request GET:/v1/users/me
      * @secure
-     * @response `200` `CustomSlice` TODO 목록 조회 성공
-     * @response `400` `(TodoRs)[]` 잘못된 요청 데이터
-     * @response `401` `(TodoRs)[]` 인증되지 않은 사용자
+     * @response `200` `UserRs` 유저 정보 조회 성공
+     * @response `401` `void` 인증되지 않은 사용자
      */
-    getMyTodos: (params: RequestParams = {}) =>
-      this.http.request<CustomSlice, TodoRs[]>({
-        path: `/v1/users/me/todos`,
+    getMyProfile: (params: RequestParams = {}) =>
+      this.http.request<UserRs, void>({
+        path: `/v1/users/me`,
         method: "GET",
         secure: true,
         ...params,
