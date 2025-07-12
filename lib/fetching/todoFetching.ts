@@ -47,6 +47,7 @@ const postTodoResult = async (todoId: string, todoResult: TodoResultRq) => {
   const res = await templateFetch<TodoResultIdRs>(
     `/v1/todos/${todoId}/result`,
     "POST",
+    todoResult,
   );
   return res;
 };
