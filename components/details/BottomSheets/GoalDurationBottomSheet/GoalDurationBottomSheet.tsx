@@ -33,7 +33,7 @@ const GoalDurationBottomSheet = ({
       <Drawer.Root open={openBottomSheet}>
         <Drawer.Portal>
           <Drawer.Overlay
-            className="w-[100vw] h-full bg-neutral-700/50"
+            className="fixed inset-0 z-20 bg-neutral-700/50 "
             onClick={() => {
               setopenBottomSheet(false);
             }}
