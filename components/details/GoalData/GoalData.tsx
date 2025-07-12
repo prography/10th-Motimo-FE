@@ -1,12 +1,11 @@
 import { AppBar } from "@/components/shared";
 
 interface GoalDataProps {
-  goalId: string;
+  goalName: string;
+  dDay: number;
+  progress: number;
 }
-const GoalData = ({ goalId }: GoalDataProps) => {
-  const dDay = 180;
-  const goalName = "";
-  const progress = 30;
+const GoalData = ({ goalName, dDay, progress }: GoalDataProps) => {
   return (
     <>
       <section className="w-full px-4 pt-3 pb-4 bg-background-alternative inline-flex flex-col justify-start items-start gap-4">
