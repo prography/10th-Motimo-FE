@@ -11,6 +11,8 @@ import Checkbox from "@/components/shared/Checkbox/Checkbox";
 import useModal from "@/hooks/useModal";
 import ModalIncompletingSubGoal from "../Modals/ModalIncompletingSubGoal/ModalIncompletingSubGoal";
 import { useState } from "react";
+import TodoResultBottomSheet from "@/components/shared/BottomSheets/TodoResultBottomSheet/TodoResultBottomSheet";
+import { TodoResultRqEmotionEnum } from "@/api/generated/motimo/Api";
 interface ListCardProps {
   subGoalInfo: {
     name?: string;
@@ -41,8 +43,9 @@ const ListCard = ({
   const [subGoalCompleted, setSubGoalCompleted] = useState(false);
 
   const { closeModal, openModal } = useModal();
-
+  const [openBottomSheet, setOpenBottomSheet] = useState(false);
   const todoItemsInfo = (fetchedTodoItemsInfo || initTodoInfoList) ?? [];
+  const [todoIdForResult, setTodoIdForResult] = useState<null | string>(null);
 
   const isTodoAllChecked =
     todoItemsInfo.filter((todo) => todo.checked).length ===
@@ -143,6 +146,8 @@ const ListCard = ({
                 onReportedClick={async () => {
                   // 일단 모달을 띄워야 함.
                   // postTodoResult(todoInfo.id);
+                  setOpenBottomSheet(true);
+                  setTodoIdForResult(todoInfo.id);
                 }}
                 reported={todoInfo.reported}
                 targetDate={todoInfo.targetDate}
@@ -151,6 +156,23 @@ const ListCard = ({
           })}
         </section>
       </main>
+      {openBottomSheet && (
+        <TodoResultBottomSheet
+          onSubmit={async (todoResult) => {
+            // console.log("todoresult: ", todoResult);
+            todoIdForResult &&
+              todoResult.emotion !== null &&
+              (await postTodoResult(todoIdForResult, {
+                ...todoResult,
+                emotion: todoResult.emotion as TodoResultRqEmotionEnum,
+                //  as NonNullable<typeof todoResult.emotion> as
+              }));
+            mutate();
+          }}
+          openBottomSheet={openBottomSheet}
+          setOpenBottomSheet={setOpenBottomSheet}
+        />
+      )}
     </>
   );
 };
