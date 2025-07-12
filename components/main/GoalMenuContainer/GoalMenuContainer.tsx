@@ -8,6 +8,7 @@ import PlusSvg from "@/components/shared/public/Add_Plus.svg";
 import useModal from "@/hooks/useModal";
 import ModalAddingGoal from "@/components/shared/Modal/ModalAddingGoal/ModalAddingGoal";
 import { createNewGoal } from "@/lib/fetching/goalFetching";
+import { useRouter } from "next/navigation";
 
 type GoalMenuInfo = Pick<GoalMenuProps, "goal" | "percentage"> & {
   goalId: string;
@@ -22,6 +23,7 @@ const GoalMenuContainer = ({}: GoalMenuContainerProps) => {
   const [selectedGoalIdx, setSelectedGoalIdx] = useState(0);
   const { updateGoalId } = useGoalStore();
   const { openModal, closeModal } = useModal();
+  const router = useRouter();
 
   useEffect(() => {
     updateGoalId(goalMenuInfoList[selectedGoalIdx]?.goalId ?? null);
@@ -41,7 +43,10 @@ const GoalMenuContainer = ({}: GoalMenuContainerProps) => {
               openModal(
                 <ModalAddingGoal
                   onClose={closeModal}
-                  onAddGoal={async () => {}}
+                  onAddGoal={async () => {
+                    closeModal();
+                    router.push("/adding-goal");
+                  }}
                 />,
               )
             }
