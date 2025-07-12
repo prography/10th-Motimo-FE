@@ -52,6 +52,8 @@ interface TodoListProps {
   subGoalId?: string;
   /** goal의 id */
   goalId?: string;
+  /** 외부에서 todoItem의 report관련 클릭 처리 */
+  onReportedClick?: (todoId: string) => void;
 }
 
 const TodoListContext = createContext<{
@@ -59,6 +61,7 @@ const TodoListContext = createContext<{
   subGoalId?: string;
   mutate?: KeyedMutator<TodoRs[]>;
   updateOptimisticCheckedLen?: (action: number) => void;
+  onReportedClick?: TodoListProps["onReportedClick"];
 } | null>(null);
 
 const TodoList = ({
@@ -68,6 +71,7 @@ const TodoList = ({
   initTodoItemsInfo,
   subGoalId,
   goalId,
+  onReportedClick,
 }: TodoListProps) => {
   // 펼친 상태가 기본
   const [isFolded, setIsFolded] = useState(false);
@@ -133,6 +137,7 @@ const TodoList = ({
                 subGoalId,
                 subGoalTitle: subGoal,
                 updateOptimisticCheckedLen,
+                onReportedClick,
               }}
             >
               <TodoArea
@@ -268,8 +273,13 @@ const TodoItemContainer = ({
 }) => {
   const x = useMotionValue(0);
   const contextContent = useContext(TodoListContext);
-  const { mutate, subGoalId, subGoalTitle, updateOptimisticCheckedLen } =
-    contextContent || {};
+  const {
+    mutate,
+    subGoalId,
+    subGoalTitle,
+    updateOptimisticCheckedLen,
+    onReportedClick,
+  } = contextContent || {};
 
   const [checked, toggleChecekdOptimistically] = useOptimisticToggle(
     info.checked ?? false,
@@ -320,8 +330,12 @@ const TodoItemContainer = ({
                 await toggleTodo(info.id);
                 mutate && mutate();
               });
+
               // updateOptimisticCheckedLen &&
               //   updateOptimisticCheckedLen(checked ? -1 : +1);
+            }}
+            onReportedClick={async () => {
+              onReportedClick && onReportedClick(info.id);
             }}
           />
         </motion.div>

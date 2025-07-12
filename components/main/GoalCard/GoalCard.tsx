@@ -3,7 +3,10 @@
 import useGoalStore from "@/stores/useGoalStore";
 import TodoList from "../TodoList/TodoList";
 import useGoalWithSubGoalTodo from "@/hooks/main/queries/useGoalWithSubGoalTodo";
-import { GoalWithSubGoalTodoRs } from "@/api/generated/motimo/Api";
+import {
+  GoalWithSubGoalTodoRs,
+  TodoResultRqEmotionEnum,
+} from "@/api/generated/motimo/Api";
 import GoalTitleArea from "../GoalTitleArea/GoalTitleArea";
 import GoalInfo from "@/components/shared/GoalInfo/GoalInfo";
 import TodoBottomSheet, {
@@ -14,11 +17,12 @@ import useTodoList from "@/hooks/main/queries/useTodoList";
 import { useEffect, useRef, useState } from "react";
 import { createNewGoal } from "@/lib/fetching/goalFetching";
 import { createNewTodoOnSubGoal } from "@/lib/fetching/subGoalFetching";
-import { updateTodo } from "@/lib/fetching/todoFetching";
+import { postTodoResult, updateTodo } from "@/lib/fetching/todoFetching";
 import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
 import useModal from "@/hooks/useModal";
 import { date2StringWithSpliter } from "@/utils/date2String";
 import { calcLeftDay } from "@/utils/calcLeftDay";
+import TodoResultBottomSheet from "@/components/shared/BottomSheets/TodoResultBottomSheet/TodoResultBottomSheet";
 
 interface GoalCardProps {
   initSubGoalTodo?: GoalWithSubGoalTodoRs;
@@ -33,6 +37,13 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
   const { mutate } = useTodoList(newTodo?.subGoalId ?? "");
   const { isActive, setIsActive, initContent } = useActiveTodoBottomSheet();
   const { isOpened: isModalOpened } = useModal();
+  const [todoResBottomSheetInfo, setTodoResBottomSheetInfo] = useState<{
+    open: boolean;
+    todoId: string | null;
+  }>({
+    open: false,
+    todoId: null,
+  });
 
   // GoalInfo props 계산
   // const goalLeftDate = Math.floor(
@@ -72,7 +83,15 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
         <GoalInfo leftDateNum={goalLeftDate} leftTodoNum={goalLeftTodoNum} />
         <section className="flex flex-col gap-4 w-full">
           {goalWithSubGoalTodo?.subGoals?.map((subGoalInfo) => {
-            return <TodoList {...subGoalInfo} key={subGoalInfo.subGoalId} />;
+            return (
+              <TodoList
+                {...subGoalInfo}
+                key={subGoalInfo.subGoalId}
+                onReportedClick={(todoId) => {
+                  setTodoResBottomSheetInfo({ open: true, todoId });
+                }}
+              />
+            );
           })}
           <TodoList
             key={"new"}
@@ -122,6 +141,25 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
           }
 
           return isFetchOk;
+        }}
+      />
+      <TodoResultBottomSheet
+        hasBottomTabBar={true}
+        openBottomSheet={todoResBottomSheetInfo.open}
+        setOpenBottomSheet={(nextIsOpen) =>
+          setTodoResBottomSheetInfo((prev) => ({ ...prev, open: nextIsOpen }))
+        }
+        onSubmit={async (todoResult) => {
+          const res = await postTodoResult(
+            todoResBottomSheetInfo.todoId ?? "",
+            {
+              ...todoResult,
+              emotion: todoResult.emotion as unknown as TodoResultRqEmotionEnum,
+            },
+          );
+          if (res) {
+            setTodoResBottomSheetInfo({ open: false, todoId: null });
+          }
         }}
       />
     </>
