@@ -18,6 +18,7 @@ import { updateTodo } from "@/lib/fetching/todoFetching";
 import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
 import useModal from "@/hooks/useModal";
 import { date2StringWithSpliter } from "@/utils/date2String";
+import { calcLeftDay } from "@/utils/calcLeftDay";
 
 interface GoalCardProps {
   initSubGoalTodo?: GoalWithSubGoalTodoRs;
@@ -34,14 +35,15 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
   const { isOpened: isModalOpened } = useModal();
 
   // GoalInfo props 계산
-  const goalLeftDate = Math.floor(
-    (new Date(goalWithSubGoalTodo.dueDate ?? "").getTime() -
-      new Date().getTime()) /
-      1000 /
-      24 /
-      60 /
-      60,
-  );
+  // const goalLeftDate = Math.floor(
+  //   (new Date(goalWithSubGoalTodo.dueDate ?? "").getTime() -
+  //     new Date().getTime()) /
+  //     1000 /
+  //     24 /
+  //     60 /
+  //     60,
+  // );
+  const goalLeftDate = calcLeftDay(goalWithSubGoalTodo.dueDate ?? new Date());
 
   const totalTodoLenInGoal =
     goalWithSubGoalTodo.subGoals?.reduce(

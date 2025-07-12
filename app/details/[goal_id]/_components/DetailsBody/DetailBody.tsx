@@ -11,17 +11,25 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import CheckSvg from "@/components/shared/public/check.svg";
 import { toggleGoalCompletion } from "@/lib/fetching/goalFetching";
+import { calcLeftDay } from "@/utils/calcLeftDay";
+import useGoalDetail from "@/hooks/main/queries/useGoalDetail";
 interface DetailBodyProps {
   goalId: string;
 }
 
 const DetailBody = ({ goalId }: DetailBodyProps) => {
   const { data, mutate } = useGoalWithSubGoalTodo(goalId);
+  const { data: goalDetail } = useGoalDetail(goalId);
   const [targetSubGoalIdx, setTargetSubGoalIdx] = useState(0);
   const { openModal, closeModal } = useModal();
-  // 모든 세부목표 완료 시에 모달
+
+  const dDay = calcLeftDay(data.dueDate ?? new Date());
+
+  // tmp
   const allSubGoalCompleted = true;
   const groupId = "";
+
+  // 모든 세부목표 완료 시에 모달
   const openModalCompletingGoal = () => {
     openModal(
       <ModalCompletingGoal
@@ -42,7 +50,11 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
   }, [allSubGoalCompleted]);
   return (
     <>
-      <GoalData goalId={goalId} />
+      <GoalData
+        goalName={data.title ?? ""}
+        dDay={dDay}
+        progress={goalDetail?.progress ?? 0}
+      />
       {groupId && (
         <>
           <div className="self-stretch h-10 px-2 py-0.5 bg-Color-primary-5 rounded-lg inline-flex justify-start items-center gap-1">
@@ -113,7 +125,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
         subGoalInfo={{
           id: data.subGoals?.[targetSubGoalIdx].subGoalId,
           idx: targetSubGoalIdx,
-          name: data.subGoals?.[targetSubGoalIdx].subGoalId,
+          name: data.subGoals?.[targetSubGoalIdx].subGoal,
           totalSubGoalsLen: data.subGoals?.length ?? 0,
         }}
         applyOnGoalData={() => mutate()}
