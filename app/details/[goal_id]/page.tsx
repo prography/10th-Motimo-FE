@@ -4,6 +4,7 @@ import { AppBar } from "@/components/shared";
 import { Button } from "@/components/shared/Button/Button";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import DetailBody from "./_components/DetailsBody/DetailBody";
 
 export default function Details() {
   const { goal_id: goalId } = useParams<{ goal_id: string }>();
@@ -28,6 +29,7 @@ export default function Details() {
           </Link>
         </header>
       </div>
+      <DetailBody goalId={goalId} />
     </>
   );
 }
