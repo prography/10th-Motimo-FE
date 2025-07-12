@@ -158,6 +158,7 @@ const ListCard = ({
       </main>
       {openBottomSheet && (
         <TodoResultBottomSheet
+          hasBottomTabBar={false}
           onSubmit={async (todoResult) => {
             // console.log("todoresult: ", todoResult);
             todoIdForResult &&
