@@ -46,7 +46,7 @@ const ModalIncompletingSubGoal = ({
           />,
           <Modal.Button
             onClick={() => {
-              onIncompleteSubGoal;
+              onIncompleteSubGoal();
             }}
             key={"incomplete"}
             type="button"
