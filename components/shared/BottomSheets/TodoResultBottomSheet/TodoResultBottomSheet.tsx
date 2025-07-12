@@ -21,6 +21,7 @@ interface TodoResultBottomSheetProps {
   openBottomSheet: boolean;
   setOpenBottomSheet: (nextIsOpen: boolean) => void;
   onSubmit: (todoResult: TodoResult) => Promise<void>;
+  hasBottomTabBar: boolean;
 }
 
 const initTodoResult = {
@@ -34,6 +35,7 @@ const TodoResultBottomSheet = ({
   openBottomSheet,
   setOpenBottomSheet,
   onSubmit,
+  hasBottomTabBar,
 }: TodoResultBottomSheetProps) => {
   const [todoResult, setTodoResult] = useState<TodoResult>(initTodoResult);
 
@@ -53,9 +55,16 @@ const TodoResultBottomSheet = ({
             className="fixed inset-0 bg-black/10 z-20"
           />
 
-          <div className="flex justify-center relative">
+          <div className="flex justify-center w-[100vw] fixed bottom-0 z-40">
             <Drawer.Content
-              className={`z-30 bottom-0  h-[585px] absolute bg-background-alternative rounded-tl-lg rounded-tr-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.24)] overflow-hidden`}
+              className={`
+                 
+                ${
+                  hasBottomTabBar ? "bottom-14" : "bottom-0"
+                  // hasBottomTabBar ? "pb-14" : "pb-0"
+                }
+                w-[360px]
+                z-40  absolute bg-background-alternative rounded-tl-lg rounded-tr-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.24)] overflow-hidden`}
             >
               <Drawer.Title className="invisible"></Drawer.Title>
               <header>
