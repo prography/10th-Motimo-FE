@@ -5,27 +5,24 @@ import { AppBar } from "@/components/shared/AppBar/AppBar";
 import { ButtonRound } from "@/components/shared/ButtonRound/ButtonRound";
 import ToolTip from "@/components/shared/ToolTip/ToolTip";
 import useAuthStore from "@/stores/useAuthStore";
+import useOnboardingStore from "@/stores/useOnboardingStore";
 
 interface GoalInputScreenProps {
-  goal: string;
-  onGoalChange: (goal: string) => void;
   onNext: () => void;
   onBack: () => void;
 }
 
 export default function GoalInputScreen({
-  goal,
-  onGoalChange,
   onNext,
   onBack,
 }: GoalInputScreenProps) {
+  const { goal, setGoal } = useOnboardingStore();
   const [isFocused, setIsFocused] = useState(false);
   const [showTooltip, setShowTooltip] = useState(!goal);
-  const { setUserGoal } = useAuthStore();
 
   const handleGoalChange = (value: string) => {
     if (value.length <= 30) {
-      onGoalChange(value);
+      setGoal(value);
       setShowTooltip(!value);
     }
   };
@@ -94,7 +91,6 @@ export default function GoalInputScreen({
         <ButtonRound
           onClick={() => {
             if (isNextEnabled) {
-              setUserGoal(goal);
               onNext();
             }
           }}
