@@ -42,18 +42,19 @@ const SubGoalEdit = ({ goalId }: SubGoalEditProps) => {
                       onClose={() => closeModal()}
                       onAddSubGoal={async (subGoal: string) => {
                         // 동기적으로 처리
-                        setEditContents((prev) => ({
-                          ...prev,
-                          subGoals: [
-                            ...prev.subGoals,
-                            {
-                              id: null,
-                              order: editContents?.subGoals.length + 1,
-                              title: subGoal,
-                              tmpKey: new Date().getTime(),
-                            },
-                          ],
-                        }));
+                        setEditContents &&
+                          setEditContents((prev) => ({
+                            ...prev,
+                            subGoals: [
+                              ...prev.subGoals,
+                              {
+                                id: null,
+                                order: (editContents?.subGoals.length ?? 0) + 1,
+                                title: subGoal,
+                                tmpKey: new Date().getTime(),
+                              },
+                            ],
+                          }));
                         closeModal();
                       }}
                     />,
@@ -73,27 +74,27 @@ const SubGoalEdit = ({ goalId }: SubGoalEditProps) => {
           onReorder={(newOrderedSubGoals) => {
             const orderUpdated = newOrderedSubGoals as unknown as NonNullable<
               typeof editContents
-            >;
+            >["subGoals"];
             setEditContents &&
               setEditContents((prev) => ({
                 ...prev,
                 subGoals:
                   orderUpdated.map((subGoalInfo, idx) => ({
                     ...subGoalInfo,
-                    order: idx + 1,
+                    // order: idx + 1,
                   })) ?? [],
               }));
           }}
-          values={editContents?.subGoals}
+          values={editContents?.subGoals ?? []}
         >
           <section className="flex flex-col gap-2">
             {(editContents?.subGoals ?? []).map((currentSubGoalInfo, idx) => (
               <Reorder.Item
                 value={currentSubGoalInfo}
                 key={
-                  currentSubGoalInfo.tmpKey
-                    ? currentSubGoalInfo.tmpKey
-                    : `${currentSubGoalInfo.id}-${currentSubGoalInfo.title}`
+                  currentSubGoalInfo.id
+                    ? `${currentSubGoalInfo.id}-${currentSubGoalInfo.title}`
+                    : currentSubGoalInfo.order
                 }
               >
                 <SubGoalEditItem

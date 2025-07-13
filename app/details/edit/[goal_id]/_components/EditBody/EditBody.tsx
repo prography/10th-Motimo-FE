@@ -61,10 +61,10 @@ const EditBody = ({ goalId, initData, tab }: EditBodyProps) => {
         <form
           className="pt-6 pl-4 pr-4 flex flex-col flex-1"
           id="GoalInfoEdit"
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
 
-            const res = updateGoal(goalId, {
+            const res = await updateGoal(goalId, {
               title: editContents.goalTitle,
               isPeriodByMonth: editContents.durationType === "month",
               month:
@@ -78,21 +78,23 @@ const EditBody = ({ goalId, initData, tab }: EditBodyProps) => {
                       editContents.durationValue as Date,
                       "-",
                     ),
-              subGoals: editContents.subGoals.map((subGoalsInfo) => ({
+              subGoals: editContents.subGoals.map((subGoalsInfo, idx) => ({
                 // interface라, 임시로 넣은 필드 값 제거하기 위해서.
-                order: subGoalsInfo.order,
+                order: idx + 1,
                 title: subGoalsInfo.title,
-                id: subGoalsInfo.id,
+                id: subGoalsInfo.id ? subGoalsInfo.id : undefined,
               })),
               deletedSubGoalIds:
                 initData?.subGoals
                   ?.filter(({ id: initSubGoalId }) => {
                     // init에 있었지만 없어진 것들을 골라내기
                     return !editContents.subGoals.find(
-                      (curSubGoal) => curSubGoal.id === initSubGoalId,
+                      (curSubGoal) =>
+                        curSubGoal.id === initSubGoalId &&
+                        curSubGoal.id !== null,
                     );
                   })
-                  ?.map((item) => item.id) ?? [],
+                  ?.map((item) => item.id || "") ?? [],
             });
             if (res) {
               mutate();
