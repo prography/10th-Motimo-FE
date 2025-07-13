@@ -5,46 +5,7 @@ import { AppBar } from "@/components/shared/AppBar/AppBar";
 import { GroupChat, SystemMessage } from "@/components/group";
 import { UsersGroupIcon } from "@/components/icons";
 import { useSafeRouter } from "@/hooks/useSafeRouter";
-import { ChatMessage } from "@/components/group/GroupChat";
-
-// Mock data for demonstration
-const mockMessages: ChatMessage[] = [
-  {
-    id: "1",
-    type: "member",
-    style: "todo",
-    username: "이름(닉네임)",
-    mainText: "투두를 완료했어요!",
-    checkboxLabel: "프레이머 공부하기",
-    isChecked: true,
-    hasReaction: true,
-    reactionCount: 2,
-  },
-  {
-    id: "2",
-    type: "member",
-    style: "diary",
-    username: "이름(닉네임)",
-    mainText: "투두 기록을 남겼어요!",
-    checkboxLabel: "프레이머 공부하기",
-    isChecked: true,
-    diaryText:
-      "다양한 툴을 익히기 위해 어쩌구저쩌구 짧은 기록이 여기에 다 보이게 됩니다.",
-    hasReaction: false,
-  },
-  {
-    id: "3",
-    type: "member",
-    style: "photo",
-    username: "이름(닉네임)",
-    mainText: "투두 기록을 남겼어요!",
-    checkboxLabel: "프레이머 공부하기",
-    isChecked: true,
-    photoUrl: "/profile-default.png",
-    hasReaction: false,
-  },
-];
-
+import { useGroupChat, useJoinedGroups } from "@/api/hooks";
 interface GroupDetailPageProps {
   params: Promise<{
     id: string;
@@ -53,6 +14,9 @@ interface GroupDetailPageProps {
 
 export default function GroupDetailPage({ params }: GroupDetailPageProps) {
   const { id } = use(params);
+  // const { data: groups } = useJoinedGroups();
+  const title = "백엔드 api 가 없어 임시 타이틀"
+  const { data: messages } = useGroupChat(id, 0, 0);
   const router = useSafeRouter();
 
   const handleBackClick = () => {
@@ -87,7 +51,7 @@ export default function GroupDetailPage({ params }: GroupDetailPageProps) {
         </button>
 
         <h1 className="flex-1 ml-5 font-SUIT_Variable font-bold text-xl leading-[1.2] tracking-[-0.01em] text-black truncate">
-          {`"내 목표명"의 그룹 (길면...처리)`}
+          {title}
         </h1>
 
         <div className="flex items-center justify-center w-10 h-10 rounded-full">
@@ -105,7 +69,7 @@ export default function GroupDetailPage({ params }: GroupDetailPageProps) {
         {/* Chat Messages */}
         <div className="px-4 pb-4">
           <GroupChat
-            messages={mockMessages}
+            messages={messages ?? { content: [] }}
             onReactionClick={handleReactionClick}
           />
         </div>

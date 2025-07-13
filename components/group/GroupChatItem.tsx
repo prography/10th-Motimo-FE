@@ -10,9 +10,10 @@ import ReactionCool from "@/components/shared/public/reactions/Reaction_Cool.svg
 import ReactionCheerUp from "@/components/shared/public/reactions/Reaction_CheerUp.svg";
 import ReactionLove from "@/components/shared/public/reactions/Reaction_Love.svg";
 import ReactionTypes from "@/types/reactionTypes";
+import { GroupMessageItemRsMessageTypeEnum } from "@/api/generated/motimo/Api";
 
 interface GroupChatItemProps {
-  type: "me" | "member";
+  type: GroupMessageItemRsMessageTypeEnum;
   style: "todo" | "photo" | "diary" | "reaction";
   hasReaction?: boolean;
   reactionCount?: number;
@@ -29,11 +30,11 @@ interface GroupChatItemProps {
 }
 
 // Checkbox component for todo items
-const ChatCheckbox = ({ 
-  checked, 
-  label 
-}: { 
-  checked: boolean; 
+const ChatCheckbox = ({
+  checked,
+  label
+}: {
+  checked: boolean;
   label: string;
 }) => {
   return (
@@ -52,29 +53,29 @@ const ChatCheckbox = ({
 };
 
 // Reaction illustration component
-const ReactionIllustration = ({ 
-  type = "best" 
-}: { 
+const ReactionIllustration = ({
+  type = "best"
+}: {
   type?: ReactionTypes;
 }) => {
   const reactionConfig = {
-    best: { 
+    best: {
       Component: ReactionBest,
       label: "최고!"
     },
-    good: { 
+    good: {
       Component: ReactionGood,
       label: "좋아!"
     },
-    cool: { 
+    cool: {
       Component: ReactionCool,
       label: "멋져!"
     },
-    cheerUp: { 
+    cheerUp: {
       Component: ReactionCheerUp,
       label: "화이팅!"
     },
-    love: { 
+    love: {
       Component: ReactionLove,
       label: "사랑해!"
     },
@@ -86,7 +87,7 @@ const ReactionIllustration = ({
   return (
     <div className="w-20 h-20 rounded-full relative overflow-hidden">
       {/* Reaction SVG Component */}
-      <Component 
+      <Component
         className="w-full h-full object-cover"
         aria-label={label}
       />
@@ -110,7 +111,7 @@ export const GroupChatItem = ({
   onReactionClick,
   id,
 }: GroupChatItemProps) => {
-  const isMe = type === "me";
+  const isMe = type === "TODO";
 
   return (
     <div
@@ -123,8 +124,8 @@ export const GroupChatItem = ({
       {/* Username */}
       <div className={cn(
         "w-full",
-        isMe 
-          ? "font-SUIT_Variable font-bold text-sm leading-[1.4] tracking-[-0.01em] text-[#1E2124] text-right" 
+        isMe
+          ? "font-SUIT_Variable font-bold text-sm leading-[1.4] tracking-[-0.01em] text-[#1E2124] text-right"
           : "font-SUIT_Variable font-bold text-sm leading-[1.4] tracking-[-0.01em] text-[#1E2124] text-left"
       )}>
         {username}
@@ -137,16 +138,16 @@ export const GroupChatItem = ({
       )}>
         {/* Icon Area for me messages - render first to appear on the left */}
         {isMe && style !== "reaction" && (
-          <button 
+          <button
             className="bg-[#F7F7F8] rounded-lg p-2 flex items-center gap-1 hover:bg-[#E6E8EA] transition-colors cursor-pointer"
             onClick={() => onReactionClick?.(id)}
             aria-label={hasReaction ? "반응 취소" : "반응 추가"}
           >
-            <HeartIcon 
-              width={16} 
-              height={16} 
-              color={hasReaction ? "#EA3429" : "#33363D"} 
-              filled={hasReaction} 
+            <HeartIcon
+              width={16}
+              height={16}
+              color={hasReaction ? "#EA3429" : "#33363D"}
+              filled={hasReaction}
             />
             {hasReaction && (
               <span className="font-SUIT_Variable font-medium text-xs leading-[1.4] tracking-[-0.01em] text-black">
@@ -161,7 +162,7 @@ export const GroupChatItem = ({
           "bg-[#F7F7F8] rounded-lg",
           style === "todo" && "py-3 px-4",
           style === "photo" && "p-3 w-[248px]",
-          style === "diary" && "p-3 w-[248px]", 
+          style === "diary" && "p-3 w-[248px]",
           style === "reaction" && "py-3 px-4 w-[248px]"
         )}>
           {/* Main content */}
@@ -172,7 +173,7 @@ export const GroupChatItem = ({
               <span className="font-SUIT_Variable font-bold text-sm leading-[1.4] tracking-[-0.01em] text-[#33363D]">
                 {mainText}
               </span>
-              
+
               {/* Checkbox for todo, photo, and diary styles */}
               {(style === "todo" || style === "photo" || style === "diary") && checkboxLabel && (
                 <ChatCheckbox checked={isChecked} label={checkboxLabel} />
@@ -182,10 +183,10 @@ export const GroupChatItem = ({
             {/* Photo for photo style */}
             {style === "photo" && photoUrl && (
               <div className="w-[116px] h-[116px] rounded-lg border border-[#CDD1D5] overflow-hidden">
-                <Image 
-                  src={photoUrl} 
-                  alt="첨부 이미지" 
-                  width={116} 
+                <Image
+                  src={photoUrl}
+                  alt="첨부 이미지"
+                  width={116}
                   height={116}
                   className="w-full h-full object-cover"
                 />
@@ -208,16 +209,16 @@ export const GroupChatItem = ({
 
         {/* Icon Area for member messages - render last to appear on the right */}
         {!isMe && style !== "reaction" && (
-          <button 
+          <button
             className="bg-[#F7F7F8] rounded-lg p-2 flex items-center gap-1 hover:bg-[#E6E8EA] transition-colors cursor-pointer"
             onClick={() => onReactionClick?.(id)}
             aria-label={hasReaction ? "반응 취소" : "반응 추가"}
           >
-            <HeartIcon 
-              width={16} 
-              height={16} 
-              color={hasReaction ? "#EA3429" : "#33363D"} 
-              filled={hasReaction} 
+            <HeartIcon
+              width={16}
+              height={16}
+              color={hasReaction ? "#EA3429" : "#33363D"}
+              filled={hasReaction}
             />
             {hasReaction && (
               <span className="font-SUIT_Variable font-medium text-xs leading-[1.4] tracking-[-0.01em] text-black">
