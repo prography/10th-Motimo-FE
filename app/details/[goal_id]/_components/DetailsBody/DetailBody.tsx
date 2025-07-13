@@ -13,6 +13,7 @@ import CheckSvg from "@/components/shared/public/check.svg";
 import { toggleGoalCompletion } from "@/lib/fetching/goalFetching";
 import { calcLeftDay } from "@/utils/calcLeftDay";
 import useGoalDetail from "@/hooks/main/queries/useGoalDetail";
+import PeopleSvg from "@/public/images/People.svg";
 interface DetailBodyProps {
   goalId: string;
 }
@@ -27,7 +28,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
 
   // tmp
   const allSubGoalCompleted = true;
-  const groupId = "";
+  const groupId = goalDetail?.groupId;
 
   // 모든 세부목표 완료 시에 모달
   const openModalCompletingGoal = () => {
@@ -49,88 +50,90 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
     openModalCompletingGoal();
   }, [allSubGoalCompleted]);
   return (
-    <>
+    <div className="flex flex-col flex-1">
       <GoalData
         goalName={data.title ?? ""}
-        dDay={dDay}
         progress={goalDetail?.progress ?? 0}
+        dDay={dDay}
       />
-      {groupId && (
-        <>
-          <div className="self-stretch h-10 px-2 py-0.5 bg-Color-primary-5 rounded-lg inline-flex justify-start items-center gap-1">
-            <div
-              data-property-1="Users_Group"
-              className="w-5 h-5 relative overflow-hidden"
-            >
-              <>
-                <UserIcon color="#5d5fef " />
-              </>
-            </div>
-            <div className="flex-1 flex justify-start items-center gap-0.5">
-              <p className="justify-center text-label-normal text-xs font-semibold font-['SUIT_Variable'] leading-none">
-                그룹으로 이동
-              </p>
-            </div>
+      <section className="flex flex-col gap-4 pl-4 pr-4 pb-4 bg-background-alternative">
+        {allSubGoalCompleted && (
+          <>
             <button
               type="button"
-              className="w-6 h-6 relative overflow-hidden text-label-assistive"
+              onClick={() => {
+                openModalCompletingGoal();
+              }}
+              data-leading-icon="true"
+              data-status="enabled"
+              data-type="filled"
+              className="self-stretch w-full px-4 py-2 relative bg-background-normal rounded-lg inline-flex flex-col justify-center items-start gap-2 overflow-hidden"
             >
-              <Link href={`/group/${groupId}`}>
-                <RightArrowSvg />
-              </Link>
-            </button>
-          </div>
-        </>
-      )}
-      {allSubGoalCompleted && (
-        <>
-          <button
-            type="button"
-            onClick={() => {
-              openModalCompletingGoal();
-            }}
-            data-leading-icon="true"
-            data-status="enabled"
-            data-type="filled"
-            className="self-stretch px-4 py-2 relative bg-background-normal rounded-lg inline-flex flex-col justify-center items-start gap-2 overflow-hidden"
-          >
-            <div className="self-stretch inline-flex justify-center items-center gap-2">
-              <div className="w-6 h-6 relative overflow-hidden flex justify-center items-center text-label-strong">
-                <CheckSvg />
-              </div>
+              <div className="self-stretch inline-flex justify-center items-center gap-2">
+                <div className="w-6 h-6 relative overflow-hidden flex justify-center items-center text-label-strong">
+                  <CheckSvg />
+                </div>
 
-              <p className="justify-start text-label-strong text-base font-semibold font-['Pretendard'] leading-normal">
-                목표 완료 처리 하기
-              </p>
+                <p className="justify-start text-label-strong text-base font-semibold font-['Pretendard'] leading-normal">
+                  목표 완료 처리 하기
+                </p>
+              </div>
+            </button>
+          </>
+        )}
+        {groupId && (
+          <>
+            <div className="self-stretch w-full h-10 px-2 py-0.5 bg-Color-primary-5 rounded-lg inline-flex justify-start items-center gap-1">
+              <div
+                data-property-1="Users_Group"
+                className="w-5 h-5 relative overflow-hidden"
+              >
+                <PeopleSvg />
+              </div>
+              <div className="flex-1 flex justify-start items-center gap-0.5">
+                <p className="justify-center text-label-normal text-xs font-semibold font-['SUIT_Variable'] leading-none">
+                  그룹으로 이동
+                </p>
+              </div>
+              <button
+                type="button"
+                className="w-6 h-6 relative overflow-hidden text-label-assistive"
+              >
+                <Link href={`/group/${groupId}`}>
+                  <RightArrowSvg />
+                </Link>
+              </button>
             </div>
-          </button>
-        </>
-      )}
-      <ListCard
-        initTodoInfoList={data.subGoals?.[targetSubGoalIdx].initTodoItemsInfo}
-        onLeft={() =>
-          setTargetSubGoalIdx((prev) => {
-            if (prev > 0) return prev - 1;
-            // 에러 방지
-            return prev;
-          })
-        }
-        onRight={() =>
-          setTargetSubGoalIdx((prev) => {
-            if (prev < (data.subGoals?.length ?? 0)) return prev + 1;
-            // 에러방지
-            return prev;
-          })
-        }
-        subGoalInfo={{
-          id: data.subGoals?.[targetSubGoalIdx].subGoalId,
-          idx: targetSubGoalIdx,
-          name: data.subGoals?.[targetSubGoalIdx].subGoal,
-          totalSubGoalsLen: data.subGoals?.length ?? 0,
-        }}
-        applyOnGoalData={() => mutate()}
-      />
-    </>
+          </>
+        )}
+      </section>
+      <section className="mt-2 bg-background-alternative h-full">
+        <ListCard
+          initTodoInfoList={data.subGoals?.[targetSubGoalIdx].initTodoItemsInfo}
+          onLeft={() =>
+            setTargetSubGoalIdx((prev) => {
+              if (prev > 0) return prev - 1;
+              // 에러 방지
+              return prev;
+            })
+          }
+          onRight={() =>
+            setTargetSubGoalIdx((prev) => {
+              if (prev < (data.subGoals?.length ?? 0)) return prev + 1;
+              // 에러방지
+              return prev;
+            })
+          }
+          subGoalInfo={{
+            id: data.subGoals?.[targetSubGoalIdx].subGoalId,
+            idx: targetSubGoalIdx,
+            name: data.subGoals?.[targetSubGoalIdx].subGoal,
+            totalSubGoalsLen: data.subGoals?.length ?? 0,
+          }}
+          applyOnGoalData={() => mutate()}
+        />
+      </section>
+    </div>
   );
 };
 

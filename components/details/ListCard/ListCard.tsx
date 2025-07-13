@@ -56,8 +56,8 @@ const ListCard = ({
     initTodoInfoList?.filter((todo) => todo.checked).length ?? 0;
   return (
     <>
-      <main className="w-96 flex-1 p-4 bg-background-alternative inline-flex flex-col justify-start items-center gap-2 overflow-hidden">
-        <section>
+      <main className="w-full flex-1 p-4  inline-flex flex-col justify-start items-center gap-2 overflow-hidden">
+        <section className="flex items-center gap-2 w-full justify-between">
           <button
             onClick={() => onLeft()}
             type="button"
@@ -70,7 +70,7 @@ const ListCard = ({
               <LeftArrowSvg />
             </div>
           </button>
-          <p className="self-stretch text-center justify-center text-label-strong text-base font-medium font-['SUIT_Variable'] leading-snug">
+          <p className=" overflow-hidden  self-center truncate  text-center justify-center text-label-strong text-base font-medium font-['SUIT_Variable'] leading-snug">
             {subGoalInfo.name ?? ""}
           </p>
 
@@ -89,7 +89,7 @@ const ListCard = ({
         </section>
         <section className="self-stretch inline-flex justify-end items-center gap-0.5">
           <p className="justify-center text-label-alternative text-sm font-medium font-['SUIT_Variable'] leading-tight">
-            {`${checkedTodoLen}/${totalTodoLen}`}
+            {`${checkedTodoLen} / ${totalTodoLen}`}
           </p>
         </section>
         {isTodoAllChecked && (
@@ -132,7 +132,7 @@ const ListCard = ({
             </div>
           </>
         )}
-        <section>
+        <section className="flex-1 w-full h-full gap-2 flex flex-col">
           {todoItemsInfo.map((todoInfo) => {
             return (
               <TodoItem
@@ -163,11 +163,20 @@ const ListCard = ({
             // console.log("todoresult: ", todoResult);
             todoIdForResult &&
               todoResult.emotion !== null &&
-              (await postTodoResult(todoIdForResult, {
-                ...todoResult,
-                emotion: todoResult.emotion as TodoResultRqEmotionEnum,
-                //  as NonNullable<typeof todoResult.emotion> as
-              }));
+              (await postTodoResult(
+                todoIdForResult,
+                {
+                  emotion:
+                    // TodoResultRqEmotionEnum[
+                    //   todoResult.emotion as keyof TodoResultRqEmotionEnum
+                    // ],
+                    todoResult.emotion as TodoResultRqEmotionEnum,
+                  content: todoResult.memo,
+
+                  //  as NonNullable<typeof todoResult.emotion> as
+                },
+                todoResult.file ? todoResult.file : undefined,
+              ));
             mutate();
           }}
           openBottomSheet={openBottomSheet}
