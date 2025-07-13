@@ -3,6 +3,7 @@ import { HomeIcon } from "../../icons/HomeIcon";
 import { UserIcon } from "../../icons/UserIcon";
 import { ChatIcon } from "../../icons/ChatIcon";
 import Link from "next/link";
+import useAuthStore from "@/stores/useAuthStore";
 
 interface BottomTabBarProps {
   type: "1" | "2" | "3" | "4";
@@ -10,6 +11,8 @@ interface BottomTabBarProps {
 }
 
 export const BottomTabBar = ({ type, className }: BottomTabBarProps) => {
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+
   // Define the tab configuration with consistent order
   const tabs = [
     {
@@ -41,6 +44,10 @@ export const BottomTabBar = ({ type, className }: BottomTabBarProps) => {
       href: "/mypage",
     },
   ];
+
+  if (!isLoggedIn) {
+    return null;
+  }
 
   return (
     <div
