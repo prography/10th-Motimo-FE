@@ -49,15 +49,15 @@ function JoinRandomGroupContent() {
       setIsJoining(true);
       console.log("Joining random group with goalId:", goalId);
 
-      //   const response = await api.그룹Api.joinRandomGroup({ goalId });
-      //   const id = response.id;
-      //   if (!id) {
-      //     alert("그룹 참여에 실패했습니다. 다시 시도해주세요.");
-      //     return;
-      //   }
+      const response = await api.그룹Api.joinRandomGroup({ goalId });
+      const id = response.id;
+      if (!id) {
+        alert("그룹 참여에 실패했습니다. 다시 시도해주세요.");
+        return;
+      }
 
-      // TODO: API 오류로 인해 1 번 group 으로 임시 고정
-      const id = "1";
+      // // TODO: API 오류로 인해 1 번 group 으로 임시 고정
+      // const id = "1";
       alert("그룹에 성공적으로 참여했습니다!");
 
       // 성공 시 그룹 페이지로 이동
