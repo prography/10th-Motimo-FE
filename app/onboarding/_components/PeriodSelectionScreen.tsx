@@ -99,13 +99,12 @@ export default function PeriodSelectionScreen({
             !isPast && setTargetDate(new Date(currentYear, currentMonth, day))
           }
           disabled={isPast}
-          className={`h-10 w-10 rounded flex items-center justify-center text-xs font-medium ${
-            isSelected
+          className={`h-10 w-10 rounded flex items-center justify-center text-xs font-medium ${isSelected
               ? "bg-label-primary text-background-alternative"
               : isPast
                 ? "text-label-disabled cursor-not-allowed"
                 : "text-label-normal hover:bg-background-assistive"
-          }`}
+            }`}
         >
           {day}
         </button>,
@@ -156,21 +155,19 @@ export default function PeriodSelectionScreen({
           <div className="flex">
             <button
               onClick={() => setPeriodType("months")}
-              className={`flex-1 py-2 px-4 rounded-full font-bold text-sm ${
-                periodType === "months"
+              className={`flex-1 py-2 px-4 rounded-full font-bold text-sm ${periodType === "months"
                   ? "bg-label-primary text-background-alternative"
                   : "text-label-alternative"
-              }`}
+                }`}
             >
               개월 수로 설정
             </button>
             <button
               onClick={() => setPeriodType("date")}
-              className={`flex-1 py-2 px-4 rounded-full font-bold text-sm ${
-                periodType === "date"
+              className={`flex-1 py-2 px-4 rounded-full font-bold text-sm ${periodType === "date"
                   ? "bg-label-primary text-background-alternative"
                   : "text-label-alternative"
-              }`}
+                }`}
             >
               완료 날짜로 설정
             </button>
@@ -246,9 +243,11 @@ export default function PeriodSelectionScreen({
             const isPeriodByMonth = periodType === "months";
             const dueDate = targetDate
               ? targetDate.toISOString().split("T")[0]
-              : new Date(Date.now() + monthCount * 30 * 24 * 60 * 60 * 1000)
-                  .toISOString()
-                  .split("T")[0];
+              : (() => {
+                const today = new Date();
+                const futureDate = new Date(today.getFullYear(), today.getMonth() + monthCount, today.getDate());
+                return futureDate.toISOString().split("T")[0];
+              })();
 
             goalApi.createGoal({
               title: goal,
