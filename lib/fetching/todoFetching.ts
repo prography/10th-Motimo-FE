@@ -43,12 +43,25 @@ const getTodoResult = async (todoId: string) => {
 
   return todoResult ?? {};
 };
-const postTodoResult = async (todoId: string, todoResult: TodoResultRq) => {
+const postTodoResult = async (
+  todoId: string,
+  todoResult: TodoResultRq,
+  file?: File,
+) => {
+  const formData = new FormData();
+  const todoResStr = JSON.stringify(todoResult);
+  formData.append("request", todoResStr);
+  if (file) formData.append("file", file);
+
   const res = await templateFetch<TodoResultIdRs>(
     `/v1/todos/${todoId}/result`,
     "POST",
-    todoResult,
+    formData,
+    undefined,
+    undefined,
+    true,
   );
+
   return res;
 };
 const deleteTodoResult = async (todoResultId: string) => {
