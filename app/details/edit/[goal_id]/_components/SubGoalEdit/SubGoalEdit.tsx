@@ -11,6 +11,10 @@ import ModalAddingSubGoal from "@/components/shared/Modal/ModalAddingSubGoal/Mod
 import ModalDeletingSubGoal from "@/components/shared/Modal/ModalDeletingSubGoal/ModalDeletingSubGoal";
 import { EditContext } from "../EditBody/EditBody";
 import ModalUpdatingSubGoal from "@/components/details/Modals/ModalUpdatingSubGoal/ModalUpdatingSubGoal";
+
+import PlusSvg from "@/components/shared/public/Add_Plus.svg";
+import { randomUUID } from "crypto";
+
 interface SubGoalEditProps {
   goalId: string;
 }
@@ -21,30 +25,76 @@ const SubGoalEdit = ({ goalId }: SubGoalEditProps) => {
 
   return (
     <>
-      <main>
-        <TodoList initTodoTotalLen={0} goalId={goalId} />
-        <section>
-          <Reorder.Group
-            onReorder={(newOrderedSubGoals) => {
-              const orderUpdated = newOrderedSubGoals as unknown as NonNullable<
-                typeof editContents
-              >;
-              setEditContents &&
-                setEditContents((prev) => ({
-                  ...prev,
-                  subGoals:
-                    orderUpdated?.subGoals.map((subGoalInfo, idx) => ({
-                      ...subGoalInfo,
-                      order: idx + 1,
-                    })) ?? [],
-                }));
-            }}
-            values={editContents?.subGoals ?? []}
+      <main className="flex flex-col gap-2">
+        <>
+          <div
+            data-type="type5"
+            className="w-full p-3 bg-white rounded-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.10)] inline-flex flex-col justify-start items-center gap-2 overflow-hidden"
           >
-            {(editContents?.subGoals ?? []).map((currentSubGoalInfo) => (
+            <div className="self-stretch h-8 inline-flex justify-start items-center gap-1">
+              <div className="flex-1 justify-center text-label-strong text-base font-bold font-['SUIT_Variable'] leading-snug">
+                세부 목표를 추가해주세요.
+              </div>
+              <button
+                onClick={() => {
+                  openModal(
+                    <ModalAddingSubGoal
+                      onClose={() => closeModal()}
+                      onAddSubGoal={async (subGoal: string) => {
+                        // 동기적으로 처리
+                        setEditContents((prev) => ({
+                          ...prev,
+                          subGoals: [
+                            ...prev.subGoals,
+                            {
+                              id: null,
+                              order: editContents?.subGoals.length + 1,
+                              title: subGoal,
+                              tmpKey: new Date().getTime(),
+                            },
+                          ],
+                        }));
+                        closeModal();
+                      }}
+                    />,
+                  );
+                }}
+                type="button"
+                className="w-8 h-8 p-1.5 bg-background-primary rounded-[999px] flex justify-center items-center gap-2"
+              >
+                <div className="w-5 h-5 relative overflow-hidden text-white">
+                  <PlusSvg width={20} height={20} />
+                </div>
+              </button>
+            </div>
+          </div>
+        </>
+        <Reorder.Group
+          onReorder={(newOrderedSubGoals) => {
+            const orderUpdated = newOrderedSubGoals as unknown as NonNullable<
+              typeof editContents
+            >;
+            setEditContents &&
+              setEditContents((prev) => ({
+                ...prev,
+                subGoals:
+                  orderUpdated.map((subGoalInfo, idx) => ({
+                    ...subGoalInfo,
+                    order: idx + 1,
+                  })) ?? [],
+              }));
+          }}
+          values={editContents?.subGoals}
+        >
+          <section className="flex flex-col gap-2">
+            {(editContents?.subGoals ?? []).map((currentSubGoalInfo, idx) => (
               <Reorder.Item
                 value={currentSubGoalInfo}
-                key={currentSubGoalInfo.id}
+                key={
+                  currentSubGoalInfo.tmpKey
+                    ? currentSubGoalInfo.tmpKey
+                    : `${currentSubGoalInfo.id}-${currentSubGoalInfo.title}`
+                }
               >
                 <SubGoalEditItem
                   subGoalTitle={currentSubGoalInfo.title}
@@ -101,8 +151,8 @@ const SubGoalEdit = ({ goalId }: SubGoalEditProps) => {
                 />
               </Reorder.Item>
             ))}
-          </Reorder.Group>
-        </section>
+          </section>
+        </Reorder.Group>
       </main>
     </>
   );

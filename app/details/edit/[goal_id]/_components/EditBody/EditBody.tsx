@@ -25,11 +25,11 @@ import { date2StringWithSpliter } from "@/utils/date2String";
 
 import { updateGoal } from "@/lib/fetching/goalFetching";
 
-type SubGoalEditItem = {
+interface SubGoalEditItem {
   order: number;
-  id: string;
+  id: string | null;
   title: string;
-};
+}
 
 type EditContents = {
   goalTitle: string;
@@ -53,17 +53,18 @@ const EditBody = ({ goalId, initData, tab }: EditBodyProps) => {
   const router = useRouter();
 
   const { closeModal, openModal } = useModal();
-
+  const { mutate } = useGoalWithSubGoalTodo(goalId);
   const [editContents, setEditContents] = useState<EditContents>(initData);
   return (
     <>
       <EditContext.Provider value={{ editContents, setEditContents }}>
         <form
+          className="pt-6 pl-4 pr-4 flex flex-col flex-1"
           id="GoalInfoEdit"
           onSubmit={(e) => {
             e.preventDefault();
 
-            updateGoal(goalId, {
+            const res = updateGoal(goalId, {
               title: editContents.goalTitle,
               isPeriodByMonth: editContents.durationType === "month",
               month:
@@ -77,7 +78,12 @@ const EditBody = ({ goalId, initData, tab }: EditBodyProps) => {
                       editContents.durationValue as Date,
                       "-",
                     ),
-              subGoals: editContents.subGoals,
+              subGoals: editContents.subGoals.map((subGoalsInfo) => ({
+                // interface라, 임시로 넣은 필드 값 제거하기 위해서.
+                order: subGoalsInfo.order,
+                title: subGoalsInfo.title,
+                id: subGoalsInfo.id,
+              })),
               deletedSubGoalIds:
                 initData?.subGoals
                   ?.filter(({ id: initSubGoalId }) => {
@@ -88,7 +94,10 @@ const EditBody = ({ goalId, initData, tab }: EditBodyProps) => {
                   })
                   ?.map((item) => item.id) ?? [],
             });
-            router.back();
+            if (res) {
+              mutate();
+              router.back();
+            }
           }}
         >
           {tab === "goal" ? <GoalEdit /> : <SubGoalEdit goalId={goalId} />}

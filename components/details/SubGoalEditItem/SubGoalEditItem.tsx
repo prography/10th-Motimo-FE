@@ -16,14 +16,17 @@ const SubGoalEditItem = ({
 }: SubGoalEditItemProps) => {
   return (
     <>
-      <div className="w-80 h-14 p-2 bg-background-alternative rounded-lg  outline-1 outline-offset-[-1px] outline-line-normal inline-flex flex-col justify-center items-start">
-        <div className="w-6 h-6 relative overflow-hidden">
+      <div className="w-full gap-1  h-14 p-2 bg-background-alternative rounded-lg  outline-1 outline-offset-[-1px] outline-line-normal flex  justify-start items-center">
+        <div className="w-6 h-6 relative ">
           <DraggableSvg />
         </div>
-        <p className="self-stretch justify-start text-label-normal text-sm font-medium font-['SUIT_Variable'] leading-tight">
+        <p
+          className="flex-1 flex items-center justify-start  text-label-normal text-sm font-medium font-['SUIT_Variable'] leading-tight"
+          style={{ lineHeight: "normal" }}
+        >
           {subGoalTitle}
         </p>
-        <div>
+        <div className="flex justify-end gap-1">
           <button
             onClick={() => onEdit()}
             type="button"

@@ -11,7 +11,7 @@ const TabMenu = ({ title, isActive, onClick }: TabMenuProps) => {
     <>
       <div
         onClick={() => onClick()}
-        className="w-44 h-12 px-4 py-2 relative inline-flex justify-center items-center gap-2"
+        className="w-full  h-12 px-4 py-2 relative inline-flex justify-center items-center gap-2"
       >
         <div
           className={`flex-1 text-center justify-center  

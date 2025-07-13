@@ -36,25 +36,25 @@ export default function Edit() {
   const [tab, setTab] = useState<"goal" | "subGoal">("goal");
   return (
     <>
-      <div>
+      <div className="bg-background-alternative flex flex-col h-screen">
         <EditHeader />
-        <section>
-          <section>
-            <div>
-              <TabMenu
-                title="목표"
-                isActive={tab === "goal"}
-                onClick={() => setTab("goal")}
-              />
-              <TabMenu
-                title="세부 목표"
-                isActive={tab === "subGoal"}
-                onClick={() => setTab("subGoal")}
-              />
-            </div>
-            <EditInfo type={tab} />
-          </section>
+
+        <section className="w-full">
+          <div className="w-full flex ">
+            <TabMenu
+              title="목표"
+              isActive={tab === "goal"}
+              onClick={() => setTab("goal")}
+            />
+            <TabMenu
+              title="세부 목표"
+              isActive={tab === "subGoal"}
+              onClick={() => setTab("subGoal")}
+            />
+          </div>
+          <EditInfo type={tab} />
         </section>
+
         <EditBody
           key={data.subGoals?.map((s) => `${s.subGoal}`)?.join("") ?? ""}
           goalId={goalId}

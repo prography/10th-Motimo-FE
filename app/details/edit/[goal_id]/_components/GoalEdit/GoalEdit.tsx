@@ -40,8 +40,8 @@ const GoalEdit = (
 
   return (
     <>
-      <main>
-        <section>
+      <main className="flex flex-col gap-6 flex-1 items-center">
+        <section className="w-full">
           <p>목표</p>
           <TextField
             name=""
@@ -56,7 +56,7 @@ const GoalEdit = (
             }
           />
         </section>
-        <section className="w-80 h-10 inline-flex justify-start items-center gap-4">
+        <section className="w-full h-10 inline-flex justify-start items-center gap-4">
           <div className="flex-1 flex justify-start items-center">
             <p className="justify-start text-neutral-900 text-sm font-semibold font-['Pretendard'] leading-none">
               기간 설정
@@ -75,7 +75,7 @@ const GoalEdit = (
             </p>
           </button>
         </section>
-        <div>
+        <div className="fixed bottom-4 w-screen flex justify-center">
           <Button
             icon={
               <div className="text-status-negative w-5 h-5 inline-flex justify-center items-center">

@@ -12,7 +12,10 @@ const EditHeader = () => {
   const router = useRouter();
   return (
     <>
-      <header>
+      <header
+        // AppBar에서 pl-4는 이미 처리 되어 있음.
+        className="flex pr-4 justify-between items-center"
+      >
         <AppBar
           type="back"
           title="편집"
@@ -30,7 +33,14 @@ const EditHeader = () => {
           }}
         />
 
-        <Button form="GoalInfoEdit" type="submit" size="s" variant="filled">
+        <Button
+          // 너비가 충분치 않아 글씨가 제대로 안보여서 넓이 직접 수정
+          className="w-[55px]"
+          form="GoalInfoEdit"
+          type="submit"
+          size="s"
+          variant="filled"
+        >
           저장
         </Button>
       </header>
