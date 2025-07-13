@@ -2,13 +2,14 @@
 import GoalMenu, { GoalMenuProps } from "@/components/shared/GoalMenu/GoalMenu";
 import useGoalList from "@/hooks/main/queries/useGoalList";
 import useGoalStore from "@/stores/useGoalStore";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import PlusSvg from "@/components/shared/public/Add_Plus.svg";
 import useModal from "@/hooks/useModal";
 import ModalAddingGoal from "@/components/shared/Modal/ModalAddingGoal/ModalAddingGoal";
 import { createNewGoal } from "@/lib/fetching/goalFetching";
 import { useRouter } from "next/navigation";
+import { motion, useMotionValue } from "motion/react";
 
 type GoalMenuInfo = Pick<GoalMenuProps, "goal" | "percentage"> & {
   goalId: string;
@@ -23,11 +24,28 @@ const GoalMenuContainer = ({}: GoalMenuContainerProps) => {
   const [selectedGoalIdx, setSelectedGoalIdx] = useState(0);
   const { updateGoalId } = useGoalStore();
   const { openModal, closeModal } = useModal();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [containerW, setContainerW] = useState(0);
+  const [contentW, setContentW] = useState(0);
+
   const router = useRouter();
+  const x = useMotionValue(0);
 
   useEffect(() => {
     updateGoalId(goalMenuInfoList[selectedGoalIdx]?.goalId ?? null);
   }, [goalMenuInfoList[selectedGoalIdx]?.goalId, updateGoalId]);
+
+  useEffect(() => {
+    const updateSizes = () => {
+      if (containerRef.current && contentRef.current) {
+        setContainerW(containerRef.current.offsetWidth);
+        setContentW(contentRef.current.scrollWidth);
+      }
+    };
+
+    updateSizes();
+  }, [goalMenuInfoList]);
 
   const goalNum = goalMenuInfoList.length;
   return (
@@ -57,19 +75,35 @@ const GoalMenuContainer = ({}: GoalMenuContainerProps) => {
             </div>
           </button>
         </div>
-        <div className="flex gap-2 justify-start overflow-x-hidden">
-          {goalMenuInfoList.map((goalMenuInfo, idx) => (
-            <GoalMenu
-              key={goalMenuInfo.goalId}
-              goal={goalMenuInfo.goal}
-              percentage={goalMenuInfo.percentage}
-              selected={idx === selectedGoalIdx}
-              onSelected={() => {
-                setSelectedGoalIdx(idx);
-                // updateGoalId(goalMenuInfo.goalId);
-              }}
-            />
-          ))}
+        <div
+          ref={containerRef}
+          className="flex gap-2 w-full justify-start overflow-x-hidden"
+        >
+          <motion.div
+            className="flex gap-2  justify-start w-max"
+            drag="x"
+            ref={contentRef}
+            dragConstraints={{
+              left: -(contentW - containerW),
+              right: 0,
+            }}
+            dragElastic={0.1}
+            whileDrag={{ cursor: "grabbing" }}
+            style={{ x }}
+          >
+            {goalMenuInfoList.map((goalMenuInfo, idx) => (
+              <GoalMenu
+                key={goalMenuInfo.goalId}
+                goal={goalMenuInfo.goal}
+                percentage={goalMenuInfo.percentage}
+                selected={idx === selectedGoalIdx}
+                onSelected={() => {
+                  setSelectedGoalIdx(idx);
+                  // updateGoalId(goalMenuInfo.goalId);
+                }}
+              />
+            ))}
+          </motion.div>
         </div>
       </div>
     </>
