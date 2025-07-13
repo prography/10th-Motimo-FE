@@ -2,7 +2,6 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { useEffect } from "react";
 
 interface AuthState {
   // Auth tokens
@@ -116,8 +115,8 @@ const useAuthStore = create<AuthStore>()(
 );
 
 // 클라이언트에서 즉시 hydration 실행
-useEffect(() => {
+if (typeof window !== "undefined") {
   useAuthStore.persist.rehydrate();
-}, []);
+}
 
 export default useAuthStore;

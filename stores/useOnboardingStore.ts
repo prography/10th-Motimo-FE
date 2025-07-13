@@ -22,7 +22,7 @@ interface OnboardingState {
 const initialState = {
   goal: "",
   periodType: "months" as const,
-  monthCount: 1,
+  monthCount: 3,
   targetDate: null,
 };
 
