@@ -75,7 +75,10 @@ const useAuthStore = create<AuthStore>()(
           accessToken: null,
           refreshToken: null,
           oauthCode: null,
+          oauthState: null,
+          oauthReturnStep: null,
           isLoggedIn: false,
+          hasCompletedOnboarding: false,
         }),
 
       clearOauthData: () =>
