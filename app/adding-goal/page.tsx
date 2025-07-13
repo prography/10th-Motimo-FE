@@ -24,8 +24,8 @@ export default function AddingGoal() {
   });
   const [openBottomSheet, setOpenBottomSheet] = useState(false);
   return (
-    <>
-      <header>
+    <div className="h-screen flex flex-col ">
+      <header className="bg-background-alternative">
         <AppBar
           type="back"
           title="목표 추가"
@@ -33,6 +33,7 @@ export default function AddingGoal() {
         />
       </header>
       <form
+        className="flex-1 flex flex-col"
         id="goalAdding"
         onSubmit={async () => {
           const res = await createNewGoal({
@@ -58,9 +59,9 @@ export default function AddingGoal() {
           }
         }}
       >
-        <section>
-          <div>
-            <div className="self-stretch inline-flex justify-start items-center">
+        <section className="pl-4 pr-4  flex flex-col gap-[21px] bg-background-alternative">
+          <div className="flex flex-col gap-1">
+            <div className="self-stretch inline-flex justify-start ">
               <h3 className="justify-start text-label-strong text-sm font-bold font-['SUIT'] leading-tight">
                 목표
               </h3>
@@ -101,19 +102,23 @@ export default function AddingGoal() {
             </button>
           </div>
         </section>
-        <div className="w-96 h-2 relative bg-background-normal">
-          {/** Divider */}
-        </div>
-        <section>
+
+        <section className=" pl-4 pr-4 gap-4 flex flex-col mt-2 pt-6 flex-1 bg-background-alternative">
           <div className="flex flex-col gap-1">
             <h3 className="self-stretch justify-start text-label-strong text-sm font-semibold font-['Pretendard'] leading-none">
               세부 목표 설정
             </h3>
-            <p className="self-stretch justify-start text-label-alternative text-sm font-normal font-['Pretendard'] leading-none">
+            <p
+              className="self-stretch justify-start text-label-alternative text-sm font-normal font-['Pretendard'] leading-none"
+              style={{
+                // 한줄로 만들기 위해
+                letterSpacing: "-1px",
+              }}
+            >
               세부 목표는 목표 상세페이지에서도 추가하실 수 있습니다.
             </p>
           </div>
-          <div className="inline-flex flex-col justify-start items-start gap-4">
+          <div className="flex flex-col justify-start items-start gap-2">
             {goalAddInfo.subGoals.map((subGoal, idx) => (
               <TextField
                 key={`${idx}`}
@@ -138,29 +143,36 @@ export default function AddingGoal() {
                 }));
               }}
               type="button"
-              className="self-stretch h-10 px-4 py-2 relative bg-background-normal rounded-lg inline-flex flex-col justify-center items-start gap-2 overflow-hidden"
+              className="self-stretch h-12 px-4 py-2 relative bg-background-normal rounded-lg inline-flex  justify-start items-center gap-2 overflow-hidden"
             >
-              <PlusSvg />
-              <p className="self-stretch justify-start text-label-normal text-sm font-semibold font-['Pretendard'] leading-tight">
+              <div>
+                <PlusSvg width={20} height={20} />
+              </div>
+              <p
+                className="self-stretch flex items-center justify-start text-label-normal text-sm font-semibold font-['Pretendard'] leading-tight"
+                style={{ lineHeight: "normal" }}
+              >
                 세부 목표 추가
               </p>
             </button>
           </div>
         </section>
       </form>
-      <button
-        type="submit"
-        form="goalAdding"
-        // duration은 기본값 있으므로 무조건 값 존재
-        disabled={!goalAddInfo.goal}
-        className={`w-80 h-14 px-6 py-4 ${!goalAddInfo.goal ? "bg-background-disabled" : "bg-background-strong"}  rounded-[999px] inline-flex justify-center items-center gap-2 overflow-hidden`}
-      >
-        <p
-          className={`flex-1 text-center justify-center ${!goalAddInfo.goal ? "text-label-disabled" : "text-label-inverse"}   text-xl font-bold font-['SUIT'] leading-normal`}
+      <div className="fixed bottom-4 flex items-center">
+        <button
+          type="submit"
+          form="goalAdding"
+          // duration은 기본값 있으므로 무조건 값 존재
+          disabled={!goalAddInfo.goal}
+          className={`w-82 h-14 px-6 py-4 ${!goalAddInfo.goal ? "bg-background-disabled" : "bg-background-strong"}  rounded-[999px] inline-flex justify-center items-center gap-2 overflow-hidden`}
         >
-          추가하기
-        </p>
-      </button>
+          <p
+            className={`flex-1 text-center justify-center ${!goalAddInfo.goal ? "text-label-disabled" : "text-label-inverse"}   text-xl font-bold font-['SUIT'] leading-normal`}
+          >
+            추가하기
+          </p>
+        </button>
+      </div>
 
       <GoalDurationBottomSheet
         openBottomSheet={openBottomSheet}
@@ -175,6 +187,6 @@ export default function AddingGoal() {
           setOpenBottomSheet(false);
         }}
       />
-    </>
+    </div>
   );
 }
