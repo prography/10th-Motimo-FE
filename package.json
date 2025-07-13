@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "dotenv -e .env.dev -- next dev --turbopack",
-    "local": "dotenv -e .env.local -- next dev --turbopack",
-    "build": "next build",
+    "local": "dotenv -e .env.localhost -- next dev --turbopack",
+    "build": "NODE_ENV=production next build",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",

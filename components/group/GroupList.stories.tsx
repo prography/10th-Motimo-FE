@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { GroupList, GroupData } from "./GroupList";
+import { GroupList } from "./GroupList";
 import { JoinedGroupRs, GoalNotInGroupRs } from "@/api/generated/motimo/Api";
 
 const meta: Meta<typeof GroupList> = {
@@ -154,4 +154,4 @@ export const ManyGroups: Story = {
       console.log("Join group:", groupId);
     },
   },
-}; 
+};
