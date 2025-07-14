@@ -5,7 +5,12 @@ import { AppBar } from "@/components/shared/AppBar/AppBar";
 import { GroupChat, SystemMessage } from "@/components/group";
 import { UsersGroupIcon } from "@/components/icons";
 import { useSafeRouter } from "@/hooks/useSafeRouter";
-import { useGroupChat, useJoinedGroups } from "@/api/hooks";
+import {
+  useGroupChat,
+  useGroupDetail,
+  useJoinedGroups,
+  useMyProfile,
+} from "@/api/hooks";
 import { GetGroupChatParamsDirectionEnum } from "@/api/generated/motimo/Api";
 interface GroupDetailPageProps {
   params: Promise<{
@@ -15,8 +20,8 @@ interface GroupDetailPageProps {
 
 export default function GroupDetailPage({ params }: GroupDetailPageProps) {
   const { id } = use(params);
-  // const { data: groups } = useJoinedGroups();
-  const title = "백엔드 api 가 없어 임시 타이틀";
+  const { data: { name: title } = {}, error } = useGroupDetail(id);
+
   const { data: groupChat } = useGroupChat(
     id,
     "0",
@@ -33,6 +38,8 @@ export default function GroupDetailPage({ params }: GroupDetailPageProps) {
     console.log("Reaction clicked for message:", messageId);
     // TODO: Implement reaction functionality
   };
+
+  const { data: { nickname } = {} } = useMyProfile();
 
   return (
     <div className="flex flex-col h-screen bg-white">
@@ -69,7 +76,7 @@ export default function GroupDetailPage({ params }: GroupDetailPageProps) {
       <div className="flex-1 overflow-y-auto">
         {/* System Message */}
         <div className="px-4 py-4">
-          <SystemMessage message="000님이 그룹에 입장했습니다." />
+          <SystemMessage message={`${nickname}님이 그룹에 입장했습니다.`} />
         </div>
 
         {/* Chat Messages */}
