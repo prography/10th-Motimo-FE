@@ -6,7 +6,13 @@ import { useState } from "react";
 import Image from "next/image";
 
 type TodoResult = {
-  emotion: "PROUD" | "ROUTINE" | "REGRETFUL" | "IMMERSED" | "REFLECTION" | null;
+  emotion:
+    | "PROUD"
+    | "ROUTINE"
+    | "REGRETFUL"
+    | "IMMERSED"
+    | "SELF_REFLECTION"
+    | null;
   file: File | null;
   fileName: string;
   memo: string;
@@ -17,7 +23,7 @@ const emotionMaps = {
   ROUTINE: { title: "루틴", bg: "bg-Color-primary-30" },
   IMMERSED: { title: "몰입", bg: "bg-Color-yellow-30" },
   REGRETFUL: { title: "아쉬움", bg: "bg-Color-red-30" },
-  REFLECTION: { title: "성찰", bg: "bg-background-strong" },
+  SELF_REFLECTION: { title: "성찰", bg: "bg-background-strong" },
 };
 
 interface TodoResultBottomSheetProps {
