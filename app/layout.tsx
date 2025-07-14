@@ -5,8 +5,6 @@ import "./globals.css";
 import ModalRenderer from "./_components/ModalRenderer";
 import { MSWComponent } from "@/components/_mocks/MSWComponent";
 
-import { SWRConfig } from "swr";
-
 const customFont = localFont({
   src: "../public/fonts/SUIT-Variable.woff2",
   display: "swap",
@@ -24,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`${customFont.className} w-full `}>
+    <html lang="ko" className={`${customFont.className} w-full h-full`}>
       <head>
         <link
           rel="preload"
@@ -35,13 +33,13 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${customFont.variable} antialiased w-full h-full pb-20`}
+        className={`${customFont.variable} antialiased bg-background-alternative`}
       >
-        <ModalRenderer />
-        {/* {process.env.NODE_ENV === "development" && <MSWComponent />} */}
-        {/* <SWRConfig value={{ dedupingInterval: 5000 }}> */}
-        {children}
-        {/* </SWRConfig> */}
+        <div className="w-[360px] mx-auto min-h-screen bg-background-normal">
+          {/* {process.env.NODE_ENV === "development" && <MSWComponent />} */}
+          <ModalRenderer />
+          {children}
+        </div>
       </body>
     </html>
   );

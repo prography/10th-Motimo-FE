@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "../utils/utils";
 import { BellIcon } from "../../icons/BellIcon";
 import { ChevronLeftIcon } from "../../icons/ChevronLeftIcon";
 
@@ -15,8 +15,8 @@ interface AppBarProps {
 
 export const AppBar = ({
   type,
-  title = "투두 추가",
-  points = "1,000P",
+  title,
+  points,
   hasNotification = false,
   progress = 50,
   onBackClick,
@@ -26,7 +26,7 @@ export const AppBar = ({
   return (
     <div
       className={cn(
-        "flex items-center relative w-[360px] h-14 bg-Color-white px-3 py-2",
+        "flex items-center relative w-[360px] h-14 bg-Color-white px-3 h-[56px]",
         {
           "justify-end": type === "main",
           "justify-start": type === "back" || type === "progress",
@@ -46,9 +46,9 @@ export const AppBar = ({
       )}
 
       {/* Title - shown for back type */}
-      {type === "back" && (
-        <div className="flex-1 pl-2 w-full">
-          <h1 className="font-SUIT_Variable font-bold text-base leading-[1.2] tracking-[-0.02em] text-Color-black m-0 truncate overflow-hidden w-full">
+      {title && (
+        <div className="flex-1 ml-5">
+          <h1 className="font-SUIT_Variable font-bold text-base leading-[1.2] tracking-[-0.02em] text-Color-black m-0">
             {title}
           </h1>
         </div>
@@ -57,7 +57,7 @@ export const AppBar = ({
       {/* Progress bar - shown for progress type */}
       {type === "progress" && (
         <div className="flex-1 ml-5 flex items-center">
-          <div className="w-[232px] h-2 bg-Color-gray-10 rounded-full overflow-hidden">
+          <div className="w-full mr-[24px] h-[8px] bg-Color-gray-10 rounded-full overflow-hidden">
             <div
               className="h-full bg-Color-primary-50 rounded-full transition-all duration-300 ease-in-out"
               style={{ width: `${progress}%` }}
@@ -69,11 +69,13 @@ export const AppBar = ({
       {/* Right area - shown for main type */}
       {type === "main" && (
         <div className="flex items-center gap-1 ml-auto">
-          <div className="bg-Color-primary-5 rounded-full px-2 py-2 flex items-center justify-center">
-            <span className="font-SUIT_Variable font-bold text-xs leading-[1.2] tracking-[-0.02em] text-Color-primary-50">
-              {points}
-            </span>
-          </div>
+          {points && (
+            <div className="bg-Color-primary-5 rounded-full px-2 py-2 flex items-center justify-center">
+              <span className="font-SUIT_Variable font-bold text-xs leading-[1.2] tracking-[-0.02em] text-Color-primary-50">
+                {points}
+              </span>
+            </div>
+          )}
           <button
             className="flex items-center justify-center w-10 h-10 bg-transparent border-none cursor-pointer p-2 hover:opacity-70"
             onClick={onNotificationClick}

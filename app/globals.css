@@ -31,4 +31,28 @@ body {
   color: var(--foreground);
 
   font-family: var(--font-suit-varialbe), Arial, Helvetica, sans-serif;
+
+  /* 스크롤바 layout shift안되게 수정 */
+  width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Utility class to hide scrollbar */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari and Opera */
+}
+
+/* Smooth scrolling optimization */
+.touch-pan-y {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  scroll-behavior: smooth;
 }

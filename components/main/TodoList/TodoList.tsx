@@ -9,6 +9,7 @@ import {
   createContext,
   useContext,
   useOptimistic,
+  startTransition,
 } from "react";
 import { KeyedMutator } from "swr";
 import { motion, useMotionValue } from "motion/react";
@@ -26,15 +27,12 @@ import TodoItem from "@/components/shared/TodoItem/TodoItem";
 import ModalAddingSubGoal from "@/components/shared/Modal/ModalAddingSubGoal/ModalAddingSubGoal";
 
 import useModal from "@/hooks/useModal";
-import useTodoList from "@/hooks/main/queries/useTodoList";
+import { useSubGoalTodos, useGoalWithSubGoals } from "@/api/hooks";
 import useOptimisticToggle from "@/hooks/main/useOptimisticToggle";
 import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
 
-import { deleteTodo, toggleTodo } from "@/lib/main/todoFetching";
-// import { createNewTodoOnSubGoal } from "@/lib/main/subGoalFetching";
-import { createNewSubGoalOnGoal } from "@/lib/main/goalFetching";
-import { TodoRs } from "@/api/generated/motimo/Api";
-import useGoalWithSubGoalTodo from "@/hooks/main/queries/useGoalWithSubGoalTodo";
+import { todoApi, goalApi } from "@/api/service";
+import { TodoRs, TodoRsStatusEnum } from "@/api/generated/motimo/Api";
 
 /** api generator로부터 받은 타입을 사용 */
 
@@ -70,9 +68,21 @@ const TodoList = ({
 }: TodoListProps) => {
   // 펼친 상태가 기본
   const [isFolded, setIsFolded] = useState(false);
-  const { data: todoItemsInfo, mutate } = useTodoList(subGoalId ?? "", {
+  const { data: rawTodoData, mutate } = useSubGoalTodos(subGoalId ?? "", {
     fallbackData: initTodoItemsInfo,
   });
+
+  // Convert raw todo data to the format expected by the component
+  const todoItemsInfo: TodoItemsInfo[] | undefined = rawTodoData?.map(
+    (todoRs) => ({
+      id: todoRs.id ?? "",
+      title: todoRs.title ?? "",
+      checked: todoRs.status === TodoRsStatusEnum.COMPLETE,
+      reported: !!todoRs.todoResultId,
+      targetDate: todoRs.date ? new Date(todoRs.date) : undefined,
+    }),
+  );
+
   const todoCheckedLen =
     todoItemsInfo?.filter((todoItem) => todoItem.checked).length ??
     initTodoCheckedLen;
@@ -96,7 +106,7 @@ const TodoList = ({
   return (
     <>
       <div
-        className={` w-full  px-3 py-4 bg-white rounded-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.10)] inline-flex flex-col justify-start items-center gap-${isFolded ? 0 : 2} overflow-hidden`}
+        className={` w-full  px-3 py-4 bg-white rounded-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.10)] inline-flex flex-col justify-start items-center ${isFolded ? "gap-0" : "gap-2"} overflow-hidden`}
       >
         {/**  TodoList Header */}
         <header className="self-stretch h-8 inline-flex justify-start items-center gap-1">
@@ -161,7 +171,7 @@ interface NoSubGoalProps {
 
 const NoSubGoal = ({ goalId }: NoSubGoalProps) => {
   const { closeModal, openModal } = useModal();
-  const { mutate } = useGoalWithSubGoalTodo(goalId ?? "");
+  const { mutate } = useGoalWithSubGoals(goalId ?? "");
 
   return (
     <>
@@ -174,7 +184,7 @@ const NoSubGoal = ({ goalId }: NoSubGoalProps) => {
             세부 목표를 추가해주세요.
           </div>
           <button
-            onClick={() =>
+            onClick={() => {
               openModal(
                 <ModalAddingSubGoal
                   onClose={() => closeModal()}
@@ -182,7 +192,7 @@ const NoSubGoal = ({ goalId }: NoSubGoalProps) => {
                     // mutateResult가 네트워크 fail에서는 undefined가 나와야 함.
                     if (!goalId) return;
 
-                    const mutateResult = await createNewSubGoalOnGoal(goalId, {
+                    const mutateResult = await goalApi.addSubGoal(goalId, {
                       title: subGoal,
                     });
                     if (mutateResult) {
@@ -191,8 +201,8 @@ const NoSubGoal = ({ goalId }: NoSubGoalProps) => {
                     }
                   }}
                 />,
-              )
-            }
+              );
+            }}
             type="button"
             className="w-8 h-8 p-1.5 bg-background-primary rounded-[999px] flex justify-center items-center gap-2"
           >
@@ -288,7 +298,7 @@ const TodoItemContainer = ({
 
   return (
     <Fragment key={info.id}>
-      <div className="flex items-center relative w-full overflow-x-hidden">
+      <div className="flex items-center relative w-full overflow-hidden min-h-14">
         <motion.div
           className="cursor-grab active:cursor-grabbing  w-full z-10"
           drag="x"
@@ -314,10 +324,13 @@ const TodoItemContainer = ({
             {...info}
             checked={checked}
             onChecked={async () => {
-              await toggleTodo(info.id);
-              toggleChecekdOptimistically();
-              updateOptimisticCheckedLen && updateOptimisticCheckedLen(1);
-              mutate && mutate();
+              startTransition(async () => {
+                toggleChecekdOptimistically();
+                await todoApi.toggleTodoCompletion(info.id);
+                mutate && mutate();
+              });
+              // updateOptimisticCheckedLen &&
+              //   updateOptimisticCheckedLen(checked ? -1 : +1);
             }}
           />
         </motion.div>
@@ -326,7 +339,7 @@ const TodoItemContainer = ({
             onEdit={() => {
               /** 임시. 여기에 바텀 시트 관련 들어가야 함 */
               const initTodoInfo = {
-                date: info?.targetDate ?? new Date(),
+                date: info?.targetDate,
                 subGoalId: subGoalId ?? "",
                 subGoalTitle: subGoalTitle ?? "",
                 todo: info?.title,
@@ -337,7 +350,7 @@ const TodoItemContainer = ({
           />
           <DeleteButton
             onDelete={async () => {
-              await deleteTodo(info.id);
+              await todoApi.deleteById(info.id);
               mutate && mutate();
             }}
           />

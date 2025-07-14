@@ -1,24 +1,26 @@
 "use client";
 import { AppBar } from "@/components/shared";
 import Banner from "@/components/shared/Banner/Banner";
-import { getCheerComment } from "@/lib/main/cheersFetching";
-import { getPoints } from "@/lib/main/pointsFetching";
-import useSWR from "swr";
+import { useCheerPhrase, usePoints } from "@/api/hooks";
 
 interface MainHeaderProps {
   daysOfServiceUse: number;
 }
 const MainHeader = ({ daysOfServiceUse }: MainHeaderProps) => {
-  // 임시 fetching. RSC에서 가져오도록 바꿔야 함
-  const { data: cheerData } = useSWR("title", getCheerComment);
-  const { data: pointData } = useSWR("points", getPoints);
+  // SWR hooks from api/hooks.ts
+  const { data: cheerData } = useCheerPhrase();
+  const { data: pointData } = usePoints();
   const cheerPhrase = cheerData?.cheerPhrase ?? "";
   const points = `${(pointData?.point ?? 0).toLocaleString()}P`;
 
   return (
     <>
-      <div className="flex justify-end w-full">
-        <AppBar type="main" points={points} />
+      <div
+        className="flex justify-end w-full h-14" // Banner 여유 공간 확보
+      >
+        <div className="fixed top-0 z-20">
+          <AppBar type="main" points={points} />
+        </div>
       </div>
       <Banner
         title={cheerPhrase}

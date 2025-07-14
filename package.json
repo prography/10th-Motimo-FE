@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "dotenv -e .env.dev -- next dev --turbopack",
+    "local": "dotenv -e .env.local -- next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -24,6 +25,7 @@
   "dependencies": {
     "motion": "^12.18.1",
     "clsx": "^2.1.1",
+    "motion": "^12.18.1",
     "next": "15.3.2",
     "prop-types": "^15.8.1",
     "react": "^19.0.0",
@@ -50,6 +52,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "chromatic": "^12.1.1",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^9.27.0",
     "eslint-config-next": "^15.3.4",
     "glob": "^11.0.2",

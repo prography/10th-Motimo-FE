@@ -1,11 +1,11 @@
 import React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils/utils";
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "filled" | "outlined" | "text";
   size?: "s" | "m" | "l";
-  icon?: React.ReactNode;
+  icon?: React.ReactElement<{ className?: string }>;
   children: React.ReactNode;
 }
 
@@ -31,7 +31,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           // Size variants with correct padding and font sizes from Figma
           {
             "px-3 py-1 text-sm h-8": size === "s", // 4px 12px, 14px font, 32px height
-            "px-4 py-2 text-base h-10": size === "m", // 8px 16px, 16px font, 40px height  
+            "px-4 py-2 text-base h-10": size === "m", // 8px 16px, 16px font, 40px height
             "px-4 py-3 text-base h-12": size === "l", // 12px 16px, 16px font, 48px height
           },
 
@@ -41,7 +41,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             "bg-Color-primary-50 text-Color-white hover:opacity-90 active:opacity-80 disabled:bg-Color-gray-20 disabled:text-Color-gray-50 disabled:cursor-not-allowed disabled:hover:opacity-100":
               variant === "filled",
 
-            // Outlined variant  
+            // Outlined variant
             "border-[1.5px] border-Color-primary-50 text-Color-primary-50 bg-transparent hover:bg-Color-primary-50/5 active:bg-Color-primary-50/10 disabled:border-Color-gray-40 disabled:text-Color-gray-50 disabled:cursor-not-allowed disabled:hover:bg-transparent":
               variant === "outlined",
 
@@ -58,10 +58,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {icon && (
           <span className="flex-shrink-0">
-            {React.cloneElement(icon as React.ReactElement, {
+            {React.cloneElement(icon, {
               className: cn(
                 size === "s" ? "w-4 h-4" : size === "m" ? "w-5 h-5" : "w-5 h-5",
-                (icon as React.ReactElement).props?.className,
+                icon.props.className,
               ),
             })}
           </span>

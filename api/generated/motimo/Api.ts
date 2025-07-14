@@ -209,6 +209,53 @@ export interface TokenResponse {
   refreshToken?: string;
 }
 
+export interface UserRs {
+  /**
+   * 유저 Id
+   * @format uuid
+   * @example "0197157f-aea4-77bb-8581-3213eb5bd2ae"
+   */
+  id?: string;
+  /** 유저 이메일 */
+  email?: string;
+  /** 유저 닉네임 */
+  nickname?: string;
+  /** 유저 프로필 이미지 url */
+  profileImageUrl?: string;
+  /**
+   * 유저 생성 날짜
+   * @format date-time
+   */
+  createdAt?: string;
+}
+
+export interface TodoResultRs {
+  /**
+   * 투두 결과 Id
+   * @format uuid
+   * @example "0197157f-aea4-77bb-8581-3213eb5bd2ae"
+   */
+  todoResultId?: string;
+  /**
+   * 투두 Id
+   * @format uuid
+   * @example "0197157f-aea4-77bb-8581-3213eb5bd2ae"
+   */
+  todoId?: string;
+  /**
+   * 투두 진행 후 감정
+   * @example "뿌듯"
+   */
+  emotion?: TodoResultRsEmotionEnum;
+  /**
+   * 투두 설명
+   * @example "영단어 10개 이상 외우기를 했다."
+   */
+  content?: string;
+  /** 투두 관련 파일 url */
+  fileUrl?: string;
+}
+
 export interface TodoRs {
   /**
    * 투두 Id
@@ -242,39 +289,6 @@ export interface TodoRs {
    * @format date-time
    */
   createdAt?: string;
-}
-
-export interface TodoResultRs {
-  /**
-   * 투두 결과 Id
-   * @format uuid
-   * @example "0197157f-aea4-77bb-8581-3213eb5bd2ae"
-   */
-  todoResultId?: string;
-  /**
-   * 투두 Id
-   * @format uuid
-   * @example "0197157f-aea4-77bb-8581-3213eb5bd2ae"
-   */
-  todoId?: string;
-  /**
-   * 투두 진행 후 감정
-   * @example "뿌듯"
-   */
-  emotion?: TodoResultRsEmotionEnum;
-  /**
-   * 투두 설명
-   * @example "영단어 10개 이상 외우기를 했다."
-   */
-  content?: string;
-  /** 투두 관련 파일 url */
-  fileUrl?: string;
-}
-
-export interface ErrorResponse {
-  /** @format int32 */
-  statusCode?: number;
-  message?: string;
 }
 
 export interface PointRs {
@@ -493,15 +507,6 @@ export enum TodoResultRqEmotionEnum {
 }
 
 /**
- * 투두 상태
- * @example "COMPLETE"
- */
-export enum TodoRsStatusEnum {
-  COMPLETE = "COMPLETE",
-  INCOMPLETE = "INCOMPLETE",
-}
-
-/**
  * 투두 진행 후 감정
  * @example "뿌듯"
  */
@@ -510,6 +515,15 @@ export enum TodoResultRsEmotionEnum {
   REGRETFUL = "REGRETFUL",
   IMMERSED = "IMMERSED",
   GROWN = "GROWN",
+}
+
+/**
+ * 투두 상태
+ * @example "COMPLETE"
+ */
+export enum TodoRsStatusEnum {
+  COMPLETE = "COMPLETE",
+  INCOMPLETE = "INCOMPLETE",
 }
 
 /** 메세지 타입 (TODO, ENTER) */
@@ -528,9 +542,7 @@ export enum TodoMessageContentRsEmotionEnum {
 
 export type QueryParamsType = Record<string | number, any>;
 export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
-export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
 
-export interface FullRequestParams extends Omit<RequestInit, "body"> {
 export interface FullRequestParams extends Omit<RequestInit, "body"> {
   /** set parameter to `true` for call `securityWorker` for this request */
   secure?: boolean;
@@ -542,13 +554,8 @@ export interface FullRequestParams extends Omit<RequestInit, "body"> {
   query?: QueryParamsType;
   /** format of response (i.e. response.json() -> format: "json") */
   format?: ResponseFormat;
-  format?: ResponseFormat;
   /** request body */
   body?: unknown;
-  /** base url */
-  baseUrl?: string;
-  /** request cancellation token */
-  cancelToken?: CancelToken;
   /** base url */
   baseUrl?: string;
   /** request cancellation token */
@@ -563,9 +570,6 @@ export type RequestParams = Omit<
 export interface ApiConfig<SecurityDataType = unknown> {
   baseUrl?: string;
   baseApiParams?: Omit<RequestParams, "baseUrl" | "cancelToken" | "signal">;
-export interface ApiConfig<SecurityDataType = unknown> {
-  baseUrl?: string;
-  baseApiParams?: Omit<RequestParams, "baseUrl" | "cancelToken" | "signal">;
   securityWorker?: (
     securityData: SecurityDataType | null,
   ) => Promise<RequestParams | void> | RequestParams | void;
@@ -576,23 +580,12 @@ export interface HttpResponse<D extends unknown, E extends unknown = unknown>
   extends Response {
   data: D;
   error: E;
-  ) => Promise<RequestParams | void> | RequestParams | void;
-  customFetch?: typeof fetch;
 }
-
-export interface HttpResponse<D extends unknown, E extends unknown = unknown>
-  extends Response {
-  data: D;
-  error: E;
-}
-
-type CancelToken = Symbol | string | number;
 
 type CancelToken = Symbol | string | number;
 
 export enum ContentType {
   Json = "application/json",
-  JsonApi = "application/vnd.api+json",
   JsonApi = "application/vnd.api+json",
   FormData = "multipart/form-data",
   UrlEncoded = "application/x-www-form-urlencoded",
@@ -601,25 +594,12 @@ export enum ContentType {
 
 export class HttpClient<SecurityDataType = unknown> {
   public baseUrl: string = "http://158.179.175.134:8080";
-  public baseUrl: string = "http://158.179.175.134:8080";
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
   private abortControllers = new Map<CancelToken, AbortController>();
   private customFetch = (...fetchParams: Parameters<typeof fetch>) =>
     fetch(...fetchParams);
-  private abortControllers = new Map<CancelToken, AbortController>();
-  private customFetch = (...fetchParams: Parameters<typeof fetch>) =>
-    fetch(...fetchParams);
 
-  private baseApiParams: RequestParams = {
-    credentials: "same-origin",
-    headers: {},
-    redirect: "follow",
-    referrerPolicy: "no-referrer",
-  };
-
-  constructor(apiConfig: ApiConfig<SecurityDataType> = {}) {
-    Object.assign(this, apiConfig);
   private baseApiParams: RequestParams = {
     credentials: "same-origin",
     headers: {},
@@ -697,10 +677,6 @@ export class HttpClient<SecurityDataType = unknown> {
     [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
   };
 
-  protected mergeRequestParams(
-    params1: RequestParams,
-    params2?: RequestParams,
-  ): RequestParams {
   protected encodeQueryParam(key: string, value: any) {
     const encodedKey = encodeURIComponent(key);
     return `${encodedKey}=${encodeURIComponent(typeof value === "number" ? value : `${value}`)}`;
@@ -769,11 +745,9 @@ export class HttpClient<SecurityDataType = unknown> {
   ): RequestParams {
     return {
       ...this.baseApiParams,
-      ...this.baseApiParams,
       ...params1,
       ...(params2 || {}),
       headers: {
-        ...(this.baseApiParams.headers || {}),
         ...(this.baseApiParams.headers || {}),
         ...(params1.headers || {}),
         ...((params2 && params2.headers) || {}),
@@ -805,33 +779,7 @@ export class HttpClient<SecurityDataType = unknown> {
       this.abortControllers.delete(cancelToken);
     }
   };
-  protected createAbortSignal = (
-    cancelToken: CancelToken,
-  ): AbortSignal | undefined => {
-    if (this.abortControllers.has(cancelToken)) {
-      const abortController = this.abortControllers.get(cancelToken);
-      if (abortController) {
-        return abortController.signal;
-      }
-      return void 0;
-    }
 
-    const abortController = new AbortController();
-    this.abortControllers.set(cancelToken, abortController);
-    return abortController.signal;
-  };
-
-  public abortRequest = (cancelToken: CancelToken) => {
-    const abortController = this.abortControllers.get(cancelToken);
-
-    if (abortController) {
-      abortController.abort();
-      this.abortControllers.delete(cancelToken);
-    }
-  };
-
-  public request = async <T = any, E = any>({
-    body,
   public request = async <T = any, E = any>({
     body,
     secure,
@@ -841,24 +789,14 @@ export class HttpClient<SecurityDataType = unknown> {
     format,
     baseUrl,
     cancelToken,
-    baseUrl,
-    cancelToken,
     ...params
   }: FullRequestParams): Promise<T> => {
     const secureParams =
-      ((typeof secure === "boolean" ? secure : this.baseApiParams.secure) &&
       ((typeof secure === "boolean" ? secure : this.baseApiParams.secure) &&
         this.securityWorker &&
         (await this.securityWorker(this.securityData))) ||
       {};
     const requestParams = this.mergeRequestParams(params, secureParams);
-    const queryString = query && this.toQueryString(query);
-    const payloadFormatter = this.contentFormatters[type || ContentType.Json];
-    const responseFormat = format || requestParams.format;
-
-    return this.customFetch(
-      `${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`,
-      {
     const queryString = query && this.toQueryString(query);
     const payloadFormatter = this.contentFormatters[type || ContentType.Json];
     const responseFormat = format || requestParams.format;
@@ -872,47 +810,7 @@ export class HttpClient<SecurityDataType = unknown> {
           ...(type && type !== ContentType.FormData
             ? { "Content-Type": type }
             : {}),
-          ...(type && type !== ContentType.FormData
-            ? { "Content-Type": type }
-            : {}),
         },
-        signal:
-          (cancelToken
-            ? this.createAbortSignal(cancelToken)
-            : requestParams.signal) || null,
-        body:
-          typeof body === "undefined" || body === null
-            ? null
-            : payloadFormatter(body),
-      },
-    ).then(async (response) => {
-      const r = response.clone() as HttpResponse<T, E>;
-      r.data = null as unknown as T;
-      r.error = null as unknown as E;
-
-      const data = !responseFormat
-        ? r
-        : await response[responseFormat]()
-            .then((data) => {
-              if (r.ok) {
-                r.data = data;
-              } else {
-                r.error = data;
-              }
-              return r;
-            })
-            .catch((e) => {
-              r.error = e;
-              return r;
-            });
-
-      if (cancelToken) {
-        this.abortControllers.delete(cancelToken);
-      }
-
-      if (!response.ok) throw data;
-      return data.data;
-    });
         signal:
           (cancelToken
             ? this.createAbortSignal(cancelToken)
@@ -1084,6 +982,26 @@ export class Api<SecurityDataType extends unknown> {
       this.http.request<TodoIdRs, void | ErrorResponse>({
         path: `/v1/todos/${todoId}/completion`,
         method: "PATCH",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description 로그인한 사용자의 TODO 목록을 조회합니다.
+     *
+     * @tags 투두 API
+     * @name GetMyTodos
+     * @summary 나의 TODO 목록 조회
+     * @request GET:/v1/todos/me
+     * @secure
+     * @response `200` `(TodoRs)[]` TODO 목록 조회 성공
+     * @response `400` `ErrorResponse` 잘못된 요청 데이터
+     * @response `401` `void` 인증되지 않은 사용자
+     */
+    getMyTodos: (params: RequestParams = {}) =>
+      this.http.request<TodoRs[], ErrorResponse | void>({
+        path: `/v1/todos/me`,
+        method: "GET",
         secure: true,
         ...params,
       }),
@@ -1350,14 +1268,11 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      * @response `200` `(TodoRs)[]` TODO 목록 조회 성공
      * @response `400` `ErrorResponse` 잘못된 요청 데이터
-     * @response `200` `(TodoRs)[]` TODO 목록 조회 성공
-     * @response `400` `ErrorResponse` 잘못된 요청 데이터
      */
     getIncompleteOrTodayTodos: (
       subGoalId: string,
       params: RequestParams = {},
     ) =>
-      this.http.request<TodoRs[], ErrorResponse>({
       this.http.request<TodoRs[], ErrorResponse>({
         path: `/v1/sub-goals/${subGoalId}/todos/incomplete-or-date`,
         method: "GET",
@@ -1554,20 +1469,19 @@ export class Api<SecurityDataType extends unknown> {
   };
   사용자Api = {
     /**
-     * @description 로그인한 사용자의 TODO 목록을 조회합니다.
+     * @description 로그인한 사용자의 정보를 조회합니다.
      *
      * @tags 사용자 API
-     * @name GetMyTodos
-     * @summary 나의 TODO 목록 조회
-     * @request GET:/v1/users/me/todos
+     * @name GetMyProfile
+     * @summary 내 정보 조회
+     * @request GET:/v1/users/me
      * @secure
-     * @response `200` `(TodoRs)[]` TODO 목록 조회 성공
-     * @response `400` `ErrorResponse` 잘못된 요청 데이터
+     * @response `200` `UserRs` 유저 정보 조회 성공
      * @response `401` `void` 인증되지 않은 사용자
      */
-    getMyTodos: (params: RequestParams = {}) =>
-      this.http.request<TodoRs[], ErrorResponse | void>({
-        path: `/v1/users/me/todos`,
+    getMyProfile: (params: RequestParams = {}) =>
+      this.http.request<UserRs, void>({
+        path: `/v1/users/me`,
         method: "GET",
         secure: true,
         ...params,
