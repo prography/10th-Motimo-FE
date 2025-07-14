@@ -1,3 +1,4 @@
+import React from "react";
 import type { Preview } from "@storybook/react";
 import "../app/globals.css";
 import "./storybook-fonts.css";
@@ -9,6 +10,7 @@ import {
   Controls,
   Stories,
 } from "@storybook/blocks";
+
 const preview: Preview = {
   tags: ["autodocs"],
   decorators: [
@@ -31,6 +33,7 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
+
     docs: {
       page: () => (
         <>

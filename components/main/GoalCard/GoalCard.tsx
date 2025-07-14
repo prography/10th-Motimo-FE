@@ -46,7 +46,7 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
             id: todoInfo.id ?? "",
             title: todoInfo.title ?? "",
             checked: todoInfo.status === TodoRsStatusEnum.COMPLETE,
-            reported: todoInfo.todoResultId ? true : false,
+            reported: !!todoInfo.todoResultId,
             targetDate: todoInfo.date ? new Date(todoInfo.date) : new Date(),
           })) ?? [];
 

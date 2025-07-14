@@ -1,5 +1,6 @@
 import { SWRConfiguration } from "swr";
 import { useApiQuery } from "./useApiQuery";
+import { GetGroupChatParamsDirectionEnum } from "./generated/motimo/Api";
 
 export const useQuery = {
   // Todo API
@@ -66,20 +67,43 @@ export const useQuery = {
 
   groupChat: (
     groupId: string | null,
-    page: number,
-    size: number,
+    limit?: string,
+    cursor?: string,
+    direction?: GetGroupChatParamsDirectionEnum,
     config?: SWRConfiguration,
   ) =>
     useApiQuery(
       "그룹Api",
       "getGroupChat",
-      groupId ? [groupId, { page, size }] : null,
+      groupId ? [groupId, { limit, cursor, direction }] : null,
+      undefined,
+      config,
+    ),
+
+  groupDetail: (groupId: string | null, config?: SWRConfiguration) =>
+    useApiQuery(
+      "그룹Api",
+      "getGroupDetail",
+      groupId ? [groupId] : null,
+      undefined,
+      config,
+    ),
+
+  newGroupMessages: (
+    groupId: string | null,
+    latestCursor?: string,
+    config?: SWRConfiguration,
+  ) =>
+    useApiQuery(
+      "그룹Api",
+      "getNewGroupMessages",
+      groupId ? [groupId, { latestCursor }] : null,
       undefined,
       config,
     ),
 
   joinedGroups: (config?: SWRConfiguration) =>
-    useApiQuery("그룹Api", "getJoinedGroup", [], undefined, config),
+    useApiQuery("그룹Api", "getJoinedGroups", [], undefined, config),
 
   // Point & Cheer API
   points: (config?: SWRConfiguration) =>
@@ -87,6 +111,16 @@ export const useQuery = {
 
   cheerPhrase: (config?: SWRConfiguration) =>
     useApiQuery("응원Api", "getCheerPhrase", [], undefined, config),
+
+  // Notification API
+  notifications: (offset: number, limit: number, config?: SWRConfiguration) =>
+    useApiQuery(
+      "알림Api",
+      "getNotificationList",
+      [{ offset, limit }],
+      undefined,
+      config,
+    ),
 };
 
 // Legacy hooks for backward compatibility (이전 방식과 호환성 유지)
@@ -100,6 +134,9 @@ export const useSubGoalTodos = useQuery.subGoalTodos;
 export const useMyProfile = useQuery.myProfile;
 export const useGroupMembers = useQuery.groupMembers;
 export const useGroupChat = useQuery.groupChat;
+export const useGroupDetail = useQuery.groupDetail;
+export const useNewGroupMessages = useQuery.newGroupMessages;
 export const useJoinedGroups = useQuery.joinedGroups;
 export const usePoints = useQuery.points;
 export const useCheerPhrase = useQuery.cheerPhrase;
+export const useNotifications = useQuery.notifications;
