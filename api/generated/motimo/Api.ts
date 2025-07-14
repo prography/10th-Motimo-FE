@@ -10,13 +10,23 @@
  * ---------------------------------------------------------------
  */
 
-export interface UserInterestsRq {
+export interface UserUpdateRq {
+  /**
+   * 변경할 유저 이름
+   * @example "user name"
+   */
+  userName?: string;
+  /**
+   * 한줄 소개
+   * @example "안녕하세요."
+   */
+  bio?: string;
   /**
    * 유저 관심사 목록
    * @uniqueItems true
    * @example ["HEALTH","PROGRAMMING","SPORTS"]
    */
-  interests?: UserInterestsRqInterestsEnum[];
+  interests?: UserUpdateRqInterestsEnum[];
 }
 
 export interface UserIdRs {
@@ -226,6 +236,15 @@ export interface TokenResponse {
   refreshToken?: string;
 }
 
+export interface UserInterestsRq {
+  /**
+   * 유저 관심사 목록
+   * @uniqueItems true
+   * @example ["HEALTH","PROGRAMMING","SPORTS"]
+   */
+  interests?: UserInterestsRqInterestsEnum[];
+}
+
 export interface UserRs {
   /**
    * 유저 Id
@@ -237,8 +256,15 @@ export interface UserRs {
   email?: string;
   /** 유저 닉네임 */
   nickname?: string;
+  /** 유저 한줄 소개 */
+  bio?: string;
   /** 유저 프로필 이미지 url */
   profileImageUrl?: string;
+  /**
+   * 유저 관심사 목록
+   * @uniqueItems true
+   */
+  interestTypes?: UserRsInterestTypesEnum[];
   /**
    * 유저 생성 날짜
    * @format date-time
@@ -328,6 +354,16 @@ export interface CustomSliceNotificationItemRs {
 
 export type NotificationItemRs = object;
 
+export interface GroupDetailRs {
+  /**
+   * 그룹 아이디
+   * @format uuid
+   */
+  groupId: string;
+  /** 그룹 이름 (현재는 목표와 동일) */
+  name: string;
+}
+
 /** 새 메시지 카운트 및 최신 메세지 커서 응답 */
 export interface NewMessageRs {
   /** 새 메시지 존재 여부 */
@@ -362,8 +398,8 @@ export interface GroupMemberRs {
    * @format date-time
    */
   lastOnlineDate: string;
-  /** 찌르기 활성화 여부 */
-  isActivePoke: boolean;
+  /** 찌르기 활성화 여부, 본인이면 null */
+  isActivePoke?: boolean;
 }
 
 /** 그룹 메시지 응답 */
@@ -448,14 +484,19 @@ export type TodoResultSubmittedContent = GroupMessageContent & {
 };
 
 export interface JoinedGroupRs {
+  /**
+   * 그룹 아이디
+   * @format uuid
+   */
+  groupId: string;
   /** 그룹 이름 (현재는 목표와 동일) */
-  title: string;
+  name: string;
   /**
    * 그룹 마지막 활동 날짜
    * @format date-time
    */
   lastActiveDate?: string;
-  /** 알림 활성화 여부 */
+  /** 알림 활성화 여부 - 현재는 true 고정(미개발) */
   isNotificationActive: boolean;
 }
 
@@ -583,7 +624,7 @@ export interface CheerPhraseRs {
   cheerPhrase?: string;
 }
 
-export enum UserInterestsRqInterestsEnum {
+export enum UserUpdateRqInterestsEnum {
   HEALTH = "HEALTH",
   READING = "READING",
   STUDY = "STUDY",
@@ -602,7 +643,30 @@ export enum TodoResultRqEmotionEnum {
   PROUD = "PROUD",
   REGRETFUL = "REGRETFUL",
   IMMERSED = "IMMERSED",
-  GROWN = "GROWN",
+  SELF_REFLECTION = "SELF_REFLECTION",
+  ROUTINE = "ROUTINE",
+}
+
+export enum UserInterestsRqInterestsEnum {
+  HEALTH = "HEALTH",
+  READING = "READING",
+  STUDY = "STUDY",
+  LANGUAGE = "LANGUAGE",
+  SPORTS = "SPORTS",
+  PROGRAMMING = "PROGRAMMING",
+  CAREER = "CAREER",
+  SELF_IMPROVEMENT = "SELF_IMPROVEMENT",
+}
+
+export enum UserRsInterestTypesEnum {
+  HEALTH = "HEALTH",
+  READING = "READING",
+  STUDY = "STUDY",
+  LANGUAGE = "LANGUAGE",
+  SPORTS = "SPORTS",
+  PROGRAMMING = "PROGRAMMING",
+  CAREER = "CAREER",
+  SELF_IMPROVEMENT = "SELF_IMPROVEMENT",
 }
 
 /**
@@ -613,7 +677,8 @@ export enum TodoResultRsEmotionEnum {
   PROUD = "PROUD",
   REGRETFUL = "REGRETFUL",
   IMMERSED = "IMMERSED",
-  GROWN = "GROWN",
+  SELF_REFLECTION = "SELF_REFLECTION",
+  ROUTINE = "ROUTINE",
 }
 
 /**
@@ -636,7 +701,8 @@ export enum TodoResultSubmittedContentEmotionEnum {
   PROUD = "PROUD",
   REGRETFUL = "REGRETFUL",
   IMMERSED = "IMMERSED",
-  GROWN = "GROWN",
+  SELF_REFLECTION = "SELF_REFLECTION",
+  ROUTINE = "ROUTINE",
 }
 
 export enum CreateGroupReactionParamsTypeEnum {
@@ -918,12 +984,44 @@ export class Api<SecurityDataType extends unknown> {
 
   사용자Api = {
     /**
+     * @description 닉네임,소개글,관심사 및 프로필 이미지를 수정합니다. 유저 이름이 null이거나 빈 문자열(공백만 있는 경우 포함)이면 기존 이름을 사용합니다. 이미지 업로드가 없으면 기존 이미지를 유지합니다.
+     *
+     * @tags 사용자 API
+     * @name UpdateMyProfile
+     * @summary 프로필 수정
+     * @request PUT:/v1/users
+     * @secure
+     * @response `200` `UserIdRs` 수정 성공
+     * @response `400` `ErrorResponse` 잘못된 요청/파일 형식 오류
+     * @response `401` `void` 인증되지 않은 사용자
+     */
+    updateMyProfile: (
+      data: {
+        request: UserUpdateRq;
+        /**
+         * 프로필 이미지 파일
+         * @format binary
+         */
+        file?: File;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<UserIdRs, ErrorResponse | void>({
+        path: `/v1/users`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.FormData,
+        ...params,
+      }),
+
+    /**
      * @description 사용자가 보유한 관심사를 수정합니다.
      *
      * @tags 사용자 API
      * @name UpdateMyInterests
      * @summary 나의 관심사 수정
-     * @request PUT:/v1/users/interests
+     * @request PATCH:/v1/users/interests
      * @secure
      * @response `200` `UserIdRs` 관심사 수정 성공
      * @response `400` `ErrorResponse` 잘못된 요청 데이터
@@ -932,10 +1030,29 @@ export class Api<SecurityDataType extends unknown> {
     updateMyInterests: (data: UserInterestsRq, params: RequestParams = {}) =>
       this.http.request<UserIdRs, ErrorResponse | void>({
         path: `/v1/users/interests`,
-        method: "PUT",
+        method: "PATCH",
         body: data,
         secure: true,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * @description userId 로 특정 사용자의 프로필을 조회합니다.
+     *
+     * @tags 사용자 API
+     * @name GetProfile
+     * @summary 사용자 프로필 조회
+     * @request GET:/v1/users/{userId}
+     * @secure
+     * @response `200` `UserRs` 조회 성공
+     * @response `404` `ErrorResponse` 사용자를 찾을 수 없음
+     */
+    getProfile: (userId: string, params: RequestParams = {}) =>
+      this.http.request<UserRs, ErrorResponse>({
+        path: `/v1/users/${userId}`,
+        method: "GET",
+        secure: true,
         ...params,
       }),
 
@@ -1443,6 +1560,24 @@ export class Api<SecurityDataType extends unknown> {
       }),
 
     /**
+     * @description 그룹 아이디와 제목을 조회합니다.
+     *
+     * @tags 그룹 API
+     * @name GetGroupDetail
+     * @summary 그룹 상세 조회 API
+     * @request GET:/v1/groups/{groupId}
+     * @secure
+     * @response `200` `GroupDetailRs` OK
+     */
+    getGroupDetail: (groupId: string, params: RequestParams = {}) =>
+      this.http.request<GroupDetailRs, any>({
+        path: `/v1/groups/${groupId}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
      * @description  사용자가 마지막으로 읽은 커서 이후 새로 작성된 메시지 개수를 반환합니다.
      *
      * @tags 그룹 API
@@ -1524,13 +1659,13 @@ export class Api<SecurityDataType extends unknown> {
      * @description 참여중인 그룹을 조회합니다.
      *
      * @tags 그룹 API
-     * @name GetJoinedGroup
+     * @name GetJoinedGroups
      * @summary 참여중인 그룹 목록 API
      * @request GET:/v1/groups/me
      * @secure
      * @response `200` `(JoinedGroupRs)[]` OK
      */
-    getJoinedGroup: (params: RequestParams = {}) =>
+    getJoinedGroups: (params: RequestParams = {}) =>
       this.http.request<JoinedGroupRs[], any>({
         path: `/v1/groups/me`,
         method: "GET",

@@ -39,7 +39,7 @@ const ListCard = ({
   const { data: fetchedTodoItemsInfo, mutate } = useTodoList(
     subGoalInfo.id ?? "",
   );
-
+  // 여기 초기값 등 처리에서 데이터를 가져와야 함. 지금은 false로 임시로 둠.
   const [subGoalCompleted, setSubGoalCompleted] = useState(false);
 
   const { closeModal, openModal } = useModal();
@@ -102,7 +102,7 @@ const ListCard = ({
               </div>
               <Checkbox
                 checked={subGoalCompleted}
-                onClick={async () => {
+                onChange={async () => {
                   if (!subGoalCompleted) {
                     const res = await toggleSubGoalCompletion(
                       subGoalInfo.id ?? "",

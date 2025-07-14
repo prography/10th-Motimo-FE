@@ -36,6 +36,7 @@ import { deleteTodo, toggleTodo } from "@/lib/fetching/todoFetching";
 import { createNewSubGoalOnGoal } from "@/lib/fetching/goalFetching";
 import { TodoRs } from "@/api/generated/motimo/Api";
 import useGoalWithSubGoalTodo from "@/hooks/main/queries/useGoalWithSubGoalTodo";
+import Link from "next/link";
 
 /** api generator로부터 받은 타입을 사용 */
 
@@ -62,6 +63,7 @@ const TodoListContext = createContext<{
   mutate?: KeyedMutator<TodoRs[]>;
   updateOptimisticCheckedLen?: (action: number) => void;
   onReportedClick?: TodoListProps["onReportedClick"];
+  goalId?: string;
 } | null>(null);
 
 const TodoList = ({
@@ -138,6 +140,7 @@ const TodoList = ({
                 subGoalTitle: subGoal,
                 updateOptimisticCheckedLen,
                 onReportedClick,
+                goalId,
               }}
             >
               <TodoArea
@@ -369,6 +372,8 @@ const TodoItemContainer = ({
 const OptimizedTodoItem = memo(TodoItem);
 
 const AllTodoFinished = () => {
+  const nullableContext = useContext(TodoListContext);
+  const { goalId } = nullableContext || {};
   return (
     <>
       <div className="w-full self-stretch py-6 bg-background-normal rounded-lg inline-flex flex-col justify-center items-center gap-3 overflow-hidden">
@@ -383,25 +388,15 @@ const AllTodoFinished = () => {
             {"새로운 투두를 추가하시거나\n세부 목표를 달성하실 수 있어요."}
           </p>
         </div>
-        <div
-          data-leading-icon="false"
-          data-status="enabled"
-          data-type="filled"
-          className="px-4 py-2 relative bg-background-primary rounded-lg flex flex-col justify-center items-start gap-2 overflow-hidden"
-        >
-          <div className="self-stretch inline-flex justify-center items-center gap-2">
-            <button
-              type="button"
-              className="justify-start text-white text-sm font-semibold font-['Pretendard'] leading-tight"
-            >
-              목표 상세페이지로 이동
-            </button>
+        <Link href={`/details/${goalId}`}>
+          <div className="px-4 py-2 relative bg-background-primary rounded-lg flex flex-col justify-center items-start gap-2 overflow-hidden">
+            <div className="self-stretch inline-flex justify-center items-center gap-2">
+              <p className="justify-start text-white text-sm font-semibold font-['Pretendard'] leading-tight">
+                목표 상세페이지로 이동
+              </p>
+            </div>
           </div>
-          <div
-            data-type="normal"
-            className="w-40 h-9 left-0 top-0 absolute"
-          ></div>
-        </div>
+        </Link>
       </div>
     </>
   );

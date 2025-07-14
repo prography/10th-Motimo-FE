@@ -86,6 +86,7 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
             return (
               <TodoList
                 {...subGoalInfo}
+                goalId={goalId || ""}
                 key={subGoalInfo.subGoalId}
                 onReportedClick={(todoId) => {
                   setTodoResBottomSheetInfo({ open: true, todoId });

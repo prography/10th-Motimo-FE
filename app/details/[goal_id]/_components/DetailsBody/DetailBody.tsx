@@ -19,8 +19,9 @@ interface DetailBodyProps {
 }
 
 const DetailBody = ({ goalId }: DetailBodyProps) => {
-  const { data, mutate } = useGoalWithSubGoalTodo(goalId);
-  const { data: goalDetail } = useGoalDetail(goalId);
+  const { data } = useGoalWithSubGoalTodo(goalId);
+  const { data: goalDetail, mutate: mutateForGoalProgress } =
+    useGoalDetail(goalId);
   const [targetSubGoalIdx, setTargetSubGoalIdx] = useState(0);
   const { openModal, closeModal } = useModal();
 
@@ -130,7 +131,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
             name: data.subGoals?.[targetSubGoalIdx].subGoal,
             totalSubGoalsLen: data.subGoals?.length ?? 0,
           }}
-          applyOnGoalData={() => mutate()}
+          applyOnGoalData={() => mutateForGoalProgress()}
         />
       </section>
     </div>
