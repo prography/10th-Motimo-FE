@@ -53,9 +53,6 @@ export const Primary: Story = {
   args: {
     groups: sampleJoinedGroups,
     isJoined: true,
-    onJoinGroup: (groupId: string) => {
-      console.log("Join group:", groupId);
-    },
   },
 };
 
@@ -63,9 +60,6 @@ export const JoinedGroups: Story = {
   args: {
     groups: sampleJoinedGroups,
     isJoined: true,
-    onJoinGroup: (groupId: string) => {
-      console.log("Join group:", groupId);
-    },
   },
 };
 
@@ -73,9 +67,6 @@ export const PendingGroups: Story = {
   args: {
     groups: samplePendingGroups,
     isJoined: false,
-    onJoinGroup: (groupId: string) => {
-      console.log("Join group:", groupId);
-    },
   },
 };
 
@@ -102,9 +93,6 @@ export const SinglePendingGroup: Story = {
       },
     ] as GoalNotInGroupRs[],
     isJoined: false,
-    onJoinGroup: (groupId: string) => {
-      console.log("Join group:", groupId);
-    },
   },
 };
 
@@ -155,8 +143,5 @@ export const ManyGroups: Story = {
       },
     ] as JoinedGroupRs[],
     isJoined: true,
-    onJoinGroup: (groupId: string) => {
-      console.log("Join group:", groupId);
-    },
   },
 };
