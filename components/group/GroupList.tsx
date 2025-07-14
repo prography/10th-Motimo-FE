@@ -12,14 +12,12 @@ const isJoinedGroupRs = (
 
 interface GroupListProps<T extends JoinedGroupRs | GoalNotInGroupRs> {
   groups: T[];
-  onJoinGroup?: (groupId: string) => void;
   className?: string;
   isJoined: boolean;
 }
 
 export const GroupList = <T extends JoinedGroupRs | GoalNotInGroupRs>({
   groups,
-  onJoinGroup,
   className,
   isJoined,
 }: GroupListProps<T>) => {
@@ -39,7 +37,7 @@ export const GroupList = <T extends JoinedGroupRs | GoalNotInGroupRs>({
               title={group.name}
               lastActivityDate={group.lastActiveDate}
               hasNotification={group.isNotificationActive}
-              onJoinClick={() => {}}
+              onClick={() => router.push(`/group/${group.groupId}`)}
             />
           );
         } else {
@@ -51,17 +49,9 @@ export const GroupList = <T extends JoinedGroupRs | GoalNotInGroupRs>({
               title={group.title ?? ""}
               lastActivityDate={undefined} // GoalNotInGroupRs는 lastActiveDate가 없음
               hasNotification={false} // GoalNotInGroupRs는 isNotificationActive가 없음
-              onJoinClick={() => {
-                // goal id를 가지고 join random group page로 이동
-                if (group.id) {
-                  router.push(`/group/join-random?goalId=${group.id}`);
-                } else {
-                  // 에러 처리: goal id가 없는 경우
-                  console.error("Goal ID is missing for group:", group.title);
-                  alert("목표 정보를 찾을 수 없습니다. 다시 시도해주세요.");
-                  return;
-                }
-              }}
+              onClick={() =>
+                router.push(`/group/join-random?goalId=${group.id}`)
+              }
             />
           );
         }

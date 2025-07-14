@@ -7,7 +7,6 @@ import { GoalNotInGroupRs, JoinedGroupRs } from "@/api/generated/motimo/Api";
 interface GroupPageProps {
   pendingGroups: GoalNotInGroupRs[];
   joinedGroups: JoinedGroupRs[]; // 추후 타입 정의
-  onJoinGroup: () => void;
   onNotificationClick?: () => void;
   className?: string;
 }
@@ -15,7 +14,6 @@ interface GroupPageProps {
 export function GroupPage({
   pendingGroups,
   joinedGroups,
-  onJoinGroup,
   onNotificationClick,
   className = "",
 }: GroupPageProps) {
@@ -41,7 +39,7 @@ export function GroupPage({
                 참여 중인 그룹 ({joinedGroups.length})
               </h1>
             </div>
-            <GroupList groups={joinedGroups} onJoinGroup={onJoinGroup} isJoined={true} />
+            <GroupList groups={joinedGroups} isJoined={true} />
           </div>
         )}
 
@@ -53,7 +51,7 @@ export function GroupPage({
               참여 대기 중인 목표 ({pendingGroups.length})
             </h1>
           </div>
-          <GroupList groups={pendingGroups} onJoinGroup={onJoinGroup} isJoined={false} />
+          <GroupList groups={pendingGroups} isJoined={false} />
         </div>
       </div>
     </div>

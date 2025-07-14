@@ -29,7 +29,6 @@ export default function GroupRoute() {
       <GroupPage
         pendingGroups={pendingGroups ?? []}
         joinedGroups={joinedGroups ?? []}
-        onJoinGroup={() => {}}
         onNotificationClick={handleNotificationClick}
       />
 
