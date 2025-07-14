@@ -2,7 +2,7 @@
 
 import GoalData from "@/components/details/GoalData/GoalData";
 import ListCard from "@/components/details/ListCard/ListCard";
-import useGoalWithSubGoalTodo from "@/hooks/main/queries/useGoalWithSubGoalTodo";
+// import useGoalWithSubGoalTodo from "@/hooks/main/queries/useGoalWithSubGoalTodo";
 import useModal from "@/hooks/useModal";
 import ModalCompletingGoal from "@/components/shared/Modal/ModalCompletingGoal/ModalCompletingGoal";
 import RightArrowSvg from "@/components/shared/public/Chevron_Right_MD.svg";
@@ -10,10 +10,13 @@ import { UserIcon } from "@/components/icons";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import CheckSvg from "@/components/shared/public/check.svg";
-import { toggleGoalCompletion } from "@/lib/fetching/goalFetching";
+// import { toggleGoalCompletion } from "@/lib/fetching/goalFetching";
 import { calcLeftDay } from "@/utils/calcLeftDay";
-import useGoalDetail from "@/hooks/main/queries/useGoalDetail";
+// import useGoalDetail from "@/hooks/main/queries/useGoalDetail";
 import PeopleSvg from "@/public/images/People.svg";
+import { useGoalDetail, useGoalWithSubGoals } from "@/api/hooks";
+import useGoalWithSubGoalTodo from "@/hooks/queries/useGoalWithSubGoalTodo";
+import { goalApi } from "@/api/service";
 interface DetailBodyProps {
   goalId: string;
 }
@@ -25,7 +28,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
   const [targetSubGoalIdx, setTargetSubGoalIdx] = useState(0);
   const { openModal, closeModal } = useModal();
 
-  const dDay = calcLeftDay(data.dueDate ?? new Date());
+  const dDay = calcLeftDay(data?.dueDate ?? new Date());
 
   // tmp
   const allSubGoalCompleted = true;
@@ -37,7 +40,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
       <ModalCompletingGoal
         onClose={closeModal}
         onCompleteGoal={async () => {
-          const res = await toggleGoalCompletion(goalId);
+          const res = await goalApi.goalComplete(goalId);
           if (res) {
             // 토스트
             closeModal();
@@ -126,7 +129,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
             })
           }
           subGoalInfo={{
-            id: data.subGoals?.[targetSubGoalIdx].subGoalId,
+            id: data?.subGoals?.[targetSubGoalIdx]?.subGoalId,
             idx: targetSubGoalIdx,
             name: data.subGoals?.[targetSubGoalIdx].subGoal,
             totalSubGoalsLen: data.subGoals?.length ?? 0,

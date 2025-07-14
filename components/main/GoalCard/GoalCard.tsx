@@ -22,6 +22,7 @@ import useModal from "@/hooks/useModal";
 import { date2StringWithSpliter } from "@/utils/date2String";
 import { calcLeftDay } from "@/utils/calcLeftDay";
 import TodoResultBottomSheet from "@/components/shared/BottomSheets/TodoResultBottomSheet/TodoResultBottomSheet";
+import { TodoResultRqEmotionEnum } from "@/api/generated/motimo/Api";
 
 // Define the converted data type
 type ConvertedGoalWithSubGoalTodo = Omit<GoalWithSubGoalTodoRs, "subGoals"> & {
@@ -184,13 +185,18 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
           setTodoResBottomSheetInfo((prev) => ({ ...prev, open: nextIsOpen }))
         }
         onSubmit={async (todoResult) => {
-          const res = await postTodoResult(
+          const res = await todoApi.upsertTodoResult(
             todoResBottomSheetInfo.todoId ?? "",
             {
-              ...todoResult,
-              emotion: todoResult.emotion as unknown as TodoResultRqEmotionEnum,
+              request: {
+                content: todoResult.memo,
+                emotion:
+                  todoResult.emotion as unknown as TodoResultRqEmotionEnum,
+              },
+              file: todoResult.file || undefined,
             },
           );
+
           if (res) {
             setTodoResBottomSheetInfo({ open: false, todoId: null });
           }

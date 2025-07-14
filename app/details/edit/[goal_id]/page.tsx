@@ -1,9 +1,12 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import useGoalWithSubGoalTodo from "@/hooks/main/queries/useGoalWithSubGoalTodo";
+// import useGoalWithSubGoalTodo from "@/hooks/main/queries/useGoalWithSubGoalTodo";
+import useGoalWithSubGoalTodo, {
+  ConvertedGoalWithSubGoalTodo,
+} from "@/hooks/queries/useGoalWithSubGoalTodo";
 import { useState } from "react";
-import { ConvertedGoalWithSubGoalTodo } from "@/hooks/main/queries/useGoalWithSubGoalTodo";
+// import { ConvertedGoalWithSubGoalTodo } from "@/hooks/main/queries/useGoalWithSubGoalTodo";
 
 import EditHeader from "./_components/EditHeader/EditHeader";
 import EditBody from "./_components/EditBody/EditBody";

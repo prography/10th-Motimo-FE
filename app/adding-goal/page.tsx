@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import PlusSvg from "@/components/shared/public/Add_Plus.svg";
 import GoalDurationBottomSheet from "@/components/details/BottomSheets/GoalDurationBottomSheet/GoalDurationBottomSheet";
-import { createNewGoal } from "@/lib/fetching/goalFetching";
+import { goalApi } from "@/api/service";
 
 export default function AddingGoal() {
   const router = useRouter();
@@ -36,7 +36,7 @@ export default function AddingGoal() {
         className="flex-1 flex flex-col"
         id="goalAdding"
         onSubmit={async () => {
-          const res = await createNewGoal({
+          const res = await goalApi.createGoal({
             isPeriodByMonth: goalAddInfo.durationType === "month",
             title: goalAddInfo.goal,
             dueDate:

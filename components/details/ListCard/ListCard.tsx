@@ -4,15 +4,15 @@ import RightArrowSvg from "@/components/shared/public/Chevron_Right_MD.svg";
 import LeftArrowSvg from "@/components/shared/public/Chevron_Left_MD.svg";
 import TodoItem from "@/components/shared/TodoItem/TodoItem";
 import { TodoItemsInfo } from "@/types/todoList";
-import useTodoList from "@/hooks/main/queries/useTodoList";
-import { toggleTodo, postTodoResult } from "@/lib/fetching/todoFetching";
-import { toggleSubGoalCompletion } from "@/lib/fetching/subGoalFetching";
 import Checkbox from "@/components/shared/Checkbox/Checkbox";
 import useModal from "@/hooks/useModal";
 import ModalIncompletingSubGoal from "../Modals/ModalIncompletingSubGoal/ModalIncompletingSubGoal";
 import { useState } from "react";
 import TodoResultBottomSheet from "@/components/shared/BottomSheets/TodoResultBottomSheet/TodoResultBottomSheet";
 import { TodoResultRqEmotionEnum } from "@/api/generated/motimo/Api";
+import { useSubGoalTodos } from "@/api/hooks";
+import useTodoList from "@/hooks/queries/useTodoList";
+import { subGoalApi, todoApi } from "@/api/service";
 interface ListCardProps {
   subGoalInfo: {
     name?: string;
@@ -104,7 +104,7 @@ const ListCard = ({
                 checked={subGoalCompleted}
                 onChange={async () => {
                   if (!subGoalCompleted) {
-                    const res = await toggleSubGoalCompletion(
+                    const res = await subGoalApi.subGoalCompleteToggle(
                       subGoalInfo.id ?? "",
                     );
                     if (res) setSubGoalCompleted(!subGoalCompleted);
@@ -115,7 +115,7 @@ const ListCard = ({
                       <ModalIncompletingSubGoal
                         onClose={() => closeModal()}
                         onIncompleteSubGoal={async () => {
-                          const res = await toggleSubGoalCompletion(
+                          const res = await subGoalApi.subGoalCompleteToggle(
                             subGoalInfo.id ?? "",
                           );
                           if (res) {
@@ -137,7 +137,7 @@ const ListCard = ({
             return (
               <TodoItem
                 onChecked={async () => {
-                  const res = await toggleTodo(todoInfo.id);
+                  const res = await todoApi.toggleTodoCompletion(todoInfo.id);
                   if (res) mutate();
                 }}
                 title={todoInfo.title}
@@ -160,23 +160,15 @@ const ListCard = ({
         <TodoResultBottomSheet
           hasBottomTabBar={false}
           onSubmit={async (todoResult) => {
-            // console.log("todoresult: ", todoResult);
             todoIdForResult &&
               todoResult.emotion !== null &&
-              (await postTodoResult(
-                todoIdForResult,
-                {
-                  emotion:
-                    // TodoResultRqEmotionEnum[
-                    //   todoResult.emotion as keyof TodoResultRqEmotionEnum
-                    // ],
-                    todoResult.emotion as TodoResultRqEmotionEnum,
+              (await todoApi.upsertTodoResult(todoIdForResult, {
+                request: {
+                  emotion: todoResult.emotion as TodoResultRqEmotionEnum,
                   content: todoResult.memo,
-
-                  //  as NonNullable<typeof todoResult.emotion> as
                 },
-                todoResult.file ? todoResult.file : undefined,
-              ));
+                file: todoResult.file || undefined,
+              }));
             mutate();
           }}
           openBottomSheet={openBottomSheet}

@@ -7,7 +7,6 @@ import { useEffect, useState, useRef } from "react";
 import PlusSvg from "@/components/shared/public/Add_Plus.svg";
 import useModal from "@/hooks/useModal";
 import ModalAddingGoal from "@/components/shared/Modal/ModalAddingGoal/ModalAddingGoal";
-import { createNewGoal } from "@/lib/fetching/goalFetching";
 import { useRouter } from "next/navigation";
 import { motion, useMotionValue } from "motion/react";
 

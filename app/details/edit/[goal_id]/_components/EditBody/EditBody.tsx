@@ -14,16 +14,18 @@ import {
 import useModal from "@/hooks/useModal";
 import ModalExitingEdit from "@/components/details/Modals/ModalExitingEdit/ModalExitingEdit";
 import { useParams, useRouter } from "next/navigation";
-import useGoalWithSubGoalTodo, {
-  ConvertedGoalWithSubGoalTodo,
-} from "@/hooks/main/queries/useGoalWithSubGoalTodo";
+// import useGoalWithSubGoalTodo, {
+//   ConvertedGoalWithSubGoalTodo,
+// } from "@/hooks/main/queries/useGoalWithSubGoalTodo";
+import useGoalWithSubGoalTodo from "@/hooks/queries/useGoalWithSubGoalTodo";
 
 import GoalEdit from "../GoalEdit/GoalEdit";
 import SubGoalEdit from "../SubGoalEdit/SubGoalEdit";
 
 import { date2StringWithSpliter } from "@/utils/date2String";
+import { goalApi } from "@/api/service";
 
-import { updateGoal } from "@/lib/fetching/goalFetching";
+// import { updateGoal } from "@/lib/fetching/goalFetching";
 
 interface SubGoalEditItem {
   order: number;
@@ -64,7 +66,7 @@ const EditBody = ({ goalId, initData, tab }: EditBodyProps) => {
           onSubmit={async (e) => {
             e.preventDefault();
 
-            const res = await updateGoal(goalId, {
+            const res = await goalApi.updateGoal(goalId, {
               title: editContents.goalTitle,
               isPeriodByMonth: editContents.durationType === "month",
               month:
