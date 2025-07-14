@@ -8,5 +8,4 @@ export { PendingGroupCard } from "./PendingGroupCard";
 export { PendingGroupList } from "./PendingGroupList";
 export { default as ReactionModal } from "./ReactionModal";
 export { SystemMessage } from "./SystemMessage";
-export type { ChatMessage } from "./GroupChat";
 export type { PendingGroup } from "./PendingGroupList";

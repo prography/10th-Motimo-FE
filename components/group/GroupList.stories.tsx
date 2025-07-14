@@ -18,17 +18,20 @@ type Story = StoryObj<typeof GroupList>;
 // Mock data for joined groups
 const sampleJoinedGroups: JoinedGroupRs[] = [
   {
-    title: "아 그룹명뭐로하지",
+    groupId: "1",
+    name: "아 그룹명뭐로하지",
     lastActiveDate: "2025.05.12",
     isNotificationActive: true,
   },
   {
-    title: "프로그래밍 스터디 그룹",
+    groupId: "2",
+    name: "프로그래밍 스터디 그룹",
     lastActiveDate: "2025.05.15",
     isNotificationActive: false,
   },
   {
-    title: "독서 클럽",
+    groupId: "3",
+    name: "독서 클럽",
     lastActiveDate: "2025.05.10",
     isNotificationActive: true,
   },
@@ -80,7 +83,8 @@ export const SingleJoinedGroup: Story = {
   args: {
     groups: [
       {
-        title: "UI/UX 디자인 스터디",
+        groupId: "1",
+        name: "UI/UX 디자인 스터디",
         lastActiveDate: "2025.05.18",
         isNotificationActive: true,
       },
@@ -120,7 +124,8 @@ export const WithNotifications: Story = {
         isNotificationActive: true,
       },
       {
-        title: "알림이 없는 그룹",
+        groupId: "2",
+        name: "알림이 없는 그룹",
         lastActiveDate: "2025.05.19",
         isNotificationActive: false,
       },

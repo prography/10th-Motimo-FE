@@ -4,8 +4,10 @@ import { GoalNotInGroupRs, JoinedGroupRs } from "@/api/generated/motimo/Api";
 import { useRouter } from "next/navigation";
 
 // 타입 가드 함수들
-const isJoinedGroupRs = (group: JoinedGroupRs | GoalNotInGroupRs): group is JoinedGroupRs => {
-  return 'lastActiveDate' in group || 'isNotificationActive' in group;
+const isJoinedGroupRs = (
+  group: JoinedGroupRs | GoalNotInGroupRs,
+): group is JoinedGroupRs => {
+  return "lastActiveDate" in group || "isNotificationActive" in group;
 };
 
 interface GroupListProps<T extends JoinedGroupRs | GoalNotInGroupRs> {
@@ -27,16 +29,17 @@ export const GroupList = <T extends JoinedGroupRs | GoalNotInGroupRs>({
     <div className={cn("flex flex-col gap-4", className)}>
       {groups.map((group, i) => {
         // 타입에 따라 분기 처리
-        if (isJoinedGroupRs(group)) { // TODO: should refactor
+        if (isJoinedGroupRs(group)) {
+          // TODO: should refactor
           // JoinedGroupRs 타입인 경우
           return (
             <GroupItem
-              key={`${group.title}-${i}`}
+              key={group.groupId}
               isJoined={isJoined}
-              title={group.title ?? ""}
+              title={group.name}
               lastActivityDate={group.lastActiveDate}
               hasNotification={group.isNotificationActive}
-              onJoinClick={() => { }}
+              onJoinClick={() => {}}
             />
           );
         } else {

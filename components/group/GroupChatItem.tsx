@@ -10,15 +10,19 @@ import ReactionCool from "@/components/shared/public/reactions/Reaction_Cool.svg
 import ReactionCheerUp from "@/components/shared/public/reactions/Reaction_CheerUp.svg";
 import ReactionLove from "@/components/shared/public/reactions/Reaction_Love.svg";
 import ReactionTypes from "@/types/reactionTypes";
-import { GroupMessageItemRsMessageTypeEnum } from "@/api/generated/motimo/Api";
+import { useMyProfile } from "@/api/hooks";
+import {
+  GroupMessageContentRs,
+  TodoResultSubmittedContent,
+} from "@/api/generated/motimo/Api";
 
 interface GroupChatItemProps {
-  type: GroupMessageItemRsMessageTypeEnum;
   style: "todo" | "photo" | "diary" | "reaction";
-  hasReaction?: boolean;
+  hasUserReacted?: boolean;
   reactionCount?: number;
-  username: string;
-  mainText: string;
+  userName: string;
+  userId: string;
+  mainText: TodoResultSubmittedContent;
   checkboxLabel?: string;
   isChecked?: boolean;
   diaryText?: string;
@@ -32,17 +36,19 @@ interface GroupChatItemProps {
 // Checkbox component for todo items
 const ChatCheckbox = ({
   checked,
-  label
+  label,
 }: {
   checked: boolean;
   label: string;
 }) => {
   return (
     <div className="flex items-center gap-1 py-1">
-      <div className={cn(
-        "w-4 h-4 rounded-[4px] flex items-center justify-center",
-        checked ? "bg-[#33363D]" : "border border-[#33363D]"
-      )}>
+      <div
+        className={cn(
+          "w-4 h-4 rounded-[4px] flex items-center justify-center",
+          checked ? "bg-[#33363D]" : "border border-[#33363D]",
+        )}
+      >
         {checked && <CheckIcon width={14} height={14} color="#FFFFFF" />}
       </div>
       <span className="font-SUIT_Variable font-normal text-sm leading-[1.5] tracking-[-0.01em] text-[#33363D]">
@@ -53,31 +59,27 @@ const ChatCheckbox = ({
 };
 
 // Reaction illustration component
-const ReactionIllustration = ({
-  type = "best"
-}: {
-  type?: ReactionTypes;
-}) => {
+const ReactionIllustration = ({ type = "best" }: { type?: ReactionTypes }) => {
   const reactionConfig = {
     best: {
       Component: ReactionBest,
-      label: "최고!"
+      label: "최고!",
     },
     good: {
       Component: ReactionGood,
-      label: "좋아!"
+      label: "좋아!",
     },
     cool: {
       Component: ReactionCool,
-      label: "멋져!"
+      label: "멋져!",
     },
     cheerUp: {
       Component: ReactionCheerUp,
-      label: "화이팅!"
+      label: "화이팅!",
     },
     love: {
       Component: ReactionLove,
-      label: "사랑해!"
+      label: "사랑해!",
     },
   };
 
@@ -87,20 +89,16 @@ const ReactionIllustration = ({
   return (
     <div className="w-20 h-20 rounded-full relative overflow-hidden">
       {/* Reaction SVG Component */}
-      <Component
-        className="w-full h-full object-cover"
-        aria-label={label}
-      />
+      <Component className="w-full h-full object-cover" aria-label={label} />
     </div>
   );
 };
 
 export const GroupChatItem = ({
-  type,
   style,
-  hasReaction = false,
+  hasUserReacted: hasReaction = false,
   reactionCount = 2,
-  username,
+  userName: username,
   mainText,
   checkboxLabel = "프레이머 공부하기",
   isChecked = true,
@@ -110,32 +108,38 @@ export const GroupChatItem = ({
   className,
   onReactionClick,
   id,
+  userId: senderId,
 }: GroupChatItemProps) => {
-  const isMe = type === "TODO";
+  const { data: myProfile } = useMyProfile();
+  const isMe = myProfile?.id === senderId;
 
   return (
     <div
       className={cn(
         "flex flex-col gap-1 w-[328px]",
         isMe ? "items-end" : "items-start",
-        className
+        className,
       )}
     >
       {/* Username */}
-      <div className={cn(
-        "w-full",
-        isMe
-          ? "font-SUIT_Variable font-bold text-sm leading-[1.4] tracking-[-0.01em] text-[#1E2124] text-right"
-          : "font-SUIT_Variable font-bold text-sm leading-[1.4] tracking-[-0.01em] text-[#1E2124] text-left"
-      )}>
+      <div
+        className={cn(
+          "w-full",
+          isMe
+            ? "font-SUIT_Variable font-bold text-sm leading-[1.4] tracking-[-0.01em] text-[#1E2124] text-right"
+            : "font-SUIT_Variable font-bold text-sm leading-[1.4] tracking-[-0.01em] text-[#1E2124] text-left",
+        )}
+      >
         {username}
       </div>
 
       {/* Container */}
-      <div className={cn(
-        "flex items-end gap-1 w-full",
-        isMe ? "justify-end" : "justify-start"
-      )}>
+      <div
+        className={cn(
+          "flex items-end gap-1 w-full",
+          isMe ? "justify-end" : "justify-start",
+        )}
+      >
         {/* Icon Area for me messages - render first to appear on the left */}
         {isMe && style !== "reaction" && (
           <button
@@ -158,26 +162,29 @@ export const GroupChatItem = ({
         )}
 
         {/* Message Bubble */}
-        <div className={cn(
-          "bg-[#F7F7F8] rounded-lg",
-          style === "todo" && "py-3 px-4",
-          style === "photo" && "p-3 w-[248px]",
-          style === "diary" && "p-3 w-[248px]",
-          style === "reaction" && "py-3 px-4 w-[248px]"
-        )}>
+        <div
+          className={cn(
+            "bg-[#F7F7F8] rounded-lg",
+            style === "todo" && "py-3 px-4",
+            style === "photo" && "p-3 w-[248px]",
+            style === "diary" && "p-3 w-[248px]",
+            style === "reaction" && "py-3 px-4 w-[248px]",
+          )}
+        >
           {/* Main content */}
           <div className="flex flex-col gap-2">
             {/* Text content */}
             <div className="flex flex-col gap-1">
               {/* Main text */}
               <span className="font-SUIT_Variable font-bold text-sm leading-[1.4] tracking-[-0.01em] text-[#33363D]">
-                {mainText}
+                {mainText.content}
               </span>
 
               {/* Checkbox for todo, photo, and diary styles */}
-              {(style === "todo" || style === "photo" || style === "diary") && checkboxLabel && (
-                <ChatCheckbox checked={isChecked} label={checkboxLabel} />
-              )}
+              {(style === "todo" || style === "photo" || style === "diary") &&
+                checkboxLabel && (
+                  <ChatCheckbox checked={isChecked} label={checkboxLabel} />
+                )}
             </div>
 
             {/* Photo for photo style */}
@@ -230,4 +237,4 @@ export const GroupChatItem = ({
       </div>
     </div>
   );
-}; 
+};

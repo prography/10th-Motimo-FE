@@ -6,6 +6,7 @@ import { GroupChat, SystemMessage } from "@/components/group";
 import { UsersGroupIcon } from "@/components/icons";
 import { useSafeRouter } from "@/hooks/useSafeRouter";
 import { useGroupChat, useJoinedGroups } from "@/api/hooks";
+import { GetGroupChatParamsDirectionEnum } from "@/api/generated/motimo/Api";
 interface GroupDetailPageProps {
   params: Promise<{
     id: string;
@@ -15,8 +16,13 @@ interface GroupDetailPageProps {
 export default function GroupDetailPage({ params }: GroupDetailPageProps) {
   const { id } = use(params);
   // const { data: groups } = useJoinedGroups();
-  const title = "백엔드 api 가 없어 임시 타이틀"
-  const { data: messages } = useGroupChat(id, 0, 0);
+  const title = "백엔드 api 가 없어 임시 타이틀";
+  const { data: groupChat } = useGroupChat(
+    id,
+    "0",
+    "0",
+    GetGroupChatParamsDirectionEnum.AFTER,
+  );
   const router = useSafeRouter();
 
   const handleBackClick = () => {
@@ -69,7 +75,7 @@ export default function GroupDetailPage({ params }: GroupDetailPageProps) {
         {/* Chat Messages */}
         <div className="px-4 pb-4">
           <GroupChat
-            messages={messages ?? { content: [] }}
+            messages={groupChat?.messages ?? []}
             onReactionClick={handleReactionClick}
           />
         </div>

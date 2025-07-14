@@ -31,12 +31,14 @@ const mockPendingGroups: GoalNotInGroupRs[] = [
 
 const mockJoinedGroups: JoinedGroupRs[] = [
   {
-    title: "프로그래밍 스터디 그룹",
+    groupId: "1",
+    name: "프로그래밍 스터디 그룹",
     lastActiveDate: "2025-05-12T10:30:00Z",
     isNotificationActive: true,
   },
   {
-    title: "독서 클럽",
+    groupId: "2",
+    name: "독서 클럽",
     lastActiveDate: "2025-05-15T14:20:00Z",
     isNotificationActive: false,
   },
