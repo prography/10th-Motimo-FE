@@ -4,21 +4,25 @@ import { useState } from "react";
 import { AppBar } from "@/components/shared/AppBar/AppBar";
 import { ButtonRound } from "@/components/shared/ButtonRound/ButtonRound";
 import ToolTip from "@/components/shared/ToolTip/ToolTip";
+import useAuthStore from "@/stores/useAuthStore";
+import useOnboardingStore from "@/stores/useOnboardingStore";
 
 interface GoalInputScreenProps {
-  goal: string;
-  onGoalChange: (goal: string) => void;
   onNext: () => void;
   onBack: () => void;
 }
 
-export default function GoalInputScreen({ goal, onGoalChange, onNext, onBack }: GoalInputScreenProps) {
+export default function GoalInputScreen({
+  onNext,
+  onBack,
+}: GoalInputScreenProps) {
+  const { goal, setGoal } = useOnboardingStore();
   const [isFocused, setIsFocused] = useState(false);
   const [showTooltip, setShowTooltip] = useState(!goal);
 
   const handleGoalChange = (value: string) => {
     if (value.length <= 30) {
-      onGoalChange(value);
+      setGoal(value);
       setShowTooltip(!value);
     }
   };
@@ -27,11 +31,7 @@ export default function GoalInputScreen({ goal, onGoalChange, onNext, onBack }: 
 
   return (
     <div className="min-h-screen bg-background-alternative flex flex-col">
-      <AppBar
-        type="progress"
-        progress={50}
-        onBackClick={onBack}
-      />
+      <AppBar type="progress" progress={50} onBackClick={onBack} />
 
       {/* Content */}
       <div className="flex-1 px-6 pt-8">
@@ -58,7 +58,9 @@ export default function GoalInputScreen({ goal, onGoalChange, onNext, onBack }: 
                 onChange={(e) => handleGoalChange(e.target.value)}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
-                placeholder={!isFocused ? "목표를 한 문장으로 입력해주세요." : ""}
+                placeholder={
+                  !isFocused ? "목표를 한 문장으로 입력해주세요." : ""
+                }
                 className="flex-1 bg-transparent text-xl font-bold text-label-normal placeholder:text-label-disabled outline-none"
                 maxLength={30}
               />
@@ -69,7 +71,9 @@ export default function GoalInputScreen({ goal, onGoalChange, onNext, onBack }: 
           {/* Tooltip */}
           {showTooltip && (
             <div className="mt-Number-16">
-              <ToolTip content={`올해 책 100권 읽기, 체지방 감량, 포폴 완성,\n자격증 취득, 취뽀하기 등`} />
+              <ToolTip
+                content={`올해 책 100권 읽기, 체지방 감량, 포폴 완성,\n자격증 취득, 취뽀하기 등`}
+              />
             </div>
           )}
 
@@ -87,7 +91,6 @@ export default function GoalInputScreen({ goal, onGoalChange, onNext, onBack }: 
         <ButtonRound
           onClick={() => {
             if (isNextEnabled) {
-              localStorage.setItem("userGoal", goal);
               onNext();
             }
           }}
@@ -98,4 +101,4 @@ export default function GoalInputScreen({ goal, onGoalChange, onNext, onBack }: 
       </div>
     </div>
   );
-} 
+}
