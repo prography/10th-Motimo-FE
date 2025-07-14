@@ -2,10 +2,10 @@
 
 import useGoalStore from "@/stores/useGoalStore";
 import TodoList from "../TodoList/TodoList";
-import useGoalWithSubGoalTodo from "@/hooks/main/queries/useGoalWithSubGoalTodo";
+import { useGoalWithSubGoals, useSubGoalTodos } from "@/api/hooks";
 import {
   GoalWithSubGoalTodoRs,
-  TodoResultRqEmotionEnum,
+  TodoRsStatusEnum,
 } from "@/api/generated/motimo/Api";
 import GoalTitleArea from "../GoalTitleArea/GoalTitleArea";
 import GoalInfo from "@/components/shared/GoalInfo/GoalInfo";
@@ -13,16 +13,20 @@ import TodoBottomSheet, {
   TodoBottomSheetProps,
   TodoInfoForSubmission,
 } from "@/components/shared/BottomSheets/TodoBottomSheet/TodoBottomSheet";
-import useTodoList from "@/hooks/main/queries/useTodoList";
+import { TodoListProps } from "../TodoList/TodoList";
+import { TodoItemsInfo } from "@/types/todoList";
 import { useEffect, useRef, useState } from "react";
-import { createNewGoal } from "@/lib/fetching/goalFetching";
-import { createNewTodoOnSubGoal } from "@/lib/fetching/subGoalFetching";
-import { postTodoResult, updateTodo } from "@/lib/fetching/todoFetching";
+import { goalApi, subGoalApi, todoApi } from "@/api/service";
 import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
 import useModal from "@/hooks/useModal";
 import { date2StringWithSpliter } from "@/utils/date2String";
 import { calcLeftDay } from "@/utils/calcLeftDay";
 import TodoResultBottomSheet from "@/components/shared/BottomSheets/TodoResultBottomSheet/TodoResultBottomSheet";
+
+// Define the converted data type
+type ConvertedGoalWithSubGoalTodo = Omit<GoalWithSubGoalTodoRs, "subGoals"> & {
+  subGoals: TodoListProps[];
+};
 
 interface GoalCardProps {
   initSubGoalTodo?: GoalWithSubGoalTodoRs;
@@ -30,11 +34,38 @@ interface GoalCardProps {
 
 const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
   const { goalId } = useGoalStore();
-  const { data: goalWithSubGoalTodo } = useGoalWithSubGoalTodo(goalId || "", {
+  const { data: rawGoalData } = useGoalWithSubGoals(goalId || "", {
     fallbackData: initSubGoalTodo,
   });
+
+  // Convert raw goal data to the format expected by the component
+  const goalWithSubGoalTodo: ConvertedGoalWithSubGoalTodo = {
+    ...rawGoalData,
+    subGoals:
+      rawGoalData?.subGoals?.map((subGoalInfo) => {
+        const todosInSubGoal: TodoItemsInfo[] =
+          subGoalInfo.todos?.map((todoInfo) => ({
+            id: todoInfo.id ?? "",
+            title: todoInfo.title ?? "",
+            checked: todoInfo.status === TodoRsStatusEnum.COMPLETE,
+            reported: todoInfo.todoResultId ? true : false,
+            targetDate: todoInfo.date ? new Date(todoInfo.date) : new Date(),
+          })) ?? [];
+
+        return {
+          subGoalId: subGoalInfo.id ?? "",
+          initTodoTotalLen: todosInSubGoal.length,
+          initTodoItemsInfo: todosInSubGoal,
+          subGoal: subGoalInfo.title,
+          initTodoCheckedLen: todosInSubGoal.filter(
+            (todoInfo) => todoInfo.checked,
+          ).length,
+        };
+      }) ?? [],
+  } as ConvertedGoalWithSubGoalTodo;
+
   const [newTodo, setNewTodo] = useState<TodoInfoForSubmission | null>(null);
-  const { mutate } = useTodoList(newTodo?.subGoalId ?? "");
+  const { mutate } = useSubGoalTodos(newTodo?.subGoalId ?? "");
   const { isActive, setIsActive, initContent } = useActiveTodoBottomSheet();
   const { isOpened: isModalOpened } = useModal();
   const [todoResBottomSheetInfo, setTodoResBottomSheetInfo] = useState<{
@@ -123,15 +154,17 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
           const isCreating = newTodoInfo.id ? false : true;
           let fetchRes;
           if (isCreating) {
-            fetchRes = await createNewTodoOnSubGoal(newTodoInfo.subGoalId, {
+            fetchRes = await subGoalApi.createTodo(newTodoInfo.subGoalId, {
               title: newTodoInfo.todo,
               date: newTodoInfo?.date
                 ? date2StringWithSpliter(newTodoInfo?.date, "-")
                 : undefined,
             });
           } else {
-            fetchRes = await updateTodo(newTodoInfo.id ?? "", {
-              date: newTodoInfo.date,
+            fetchRes = await todoApi.updateTodo(newTodoInfo.id ?? "", {
+              date: newTodoInfo.date
+                ? date2StringWithSpliter(newTodoInfo.date, "-")
+                : undefined,
               title: newTodoInfo.todo,
             });
           }
