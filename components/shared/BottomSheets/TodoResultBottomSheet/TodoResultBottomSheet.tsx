@@ -106,6 +106,7 @@ const TodoResultBottomSheet = ({
                 id="todoResult"
                 onSubmit={(e) => {
                   e.preventDefault();
+                  e.stopPropagation();
                   onSubmit(todoResult);
                 }}
               >
