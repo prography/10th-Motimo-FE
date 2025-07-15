@@ -3,24 +3,28 @@ const tmpToken = "";
 const templateFetch = async <T>(
   apiUrl: string,
   method: "GET" | "PUT" | "PATCH" | "POST" | "DELETE",
-  body?: object,
+  body?: object | string,
   onFetchNonOk?: (fetchRes: Response) => void,
   onErrorCatch?: (error: unknown) => void,
+  autoContentType: boolean = false,
 ) => {
   try {
+    const token = localStorage.getItem("access_token");
     const res = await fetch(
       apiUrl,
 
       {
         method: method,
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMP_BAERER}`,
+          ...(autoContentType ? {} : { "Content-Type": "application/json" }),
+          Authorization: `Bearer ${token}`,
         },
 
         body:
           method === "PUT" || method === "POST" || method === "PATCH"
-            ? JSON.stringify(body)
+            ? autoContentType
+              ? (body as BodyInit)
+              : JSON.stringify(body)
             : undefined,
       },
     );

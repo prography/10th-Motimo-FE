@@ -1,19 +1,20 @@
 "use client";
 
 import { TodoRs, TodoRsStatusEnum } from "@/api/generated/motimo/Api";
-import { getTodosOnSubGoal } from "@/lib/main/subGoalFetching";
+import { useSubGoalTodos } from "@/api/hooks";
 import { TodoItemsInfo } from "@/types/todoList";
-import { date2StringWithSpliter } from "@/utils/date2String";
-import useSWR, { SWRConfiguration } from "swr";
+// import { date2StringWithSpliter } from "@/utils/date2String";
+import { SWRConfiguration } from "swr";
 
-const mockFetcher = async () => {};
+// const mockFetcher = async () => {};
 
-type NewTodoItemsInfo = Omit<TodoItemsInfo, "reported"> & {
-  reportId?: string;
-};
+// type NewTodoItemsInfo = Omit<TodoItemsInfo, "reported"> & {
+//   reportId?: string;
+// };
 
 const useTodoList = (subGoalId: string, options?: SWRConfiguration) => {
-  const { data, error, mutate } = useSWR(subGoalId, getTodosOnSubGoal, options);
+  // const { data, error, mutate } = useSWR(subGoalId, getTodosOnSubGoal, options);
+  const { data, error, mutate } = useSubGoalTodos(subGoalId, options);
 
   const convertedResult: TodoItemsInfo[] | undefined = data?.map((todoRs) => ({
     id: todoRs.id ?? "",

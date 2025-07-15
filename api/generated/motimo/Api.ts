@@ -1646,17 +1646,14 @@ export class Api<SecurityDataType extends unknown> {
         direction?: GetGroupChatParamsDirectionEnum;
       },
       params: RequestParams = {},
-    ) => {
-      //tset
-      console.log("in api", groupId);
-      return this.http.request<GroupChatRs, any>({
+    ) =>
+      this.http.request<GroupChatRs, any>({
         path: `/v1/groups/${groupId}/chats`,
         method: "GET",
         query: query,
         secure: true,
         ...params,
-      });
-    },
+      }),
 
     /**
      * @description 참여중인 그룹을 조회합니다.

@@ -33,7 +33,7 @@ import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
 
 import { todoApi, goalApi } from "@/api/service";
 import { TodoRs, TodoRsStatusEnum } from "@/api/generated/motimo/Api";
-
+import Link from "next/link";
 /** api generator로부터 받은 타입을 사용 */
 
 interface TodoListProps {
@@ -49,6 +49,8 @@ interface TodoListProps {
   subGoalId?: string;
   /** goal의 id */
   goalId?: string;
+  /** 외부에서 todoItem의 report관련 클릭 처리 */
+  onReportedClick?: (todoId: string) => void;
 }
 
 const TodoListContext = createContext<{
@@ -56,6 +58,8 @@ const TodoListContext = createContext<{
   subGoalId?: string;
   mutate?: KeyedMutator<TodoRs[]>;
   updateOptimisticCheckedLen?: (action: number) => void;
+  onReportedClick?: TodoListProps["onReportedClick"];
+  goalId?: string;
 } | null>(null);
 
 const TodoList = ({
@@ -65,6 +69,7 @@ const TodoList = ({
   initTodoItemsInfo,
   subGoalId,
   goalId,
+  onReportedClick,
 }: TodoListProps) => {
   // 펼친 상태가 기본
   const [isFolded, setIsFolded] = useState(false);
@@ -142,6 +147,8 @@ const TodoList = ({
                 subGoalId,
                 subGoalTitle: subGoal,
                 updateOptimisticCheckedLen,
+                onReportedClick,
+                goalId,
               }}
             >
               <TodoArea
@@ -277,8 +284,13 @@ const TodoItemContainer = ({
 }) => {
   const x = useMotionValue(0);
   const contextContent = useContext(TodoListContext);
-  const { mutate, subGoalId, subGoalTitle, updateOptimisticCheckedLen } =
-    contextContent || {};
+  const {
+    mutate,
+    subGoalId,
+    subGoalTitle,
+    updateOptimisticCheckedLen,
+    onReportedClick,
+  } = contextContent || {};
 
   const [checked, toggleChecekdOptimistically] = useOptimisticToggle(
     info.checked ?? false,
@@ -329,8 +341,12 @@ const TodoItemContainer = ({
                 await todoApi.toggleTodoCompletion(info.id);
                 mutate && mutate();
               });
+
               // updateOptimisticCheckedLen &&
               //   updateOptimisticCheckedLen(checked ? -1 : +1);
+            }}
+            onReportedClick={async () => {
+              onReportedClick && onReportedClick(info.id);
             }}
           />
         </motion.div>
@@ -364,6 +380,8 @@ const TodoItemContainer = ({
 const OptimizedTodoItem = memo(TodoItem);
 
 const AllTodoFinished = () => {
+  const nullableContext = useContext(TodoListContext);
+  const { goalId } = nullableContext || {};
   return (
     <>
       <div className="w-full self-stretch py-6 bg-background-normal rounded-lg inline-flex flex-col justify-center items-center gap-3 overflow-hidden">
@@ -378,25 +396,15 @@ const AllTodoFinished = () => {
             {"새로운 투두를 추가하시거나\n세부 목표를 달성하실 수 있어요."}
           </p>
         </div>
-        <div
-          data-leading-icon="false"
-          data-status="enabled"
-          data-type="filled"
-          className="px-4 py-2 relative bg-background-primary rounded-lg flex flex-col justify-center items-start gap-2 overflow-hidden"
-        >
-          <div className="self-stretch inline-flex justify-center items-center gap-2">
-            <button
-              type="button"
-              className="justify-start text-white text-sm font-semibold font-['Pretendard'] leading-tight"
-            >
-              목표 상세페이지로 이동
-            </button>
+        <Link href={`/details/${goalId}`}>
+          <div className="px-4 py-2 relative bg-background-primary rounded-lg flex flex-col justify-center items-start gap-2 overflow-hidden">
+            <div className="self-stretch inline-flex justify-center items-center gap-2">
+              <p className="justify-start text-white text-sm font-semibold font-['Pretendard'] leading-tight">
+                목표 상세페이지로 이동
+              </p>
+            </div>
           </div>
-          <div
-            data-type="normal"
-            className="w-40 h-9 left-0 top-0 absolute"
-          ></div>
-        </div>
+        </Link>
       </div>
     </>
   );
@@ -457,7 +465,7 @@ const DeleteButton = ({ onDelete }: DeleteButtonProps) => {
         type="button"
         className="w-10 h-14 px-1 py-2 bg-status-negative rounded-lg inline-flex flex-col justify-center items-center gap-0.5"
       >
-        <div className="w-5 h-5 relative overflow-hidden">
+        <div className="w-5 h-5 relative overflow-hidden text-white">
           <TrashCanSvg />
         </div>
         <div className="justify-center text-label-inverse text-xs font-medium font-['SUIT_Variable'] leading-none">
