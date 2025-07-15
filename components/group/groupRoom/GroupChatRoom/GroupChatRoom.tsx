@@ -3,22 +3,91 @@ import { GroupMessageItemRsMessageTypeEnum } from "@/api/generated/motimo/Api";
 import { GroupChatItemProps, GroupChatItem } from "../../GroupChatItem";
 import useModal from "@/hooks/useModal";
 import ReactionModal from "../../ReactionModal";
+import { useGroupChat, useMyProfile } from "@/api/hooks";
+import useSWRInfinite from "swr/infinite";
+import { groupApi } from "@/api/service";
+import { useState } from "react";
+import {
+  GroupChatRs,
+  GroupMessageContentTypeEnum,
+} from "@/api/generated/motimo/Api";
 
-const GroupChatRoom = () => {
+interface GroupChatRoomProps {
+  groupId: string;
+}
+const GroupChatRoom = ({ groupId }: GroupChatRoomProps) => {
+  const { data: myProfile } = useMyProfile();
+  const userId = myProfile?.id;
+  const [page, setPage] = useState(1);
+
+  const { data } = useSWRInfinite<GroupChatRs>(
+    (pageIndex, prevPageData) => {
+      //test
+      console.log(
+        "pageIndex, prevPageData: ",
+        pageIndex,
+        prevPageData,
+        groupApi.getGroupChat,
+      );
+      return groupId;
+    },
+    async () => {
+      console.log("비동기동작");
+      return await groupApi.getGroupChat(groupId);
+    },
+    {
+      refreshInterval: 1000 * 60 * 5, // 5분마다 갱신
+    },
+  );
+
+  //test
+  console.log("DATA in groupchatroom: ", data);
+
   return (
     <>
-      <section className="overflow-y-auto w-full flex flex-col items-center gap-4">
-        <MessageItem
-          // 임시
-          messageType={GroupMessageItemRsMessageTypeEnum.TODO}
-          contents={{
-            username: "asdf",
-            id: "qwe",
-            mainText: "yaho",
-            style: "diary",
-            type: "me",
-          }}
-        />
+      <section className="overflow-y-auto w-full flex flex-col items-center gap-5 ">
+        {data?.map((pageInfo) =>
+          pageInfo.messages?.map((messageInfo) => (
+            <MessageItem
+              // 임시
+              key={messageInfo.messageId}
+              messageType={messageInfo.message.content.type}
+              // messageType={GroupMessageItemRsMessageTypeEnum.TODO}
+              contents={
+                messageInfo.message.content?.type ===
+                  GroupMessageContentTypeEnum.JOIN ||
+                messageInfo.message.content?.type ===
+                  GroupMessageContentTypeEnum.LEAVE
+                  ? { username: messageInfo.userName }
+                  : {
+                      username: messageInfo.userName,
+                      id: messageInfo.messageId,
+                      mainText:
+                        messageInfo.message.content?.type ===
+                        GroupMessageContentTypeEnum.TODO_COMPLETE
+                          ? "투두를 완료했어요!"
+                          : "투두 기록을 남겼어요!",
+                      style:
+                        messageInfo.message.content?.type ===
+                        GroupMessageContentTypeEnum.TODO_COMPLETE
+                          ? "todo"
+                          : messageInfo.message.content.fileUrl
+                            ? "photo"
+                            : "diary",
+                      type: messageInfo.userId === userId ? "me" : "member",
+                      diaryText:
+                        messageInfo.message.content.content || undefined,
+                      hasReaction: messageInfo.message.content.hasUserReacted,
+                      reactionCount: messageInfo.message.content.reactionCount,
+                      reactionType: "best", // 임시
+                      photoUrl:
+                        messageInfo.message.content.fileUrl || undefined,
+                      checkboxLabel: messageInfo.message.content.todoTitle,
+                    }
+              }
+            />
+          )),
+        )}
       </section>
     </>
   );
@@ -28,21 +97,27 @@ export default GroupChatRoom;
 type GroupChatItemValueProps = Omit<GroupChatItemProps, "onReactionClick">;
 
 interface GroupMessage {
-  messageType: GroupMessageItemRsMessageTypeEnum;
+  messageType: GroupMessageContentTypeEnum;
   contents: GroupChatItemValueProps | EnterMessageProps;
 }
 
 const MessageItem = ({ messageType, contents }: GroupMessage) => {
   switch (messageType) {
-    case GroupMessageItemRsMessageTypeEnum.ENTER:
+    case GroupMessageContentTypeEnum.JOIN: {
       // 이름을 바꿔야 함. userName말고 더 명확하게 보이도록.
-      const { userName } = contents as EnterMessageProps;
+      const { username } = contents as EnterMessageProps;
+      //test
+      console.log("contents: ", username);
       return (
         <>
-          <EnterMessage />
+          <EnterMessage username={username} />
         </>
       );
-    case GroupMessageItemRsMessageTypeEnum.TODO:
+    }
+    case GroupMessageContentTypeEnum.LEAVE: {
+      return <>{/* <div>대충 나가는 메시지.</div> */}</>;
+    }
+    case GroupMessageContentTypeEnum.TODO_COMPLETE: {
       const valueProps = contents as GroupChatItemValueProps;
       const isReaction = valueProps.style === "reaction";
       const { openModal, closeModal } = useModal();
@@ -65,20 +140,29 @@ const MessageItem = ({ messageType, contents }: GroupMessage) => {
           />
         </>
       );
+    }
+    case GroupMessageContentTypeEnum.TODO_RESULT_SUBMIT: {
+      const valueProps = contents as GroupChatItemValueProps;
+      return (
+        <>
+          <GroupChatItem {...valueProps} />
+        </>
+      );
+    }
     default:
       return <></>;
   }
 };
 
 interface EnterMessageProps {
-  userName: string;
+  username: string;
 }
-const EnterMessage = ({ userName }: EnterMessageProps) => {
+const EnterMessage = ({ username }: EnterMessageProps) => {
   return (
     <>
-      <div className="px-3 py-2 bg-background-assistive rounded inline-flex justify-center items-center gap-2">
+      <div className="px-3 py-2 mb-1 bg-background-assistive rounded inline-flex justify-center items-center gap-2">
         <p className="justify-center text-label-normal text-sm font-medium font-['SUIT_Variable'] leading-tight">
-          {`${userName}님이 그룹에 입장했습니다.`}
+          {`${username}님이 그룹에 입장했습니다.`}
         </p>
       </div>
     </>

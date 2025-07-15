@@ -77,6 +77,8 @@ export const useQuery = {
       undefined,
       config,
     ),
+  groupDetail: (groupId: string | null, config?: SWRConfiguration) =>
+    useApiQuery("그룹Api", "getGroupDetail", [groupId], undefined, config),
 
   joinedGroups: (config?: SWRConfiguration) =>
     useApiQuery("그룹Api", "getJoinedGroup", [], undefined, config),
@@ -100,6 +102,7 @@ export const useSubGoalTodos = useQuery.subGoalTodos;
 export const useMyProfile = useQuery.myProfile;
 export const useGroupMembers = useQuery.groupMembers;
 export const useGroupChat = useQuery.groupChat;
+export const useGroupDetail = useQuery.groupDetail;
 export const useJoinedGroups = useQuery.joinedGroups;
 export const usePoints = useQuery.points;
 export const useCheerPhrase = useQuery.cheerPhrase;

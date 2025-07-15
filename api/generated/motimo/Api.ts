@@ -10,6 +10,39 @@
  * ---------------------------------------------------------------
  */
 
+export interface UserUpdateRq {
+  /**
+   * 변경할 유저 이름
+   * @example "user name"
+   */
+  userName?: string;
+  /**
+   * 한줄 소개
+   * @example "안녕하세요."
+   */
+  bio?: string;
+  /**
+   * 유저 관심사 목록
+   * @uniqueItems true
+   * @example ["HEALTH","PROGRAMMING","SPORTS"]
+   */
+  interests?: UserUpdateRqInterestsEnum[];
+}
+
+export interface UserIdRs {
+  /**
+   * 유저 아이디
+   * @format uuid
+   */
+  userId?: string;
+}
+
+export interface ErrorResponse {
+  /** @format int32 */
+  statusCode?: number;
+  message?: string;
+}
+
 export interface TodoUpdateRq {
   /**
    * 새로운 투두 타이틀
@@ -21,12 +54,6 @@ export interface TodoUpdateRq {
    * @format date
    */
   date?: string;
-}
-
-export interface ErrorResponse {
-  /** @format int32 */
-  statusCode?: number;
-  message?: string;
 }
 
 export interface TodoIdRs {
@@ -145,7 +172,7 @@ export interface GroupIdRs {
    * 가입된 그룹 아이디
    * @format uuid
    */
-  id?: string;
+  id: string;
 }
 
 export interface GroupMessageIdRs {
@@ -153,7 +180,7 @@ export interface GroupMessageIdRs {
    * 영향을 받은 그룹 채팅 아이디
    * @format uuid
    */
-  id?: string;
+  id: string;
 }
 
 export interface GoalCreateRq {
@@ -209,6 +236,15 @@ export interface TokenResponse {
   refreshToken?: string;
 }
 
+export interface UserInterestsRq {
+  /**
+   * 유저 관심사 목록
+   * @uniqueItems true
+   * @example ["HEALTH","PROGRAMMING","SPORTS"]
+   */
+  interests?: UserInterestsRqInterestsEnum[];
+}
+
 export interface UserRs {
   /**
    * 유저 Id
@@ -220,8 +256,15 @@ export interface UserRs {
   email?: string;
   /** 유저 닉네임 */
   nickname?: string;
+  /** 유저 한줄 소개 */
+  bio?: string;
   /** 유저 프로필 이미지 url */
   profileImageUrl?: string;
+  /**
+   * 유저 관심사 목록
+   * @uniqueItems true
+   */
+  interestTypes?: UserRsInterestTypesEnum[];
   /**
    * 유저 생성 날짜
    * @format date-time
@@ -262,7 +305,7 @@ export interface TodoRs {
    * @format uuid
    * @example "0197157f-aea4-77bb-8581-3213eb5bd2ae"
    */
-  id?: string;
+  id: string;
   /**
    * 투두 제목
    * @example "영단어 10개 이상 외우기"
@@ -300,87 +343,161 @@ export interface PointRs {
   point?: number;
 }
 
+export interface CustomSliceNotificationItemRs {
+  content?: NotificationItemRs[];
+  hasNext?: boolean;
+  /** @format int32 */
+  offset?: number;
+  /** @format int32 */
+  size?: number;
+}
+
+export type NotificationItemRs = object;
+
+export interface GroupDetailRs {
+  /**
+   * 그룹 아이디
+   * @format uuid
+   */
+  groupId: string;
+  /** 그룹 이름 (현재는 목표와 동일) */
+  name: string;
+}
+
+/** 새 메시지 카운트 및 최신 메세지 커서 응답 */
+export interface NewMessageRs {
+  /** 새 메시지 존재 여부 */
+  hasNewMessages?: boolean;
+  /**
+   * 새 메시지 개수
+   * @format int32
+   */
+  newMessageCount?: number;
+  /**
+   * 가장 최신 메시지 시각
+   * @format date-time
+   */
+  latestMessageTime?: string;
+  /**
+   * 가장 최신 메시지 커서
+   * @example "MDE5..."
+   */
+  latestMessageCursor?: string;
+}
+
 export interface GroupMemberRs {
   /**
    * 사용자 아이디
    * @format uuid
    */
-  userId?: string;
+  userId: string;
   /** 사용자 닉네임 */
-  nickname?: string;
+  nickname: string;
   /**
    * 마지막 접속일
    * @format date-time
    */
-  lastOnlineDate?: string;
-  /** 찌르기 활성화 여부 */
+  lastOnlineDate: string;
+  /** 찌르기 활성화 여부, 본인이면 null */
   isActivePoke?: boolean;
 }
 
-export interface CustomSliceGroupMessageItemRs {
-  content?: GroupMessageItemRs[];
-  hasNext?: boolean;
+/** 그룹 메시지 응답 */
+export interface GroupChatRs {
+  /** 메시지 목록 */
+  messages?: GroupMessageItemRs[];
+  /** 이전 메시지 요청용 커서 */
+  prevCursor?: string;
+  /** 다음 메시지 요청용 커서 */
+  nextCursor?: string;
+  /** 이전 메시지 존재 여부 */
+  hasBefore?: boolean;
+  /** 다음 메시지 존재 여부 */
+  hasAfter?: boolean;
 }
 
+export type GroupJoinContent = GroupMessageContent;
+
+export type GroupLeaveContent = GroupMessageContent;
+
+export interface GroupMessageContent {
+  type?: GroupMessageContentTypeEnum;
+}
+
+export type GroupMessageContentRs = (
+  | GroupJoinContent
+  | GroupLeaveContent
+  | TodoCompletedContent
+  | TodoResultSubmittedContent
+) & {
+  content?:
+    | GroupJoinContent
+    | GroupLeaveContent
+    | TodoCompletedContent
+    | TodoResultSubmittedContent;
+};
+
 export interface GroupMessageItemRs {
-  /** 메세지 타입 (TODO, ENTER) */
-  messageType?: GroupMessageItemRsMessageTypeEnum;
+  /**
+   * 메시지 아이디
+   * @format uuid
+   */
+  messageId: string;
   /**
    * 보낸 사용자 아이디
    * @format uuid
    */
-  senderId?: string;
+  userId: string;
   /** 보낸 사용자 닉네임 */
-  senderName?: string;
+  userName: string;
   /** 메세지 내용 */
-  message?: MessageContentRs;
+  message: GroupMessageContentRs;
   /**
    * 리액션 갯수
    * @format int32
    */
-  reactionCount?: number;
+  reactionCount: number;
   /** 로그인한 사용자 리액션 여부 */
-  hasReacted?: boolean;
+  hasUserReacted: boolean;
+  /**
+   * 메세지를 보낸 시간
+   * @format date-time
+   */
+  sendAt: string;
 }
 
-export type MessageContentRs = SimpleMessageContentRs | TodoMessageContentRs;
-
-export interface SimpleMessageContentRs {
-  /**
-   * 링크된 아이디
-   * @format uuid
-   */
-  targetId?: string;
-  /** 기본적인 내용 */
-  content?: string;
-}
-
-export interface TodoMessageContentRs {
-  /**
-   * 투두 아이디
-   * @format uuid
-   */
-  targetId?: string;
-  /** 완료한 투두 제목 */
+export type TodoCompletedContent = GroupMessageContent & {
+  /** @format uuid */
+  todoId?: string;
   todoTitle?: string;
-  /** 투두 감정 */
-  emotion?: TodoMessageContentRsEmotionEnum;
-  /** 투두 내용 */
+};
+
+export type TodoResultSubmittedContent = GroupMessageContent & {
+  /** @format uuid */
+  todoId?: string;
+  todoTitle?: string;
+  /** @format uuid */
+  todoResultId?: string;
+  emotion?: TodoResultSubmittedContentEmotionEnum;
   content?: string;
-  /** 제출한 파일 링크 */
   fileUrl?: string;
-}
+};
 
 export interface JoinedGroupRs {
+  /**
+   * 그룹 아이디
+   * @format uuid
+   */
+  groupId: string;
   /** 그룹 이름 (현재는 목표와 동일) */
-  title?: string;
+  name: string;
   /**
    * 그룹 마지막 활동 날짜
    * @format date-time
    */
   lastActiveDate?: string;
-  /** 알림 활성화 여부 */
-  isNotificationActive?: boolean;
+  /** 알림 활성화 여부 - 현재는 true 고정(미개발) */
+  isNotificationActive: boolean;
 }
 
 export interface GoalItemRs {
@@ -423,6 +540,13 @@ export interface GoalDetailRs {
    * @example "자격증 따기"
    */
   title?: string;
+  /** 목표 완료 날짜 개월수로 설정 여부 */
+  isMonth?: boolean;
+  /**
+   * 목표 완료 개월수
+   * @format int32
+   */
+  month?: number;
   /**
    * 목표 완료 날짜
    * @format date
@@ -438,6 +562,11 @@ export interface GoalDetailRs {
   isCompleted?: boolean;
   /** 그룹 참여 여부 */
   isJoinedGroup?: boolean;
+  /**
+   * 그룹 아이디
+   * @format uuid
+   */
+  groupId?: string;
 }
 
 export interface GoalWithSubGoalTodoRs {
@@ -446,17 +575,17 @@ export interface GoalWithSubGoalTodoRs {
    * @format uuid
    * @example "0197157f-aea4-77bb-8581-3213eb5bd2aq"
    */
-  id?: string;
+  id: string;
   /**
    * 목표 이름
    * @example "자격증 따기"
    */
-  title?: string;
+  title: string;
   /**
    * 목표 완료 날짜
    * @format date
    */
-  dueDate?: string;
+  dueDate: string;
   /** 세부 목표 목록 */
   subGoals?: SubGoalRs[];
 }
@@ -467,12 +596,12 @@ export interface SubGoalRs {
    * @format uuid
    * @example "0197157f-aea4-77bb-8581-3213eb5bd2ae"
    */
-  id?: string;
+  id: string;
   /**
    * 세부 목표 이름
    * @example "책 한 권 끝내기"
    */
-  title?: string;
+  title: string;
   /** 세부 목표에 해당하는 투두 목록 */
   todos?: TodoRs[];
 }
@@ -482,9 +611,9 @@ export interface GoalNotInGroupRs {
    * 목표 아이디
    * @format uuid
    */
-  id?: string;
+  id: string;
   /** 목표 제목 */
-  title?: string;
+  title: string;
 }
 
 export interface CheerPhraseRs {
@@ -495,6 +624,17 @@ export interface CheerPhraseRs {
   cheerPhrase?: string;
 }
 
+export enum UserUpdateRqInterestsEnum {
+  HEALTH = "HEALTH",
+  READING = "READING",
+  STUDY = "STUDY",
+  LANGUAGE = "LANGUAGE",
+  SPORTS = "SPORTS",
+  PROGRAMMING = "PROGRAMMING",
+  CAREER = "CAREER",
+  SELF_IMPROVEMENT = "SELF_IMPROVEMENT",
+}
+
 /**
  * 투두 진행 후 감정
  * @example "PROUD"
@@ -503,7 +643,30 @@ export enum TodoResultRqEmotionEnum {
   PROUD = "PROUD",
   REGRETFUL = "REGRETFUL",
   IMMERSED = "IMMERSED",
-  GROWN = "GROWN",
+  SELF_REFLECTION = "SELF_REFLECTION",
+  ROUTINE = "ROUTINE",
+}
+
+export enum UserInterestsRqInterestsEnum {
+  HEALTH = "HEALTH",
+  READING = "READING",
+  STUDY = "STUDY",
+  LANGUAGE = "LANGUAGE",
+  SPORTS = "SPORTS",
+  PROGRAMMING = "PROGRAMMING",
+  CAREER = "CAREER",
+  SELF_IMPROVEMENT = "SELF_IMPROVEMENT",
+}
+
+export enum UserRsInterestTypesEnum {
+  HEALTH = "HEALTH",
+  READING = "READING",
+  STUDY = "STUDY",
+  LANGUAGE = "LANGUAGE",
+  SPORTS = "SPORTS",
+  PROGRAMMING = "PROGRAMMING",
+  CAREER = "CAREER",
+  SELF_IMPROVEMENT = "SELF_IMPROVEMENT",
 }
 
 /**
@@ -514,7 +677,8 @@ export enum TodoResultRsEmotionEnum {
   PROUD = "PROUD",
   REGRETFUL = "REGRETFUL",
   IMMERSED = "IMMERSED",
-  GROWN = "GROWN",
+  SELF_REFLECTION = "SELF_REFLECTION",
+  ROUTINE = "ROUTINE",
 }
 
 /**
@@ -526,18 +690,33 @@ export enum TodoRsStatusEnum {
   INCOMPLETE = "INCOMPLETE",
 }
 
-/** 메세지 타입 (TODO, ENTER) */
-export enum GroupMessageItemRsMessageTypeEnum {
-  ENTER = "ENTER",
-  TODO = "TODO",
+export enum GroupMessageContentTypeEnum {
+  JOIN = "JOIN",
+  LEAVE = "LEAVE",
+  TODO_COMPLETE = "TODO_COMPLETE",
+  TODO_RESULT_SUBMIT = "TODO_RESULT_SUBMIT",
 }
 
-/** 투두 감정 */
-export enum TodoMessageContentRsEmotionEnum {
+export enum TodoResultSubmittedContentEmotionEnum {
   PROUD = "PROUD",
   REGRETFUL = "REGRETFUL",
   IMMERSED = "IMMERSED",
-  GROWN = "GROWN",
+  SELF_REFLECTION = "SELF_REFLECTION",
+  ROUTINE = "ROUTINE",
+}
+
+export enum CreateGroupReactionParamsTypeEnum {
+  GOOD = "GOOD",
+  COOL = "COOL",
+  CHEER_UP = "CHEER_UP",
+  BEST = "BEST",
+  LIKE = "LIKE",
+}
+
+/** 페이징 방향 */
+export enum GetGroupChatParamsDirectionEnum {
+  BEFORE = "BEFORE",
+  AFTER = "AFTER",
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -613,68 +792,6 @@ export class HttpClient<SecurityDataType = unknown> {
 
   public setSecurityData = (data: SecurityDataType | null) => {
     this.securityData = data;
-  };
-
-  protected encodeQueryParam(key: string, value: any) {
-    const encodedKey = encodeURIComponent(key);
-    return `${encodedKey}=${encodeURIComponent(typeof value === "number" ? value : `${value}`)}`;
-  }
-
-  protected addQueryParam(query: QueryParamsType, key: string) {
-    return this.encodeQueryParam(key, query[key]);
-  }
-
-  protected addArrayQueryParam(query: QueryParamsType, key: string) {
-    const value = query[key];
-    return value.map((v: any) => this.encodeQueryParam(key, v)).join("&");
-  }
-
-  protected toQueryString(rawQuery?: QueryParamsType): string {
-    const query = rawQuery || {};
-    const keys = Object.keys(query).filter(
-      (key) => "undefined" !== typeof query[key],
-    );
-    return keys
-      .map((key) =>
-        Array.isArray(query[key])
-          ? this.addArrayQueryParam(query, key)
-          : this.addQueryParam(query, key),
-      )
-      .join("&");
-  }
-
-  protected addQueryParams(rawQuery?: QueryParamsType): string {
-    const queryString = this.toQueryString(rawQuery);
-    return queryString ? `?${queryString}` : "";
-  }
-
-  private contentFormatters: Record<ContentType, (input: any) => any> = {
-    [ContentType.Json]: (input: any) =>
-      input !== null && (typeof input === "object" || typeof input === "string")
-        ? JSON.stringify(input)
-        : input,
-    [ContentType.JsonApi]: (input: any) =>
-      input !== null && (typeof input === "object" || typeof input === "string")
-        ? JSON.stringify(input)
-        : input,
-    [ContentType.Text]: (input: any) =>
-      input !== null && typeof input !== "string"
-        ? JSON.stringify(input)
-        : input,
-    [ContentType.FormData]: (input: any) =>
-      Object.keys(input || {}).reduce((formData, key) => {
-        const property = input[key];
-        formData.append(
-          key,
-          property instanceof Blob
-            ? property
-            : typeof property === "object" && property !== null
-              ? JSON.stringify(property)
-              : `${property}`,
-        );
-        return formData;
-      }, new FormData()),
-    [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
   };
 
   protected encodeQueryParam(key: string, value: any) {
@@ -865,6 +982,99 @@ export class Api<SecurityDataType extends unknown> {
     this.http = http;
   }
 
+  사용자Api = {
+    /**
+     * @description 닉네임,소개글,관심사 및 프로필 이미지를 수정합니다. 유저 이름이 null이거나 빈 문자열(공백만 있는 경우 포함)이면 기존 이름을 사용합니다. 이미지 업로드가 없으면 기존 이미지를 유지합니다.
+     *
+     * @tags 사용자 API
+     * @name UpdateMyProfile
+     * @summary 프로필 수정
+     * @request PUT:/v1/users
+     * @secure
+     * @response `200` `UserIdRs` 수정 성공
+     * @response `400` `ErrorResponse` 잘못된 요청/파일 형식 오류
+     * @response `401` `void` 인증되지 않은 사용자
+     */
+    updateMyProfile: (
+      data: {
+        request: UserUpdateRq;
+        /**
+         * 프로필 이미지 파일
+         * @format binary
+         */
+        file?: File;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<UserIdRs, ErrorResponse | void>({
+        path: `/v1/users`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.FormData,
+        ...params,
+      }),
+
+    /**
+     * @description 사용자가 보유한 관심사를 수정합니다.
+     *
+     * @tags 사용자 API
+     * @name UpdateMyInterests
+     * @summary 나의 관심사 수정
+     * @request PATCH:/v1/users/interests
+     * @secure
+     * @response `200` `UserIdRs` 관심사 수정 성공
+     * @response `400` `ErrorResponse` 잘못된 요청 데이터
+     * @response `401` `void` 인증되지 않은 사용자
+     */
+    updateMyInterests: (data: UserInterestsRq, params: RequestParams = {}) =>
+      this.http.request<UserIdRs, ErrorResponse | void>({
+        path: `/v1/users/interests`,
+        method: "PATCH",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * @description userId 로 특정 사용자의 프로필을 조회합니다.
+     *
+     * @tags 사용자 API
+     * @name GetProfile
+     * @summary 사용자 프로필 조회
+     * @request GET:/v1/users/{userId}
+     * @secure
+     * @response `200` `UserRs` 조회 성공
+     * @response `404` `ErrorResponse` 사용자를 찾을 수 없음
+     */
+    getProfile: (userId: string, params: RequestParams = {}) =>
+      this.http.request<UserRs, ErrorResponse>({
+        path: `/v1/users/${userId}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description 로그인한 사용자의 정보를 조회합니다.
+     *
+     * @tags 사용자 API
+     * @name GetMyProfile
+     * @summary 내 정보 조회
+     * @request GET:/v1/users/me
+     * @secure
+     * @response `200` `UserRs` 유저 정보 조회 성공
+     * @response `401` `void` 인증되지 않은 사용자
+     */
+    getMyProfile: (params: RequestParams = {}) =>
+      this.http.request<UserRs, void>({
+        path: `/v1/users/me`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+  };
   투두Api = {
     /**
      * @description 투두 내용을 수정합니다.
@@ -935,11 +1145,11 @@ export class Api<SecurityDataType extends unknown> {
       }),
 
     /**
-     * @description 투두 수행 결과를 제출합니다. 파일을 첨부할 수 있습니다.
+     * @description 투두 수행 결과를 제출/수정합니다. 파일을 첨부할 수 있습니다.
      *
      * @tags 투두 API
      * @name UpsertTodoResult
-     * @summary 투두 결과(기록) 제출하기
+     * @summary 투두 결과(기록) 제출/수정하기
      * @request POST:/v1/todos/{todoId}/result
      * @secure
      * @response `200` `TodoResultIdRs` TODO 결과 제출 성공
@@ -1282,6 +1492,29 @@ export class Api<SecurityDataType extends unknown> {
   };
   그룹Api = {
     /**
+     * @description 특정 사용자에게 찌르기 알람을 보냅니다.
+     *
+     * @tags 그룹 API
+     * @name SendPokeNotification
+     * @summary 찌르기 API
+     * @request POST:/v1/groups/{groupId}/members/{targetUserId}/poke
+     * @secure
+     * @response `204` `void` 알림 보내기 성공
+     * @response `400` `void` 찌르기 알림 횟수 초과
+     */
+    sendPokeNotification: (
+      groupId: string,
+      targetUserId: string,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, void>({
+        path: `/v1/groups/${groupId}/members/${targetUserId}/poke`,
+        method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
      * @description 랜덤으로 그룹에 가입합니다.
      *
      * @tags 그룹 API
@@ -1314,13 +1547,57 @@ export class Api<SecurityDataType extends unknown> {
     createGroupReaction: (
       messageId: string,
       query: {
-        type: string;
+        type: CreateGroupReactionParamsTypeEnum;
       },
       params: RequestParams = {},
     ) =>
       this.http.request<GroupMessageIdRs, any>({
         path: `/v1/groups/message/${messageId}/reaction`,
         method: "POST",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description 그룹 아이디와 제목을 조회합니다.
+     *
+     * @tags 그룹 API
+     * @name GetGroupDetail
+     * @summary 그룹 상세 조회 API
+     * @request GET:/v1/groups/{groupId}
+     * @secure
+     * @response `200` `GroupDetailRs` OK
+     */
+    getGroupDetail: (groupId: string, params: RequestParams = {}) =>
+      this.http.request<GroupDetailRs, any>({
+        path: `/v1/groups/${groupId}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description  사용자가 마지막으로 읽은 커서 이후 새로 작성된 메시지 개수를 반환합니다.
+     *
+     * @tags 그룹 API
+     * @name GetNewGroupMessages
+     * @summary 그룹내 새 메시지 조회 API
+     * @request GET:/v1/groups/{groupId}/new-chats
+     * @secure
+     * @response `200` `NewMessageRs` OK
+     */
+    getNewGroupMessages: (
+      groupId: string,
+      query?: {
+        /** 마지막으로 읽은 커서 */
+        latestCursor?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<NewMessageRs, any>({
+        path: `/v1/groups/${groupId}/new-chats`,
+        method: "GET",
         query: query,
         secure: true,
         ...params,
@@ -1345,44 +1622,53 @@ export class Api<SecurityDataType extends unknown> {
       }),
 
     /**
-     * @description 그룹 채팅을 조회합니다.
+     * @description 커서,방향,limit 을 이용해 이전, 이후의 메시지 데이터를 가져옵니다.
      *
      * @tags 그룹 API
      * @name GetGroupChat
      * @summary 그룹 채팅 조회 API
      * @request GET:/v1/groups/{groupId}/chats
      * @secure
-     * @response `200` `CustomSliceGroupMessageItemRs` OK
+     * @response `200` `GroupChatRs` OK
      */
     getGroupChat: (
       groupId: string,
-      query: {
-        /** @format int32 */
-        page: number;
-        /** @format int32 */
-        size: number;
+      query?: {
+        /**
+         * 한 번에 가져올 메시지 수
+         * @min 1
+         * @max 100
+         */
+        limit?: string;
+        /** 커서 값 */
+        cursor?: string;
+        /** 페이징 방향 */
+        direction?: GetGroupChatParamsDirectionEnum;
       },
       params: RequestParams = {},
-    ) =>
-      this.http.request<CustomSliceGroupMessageItemRs, any>({
+    ) => {
+      //tset
+      console.log("in api", groupId);
+      return this.http.request<GroupChatRs, any>({
         path: `/v1/groups/${groupId}/chats`,
         method: "GET",
         query: query,
         secure: true,
         ...params,
-      }),
+      });
+    },
 
     /**
      * @description 참여중인 그룹을 조회합니다.
      *
      * @tags 그룹 API
-     * @name GetJoinedGroup
+     * @name GetJoinedGroups
      * @summary 참여중인 그룹 목록 API
      * @request GET:/v1/groups/me
      * @secure
      * @response `200` `(JoinedGroupRs)[]` OK
      */
-    getJoinedGroup: (params: RequestParams = {}) =>
+    getJoinedGroups: (params: RequestParams = {}) =>
       this.http.request<JoinedGroupRs[], any>({
         path: `/v1/groups/me`,
         method: "GET",
@@ -1404,26 +1690,6 @@ export class Api<SecurityDataType extends unknown> {
       this.http.request<void, any>({
         path: `/v1/groups/${groupId}/members/me`,
         method: "DELETE",
-        secure: true,
-        ...params,
-      }),
-  };
-  찌르기Api = {
-    /**
-     * @description 특정 사용자에게 찌르기 알람을 보냅니다.
-     *
-     * @tags 찌르기 API
-     * @name SendPokeNotification
-     * @summary 찌르기 API
-     * @request POST:/v1/groups/members/{targetUserId}/poke
-     * @secure
-     * @response `204` `void` 알림 보내기 성공
-     * @response `400` `void` 찌르기 알림 횟수 초과
-     */
-    sendPokeNotification: (targetUserId: string, params: RequestParams = {}) =>
-      this.http.request<void, void>({
-        path: `/v1/groups/members/${targetUserId}/poke`,
-        method: "POST",
         secure: true,
         ...params,
       }),
@@ -1467,26 +1733,6 @@ export class Api<SecurityDataType extends unknown> {
         ...params,
       }),
   };
-  사용자Api = {
-    /**
-     * @description 로그인한 사용자의 정보를 조회합니다.
-     *
-     * @tags 사용자 API
-     * @name GetMyProfile
-     * @summary 내 정보 조회
-     * @request GET:/v1/users/me
-     * @secure
-     * @response `200` `UserRs` 유저 정보 조회 성공
-     * @response `401` `void` 인증되지 않은 사용자
-     */
-    getMyProfile: (params: RequestParams = {}) =>
-      this.http.request<UserRs, void>({
-        path: `/v1/users/me`,
-        method: "GET",
-        secure: true,
-        ...params,
-      }),
-  };
   포인트Api = {
     /**
      * @description 사용자가 획득한 포인트를 조회합니다.
@@ -1502,6 +1748,34 @@ export class Api<SecurityDataType extends unknown> {
       this.http.request<PointRs, any>({
         path: `/v1/points`,
         method: "GET",
+        secure: true,
+        ...params,
+      }),
+  };
+  알림Api = {
+    /**
+     * @description 알림 목록을 조회합니다.
+     *
+     * @tags 알림 API
+     * @name GetNotificationList
+     * @summary 알림 목록 API
+     * @request GET:/v1/notifications
+     * @secure
+     * @response `200` `CustomSliceNotificationItemRs` OK
+     */
+    getNotificationList: (
+      query: {
+        /** @format int32 */
+        offset: number;
+        /** @format int32 */
+        limit: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<CustomSliceNotificationItemRs, any>({
+        path: `/v1/notifications`,
+        method: "GET",
+        query: query,
         secure: true,
         ...params,
       }),
