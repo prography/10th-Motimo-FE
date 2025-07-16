@@ -1,5 +1,8 @@
 "use client";
-import { GroupMessageItemRsMessageTypeEnum } from "@/api/generated/motimo/Api";
+import {
+  TodoCompletedContent,
+  TodoResultSubmittedContent,
+} from "@/api/generated/motimo/Api";
 import { GroupChatItemProps, GroupChatItem } from "../../GroupChatItem";
 import useModal from "@/hooks/useModal";
 import ReactionModal from "../../ReactionModal";
@@ -43,6 +46,8 @@ const GroupChatRoom = ({ groupId }: GroupChatRoomProps) => {
   //test
   console.log("DATA in groupchatroom: ", data);
 
+  // TODO : fileURL을 받으면 이걸로 HEAD로 이미지 타입 여부와 파일 이름을 알아내야 함.
+
   return (
     <>
       <section className="overflow-y-auto w-full flex flex-col items-center gap-5 ">
@@ -51,7 +56,7 @@ const GroupChatRoom = ({ groupId }: GroupChatRoomProps) => {
             <MessageItem
               // 임시
               key={messageInfo.messageId}
-              messageType={messageInfo.message.content.type}
+              messageType={messageInfo.message.content?.type || null}
               // messageType={GroupMessageItemRsMessageTypeEnum.TODO}
               contents={
                 messageInfo.message.content?.type ===
@@ -71,18 +76,34 @@ const GroupChatRoom = ({ groupId }: GroupChatRoomProps) => {
                         messageInfo.message.content?.type ===
                         GroupMessageContentTypeEnum.TODO_COMPLETE
                           ? "todo"
-                          : messageInfo.message.content.fileUrl
+                          : (
+                                messageInfo.message
+                                  .content as TodoResultSubmittedContent &
+                                  TodoCompletedContent
+                              )?.fileUrl
                             ? "photo"
                             : "diary",
                       type: messageInfo.userId === userId ? "me" : "member",
                       diaryText:
-                        messageInfo.message.content.content || undefined,
-                      hasReaction: messageInfo.message.content.hasUserReacted,
-                      reactionCount: messageInfo.message.content.reactionCount,
+                        (
+                          messageInfo.message
+                            .content as TodoResultSubmittedContent &
+                            TodoCompletedContent
+                        )?.content || undefined,
+                      hasReaction: messageInfo.hasUserReacted,
+                      reactionCount: messageInfo.reactionCount,
                       reactionType: "best", // 임시
                       photoUrl:
-                        messageInfo.message.content.fileUrl || undefined,
-                      checkboxLabel: messageInfo.message.content.todoTitle,
+                        (
+                          messageInfo.message
+                            .content as TodoResultSubmittedContent &
+                            TodoCompletedContent
+                        )?.fileUrl || undefined,
+                      checkboxLabel: (
+                        messageInfo.message
+                          .content as TodoResultSubmittedContent &
+                          TodoCompletedContent
+                      )?.todoTitle,
                     }
               }
             />
@@ -97,7 +118,7 @@ export default GroupChatRoom;
 type GroupChatItemValueProps = Omit<GroupChatItemProps, "onReactionClick">;
 
 interface GroupMessage {
-  messageType: GroupMessageContentTypeEnum;
+  messageType: GroupMessageContentTypeEnum | null;
   contents: GroupChatItemValueProps | EnterMessageProps;
 }
 

@@ -13,7 +13,8 @@ import ReactionTypes from "@/types/reactionTypes";
 
 export interface GroupChatItemProps {
   type: "me" | "member";
-  style: "todo" | "photo" | "diary" | "reaction";
+  style: "todo" | "reaction";
+  // style: "todo" | "photo" | "diary" | "reaction";
   hasReaction?: boolean;
   reactionCount?: number;
   username: string;
@@ -21,6 +22,8 @@ export interface GroupChatItemProps {
   checkboxLabel?: string;
   isChecked?: boolean;
   diaryText?: string;
+  // fileUrl?: string;
+  fileName?:string;
   photoUrl?: string;
   reactionType?: ReactionTypes;
   className?: string;
@@ -100,12 +103,15 @@ export const GroupChatItem = ({
   isChecked = true,
   diaryText,
   photoUrl,
+  fileName,
   reactionType = "best",
   className,
   onReactionClick,
   id,
 }: GroupChatItemProps) => {
   const isMe = type === "me";
+
+  const 
 
   return (
     <div
@@ -159,9 +165,10 @@ export const GroupChatItem = ({
         <div
           className={cn(
             "bg-[#F7F7F8] rounded-lg",
-            style === "todo" && "py-3 px-4",
-            style === "photo" && "p-3 w-[248px]",
-            style === "diary" && "p-3 w-[248px]",
+            style === "todo" &&
+              `py-3 px-4 ${diaryText || photoUrl ? "w-[248px]" : ""}`,
+            // style === "photo" && "p-3 w-[248px]",
+            // style === "diary" && "p-3 w-[248px]",
             style === "reaction" && "py-3 px-4 w-[248px]",
           )}
         >
@@ -175,14 +182,15 @@ export const GroupChatItem = ({
               </span>
 
               {/* Checkbox for todo, photo, and diary styles */}
-              {(style === "todo" || style === "photo" || style === "diary") &&
-                checkboxLabel && (
-                  <ChatCheckbox checked={isChecked} label={checkboxLabel} />
-                )}
+              {/* {(style === "todo" || style === "photo" || style === "diary") && */}
+              {style === "todo" && checkboxLabel && (
+                <ChatCheckbox checked={isChecked} label={checkboxLabel} />
+              )}
             </div>
 
             {/* Photo for photo style */}
-            {style === "photo" && photoUrl && (
+            {/* {style === "photo" && photoUrl && ( */}
+            {style === "todo" && photoUrl && (
               <div className="w-[116px] h-[116px] rounded-lg border border-[#CDD1D5] overflow-hidden">
                 <Image
                   src={photoUrl}
@@ -195,11 +203,21 @@ export const GroupChatItem = ({
             )}
 
             {/* Diary text for diary style */}
-            {style === "diary" && diaryText && (
+            {/* {style === "diary" && diaryText && ( */}
+            {style === "todo" && diaryText && (
               <p className="font-SUIT_Variable font-medium text-sm leading-[1.4] tracking-[-0.01em] text-[#464C53]">
                 {diaryText}
               </p>
             )}
+
+            {style==='todo' && fileName&&
+            <div className="pl-4 pr-3 py-2 relative bg-background-assistive rounded-lg inline-flex flex-col justify-center items-start gap-2 overflow
+            -hidden">
+              <p className="justify-start text-label-normal text-sm font-bold font-['SUIT_Variable'] leading-tight">
+                {fileName}
+                </p>
+              </div>
+              }
 
             {/* Reaction illustration for reaction style */}
             {style === "reaction" && (

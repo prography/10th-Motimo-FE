@@ -10,7 +10,7 @@ export default function GroupRoom() {
 
   return (
     <main className="flex flex-col gap-4 bg-background-alternative min-h-screen">
-      <GroupRoomHeader groupRoomName={data?.name} />
+      <GroupRoomHeader groupRoomName={data?.name ?? ""} />
       <GroupChatRoom groupId={groupId} />
     </main>
   );

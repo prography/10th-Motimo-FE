@@ -1,5 +1,6 @@
 import { SWRConfiguration } from "swr";
 import { useApiQuery } from "./useApiQuery";
+import { GetGroupChatParamsDirectionEnum } from "./generated/motimo/Api";
 
 export const useQuery = {
   // Todo API
@@ -66,22 +67,30 @@ export const useQuery = {
 
   groupChat: (
     groupId: string | null,
-    page: number,
-    size: number,
+    limit: number,
+    cursor: string,
+    direction: GetGroupChatParamsDirectionEnum,
     config?: SWRConfiguration,
   ) =>
     useApiQuery(
       "그룹Api",
       "getGroupChat",
-      groupId ? [groupId, { page, size }] : null,
+      groupId ? [groupId, { cursor, direction, limit: String(limit) }] : null,
       undefined,
       config,
     ),
+
   groupDetail: (groupId: string | null, config?: SWRConfiguration) =>
-    useApiQuery("그룹Api", "getGroupDetail", [groupId], undefined, config),
+    useApiQuery(
+      "그룹Api",
+      "getGroupDetail",
+      groupId ? [groupId] : null,
+      undefined,
+      config,
+    ),
 
   joinedGroups: (config?: SWRConfiguration) =>
-    useApiQuery("그룹Api", "getJoinedGroup", [], undefined, config),
+    useApiQuery("그룹Api", "getJoinedGroups", [], undefined, config),
 
   // Point & Cheer API
   points: (config?: SWRConfiguration) =>
