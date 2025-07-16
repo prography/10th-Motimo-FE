@@ -23,7 +23,7 @@ const useGoalWithSubGoalTodo = (goalId: string, options?: SWRConfiguration) => {
           id: todoInfo.id ?? "",
           title: todoInfo.title ?? "",
           checked: todoInfo.status === TodoRsStatusEnum.COMPLETE,
-          reported: todoInfo.todoResultId ? true : false,
+          reported: todoInfo.todoResult ? true : false,
           targetDate: todoInfo.date ? new Date(todoInfo.date) : new Date(),
         })) ?? [];
 

@@ -10,6 +10,8 @@ import {
   useContext,
   useOptimistic,
   startTransition,
+  useRef,
+  useEffect,
 } from "react";
 import { KeyedMutator } from "swr";
 import { motion, useMotionValue } from "motion/react";
@@ -27,13 +29,18 @@ import TodoItem from "@/components/shared/TodoItem/TodoItem";
 import ModalAddingSubGoal from "@/components/shared/Modal/ModalAddingSubGoal/ModalAddingSubGoal";
 
 import useModal from "@/hooks/useModal";
-import { useSubGoalTodos, useGoalWithSubGoals } from "@/api/hooks";
+import { useGoalWithSubGoals } from "@/api/hooks";
 import useOptimisticToggle from "@/hooks/main/useOptimisticToggle";
 import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
 
 import { todoApi, goalApi } from "@/api/service";
 import { TodoRs, TodoRsStatusEnum } from "@/api/generated/motimo/Api";
 import Link from "next/link";
+import { useSubGoalTodosIncompleteOrTodayInfinite } from "@/hooks/queries/useSubGoalTodosInfiniites";
+import { SubGoalTodoInfinite } from "@/hooks/queries/useSubGoalTodosInfiniites";
+import { SWRInfiniteKeyedMutator } from "swr/dist/infinite";
+
+import { useObservingInfiniteOffset } from "@/hooks/queries/useSubGoalTodosInfiniites";
 /** api generator로부터 받은 타입을 사용 */
 
 interface TodoListProps {
@@ -56,7 +63,8 @@ interface TodoListProps {
 const TodoListContext = createContext<{
   subGoalTitle?: string;
   subGoalId?: string;
-  mutate?: KeyedMutator<TodoRs[]>;
+
+  mutate?: SWRInfiniteKeyedMutator<(SubGoalTodoInfinite | undefined)[]>;
   updateOptimisticCheckedLen?: (action: number) => void;
   onReportedClick?: TodoListProps["onReportedClick"];
   goalId?: string;
@@ -73,20 +81,48 @@ const TodoList = ({
 }: TodoListProps) => {
   // 펼친 상태가 기본
   const [isFolded, setIsFolded] = useState(false);
-  const { data: rawTodoData, mutate } = useSubGoalTodos(subGoalId ?? "", {
-    fallbackData: initTodoItemsInfo,
-  });
+  // const { data: rawTodoData, mutate } = useSubGoalTodos(subGoalId ?? "", {
+  //   fallbackData: initTodoItemsInfo,
+  // });
+  const [offset, setOffset] = useState(0);
+
+  const observingRef = useRef<HTMLDivElement | null>(null);
+  const [shoudObservingStop, setShouldObservingStop] = useState(false);
+  const { curOffset } = useObservingInfiniteOffset(
+    shoudObservingStop,
+    observingRef,
+    0,
+  );
+  const { data, mutate, isLoading, isReachedLast } =
+    useSubGoalTodosIncompleteOrTodayInfinite(subGoalId ?? "", offset, {
+      fallbackData: [{ content: initTodoItemsInfo || [] }],
+    });
+  // observing처리
+  useEffect(() => {
+    if (isLoading || isReachedLast) setShouldObservingStop(true);
+  }, [isLoading, isReachedLast]);
+
+  // test
+  console.log("data in todolist: ", data);
+
+  // 임시
+  // const rawTodoData = initTodoItemsInfo;
 
   // Convert raw todo data to the format expected by the component
-  const todoItemsInfo: TodoItemsInfo[] | undefined = rawTodoData?.map(
-    (todoRs) => ({
-      id: todoRs.id ?? "",
-      title: todoRs.title ?? "",
-      checked: todoRs.status === TodoRsStatusEnum.COMPLETE,
-      reported: !!todoRs.todoResultId,
-      targetDate: todoRs.date ? new Date(todoRs.date) : undefined,
-    }),
-  );
+  // const todoItemsInfo: TodoItemsInfo[] | undefined = rawTodoData[0].isFallback(
+  //   rawTodoData as TodoRs[]
+  // )?.map((todoRs) => ({
+  //   id: todoRs.id ?? "",
+  //   title: todoRs.title ?? "",
+  //   checked: todoRs.status === TodoRsStatusEnum.COMPLETE,
+  //   reported: !!todoRs.todoResult?.todoResultId,
+  //   targetDate: todoRs.date ? new Date(todoRs.date) : todoRs.,
+  // }));
+
+  const todoItemsInfo = data ?? [];
+
+  //test
+  console.log("todoItemsInfo in todolist: ", todoItemsInfo);
 
   const todoCheckedLen =
     todoItemsInfo?.filter((todoItem) => todoItem.checked).length ??
@@ -108,6 +144,7 @@ const TodoList = ({
       </>
     );
   const hasTodoItemsInfo = todoItemsInfo ? todoItemsInfo.length > 0 : false;
+
   return (
     <>
       <div
@@ -336,14 +373,15 @@ const TodoItemContainer = ({
             {...info}
             checked={checked}
             onChecked={async () => {
-              startTransition(async () => {
-                toggleChecekdOptimistically();
-                await todoApi.toggleTodoCompletion(info.id);
-                mutate && mutate();
-              });
+              toggleChecekdOptimistically();
+              const res = await todoApi.toggleTodoCompletion(info.id);
 
-              // updateOptimisticCheckedLen &&
-              //   updateOptimisticCheckedLen(checked ? -1 : +1);
+              if (res) {
+                mutate && mutate();
+              }
+
+              updateOptimisticCheckedLen &&
+                updateOptimisticCheckedLen(checked ? -1 : +1);
             }}
             onReportedClick={async () => {
               onReportedClick && onReportedClick(info.id);

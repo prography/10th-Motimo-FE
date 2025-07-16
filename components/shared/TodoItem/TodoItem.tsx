@@ -108,7 +108,7 @@ const Reported = ({ reported }: { reported: TodoItemProps["reported"] }) => {
       <>
         <div className="self-stretch flex justify-center items-center  h-6 w-6 relative bg-background-primary rounded-[999px] overflow-hidden">
           <div className="w-5 h-5 flex justify-center items-center overflow-hidden text-white">
-            <CheckSvg />
+            <CheckSvg width={20} height={20} />
           </div>
         </div>
       </>

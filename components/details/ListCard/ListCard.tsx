@@ -7,12 +7,15 @@ import { TodoItemsInfo } from "@/types/todoList";
 import Checkbox from "@/components/shared/Checkbox/Checkbox";
 import useModal from "@/hooks/useModal";
 import ModalIncompletingSubGoal from "../Modals/ModalIncompletingSubGoal/ModalIncompletingSubGoal";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TodoResultBottomSheet from "@/components/shared/BottomSheets/TodoResultBottomSheet/TodoResultBottomSheet";
 import { TodoResultRqEmotionEnum } from "@/api/generated/motimo/Api";
-import { useSubGoalTodos } from "@/api/hooks";
-import useTodoList from "@/hooks/queries/useTodoList";
 import { subGoalApi, todoApi } from "@/api/service";
+import { postTodoResult } from "@/lib/fetching/postTodoResult";
+import {
+  useObservingInfiniteOffset,
+  useSubGoalTodosAllInfinite,
+} from "@/hooks/queries/useSubGoalTodosInfiniites";
 interface ListCardProps {
   subGoalInfo: {
     name?: string;
@@ -36,9 +39,21 @@ const ListCard = ({
 }: ListCardProps) => {
   // 이 안에서도 subGoal에대한 todod들 가져오는 fetch있어야 함.
 
-  const { data: fetchedTodoItemsInfo, mutate } = useTodoList(
-    subGoalInfo.id ?? "",
+  const observingRef = useRef<HTMLDivElement | null>(null);
+  const [shoudObservingStop, setShouldObservingStop] = useState(false);
+  const { curOffset } = useObservingInfiniteOffset(
+    shoudObservingStop,
+    observingRef,
+    0,
   );
+
+  const {
+    data: fetchedTodoItemsInfo,
+    mutate,
+    isLoading,
+    isReachedLast,
+  } = useSubGoalTodosAllInfinite(subGoalInfo.id ?? "", curOffset);
+
   // 여기 초기값 등 처리에서 데이터를 가져와야 함. 지금은 false로 임시로 둠.
   const [subGoalCompleted, setSubGoalCompleted] = useState(false);
 
@@ -54,6 +69,12 @@ const ListCard = ({
   const totalTodoLen = initTodoInfoList?.length ?? 0;
   const checkedTodoLen =
     initTodoInfoList?.filter((todo) => todo.checked).length ?? 0;
+
+  // observing처리
+  useEffect(() => {
+    if (isLoading || isReachedLast) setShouldObservingStop(true);
+  }, [isLoading, isReachedLast]);
+
   return (
     <>
       <main className="w-full flex-1 p-4  inline-flex flex-col justify-start items-center gap-2 overflow-hidden">
@@ -154,22 +175,34 @@ const ListCard = ({
               />
             );
           })}
+          <div ref={observingRef} id="observingref" className="h-10">
+            {/** observing ref */}
+          </div>
         </section>
       </main>
       {openBottomSheet && (
         <TodoResultBottomSheet
           hasBottomTabBar={false}
           onSubmit={async (todoResult) => {
-            todoIdForResult &&
-              todoResult.emotion !== null &&
-              (await todoApi.upsertTodoResult(todoIdForResult, {
-                request: {
-                  emotion: todoResult.emotion as TodoResultRqEmotionEnum,
-                  content: todoResult.memo,
-                },
-                file: todoResult.file || undefined,
-              }));
-            mutate();
+            if (todoIdForResult && todoResult.emotion !== null) {
+              // (await todoApi.upsertTodoResult(todoIdForResult, {
+              //   request: {
+              //     emotion: todoResult.emotion as TodoResultRqEmotionEnum,
+              //     content: todoResult.memo,
+              //   },
+              //   file: todoResult.file || undefined,
+              // }));
+              const res = await postTodoResult(
+                todoIdForResult,
+                todoResult.emotion as TodoResultRqEmotionEnum,
+                todoResult.memo,
+                todoResult.file || undefined,
+              );
+
+              if (!res) return;
+              setOpenBottomSheet(false);
+              mutate();
+            }
           }}
           openBottomSheet={openBottomSheet}
           setOpenBottomSheet={setOpenBottomSheet}

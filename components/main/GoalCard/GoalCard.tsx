@@ -2,7 +2,7 @@
 
 import useGoalStore from "@/stores/useGoalStore";
 import TodoList from "../TodoList/TodoList";
-import { useGoalWithSubGoals, useSubGoalTodos } from "@/api/hooks";
+import { useGoalWithSubGoals } from "@/api/hooks";
 import {
   GoalWithSubGoalTodoRs,
   TodoRsStatusEnum,
@@ -23,6 +23,8 @@ import { date2StringWithSpliter } from "@/utils/date2String";
 import { calcLeftDay } from "@/utils/calcLeftDay";
 import TodoResultBottomSheet from "@/components/shared/BottomSheets/TodoResultBottomSheet/TodoResultBottomSheet";
 import { TodoResultRqEmotionEnum } from "@/api/generated/motimo/Api";
+import { useSubGoalTodosIncompleteOrTodayInfinite } from "@/hooks/queries/useSubGoalTodosInfiniites";
+import { subGoalTodo2TodoItemList } from "@/utils/subGoalTodo2TodoItemList";
 
 // Define the converted data type
 type ConvertedGoalWithSubGoalTodo = Omit<GoalWithSubGoalTodoRs, "subGoals"> & {
@@ -39,19 +41,13 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
     fallbackData: initSubGoalTodo,
   });
 
-  // Convert raw goal data to the format expected by the component
+  // // Convert raw goal data to the format expected by the component
   const goalWithSubGoalTodo: ConvertedGoalWithSubGoalTodo = {
     ...rawGoalData,
     subGoals:
       rawGoalData?.subGoals?.map((subGoalInfo) => {
         const todosInSubGoal: TodoItemsInfo[] =
-          subGoalInfo.todos?.map((todoInfo) => ({
-            id: todoInfo.id ?? "",
-            title: todoInfo.title ?? "",
-            checked: todoInfo.status === TodoRsStatusEnum.COMPLETE,
-            reported: todoInfo.todoResultId ? true : false,
-            targetDate: todoInfo.date ? new Date(todoInfo.date) : new Date(),
-          })) ?? [];
+          subGoalTodo2TodoItemList(subGoalInfo);
 
         return {
           subGoalId: subGoalInfo.id ?? "",
@@ -66,7 +62,12 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
   } as ConvertedGoalWithSubGoalTodo;
 
   const [newTodo, setNewTodo] = useState<TodoInfoForSubmission | null>(null);
-  const { mutate } = useSubGoalTodos(newTodo?.subGoalId ?? "");
+  // const { mutate } = useSubGoalTodos(newTodo?.subGoalId ?? "");
+  const [infiniteOffset, setInfiniteOffset] = useState(0);
+  const { mutate } = useSubGoalTodosIncompleteOrTodayInfinite(
+    newTodo?.subGoalId ?? "",
+    infiniteOffset,
+  );
   const { isActive, setIsActive, initContent } = useActiveTodoBottomSheet();
   const { isOpened: isModalOpened } = useModal();
   const [todoResBottomSheetInfo, setTodoResBottomSheetInfo] = useState<{
@@ -86,6 +87,7 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
   //     60 /
   //     60,
   // );
+
   const goalLeftDate = calcLeftDay(goalWithSubGoalTodo.dueDate ?? new Date());
 
   const totalTodoLenInGoal =
@@ -115,6 +117,8 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
         <GoalInfo leftDateNum={goalLeftDate} leftTodoNum={goalLeftTodoNum} />
         <section className="flex flex-col gap-4 w-full">
           {goalWithSubGoalTodo?.subGoals?.map((subGoalInfo) => {
+            //test
+            console.log("subGoalInfo in goalcard: ", subGoalInfo);
             return (
               <TodoList
                 {...subGoalInfo}
