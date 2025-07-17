@@ -22,7 +22,8 @@ interface DetailBodyProps {
 }
 
 const DetailBody = ({ goalId }: DetailBodyProps) => {
-  const { data } = useGoalWithSubGoalTodo(goalId);
+  const { data, mutate: mutateForSubgoalCompleted } =
+    useGoalWithSubGoalTodo(goalId);
   const { data: goalDetail, mutate: mutateForGoalProgress } =
     useGoalDetail(goalId);
   const [targetSubGoalIdx, setTargetSubGoalIdx] = useState(0);
@@ -30,8 +31,13 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
 
   const dDay = calcLeftDay(data?.dueDate ?? new Date());
 
-  // tmp
-  const allSubGoalCompleted = true;
+  const allSubGoalCompleted =
+    data.subGoals?.filter((subgoalInfo) => subgoalInfo.isCompleted).length ===
+      data.subGoals?.length &&
+    // 0개 달성이면 안됨.
+    data.subGoals?.filter((subgoalInfo) => subgoalInfo.isCompleted).length !==
+      0;
+
   const groupId = goalDetail?.groupId;
 
   // 모든 세부목표 완료 시에 모달
@@ -51,7 +57,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
     );
   };
   useEffect(() => {
-    openModalCompletingGoal();
+    if (allSubGoalCompleted) openModalCompletingGoal();
   }, [allSubGoalCompleted]);
   return (
     <div className="flex flex-col flex-1">
@@ -113,7 +119,9 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
       </section>
       <section className="mt-2 bg-background-alternative h-full">
         <ListCard
-          initTodoInfoList={data.subGoals?.[targetSubGoalIdx].initTodoItemsInfo}
+          initTodoInfoList={
+            data.subGoals?.[targetSubGoalIdx]?.initTodoItemsInfo
+          }
           onLeft={() =>
             setTargetSubGoalIdx((prev) => {
               if (prev > 0) return prev - 1;
@@ -131,10 +139,14 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
           subGoalInfo={{
             id: data?.subGoals?.[targetSubGoalIdx]?.subGoalId,
             idx: targetSubGoalIdx,
-            name: data.subGoals?.[targetSubGoalIdx].subGoal,
+            name: data.subGoals?.[targetSubGoalIdx]?.subGoal,
             totalSubGoalsLen: data.subGoals?.length ?? 0,
+            isCompleted: data.subGoals?.[targetSubGoalIdx]?.isCompleted,
           }}
-          applyOnGoalData={() => mutateForGoalProgress()}
+          applyOnGoalData={() => {
+            mutateForGoalProgress();
+            mutateForSubgoalCompleted();
+          }}
         />
       </section>
     </div>

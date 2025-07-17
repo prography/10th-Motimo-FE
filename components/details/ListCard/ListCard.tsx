@@ -13,7 +13,8 @@ import { TodoResultRqEmotionEnum } from "@/api/generated/motimo/Api";
 import { subGoalApi, todoApi } from "@/api/service";
 import { postTodoResult } from "@/lib/fetching/postTodoResult";
 import {
-  useObservingInfiniteOffset,
+  useObservingExist,
+  // useObservingInfiniteOffset,
   useSubGoalTodosAllInfinite,
 } from "@/hooks/queries/useSubGoalTodosInfiniites";
 interface ListCardProps {
@@ -22,6 +23,7 @@ interface ListCardProps {
     id?: string;
     idx: number;
     totalSubGoalsLen: number;
+    isCompleted?: boolean;
   };
   initTodoInfoList?: TodoItemsInfo[];
   // 좌우 이동으로 다른 subgoal로 이동하고, 이 때 key값으로 리마운트 시켜버려야겠다 걍.
@@ -40,22 +42,24 @@ const ListCard = ({
   // 이 안에서도 subGoal에대한 todod들 가져오는 fetch있어야 함.
 
   const observingRef = useRef<HTMLDivElement | null>(null);
-  const [shoudObservingStop, setShouldObservingStop] = useState(false);
-  const { curOffset } = useObservingInfiniteOffset(
-    shoudObservingStop,
-    observingRef,
-    0,
-  );
 
   const {
     data: fetchedTodoItemsInfo,
     mutate,
     isLoading,
     isReachedLast,
-  } = useSubGoalTodosAllInfinite(subGoalInfo.id ?? "", curOffset);
+    size,
+    setSize,
+  } = useSubGoalTodosAllInfinite(subGoalInfo.id ?? "");
 
-  // 여기 초기값 등 처리에서 데이터를 가져와야 함. 지금은 false로 임시로 둠.
-  const [subGoalCompleted, setSubGoalCompleted] = useState(false);
+  const existObserver = useObservingExist(
+    isLoading,
+    isReachedLast,
+    observingRef,
+    () => {
+      setSize(size + 1);
+    },
+  );
 
   const { closeModal, openModal } = useModal();
   const [openBottomSheet, setOpenBottomSheet] = useState(false);
@@ -64,16 +68,12 @@ const ListCard = ({
 
   const isTodoAllChecked =
     todoItemsInfo.filter((todo) => todo.checked).length ===
-    todoItemsInfo.length;
+      todoItemsInfo.length &&
+    todoItemsInfo.filter((todo) => todo.checked).length !== 0;
 
-  const totalTodoLen = initTodoInfoList?.length ?? 0;
+  const totalTodoLen = todoItemsInfo?.length ?? 0;
   const checkedTodoLen =
-    initTodoInfoList?.filter((todo) => todo.checked).length ?? 0;
-
-  // observing처리
-  useEffect(() => {
-    if (isLoading || isReachedLast) setShouldObservingStop(true);
-  }, [isLoading, isReachedLast]);
+    todoItemsInfo?.filter((todo) => todo.checked).length ?? 0;
 
   return (
     <>
@@ -122,14 +122,17 @@ const ListCard = ({
                 </div>
               </div>
               <Checkbox
-                checked={subGoalCompleted}
+                checked={subGoalInfo.isCompleted}
                 onChange={async () => {
-                  if (!subGoalCompleted) {
+                  if (!subGoalInfo.isCompleted) {
+                    // if (!subGoalCompleted) {
                     const res = await subGoalApi.subGoalCompleteToggle(
                       subGoalInfo.id ?? "",
                     );
-                    if (res) setSubGoalCompleted(!subGoalCompleted);
-                    applyOnGoalData();
+                    if (res) {
+                      // setSubGoalCompleted(!subGoalCompleted);
+                      applyOnGoalData();
+                    }
                   } else {
                     // 모달 후 처리
                     openModal(
@@ -140,7 +143,7 @@ const ListCard = ({
                             subGoalInfo.id ?? "",
                           );
                           if (res) {
-                            setSubGoalCompleted(!subGoalCompleted);
+                            // setSubGoalCompleted(!subGoalCompleted);
                             applyOnGoalData();
                             closeModal();
                           }
@@ -175,9 +178,11 @@ const ListCard = ({
               />
             );
           })}
-          <div ref={observingRef} id="observingref" className="h-10">
-            {/** observing ref */}
-          </div>
+          {existObserver && (
+            <div ref={observingRef} id="observingref" className="h-10">
+              {/** observing ref */}
+            </div>
+          )}
         </section>
       </main>
       {openBottomSheet && (
