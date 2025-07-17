@@ -324,6 +324,15 @@ export interface TodoRs {
   createdAt?: string;
 }
 
+export interface CustomSliceTodoRs {
+  content?: TodoRs[];
+  hasNext?: boolean;
+  /** @format int32 */
+  offset?: number;
+  /** @format int32 */
+  size?: number;
+}
+
 export interface PointRs {
   /**
    * 사용자가 현재 획득한 포인트
@@ -1614,7 +1623,7 @@ export class Api<SecurityDataType extends unknown> {
      * @summary 세부 목표의 모든 TODO 목록(슬라이스) 조회
      * @request GET:/v1/sub-goals/{subGoalId}/todos
      * @secure
-     * @response `200` `(TodoRs)[]` 조회 성공
+     * @response `200` `CustomSliceTodoRs` 세부목표의 투두 리스트(완료, 미완료 모두)조회 성공
      * @response `400` `ErrorResponse` 잘못된 요청
      * @response `404` `ErrorResponse` 세부 목표를 찾을 수 없음
      */
@@ -1638,7 +1647,7 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<TodoRs[], ErrorResponse>({
+      this.http.request<CustomSliceTodoRs, ErrorResponse>({
         path: `/v1/sub-goals/${subGoalId}/todos`,
         method: "GET",
         query: query,
@@ -1654,7 +1663,7 @@ export class Api<SecurityDataType extends unknown> {
      * @summary 세부 목표별 미완료 또는 오늘 날짜 TODO 목록(슬라이스) 조회
      * @request GET:/v1/sub-goals/{subGoalId}/todos/incomplete-or-date
      * @secure
-     * @response `200` `(TodoRs)[]` TODO 목록 조회 성공
+     * @response `200` `CustomSliceTodoRs` 세부 목표의 오늘이거나 완료되지 않은 TODO 목록 조회 성공
      * @response `400` `ErrorResponse` 잘못된 요청 데이터
      * @response `404` `ErrorResponse` 세부 목표를 찾을 수 없음
      */
@@ -1678,7 +1687,7 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<TodoRs[], ErrorResponse>({
+      this.http.request<CustomSliceTodoRs, ErrorResponse>({
         path: `/v1/sub-goals/${subGoalId}/todos/incomplete-or-date`,
         method: "GET",
         query: query,
