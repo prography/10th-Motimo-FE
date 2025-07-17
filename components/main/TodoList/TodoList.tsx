@@ -12,6 +12,7 @@ import {
   startTransition,
   useRef,
   useEffect,
+  RefObject,
 } from "react";
 import { KeyedMutator } from "swr";
 import { motion, useMotionValue } from "motion/react";
@@ -36,11 +37,14 @@ import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
 import { todoApi, goalApi } from "@/api/service";
 import { TodoRs, TodoRsStatusEnum } from "@/api/generated/motimo/Api";
 import Link from "next/link";
-import { useSubGoalTodosIncompleteOrTodayInfinite } from "@/hooks/queries/useSubGoalTodosInfiniites";
+import {
+  useObservingExist,
+  useSubGoalTodosIncompleteOrTodayInfinite,
+} from "@/hooks/queries/useSubGoalTodosInfiniites";
 import { SubGoalTodoInfinite } from "@/hooks/queries/useSubGoalTodosInfiniites";
 import { SWRInfiniteKeyedMutator } from "swr/dist/infinite";
 
-import { useObservingInfiniteOffset } from "@/hooks/queries/useSubGoalTodosInfiniites";
+// import { useObservingInfiniteOffset } from "@/hooks/queries/useSubGoalTodosInfiniites";
 /** api generator로부터 받은 타입을 사용 */
 
 interface TodoListProps {
@@ -68,6 +72,8 @@ const TodoListContext = createContext<{
   updateOptimisticCheckedLen?: (action: number) => void;
   onReportedClick?: TodoListProps["onReportedClick"];
   goalId?: string;
+  existObserver?: boolean;
+  observingRef: RefObject<HTMLDivElement | null>;
 } | null>(null);
 
 const TodoList = ({
@@ -81,48 +87,26 @@ const TodoList = ({
 }: TodoListProps) => {
   // 펼친 상태가 기본
   const [isFolded, setIsFolded] = useState(false);
-  // const { data: rawTodoData, mutate } = useSubGoalTodos(subGoalId ?? "", {
-  //   fallbackData: initTodoItemsInfo,
-  // });
-  const [offset, setOffset] = useState(0);
 
+  // 아래는 무한 스크롤 관련
   const observingRef = useRef<HTMLDivElement | null>(null);
-  const [shoudObservingStop, setShouldObservingStop] = useState(false);
-  const { curOffset } = useObservingInfiniteOffset(
-    shoudObservingStop,
-    observingRef,
-    0,
-  );
-  const { data, mutate, isLoading, isReachedLast } =
-    useSubGoalTodosIncompleteOrTodayInfinite(subGoalId ?? "", offset, {
+
+  const { data, mutate, isLoading, isReachedLast, size, setSize } =
+    useSubGoalTodosIncompleteOrTodayInfinite(subGoalId ?? "", {
       fallbackData: [{ content: initTodoItemsInfo || [] }],
     });
-  // observing처리
-  useEffect(() => {
-    if (isLoading || isReachedLast) setShouldObservingStop(true);
-  }, [isLoading, isReachedLast]);
 
-  // test
-  console.log("data in todolist: ", data);
+  const existObserver = useObservingExist(
+    isLoading,
+    isReachedLast,
+    observingRef,
+    () => {
+      setSize(size + 1);
+    },
+  );
 
-  // 임시
-  // const rawTodoData = initTodoItemsInfo;
-
-  // Convert raw todo data to the format expected by the component
-  // const todoItemsInfo: TodoItemsInfo[] | undefined = rawTodoData[0].isFallback(
-  //   rawTodoData as TodoRs[]
-  // )?.map((todoRs) => ({
-  //   id: todoRs.id ?? "",
-  //   title: todoRs.title ?? "",
-  //   checked: todoRs.status === TodoRsStatusEnum.COMPLETE,
-  //   reported: !!todoRs.todoResult?.todoResultId,
-  //   targetDate: todoRs.date ? new Date(todoRs.date) : todoRs.,
-  // }));
-
+  // 데이터 추가 가공
   const todoItemsInfo = data ?? [];
-
-  //test
-  console.log("todoItemsInfo in todolist: ", todoItemsInfo);
 
   const todoCheckedLen =
     todoItemsInfo?.filter((todoItem) => todoItem.checked).length ??
@@ -186,6 +170,8 @@ const TodoList = ({
                 updateOptimisticCheckedLen,
                 onReportedClick,
                 goalId,
+                existObserver,
+                observingRef,
               }}
             >
               <TodoArea
@@ -272,6 +258,9 @@ const TodoArea = ({
   todoCheckedLen: number;
   todoTotalLen: number;
 }) => {
+  const nullableContext = useContext(TodoListContext);
+  const { existObserver, observingRef } = nullableContext || {};
+
   const [selectedTodoItem, setSelectedTodoItem] = useState<null | string>(null);
   // todo를 모두 완료했을 때.
   if (hasTodoItemsInfo && todoCheckedLen > 0 && todoCheckedLen === todoTotalLen)
@@ -303,6 +292,9 @@ const TodoArea = ({
             />
           );
         })}
+        {existObserver && (
+          <div ref={observingRef} className=" w-full h-1"></div>
+        )}
       </div>
     </>
   );

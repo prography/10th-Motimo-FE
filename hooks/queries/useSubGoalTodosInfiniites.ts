@@ -1,6 +1,7 @@
 "use client";
 
 import { SWRConfiguration } from "swr";
+import { SWRInfiniteConfiguration } from "swr/infinite";
 import useInfiniteSWR from "swr/infinite";
 import { TodoRs, TodoRsStatusEnum } from "@/api/generated/motimo/Api";
 import { TodoItemsInfo } from "@/types/todoList";
@@ -17,28 +18,27 @@ type SubGoalTodoInfinite = {
 
 const useSubGoalTodosIncompleteOrTodayInfinite = (
   subGoalId: string,
-  offset: number,
-  option?: SWRConfiguration,
+  option?: SWRInfiniteConfiguration,
 ) => {
-  const { data, mutate, isLoading } = useInfiniteSWR<
+  const { data, mutate, isLoading, size, setSize } = useInfiniteSWR<
     SubGoalTodoInfinite | undefined
   >(
     (pageIndex, previousPageData) => {
-      if (!subGoalId || !previousPageData?.hasNext) return null;
+      if (!subGoalId) return null;
 
       return [
         subGoalId,
         pageIndex,
-        offset,
-        // previousPageData ? (previousPageData.offset as number) + 1 : 0,
+
+        // previousPageData?.offset ? previousPageData.offset + 1 : 0,
+        previousPageData
+          ? (previousPageData.offset as number) + previousPageData.size
+          : 0,
       ];
     },
-    async () => {
+    async (key) => {
       if (!subGoalId) return undefined;
-      // subGoalApi.getIncompleteOrTodayTodosWithSlice(subGoalId, {
-      //   offset,
-      //   size: 10,
-      // });
+      const offset = key[2];
       return await templateFetch<SubGoalTodoInfinite | undefined>({
         apiUrl: `/v1/sub-goals/${subGoalId}/todos/incomplete-or-date?offset=${offset}&size=10`,
         method: "GET",
@@ -62,35 +62,48 @@ const useSubGoalTodosIncompleteOrTodayInfinite = (
         title: pageContent.title ?? "",
         checked: pageContent.status === TodoRsStatusEnum.COMPLETE,
         reported: !!pageContent.todoResult,
-        targetDate: pageContent.date ? new Date(pageContent.date) : new Date(),
+        targetDate: pageContent.date ? new Date(pageContent.date) : undefined,
       })) ?? [],
   );
-  const isReachedLast = data ? data[data?.length - 1]?.hasNext : false;
 
-  return { data: todoItemList, mutate, isReachedLast, isLoading };
+  const isReachedLast = data ? !data[data.length - 1]?.hasNext : true;
+
+  return {
+    data: todoItemList,
+    mutate,
+    isReachedLast,
+    isLoading,
+    size,
+    setSize,
+  };
 };
 
 const useSubGoalTodosAllInfinite = (
   subGoalId: string,
-  offset: number,
-  option?: SWRConfiguration,
+  option?: SWRInfiniteConfiguration,
 ) => {
-  const { data, mutate, isLoading } = useInfiniteSWR<
+  const { data, mutate, isLoading, size, setSize } = useInfiniteSWR<
     SubGoalTodoInfinite | undefined
   >(
     (pageIndex, previousPageData) => {
       if (!subGoalId || (previousPageData && !previousPageData?.hasNext))
         return null;
 
-      return [subGoalId, pageIndex, offset];
+      return [
+        subGoalId,
+        pageIndex,
+        previousPageData
+          ? (previousPageData.offset as number) + previousPageData.size
+          : 0,
+      ] as const;
     },
     async (key) => {
-      console.log("왜 안됨 - subGoalId: ", subGoalId, !subGoalId, key);
       if (!subGoalId) return undefined;
       // subGoalApi.getTodosBySubGoalIdWithSlice(subGoalId, {
       //   offset,
       //   size: 10,
       // });
+      const offset = key[2];
       return await templateFetch<SubGoalTodoInfinite | undefined>({
         apiUrl: `/v1/sub-goals/${subGoalId}/todos?offset=${offset}&size=10`,
         method: "GET",
@@ -118,29 +131,37 @@ const useSubGoalTodosAllInfinite = (
       })) ?? [],
   );
 
-  const isReachedLast = data ? data[data?.length - 1]?.hasNext : false;
+  const isReachedLast = !!data && !data[data.length - 1]?.hasNext;
 
-  return { data: todoItemList, mutate, isReachedLast, isLoading };
+  return {
+    data: todoItemList,
+    mutate,
+    isReachedLast,
+    isLoading,
+    size,
+    setSize,
+  };
 };
 
-const useObservingInfiniteOffset = (
-  shouldStop: boolean,
+const useObservingExist = (
+  isLoading: boolean,
+  isReachedLast: boolean,
   targetRef: RefObject<HTMLElement | null>,
-  initOffset: number,
+  fetchNextPage: () => void,
 ) => {
-  const [curOffset, setCurOffset] = useState(initOffset);
+  const exist = !isReachedLast && !isLoading;
 
   useEffect(() => {
-    if (shouldStop) return;
+    if (!exist) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          setCurOffset((prev) => prev + 1);
+          fetchNextPage();
         }
       },
       {
         // 임시
-
         root: null, // 뷰포트를 기준으로 (기본값)
         rootMargin: "0px", // 타겟이 뷰포트에 들어오는 즉시 트리거
         threshold: 1.0, // 타겟이 100% 뷰포트에 들어왔을 때 트리거
@@ -155,17 +176,14 @@ const useObservingInfiniteOffset = (
         observer.disconnect();
       }
     };
-  }, [shouldStop, setCurOffset]);
+  }, [exist, targetRef.current]);
 
-  //test
-  console.log("curOffset, shouldStop in use훅: ", curOffset, shouldStop);
-
-  return { curOffset };
+  return exist;
 };
 
 export {
   useSubGoalTodosIncompleteOrTodayInfinite,
   useSubGoalTodosAllInfinite,
-  useObservingInfiniteOffset,
+  useObservingExist,
 };
 export type { SubGoalTodoInfinite };

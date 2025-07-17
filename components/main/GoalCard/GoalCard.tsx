@@ -25,6 +25,7 @@ import TodoResultBottomSheet from "@/components/shared/BottomSheets/TodoResultBo
 import { TodoResultRqEmotionEnum } from "@/api/generated/motimo/Api";
 import { useSubGoalTodosIncompleteOrTodayInfinite } from "@/hooks/queries/useSubGoalTodosInfiniites";
 import { subGoalTodo2TodoItemList } from "@/utils/subGoalTodo2TodoItemList";
+import { postTodoResult } from "@/lib/fetching/postTodoResult";
 
 // Define the converted data type
 type ConvertedGoalWithSubGoalTodo = Omit<GoalWithSubGoalTodoRs, "subGoals"> & {
@@ -61,32 +62,28 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
       }) ?? [],
   } as ConvertedGoalWithSubGoalTodo;
 
-  const [newTodo, setNewTodo] = useState<TodoInfoForSubmission | null>(null);
-  // const { mutate } = useSubGoalTodos(newTodo?.subGoalId ?? "");
-  const [infiniteOffset, setInfiniteOffset] = useState(0);
+  const [newTodoForSubmission, setNewTodoForSubmission] = useState<Pick<
+    TodoInfoForSubmission,
+    "id" | "subGoalId"
+  > | null>(null);
+
   const { mutate } = useSubGoalTodosIncompleteOrTodayInfinite(
-    newTodo?.subGoalId ?? "",
-    infiniteOffset,
+    newTodoForSubmission?.subGoalId ?? "",
+    {
+      revalidateAll: true,
+    },
   );
   const { isActive, setIsActive, initContent } = useActiveTodoBottomSheet();
   const { isOpened: isModalOpened } = useModal();
   const [todoResBottomSheetInfo, setTodoResBottomSheetInfo] = useState<{
     open: boolean;
     todoId: string | null;
+    subGoalId: string | null;
   }>({
     open: false,
     todoId: null,
+    subGoalId: null,
   });
-
-  // GoalInfo props 계산
-  // const goalLeftDate = Math.floor(
-  //   (new Date(goalWithSubGoalTodo.dueDate ?? "").getTime() -
-  //     new Date().getTime()) /
-  //     1000 /
-  //     24 /
-  //     60 /
-  //     60,
-  // );
 
   const goalLeftDate = calcLeftDay(goalWithSubGoalTodo.dueDate ?? new Date());
 
@@ -105,7 +102,7 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
   // 투두 추가/변경에서 refetch
   useEffect(() => {
     mutate();
-  }, [newTodo, mutate]);
+  }, [newTodoForSubmission, mutate]);
 
   return (
     <>
@@ -117,15 +114,17 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
         <GoalInfo leftDateNum={goalLeftDate} leftTodoNum={goalLeftTodoNum} />
         <section className="flex flex-col gap-4 w-full">
           {goalWithSubGoalTodo?.subGoals?.map((subGoalInfo) => {
-            //test
-            console.log("subGoalInfo in goalcard: ", subGoalInfo);
             return (
               <TodoList
                 {...subGoalInfo}
                 goalId={goalId || ""}
                 key={subGoalInfo.subGoalId}
                 onReportedClick={(todoId) => {
-                  setTodoResBottomSheetInfo({ open: true, todoId });
+                  setTodoResBottomSheetInfo({
+                    open: true,
+                    todoId,
+                    subGoalId: subGoalInfo.subGoalId ?? null,
+                  });
                 }}
               />
             );
@@ -176,7 +175,10 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
 
           const isFetchOk = fetchRes ? true : false;
           if (isFetchOk) {
-            setNewTodo(newTodoInfo);
+            setNewTodoForSubmission(newTodoInfo);
+            //test
+            console.log("투두 추가/수정");
+            // mutate();
           }
 
           return isFetchOk;
@@ -189,20 +191,34 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
           setTodoResBottomSheetInfo((prev) => ({ ...prev, open: nextIsOpen }))
         }
         onSubmit={async (todoResult) => {
-          const res = await todoApi.upsertTodoResult(
+          const res = await postTodoResult(
             todoResBottomSheetInfo.todoId ?? "",
-            {
-              request: {
-                content: todoResult.memo,
-                emotion:
-                  todoResult.emotion as unknown as TodoResultRqEmotionEnum,
-              },
-              file: todoResult.file || undefined,
-            },
+            todoResult.emotion as unknown as TodoResultRqEmotionEnum,
+            todoResult.memo,
+            todoResult.file || undefined,
           );
+          // const res = await todoApi.upsertTodoResult(
+          //   todoResBottomSheetInfo.todoId ?? "",
+          //   {
+          //     request: {
+          //       content: todoResult.memo,
+          //       emotion:
+          //         todoResult.emotion as unknown as TodoResultRqEmotionEnum,
+          //     },
+          //     file: todoResult.file || undefined,
+          //   },
+          // );
 
           if (res) {
-            setTodoResBottomSheetInfo({ open: false, todoId: null });
+            setTodoResBottomSheetInfo({
+              open: false,
+              todoId: null,
+              subGoalId: null,
+            });
+            setNewTodoForSubmission({
+              subGoalId: todoResBottomSheetInfo.subGoalId ?? "",
+              id: todoResBottomSheetInfo.todoId ?? "",
+            });
           }
         }}
       />
