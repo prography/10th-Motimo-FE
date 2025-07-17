@@ -119,7 +119,7 @@ const TodoBottomSheet = ({
           )}
 
           <TodoInfoContext.Provider value={{ todoInfo, setTodoInfo }}>
-            <div className="flex justify-center w-[100vw] relative">
+            <div className="flex justify-center w-[100vw]  fixed bottom-0 z-30">
               <Drawer.Content
                 // bottom tab bar에 따라 위치 바뀌도록  ${hasBottomTabBar ? "pb-14" : "pb-0"}
                 // style={{ height: "auto !important" }}
@@ -262,7 +262,7 @@ const BottomSheetSelectList = ({
           const isSelected = nullabeTodoInfo?.todoInfo.subGoalId === subGoalId;
           return (
             <li
-              key={subGoalTitle}
+              key={subGoalId}
               onClick={() => {
                 nullabeTodoInfo &&
                   nullabeTodoInfo.setTodoInfo((prev) => ({

@@ -1,0 +1,156 @@
+"use client";
+
+import GoalData from "@/components/details/GoalData/GoalData";
+import ListCard from "@/components/details/ListCard/ListCard";
+// import useGoalWithSubGoalTodo from "@/hooks/main/queries/useGoalWithSubGoalTodo";
+import useModal from "@/hooks/useModal";
+import ModalCompletingGoal from "@/components/shared/Modal/ModalCompletingGoal/ModalCompletingGoal";
+import RightArrowSvg from "@/components/shared/public/Chevron_Right_MD.svg";
+import { UserIcon } from "@/components/icons";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import CheckSvg from "@/components/shared/public/check.svg";
+// import { toggleGoalCompletion } from "@/lib/fetching/goalFetching";
+import { calcLeftDay } from "@/utils/calcLeftDay";
+// import useGoalDetail from "@/hooks/main/queries/useGoalDetail";
+import PeopleSvg from "@/public/images/People.svg";
+import { useGoalDetail, useGoalWithSubGoals } from "@/api/hooks";
+import useGoalWithSubGoalTodo from "@/hooks/queries/useGoalWithSubGoalTodo";
+import { goalApi } from "@/api/service";
+interface DetailBodyProps {
+  goalId: string;
+}
+
+const DetailBody = ({ goalId }: DetailBodyProps) => {
+  const { data, mutate: mutateForSubgoalCompleted } =
+    useGoalWithSubGoalTodo(goalId);
+  const { data: goalDetail, mutate: mutateForGoalProgress } =
+    useGoalDetail(goalId);
+  const [targetSubGoalIdx, setTargetSubGoalIdx] = useState(0);
+  const { openModal, closeModal } = useModal();
+
+  const dDay = calcLeftDay(data?.dueDate ?? new Date());
+
+  const allSubGoalCompleted =
+    data.subGoals?.filter((subgoalInfo) => subgoalInfo.isCompleted).length ===
+      data.subGoals?.length &&
+    // 0개 달성이면 안됨.
+    data.subGoals?.filter((subgoalInfo) => subgoalInfo.isCompleted).length !==
+      0;
+
+  const groupId = goalDetail?.groupId;
+
+  // 모든 세부목표 완료 시에 모달
+  const openModalCompletingGoal = () => {
+    openModal(
+      <ModalCompletingGoal
+        onClose={closeModal}
+        onCompleteGoal={async () => {
+          const res = await goalApi.goalComplete(goalId);
+          if (res) {
+            // 토스트
+            closeModal();
+          }
+        }}
+        onWait={closeModal}
+      />,
+    );
+  };
+  useEffect(() => {
+    if (allSubGoalCompleted) openModalCompletingGoal();
+  }, [allSubGoalCompleted]);
+  return (
+    <div className="flex flex-col flex-1">
+      <GoalData
+        goalName={data.title ?? ""}
+        progress={goalDetail?.progress ?? 0}
+        dDay={dDay}
+      />
+      <section className="flex flex-col gap-4 pl-4 pr-4 pb-4 bg-background-alternative">
+        {allSubGoalCompleted && (
+          <>
+            <button
+              type="button"
+              onClick={() => {
+                openModalCompletingGoal();
+              }}
+              data-leading-icon="true"
+              data-status="enabled"
+              data-type="filled"
+              className="self-stretch w-full px-4 py-2 relative bg-background-normal rounded-lg inline-flex flex-col justify-center items-start gap-2 overflow-hidden"
+            >
+              <div className="self-stretch inline-flex justify-center items-center gap-2">
+                <div className="w-6 h-6 relative overflow-hidden flex justify-center items-center text-label-strong">
+                  <CheckSvg />
+                </div>
+
+                <p className="justify-start text-label-strong text-base font-semibold font-['Pretendard'] leading-normal">
+                  목표 완료 처리 하기
+                </p>
+              </div>
+            </button>
+          </>
+        )}
+        {groupId && (
+          <>
+            <div className="self-stretch w-full h-10 px-2 py-0.5 bg-Color-primary-5 rounded-lg inline-flex justify-start items-center gap-1">
+              <div
+                data-property-1="Users_Group"
+                className="w-5 h-5 relative overflow-hidden"
+              >
+                <PeopleSvg />
+              </div>
+              <div className="flex-1 flex justify-start items-center gap-0.5">
+                <p className="justify-center text-label-normal text-xs font-semibold font-['SUIT_Variable'] leading-none">
+                  그룹으로 이동
+                </p>
+              </div>
+              <button
+                type="button"
+                className="w-6 h-6 relative overflow-hidden text-label-assistive"
+              >
+                <Link href={`/group/${groupId}`}>
+                  <RightArrowSvg />
+                </Link>
+              </button>
+            </div>
+          </>
+        )}
+      </section>
+      <section className="mt-2 bg-background-alternative h-full">
+        <ListCard
+          initTodoInfoList={
+            data.subGoals?.[targetSubGoalIdx]?.initTodoItemsInfo
+          }
+          onLeft={() =>
+            setTargetSubGoalIdx((prev) => {
+              if (prev > 0) return prev - 1;
+              // 에러 방지
+              return prev;
+            })
+          }
+          onRight={() =>
+            setTargetSubGoalIdx((prev) => {
+              if (prev < (data.subGoals?.length ?? 0)) return prev + 1;
+              // 에러방지
+              return prev;
+            })
+          }
+          subGoalInfo={{
+            id: data?.subGoals?.[targetSubGoalIdx]?.subGoalId,
+            idx: targetSubGoalIdx,
+            name: data.subGoals?.[targetSubGoalIdx]?.subGoal,
+            totalSubGoalsLen: data.subGoals?.length ?? 0,
+            isCompleted: data.subGoals?.[targetSubGoalIdx]?.isCompleted,
+          }}
+          applyOnGoalData={() => {
+            mutateForGoalProgress();
+            mutateForSubgoalCompleted();
+          }}
+        />
+      </section>
+    </div>
+  );
+};
+
+export default DetailBody;

@@ -29,7 +29,7 @@ const GoalMenu = ({
     <>
       <div
         onClick={() => onSelected(selected)}
-        className={` w-36 p-3 ${backgroundColor} rounded-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.10)] inline-flex flex-col justify-start items-start gap-3`}
+        className={` w-[140px] min-w-[140px] p-3 ${backgroundColor} rounded-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.10)] inline-flex flex-col justify-start items-start gap-3`}
       >
         <p
           className={`truncate self-stretch justify-center ${goalColor}  text-sm font-bold font-['SUIT_Variable'] leading-tight`}
