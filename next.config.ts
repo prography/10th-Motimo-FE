@@ -62,7 +62,16 @@ const nextConfig: NextConfig = {
             },
           ];
         }
-      : undefined,
+      : process.env.NODE_ENV === "production"
+        ? async () => {
+            return [
+              {
+                source: "/v1/:path*",
+                destination: process.env.NEXT_PUBLIC_API_URL,
+              },
+            ];
+          }
+        : undefined,
 };
 
 export default nextConfig;
