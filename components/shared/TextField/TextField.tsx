@@ -66,13 +66,15 @@ const TextField = ({
         {onReset && isFocus && value && (
           <button
             type="button"
-            className="w-6 h-12 absolute right-3"
+            className="w-6 h-12 absolute right-3 text-label-assistive"
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => {
               onReset();
             }}
           >
-            <CloseCircleSvg />
+            <div className="w-6 h-6">
+              <CloseCircleSvg />
+            </div>
           </button>
         )}
         {description && (
