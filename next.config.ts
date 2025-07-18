@@ -67,11 +67,11 @@ const nextConfig: NextConfig = {
             return [
               {
                 source: "/v1/:path*",
-                destination: process.env.NEXT_PUBLIC_API_URL,
+                destination: `http://motimo.kro.kr:8080/v1/:path*`,
               },
             ];
           }
-        : undefined,
+        : async () => [],
 };
 
 export default nextConfig;
