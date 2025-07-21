@@ -32,7 +32,7 @@ export const useQuery = {
   goalWithSubGoals: (goalId: string | null, config?: SWRConfiguration) =>
     useApiQuery(
       "목표Api",
-      "getGoalWithSubGoalAndTodo",
+      "getGoalWithSubGoalAndTodos",
       goalId ? [goalId] : null,
       undefined,
       config,
@@ -42,11 +42,31 @@ export const useQuery = {
     useApiQuery("목표Api", "getGoalNotJoinGroup", [], undefined, config),
 
   // Sub Goal API
-  subGoalTodos: (subGoalId: string | null, config?: SWRConfiguration) =>
+  subGoalTodos: (
+    subGoalId: string | null,
+    offset: number = 0,
+    size: number = 10,
+    config?: SWRConfiguration,
+  ) =>
     useApiQuery(
       "세부목표Api",
-      "getIncompleteOrTodayTodos",
-      subGoalId ? [subGoalId] : null,
+      "getIncompleteOrTodayTodosWithSlice",
+      subGoalId ? [subGoalId, { offset, size }] : null,
+      undefined,
+      config,
+    ),
+
+  // Sub Goal API - All todos (complete and incomplete)
+  allSubGoalTodos: (
+    subGoalId: string | null,
+    offset: number = 0,
+    size: number = 10,
+    config?: SWRConfiguration,
+  ) =>
+    useApiQuery(
+      "세부목표Api",
+      "getTodosBySubGoalIdWithSlice",
+      subGoalId ? [subGoalId, { offset, size }] : null,
       undefined,
       config,
     ),
@@ -112,6 +132,14 @@ export const useQuery = {
   cheerPhrase: (config?: SWRConfiguration) =>
     useApiQuery("응원Api", "getCheerPhrase", [], undefined, config),
 
+  // Completed Goals API
+  completedGoals: (config?: SWRConfiguration) =>
+    useApiQuery("목표Api", "getCompletedGoals", [], undefined, config),
+
+  // Health API
+  health: (config?: SWRConfiguration) =>
+    useApiQuery("healthController", "health", [], undefined, config),
+
   // Notification API
   notifications: (offset: number, limit: number, config?: SWRConfiguration) =>
     useApiQuery(
@@ -140,3 +168,6 @@ export const useJoinedGroups = useQuery.joinedGroups;
 export const usePoints = useQuery.points;
 export const useCheerPhrase = useQuery.cheerPhrase;
 export const useNotifications = useQuery.notifications;
+export const useCompletedGoals = useQuery.completedGoals;
+export const useHealth = useQuery.health;
+export const useAllSubGoalTodos = useQuery.allSubGoalTodos;
