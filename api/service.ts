@@ -50,5 +50,6 @@ export const authApi = api.authController;
 export const pointApi = api.포인트Api;
 export const notificationApi = api.알림Api;
 export const cheerApi = api.응원Api;
+export const healthApi = api.healthController;
 
 export default api;
