@@ -29,6 +29,8 @@ export default function PeriodSelectionScreen({
 
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const months = [
     "1월",
@@ -52,6 +54,16 @@ export default function PeriodSelectionScreen({
 
   const getFirstDayOfMonth = (month: number, year: number) => {
     return new Date(year, month, 1).getDay();
+  };
+
+  const handleDateSelect = (day: number) => {
+    if (isSubmitting) return;
+    setTargetDate(new Date(currentYear, currentMonth, day));
+  };
+
+  const handlePeriodTypeSelect = (type: "months" | "date") => {
+    if (isSubmitting) return;
+    setPeriodType(type);
   };
 
   const renderCalendar = () => {
@@ -95,10 +107,8 @@ export default function PeriodSelectionScreen({
       days.push(
         <button
           key={day}
-          onClick={() =>
-            !isPast && setTargetDate(new Date(currentYear, currentMonth, day))
-          }
-          disabled={isPast}
+          onClick={() => !isPast && handleDateSelect(day)}
+          disabled={isPast || isSubmitting}
           className={`h-10 w-10 rounded flex items-center justify-center text-xs font-medium ${isSelected
             ? "bg-label-primary text-background-alternative"
             : isPast
@@ -115,6 +125,10 @@ export default function PeriodSelectionScreen({
   };
 
   const navigateMonth = (direction: "prev" | "next") => {
+    if (isNavigating || isSubmitting) return;
+    
+    setIsNavigating(true);
+    setTimeout(() => setIsNavigating(false), 200);
     if (direction === "prev") {
       if (currentMonth === 0) {
         setCurrentMonth(11);
@@ -132,7 +146,7 @@ export default function PeriodSelectionScreen({
     }
   };
 
-  const isNextEnabled = periodType === "months" || targetDate !== null;
+  const isNextEnabled = (periodType === "months" || targetDate !== null) && !isSubmitting;
 
   return (
     <div className="min-h-screen bg-background-alternative flex flex-col">
@@ -154,20 +168,22 @@ export default function PeriodSelectionScreen({
         <div className="bg-background-normal rounded-full p-1 mb-8">
           <div className="flex">
             <button
-              onClick={() => setPeriodType("months")}
+              onClick={() => handlePeriodTypeSelect("months")}
+              disabled={isSubmitting}
               className={`flex-1 py-2 px-4 rounded-full font-bold text-sm ${periodType === "months"
                 ? "bg-label-primary text-background-alternative"
                 : "text-label-alternative"
-                }`}
+                } ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               개월 수로 설정
             </button>
             <button
-              onClick={() => setPeriodType("date")}
+              onClick={() => handlePeriodTypeSelect("date")}
+              disabled={isSubmitting}
               className={`flex-1 py-2 px-4 rounded-full font-bold text-sm ${periodType === "date"
                 ? "bg-label-primary text-background-alternative"
                 : "text-label-alternative"
-                }`}
+                } ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               완료 날짜로 설정
             </button>
@@ -201,6 +217,8 @@ export default function PeriodSelectionScreen({
                   onClick={() => navigateMonth("prev")}
                   className="w-8 h-8 flex items-center justify-center"
                   disabled={
+                  isNavigating ||
+                  isSubmitting ||
                     currentMonth === new Date().getMonth() &&
                     currentYear === new Date().getFullYear()
                   }
@@ -210,6 +228,7 @@ export default function PeriodSelectionScreen({
                 <button
                   onClick={() => navigateMonth("next")}
                   className="w-8 h-8 flex items-center justify-center"
+                disabled={isNavigating || isSubmitting}
                 >
                   <ChevronLeftIcon className="w-4 h-4 text-label-normal rotate-180" />
                 </button>
@@ -240,6 +259,9 @@ export default function PeriodSelectionScreen({
       <div className="px-4 pb-14">
         <ButtonRound
           onClick={async () => {
+            if (isSubmitting) return;
+            
+            setIsSubmitting(true);
             const isPeriodByMonth = periodType === "months";
             const dueDate = targetDate
               ? targetDate.toISOString().split("T")[0]
@@ -260,12 +282,13 @@ export default function PeriodSelectionScreen({
               onNext();
             } catch (error) {
               console.error('Failed to create goal:', error);
+            setIsSubmitting(false);
               // Handle error appropriately (show toast, etc.)
             }
           }}
           disabled={!isNextEnabled}
         >
-          다음
+        {isSubmitting ? "처리 중..." : "다음"}
         </ButtonRound>
       </div>
     </div>
