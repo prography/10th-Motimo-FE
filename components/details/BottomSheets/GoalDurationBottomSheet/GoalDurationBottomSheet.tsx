@@ -41,56 +41,61 @@ const GoalDurationBottomSheet = ({
           <div className="flex justify-center w-[100vw] relative">
             <Drawer.Content
               className="
-          absolute
           z-30
           bottom-0
           w-[360px] h-[585px]  bg-background-alternative rounded-tl-lg rounded-tr-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.24)] overflow-hidden
           flex flex-col items-center
+          pt-5 pl-4 pr-4 pb-6
+          fixed
           "
             >
               <Drawer.Title className="invisible"></Drawer.Title>
-              <div>
-                <header>
-                  <p>목표 기간 수정</p>
-                  <button
-                    type="button"
-                    className="w-6 h-6 relative overflow-hidden"
-                    onClick={() => {
-                      setopenBottomSheet(false);
-                    }}
-                  >
-                    <CloseSvg />
-                  </button>
-                </header>
-                <section>
-                  <SegmentedControl
-                    options={[
-                      { label: "개월 수로 설정", value: "month" },
-                      { label: "완료 날짜로 설정", value: "date" },
-                    ]}
-                    onChange={(newValue) =>
-                      setDurationType(newValue as "month" | "date")
-                    }
-                    selectedValue={durationType}
-                  />
-                </section>
-                <section>
-                  {durationType === "month" ? (
-                    <CupertinoPicker
-                      items={months}
-                      selectedValue={selectedMonth}
-                      onValueChange={setSelectedMonth}
-                      renderItem={(num) => `${num}`}
-                      height={200}
-                      itemHeight={40}
+              <div className="h-full flex flex-col justify-between">
+                <div className="h-auto flex flex-col gap-6">
+                  <header className="flex justify-between">
+                    <p className="justify-start text-label-strong text-xl font-bold font-['SUIT_Variable'] leading-normal">
+                      목표 기간 수정
+                    </p>
+                    <button
+                      type="button"
+                      className="w-6 h-6 relative overflow-hidden"
+                      onClick={() => {
+                        setopenBottomSheet(false);
+                      }}
+                    >
+                      <CloseSvg />
+                    </button>
+                  </header>
+                  <section>
+                    <SegmentedControl
+                      options={[
+                        { label: "개월 수로 설정", value: "month" },
+                        { label: "완료 날짜로 설정", value: "date" },
+                      ]}
+                      onChange={(newValue) =>
+                        setDurationType(newValue as "month" | "date")
+                      }
+                      selectedValue={durationType}
                     />
-                  ) : (
-                    <Calendar
-                      selected={selectedDate}
-                      onChange={setSelectedDate}
-                    />
-                  )}
-                </section>
+                  </section>
+                  <section>
+                    {durationType === "month" ? (
+                      <CupertinoPicker
+                        items={months}
+                        selectedValue={selectedMonth}
+                        onValueChange={setSelectedMonth}
+                        renderItem={(num) => `${num}`}
+                        height={200}
+                        itemHeight={40}
+                      />
+                    ) : (
+                      <Calendar
+                        selected={selectedDate}
+                        onChange={setSelectedDate}
+                      />
+                    )}
+                  </section>
+                </div>
                 <button
                   onClick={() => {
                     onEdit({

@@ -12,20 +12,26 @@ import { useContext, useState } from "react";
 import useModal from "@/hooks/useModal";
 import { EditContext } from "../EditBody/EditBody";
 import { date2StringWithSpliter } from "@/utils/date2String";
+import { goalApi } from "@/api/service";
+import { useRouter } from "next/navigation";
+import { useGoals } from "@/api/hooks";
 
 interface GoalEditProps {
   // initGoalTitle: string;
   // // initDurationValue?: unknown;
   // // initDurationType?: unknown;
+  goalId: string;
 }
 
-const GoalEdit = (
-  {
-    // initDurationValue,
-    // initDurationType,
-    // initGoalTitle,
-  }: GoalEditProps,
-) => {
+const GoalEdit = ({
+  // initDurationValue,
+  // initDurationType,
+  // initGoalTitle,
+  goalId,
+}: GoalEditProps) => {
+  const router = useRouter();
+  const { mutate } = useGoals();
+
   // const [goalTitle, setGoalTitle] = useState(initGoalTitle);
   const nullableContext = useContext(EditContext);
   const { editContents, setEditContents } = nullableContext || {};
@@ -91,8 +97,10 @@ const GoalEdit = (
                 <ModalDeletingGoal
                   onClose={closeModal}
                   onDeleteGoal={async () => {
-                    console.log("api넣어야 함");
+                    await goalApi.deleteGoal(goalId);
                     closeModal();
+                    mutate();
+                    router.replace("/");
                   }}
                 />,
               );

@@ -32,7 +32,7 @@ export const useQuery = {
   goalWithSubGoals: (goalId: string | null, config?: SWRConfiguration) =>
     useApiQuery(
       "목표Api",
-      "getGoalWithSubGoalAndTodo",
+      "getGoalWithSubGoalAndTodos",
       goalId ? [goalId] : null,
       undefined,
       config,
@@ -41,15 +41,15 @@ export const useQuery = {
   goalsNotInGroup: (config?: SWRConfiguration) =>
     useApiQuery("목표Api", "getGoalNotJoinGroup", [], undefined, config),
 
-  // Sub Goal API
-  subGoalTodos: (subGoalId: string | null, config?: SWRConfiguration) =>
-    useApiQuery(
-      "세부목표Api",
-      "getIncompleteOrTodayTodos",
-      subGoalId ? [subGoalId] : null,
-      undefined,
-      config,
-    ),
+  // // Sub Goal API
+  // subGoalTodos: (subGoalId: string | null, config?: SWRConfiguration) =>
+  //   useApiQuery(
+  //     "세부목표Api",
+  //     "getIncompleteOrTodayTodos",
+  //     subGoalId ? [subGoalId] : null,
+  //     undefined,
+  //     config,
+  //   ),
 
   // User API
   myProfile: (config?: SWRConfiguration) =>
@@ -65,29 +65,19 @@ export const useQuery = {
       config,
     ),
 
-  groupChat: (
-    groupId: string | null,
-    limit: number,
-    cursor: string,
-    direction: GetGroupChatParamsDirectionEnum,
-    config?: SWRConfiguration,
-  ) =>
-    useApiQuery(
-      "그룹Api",
-      "getGroupChat",
-      groupId ? [groupId, { cursor, direction, limit: String(limit) }] : null,
-      undefined,
-      config,
-    ),
-
-  groupDetail: (groupId: string | null, config?: SWRConfiguration) =>
-    useApiQuery(
-      "그룹Api",
-      "getGroupDetail",
-      groupId ? [groupId] : null,
-      undefined,
-      config,
-    ),
+  // groupChat: (
+  //   groupId: string | null,
+  //   page: number,
+  //   size: number,
+  //   config?: SWRConfiguration,
+  // ) =>
+  //   useApiQuery(
+  //     "그룹Api",
+  //     "getGroupChat",
+  //     groupId ? [groupId, { page, size }] : null,
+  //     undefined,
+  //     config,
+  //   ),
 
   joinedGroups: (config?: SWRConfiguration) =>
     useApiQuery("그룹Api", "getJoinedGroups", [], undefined, config),
@@ -107,11 +97,10 @@ export const useGoals = useQuery.goals;
 export const useGoalDetail = useQuery.goalDetail;
 export const useGoalWithSubGoals = useQuery.goalWithSubGoals;
 export const useGoalsNotInGroup = useQuery.goalsNotInGroup;
-export const useSubGoalTodos = useQuery.subGoalTodos;
+// export const useSubGoalTodos = useQuery.subGoalTodos;
 export const useMyProfile = useQuery.myProfile;
 export const useGroupMembers = useQuery.groupMembers;
-export const useGroupChat = useQuery.groupChat;
-export const useGroupDetail = useQuery.groupDetail;
+// export const useGroupChat = useQuery.groupChat;
 export const useJoinedGroups = useQuery.joinedGroups;
 export const usePoints = useQuery.points;
 export const useCheerPhrase = useQuery.cheerPhrase;

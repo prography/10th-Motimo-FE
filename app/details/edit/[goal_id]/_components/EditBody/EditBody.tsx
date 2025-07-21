@@ -104,7 +104,11 @@ const EditBody = ({ goalId, initData, tab }: EditBodyProps) => {
             }
           }}
         >
-          {tab === "goal" ? <GoalEdit /> : <SubGoalEdit goalId={goalId} />}
+          {tab === "goal" ? (
+            <GoalEdit goalId={goalId} />
+          ) : (
+            <SubGoalEdit goalId={goalId} />
+          )}
           {/** zustaond로 관리하는 것들 GoalEdit이랑 SubGoalEdit내용 넣기. tab에 따라 다르게 렌더링 시키고 */}
         </form>
       </EditContext.Provider>

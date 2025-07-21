@@ -262,7 +262,7 @@ const BottomSheetSelectList = ({
           const isSelected = nullabeTodoInfo?.todoInfo.subGoalId === subGoalId;
           return (
             <li
-              key={subGoalTitle}
+              key={subGoalId}
               onClick={() => {
                 nullabeTodoInfo &&
                   nullabeTodoInfo.setTodoInfo((prev) => ({
