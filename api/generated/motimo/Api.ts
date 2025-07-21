@@ -1388,6 +1388,24 @@ export class Api<SecurityDataType extends unknown> {
       }),
 
     /**
+     * @description 목표를 삭제합니다. (세부목표, 투두, 투두결과가 함께 삭제됩니다.)
+     *
+     * @tags 목표 API
+     * @name DeleteGoal
+     * @summary 목표 삭제 API
+     * @request DELETE:/v1/goals/{goalId}
+     * @secure
+     * @response `200` `void` OK
+     */
+    deleteGoal: (goalId: string, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/v1/goals/${goalId}`,
+        method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+
+    /**
      * @description 목표 목록을 조회합니다.
      *
      * @tags 목표 API
