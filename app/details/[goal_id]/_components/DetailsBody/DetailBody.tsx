@@ -65,6 +65,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
         goalName={data.title ?? ""}
         progress={goalDetail?.progress ?? 0}
         dDay={dDay}
+        isCompleted={goalDetail?.isCompleted}
       />
       <section className="flex flex-col gap-4 pl-4 pr-4 pb-4 bg-background-alternative">
         {allSubGoalCompleted && (
