@@ -280,14 +280,8 @@ export interface TodoResultRs {
    */
   todoResultId?: string;
   /**
-   * 투두 Id
-   * @format uuid
-   * @example "0197157f-aea4-77bb-8581-3213eb5bd2ae"
-   */
-  todoId?: string;
-  /**
    * 투두 진행 후 감정
-   * @example "뿌듯"
+   * @example "PROUD"
    */
   emotion?: TodoResultRsEmotionEnum;
   /**
@@ -295,7 +289,7 @@ export interface TodoResultRs {
    * @example "영단어 10개 이상 외우기를 했다."
    */
   content?: string;
-  /** 투두 관련 파일 url */
+  /** 투두 기록 파일 url */
   fileUrl?: string;
 }
 
@@ -321,17 +315,22 @@ export interface TodoRs {
    * @example "COMPLETE"
    */
   status?: TodoRsStatusEnum;
-  /**
-   * 투두 기록 아이디
-   * @format uuid
-   * @example "0203157f-aea4-77bb-8581-3213eb6bd2ae"
-   */
-  todoResultId?: string;
+  /** 투두 기록 정보 */
+  todoResult?: TodoResultRs;
   /**
    * 투두 생성 날짜
    * @format date-time
    */
   createdAt?: string;
+}
+
+export interface CustomSliceTodoRs {
+  content?: TodoRs[];
+  hasNext?: boolean;
+  /** @format int32 */
+  offset?: number;
+  /** @format int32 */
+  size?: number;
 }
 
 export interface PointRs {
@@ -424,18 +423,26 @@ export interface GroupMessageContent {
   type?: GroupMessageContentTypeEnum;
 }
 
-export type GroupMessageContentRs = (
-  | GroupJoinContent
-  | GroupLeaveContent
-  | TodoCompletedContent
-  | TodoResultSubmittedContent
-) & {
-  content?:
-    | GroupJoinContent
-    | GroupLeaveContent
-    | TodoCompletedContent
-    | TodoResultSubmittedContent;
-};
+/**
+ *         그룹 메시지 내용
+ *         - JOIN: 그룹 참여 메시지UUID
+ *         - LEAVE: 그룹 탈퇴 메시지
+ *         - TODO_COMPLETED: 할일 완료 메시지 (todoId, todoTitle 포함)
+ *         - TODO_RESULT_SUBMITTED: 할일 결과 제출 메시지 (todoId, todoTitle, result(emotion, content, fileUrl) 포함)
+ */
+export type GroupMessageContentRs = BaseGroupMessageContentRs &
+  (
+    | BaseGroupMessageContentRsTypeMapping<"JOIN", GroupJoinContent>
+    | BaseGroupMessageContentRsTypeMapping<"LEAVE", GroupLeaveContent>
+    | BaseGroupMessageContentRsTypeMapping<
+        "TODO_COMPLETED",
+        TodoCompletedContent
+      >
+    | BaseGroupMessageContentRsTypeMapping<
+        "TODO_RESULT_SUBMITTED",
+        TodoResultSubmittedContent
+      >
+  );
 
 export interface GroupMessageItemRs {
   /**
@@ -540,18 +547,7 @@ export interface GoalDetailRs {
    * @example "자격증 따기"
    */
   title?: string;
-  /** 목표 완료 날짜 개월수로 설정 여부 */
-  isMonth?: boolean;
-  /**
-   * 목표 완료 개월수
-   * @format int32
-   */
-  month?: number;
-  /**
-   * 목표 완료 날짜
-   * @format date
-   */
-  dueDate?: string;
+  dueDate?: GoalDueDateRs;
   /**
    * 목표 달성률 (%)
    * @format float
@@ -569,7 +565,22 @@ export interface GoalDetailRs {
   groupId?: string;
 }
 
-export interface GoalWithSubGoalTodoRs {
+export interface GoalDueDateRs {
+  /** 목표 완료 날짜 개월수로 설정 여부 */
+  isMonth?: boolean;
+  /**
+   * 목표 완료 개월수
+   * @format int32
+   */
+  month?: number;
+  /**
+   * 목표 완료 날짜
+   * @format date
+   */
+  dueDate?: string;
+}
+
+export interface GoalWithSubGoalRs {
   /**
    * 목표 Id
    * @format uuid
@@ -602,6 +613,51 @@ export interface SubGoalRs {
    * @example "책 한 권 끝내기"
    */
   title: string;
+  /**
+   * 세부 목표 완료 여부
+   * @example false
+   */
+  isCompleted: boolean;
+}
+
+export interface GoalWithSubGoalTodoRs {
+  /**
+   * 목표 Id
+   * @format uuid
+   * @example "0197157f-aea4-77bb-8581-3213eb5bd2aq"
+   */
+  id: string;
+  /**
+   * 목표 이름
+   * @example "자격증 따기"
+   */
+  title: string;
+  /**
+   * 목표 완료 날짜
+   * @format date
+   */
+  dueDate: string;
+  /** 투두를 포함한 세부 목표 목록 */
+  subGoals?: SubGoalWithTodosRs[];
+}
+
+export interface SubGoalWithTodosRs {
+  /**
+   * 세부 목표 Id
+   * @format uuid
+   * @example "0197157f-aea4-77bb-8581-3213eb5bd2ae"
+   */
+  id: string;
+  /**
+   * 세부 목표 이름
+   * @example "책 한 권 끝내기"
+   */
+  title: string;
+  /**
+   * 세부 목표 완료 여부
+   * @example false
+   */
+  isCompleted: boolean;
   /** 세부 목표에 해당하는 투두 목록 */
   todos?: TodoRs[];
 }
@@ -614,6 +670,37 @@ export interface GoalNotInGroupRs {
   id: string;
   /** 목표 제목 */
   title: string;
+}
+
+export interface CompletedGoalItemRs {
+  /**
+   * 목표 아이디
+   * @format uuid
+   */
+  id?: string;
+  /**
+   * 목표 이름
+   * @example "자격증 따기"
+   */
+  title?: string;
+  dueDate?: GoalDueDateRs;
+  /**
+   * 전체 투두 개수
+   * @format int64
+   * @example 15
+   */
+  todoCount?: number;
+  /**
+   * 완료된 투두 결과 개수
+   * @format int64
+   * @example 15
+   */
+  todoResultCount?: number;
+}
+
+export interface CompletedGoalListRs {
+  /** 완료된 목표 목록 */
+  goals?: CompletedGoalItemRs[];
 }
 
 export interface CheerPhraseRs {
@@ -671,7 +758,7 @@ export enum UserRsInterestTypesEnum {
 
 /**
  * 투두 진행 후 감정
- * @example "뿌듯"
+ * @example "PROUD"
  */
 export enum TodoResultRsEmotionEnum {
   PROUD = "PROUD",
@@ -697,6 +784,26 @@ export enum GroupMessageContentTypeEnum {
   TODO_RESULT_SUBMIT = "TODO_RESULT_SUBMIT",
 }
 
+/**
+ *         그룹 메시지 내용
+ *         - JOIN: 그룹 참여 메시지UUID
+ *         - LEAVE: 그룹 탈퇴 메시지
+ *         - TODO_COMPLETED: 할일 완료 메시지 (todoId, todoTitle 포함)
+ *         - TODO_RESULT_SUBMITTED: 할일 결과 제출 메시지 (todoId, todoTitle, result(emotion, content, fileUrl) 포함)
+ */
+interface BaseGroupMessageContentRs {
+  /** 메시지 내용 */
+  content:
+    | GroupJoinContent
+    | GroupLeaveContent
+    | TodoCompletedContent
+    | TodoResultSubmittedContent;
+}
+
+type BaseGroupMessageContentRsTypeMapping<Key, Type> = {
+  type: Key;
+} & Type;
+
 export enum TodoResultSubmittedContentEmotionEnum {
   PROUD = "PROUD",
   REGRETFUL = "REGRETFUL",
@@ -705,7 +812,7 @@ export enum TodoResultSubmittedContentEmotionEnum {
   ROUTINE = "ROUTINE",
 }
 
-export enum CreateGroupReactionParamsTypeEnum {
+export enum UpsertGroupReactionParamsTypeEnum {
   GOOD = "GOOD",
   COOL = "COOL",
   CHEER_UP = "CHEER_UP",
@@ -1281,6 +1388,24 @@ export class Api<SecurityDataType extends unknown> {
       }),
 
     /**
+     * @description 목표를 삭제합니다. (세부목표, 투두, 투두결과가 함께 삭제됩니다.)
+     *
+     * @tags 목표 API
+     * @name DeleteGoal
+     * @summary 목표 삭제 API
+     * @request DELETE:/v1/goals/{goalId}
+     * @secure
+     * @response `200` `void` OK
+     */
+    deleteGoal: (goalId: string, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/v1/goals/${goalId}`,
+        method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+
+    /**
      * @description 목표 목록을 조회합니다.
      *
      * @tags 목표 API
@@ -1363,17 +1488,38 @@ export class Api<SecurityDataType extends unknown> {
       }),
 
     /**
-     * @description 목표에 해당하는 세부 목표와 투두 목록을 조회합니다.
+     * @description 목표와 세부 목표 리스트를 조회합니다.
      *
      * @tags 목표 API
-     * @name GetGoalWithSubGoalAndTodo
-     * @summary 목표 투두 목록 API
+     * @name GetGoalWithSubGoal
+     * @summary 목표와 세부목표 목록 API
+     * @request GET:/v1/goals/{goalId}/sub-goals
+     * @secure
+     * @response `200` `GoalWithSubGoalRs` 목표아이디에 해당하는 모든 세부 목표목록을 반환
+     * @response `401` `void` 인증되지 않은 사용자
+     */
+    getGoalWithSubGoal: (goalId: string, params: RequestParams = {}) =>
+      this.http.request<GoalWithSubGoalRs, void>({
+        path: `/v1/goals/${goalId}/sub-goals`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description 목표 ID에 해당하는 목표 정보와 모든 세부 목표 및 오늘의 미완료 투두 목록을 조회합니다.
+     *
+     * @tags 목표 API
+     * @name GetGoalWithSubGoalAndTodos
+     * @summary 목표 + 세부목표 + 오늘의 미완료 투두 조회 API
      * @request GET:/v1/goals/{goalId}/sub-goals/all
      * @secure
-     * @response `200` `GoalWithSubGoalTodoRs` OK
+     * @response `200` `GoalWithSubGoalTodoRs` 목표, 세부목표, 오늘의 미완료 투두 목록 반환
+     * @response `401` `void` 인증되지 않은 사용자
+     * @response `404` `void` 해당 목표를 찾을 수 없음
      */
-    getGoalWithSubGoalAndTodo: (goalId: string, params: RequestParams = {}) =>
-      this.http.request<GoalWithSubGoalTodoRs, any>({
+    getGoalWithSubGoalAndTodos: (goalId: string, params: RequestParams = {}) =>
+      this.http.request<GoalWithSubGoalTodoRs, void>({
         path: `/v1/goals/${goalId}/sub-goals/all`,
         method: "GET",
         secure: true,
@@ -1393,6 +1539,25 @@ export class Api<SecurityDataType extends unknown> {
     getGoalNotJoinGroup: (params: RequestParams = {}) =>
       this.http.request<GoalNotInGroupRs[], any>({
         path: `/v1/goals/not-joined-group`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description 사용자의 완료된 목표 목록을 조회합니다.
+     *
+     * @tags 목표 API
+     * @name GetCompletedGoals
+     * @summary 완료된 목표 목록 조회 API
+     * @request GET:/v1/goals/completed
+     * @secure
+     * @response `200` `CompletedGoalListRs` 완료된 목표 목록과 각 목표별 투두 개수, 투두 결과 개수 반환
+     * @response `401` `void` 인증되지 않은 사용자
+     */
+    getCompletedGoals: (params: RequestParams = {}) =>
+      this.http.request<CompletedGoalListRs, void>({
+        path: `/v1/goals/completed`,
         method: "GET",
         secure: true,
         ...params,
@@ -1469,23 +1634,81 @@ export class Api<SecurityDataType extends unknown> {
       }),
 
     /**
-     * @description 특정 세부 목표의 TODO 목록을 조회합니다.
+     * @description 특정 Sub‑Goal ID에 속한 모든 TODO를 슬라이스 방식(offset, size)으로 조회합니다.`hasNext` 플래그를 통해 다음 페이지 존재 여부를 판단합니다.
      *
      * @tags 세부 목표 API
-     * @name GetIncompleteOrTodayTodos
-     * @summary 세부 목표별 TODO 목록 조회
-     * @request GET:/v1/sub-goals/{subGoalId}/todos/incomplete-or-date
+     * @name GetTodosBySubGoalIdWithSlice
+     * @summary 세부 목표의 모든 TODO 목록(슬라이스) 조회
+     * @request GET:/v1/sub-goals/{subGoalId}/todos
      * @secure
-     * @response `200` `(TodoRs)[]` TODO 목록 조회 성공
-     * @response `400` `ErrorResponse` 잘못된 요청 데이터
+     * @response `200` `CustomSliceTodoRs` 세부목표의 투두 리스트(완료, 미완료 모두)조회 성공
+     * @response `400` `ErrorResponse` 잘못된 요청
+     * @response `404` `ErrorResponse` 세부 목표를 찾을 수 없음
      */
-    getIncompleteOrTodayTodos: (
+    getTodosBySubGoalIdWithSlice: (
       subGoalId: string,
+      query?: {
+        /**
+         * 시작 오프셋(0‑base)
+         * @format int32
+         * @default 0
+         * @example 0
+         */
+        offset?: number;
+        /**
+         * 한 페이지 크기
+         * @format int32
+         * @default 10
+         * @example 10
+         */
+        size?: number;
+      },
       params: RequestParams = {},
     ) =>
-      this.http.request<TodoRs[], ErrorResponse>({
+      this.http.request<CustomSliceTodoRs, ErrorResponse>({
+        path: `/v1/sub-goals/${subGoalId}/todos`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description Sub‑GoalID 기준으로 상태가 미완료이거나 `date = 오늘` 인 TODO만 필터링하여 슬라이스로 반환합니다.
+     *
+     * @tags 세부 목표 API
+     * @name GetIncompleteOrTodayTodosWithSlice
+     * @summary 세부 목표별 미완료 또는 오늘 날짜 TODO 목록(슬라이스) 조회
+     * @request GET:/v1/sub-goals/{subGoalId}/todos/incomplete-or-date
+     * @secure
+     * @response `200` `CustomSliceTodoRs` 세부 목표의 오늘이거나 완료되지 않은 TODO 목록 조회 성공
+     * @response `400` `ErrorResponse` 잘못된 요청 데이터
+     * @response `404` `ErrorResponse` 세부 목표를 찾을 수 없음
+     */
+    getIncompleteOrTodayTodosWithSlice: (
+      subGoalId: string,
+      query?: {
+        /**
+         * 시작 오프셋(0‑base)
+         * @format int32
+         * @default 0
+         * @example 0
+         */
+        offset?: number;
+        /**
+         * 한 페이지 크기
+         * @format int32
+         * @default 10
+         * @example 10
+         */
+        size?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<CustomSliceTodoRs, ErrorResponse>({
         path: `/v1/sub-goals/${subGoalId}/todos/incomplete-or-date`,
         method: "GET",
+        query: query,
         secure: true,
         ...params,
       }),
@@ -1535,19 +1758,19 @@ export class Api<SecurityDataType extends unknown> {
       }),
 
     /**
-     * @description 그룹 리액션을 생성합니다.
+     * @description 그룹 리액션을 생성/수정합니다.
      *
      * @tags 그룹 API
-     * @name CreateGroupReaction
+     * @name UpsertGroupReaction
      * @summary 그룹 리액션 API
      * @request POST:/v1/groups/message/{messageId}/reaction
      * @secure
      * @response `200` `GroupMessageIdRs` OK
      */
-    createGroupReaction: (
+    upsertGroupReaction: (
       messageId: string,
       query: {
-        type: CreateGroupReactionParamsTypeEnum;
+        type: UpsertGroupReactionParamsTypeEnum;
       },
       params: RequestParams = {},
     ) =>
@@ -1555,6 +1778,23 @@ export class Api<SecurityDataType extends unknown> {
         path: `/v1/groups/message/${messageId}/reaction`,
         method: "POST",
         query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 그룹 API
+     * @name DeleteGroupReaction
+     * @request DELETE:/v1/groups/message/{messageId}/reaction
+     * @secure
+     * @response `204` `void` No Content
+     */
+    deleteGroupReaction: (messageId: string, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/v1/groups/message/${messageId}/reaction`,
+        method: "DELETE",
         secure: true,
         ...params,
       }),
