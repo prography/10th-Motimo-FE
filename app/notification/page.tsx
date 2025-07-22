@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSafeRouter } from "@/hooks/useSafeRouter";
 import { useNotifications } from "@/api/hooks";
+import { NotificationIcon } from "@/components/icons/NotificationIcon";
 
 const NOTIFICATION_TYPE_MESSAGES = {
   REACTION: "님이 리액션을 남겼습니다.",
@@ -160,22 +161,7 @@ export default function NotificationPage() {
                     notification.isRead ? "bg-[#CDD1D5]" : "bg-[#5D5FEF]"
                   }`}
                 >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path
-                      d="M2.66666 6.00001C2.66666 6.00001 4.31866 10.6667 7.99999 10.6667C11.6813 10.6667 13.3333 6.00001 13.3333 6.00001C13.3333 6.00001 11.6813 1.33334 7.99999 1.33334C4.31866 1.33334 2.66666 6.00001 2.66666 6.00001Z"
-                      stroke="white"
-                      strokeWidth="1.33333"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M8 8C9.10457 8 10 7.10457 10 6C10 4.89543 9.10457 4 8 4C6.89543 4 6 4.89543 6 6C6 7.10457 6.89543 8 8 8Z"
-                      stroke="white"
-                      strokeWidth="1.33333"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  <NotificationIcon color="white" width={16} height={16} />
                 </div>
 
                 {/* Content */}
