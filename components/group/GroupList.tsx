@@ -37,7 +37,7 @@ export const GroupList = <T extends JoinedGroupRs | GoalNotInGroupRs>({
               groupId={group.groupId}
               title={group.name}
               lastActivityDate={group.lastActiveDate}
-              hasNotification={group.isNotificationActive}
+              isNotificationActive={group.isNotificationActive}
               onClick={() => router.push(`/group/${group.groupId}`)}
             />
           );
@@ -50,7 +50,7 @@ export const GroupList = <T extends JoinedGroupRs | GoalNotInGroupRs>({
               groupId={group.id}
               title={group.title ?? ""}
               lastActivityDate={undefined} // GoalNotInGroupRs는 lastActiveDate가 없음
-              hasNotification={false} // GoalNotInGroupRs는 isNotificationActive가 없음
+              isNotificationActive={false} // GoalNotInGroupRs는 isNotificationActive가 없음
               onClick={() =>
                 router.push(`/group/join-random?goalId=${group.id}`)
               }

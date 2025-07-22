@@ -8,7 +8,7 @@ interface GroupItemProps {
   groupId: string;
   title: string;
   lastActivityDate?: string;
-  hasNotification?: boolean;
+  isNotificationActive?: boolean;
   onClick?: () => void;
   className?: string;
 }
@@ -18,7 +18,7 @@ export const GroupItem = ({
   groupId,
   title,
   lastActivityDate,
-  hasNotification = false,
+  isNotificationActive = true,
   onClick,
   className,
 }: GroupItemProps) => {
@@ -44,7 +44,7 @@ export const GroupItem = ({
               width={20}
               height={20}
               color="#33363D"
-              hasNotification={hasNotification}
+              isNotificationActive={isNotificationActive}
               hasNewMessages={hasNewMessages}
             />
           </div>

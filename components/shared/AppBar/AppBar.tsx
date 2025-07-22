@@ -24,8 +24,8 @@ export const AppBar = ({
 }: AppBarProps) => {
   const router = useRouter();
   const { data: { totalCount } = {} } = useNotifications(0, 1);
-  const hasNotification = totalCount && totalCount > 0 ? true : false;
-  
+  const hasNewMessages = totalCount && totalCount > 0 ? true : false;
+
   const onNotificationClick = (e: MouseEvent<HTMLButtonElement>) => {
     router.push("/notification");
   };
@@ -88,7 +88,7 @@ export const AppBar = ({
             onClick={onNotificationClick}
             aria-label="알림"
           >
-            <BellIcon hasNotification={hasNotification} />
+            <BellIcon hasNewMessages={hasNewMessages} />
           </button>
         </div>
       )}
