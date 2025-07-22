@@ -39,6 +39,10 @@ export default function GroupDetailPage({ params }: GroupDetailPageProps) {
     // TODO: Implement reaction functionality
   };
 
+  const handleMemberClick = () => {
+    router.push(`/group/${id}/member`);
+  };
+
   const { data: { nickname } = {} } = useMyProfile();
 
   return (
@@ -67,9 +71,13 @@ export default function GroupDetailPage({ params }: GroupDetailPageProps) {
           {title}
         </h1>
 
-        <div className="flex items-center justify-center w-10 h-10 rounded-full">
+        <button
+          onClick={handleMemberClick}
+          className="flex items-center justify-center w-10 h-10 rounded-full"
+          aria-label="그룹 멤버 보기"
+        >
           <UsersGroupIcon width={24} height={24} color="#464C53" />
-        </div>
+        </button>
       </div>
 
       {/* Main Content */}
