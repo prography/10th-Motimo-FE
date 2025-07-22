@@ -34,6 +34,7 @@ export const GroupList = <T extends JoinedGroupRs | GoalNotInGroupRs>({
             <GroupItem
               key={group.groupId}
               isJoined={isJoined}
+              groupId={group.groupId}
               title={group.name}
               lastActivityDate={group.lastActiveDate}
               hasNotification={group.isNotificationActive}
@@ -46,6 +47,7 @@ export const GroupList = <T extends JoinedGroupRs | GoalNotInGroupRs>({
             <GroupItem
               key={`${group.title}-${i}`}
               isJoined={isJoined}
+              groupId={group.id}
               title={group.title ?? ""}
               lastActivityDate={undefined} // GoalNotInGroupRs는 lastActiveDate가 없음
               hasNotification={false} // GoalNotInGroupRs는 isNotificationActive가 없음
