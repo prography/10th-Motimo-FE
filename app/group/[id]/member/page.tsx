@@ -26,9 +26,31 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
     router.push(`/group/${id}`);
   };
 
-  const handleLeaveGroup = () => {
-    console.log("그룹 나가기 clicked");
-    // TODO: Implement leave group functionality
+  const handleLeaveGroup = async () => {
+    const confirmed = confirm("정말로 그룹을 나가시겠습니까?");
+    
+    if (!confirmed) {
+      return;
+    }
+    
+    try {
+      await groupApi.exitGroup(id);
+      setToastMessage("그룹을 나갔습니다.");
+      setToastVisible(true);
+      
+      setTimeout(() => {
+        setToastVisible(false);
+        router.push("/group");
+      }, 2000);
+    } catch (error) {
+      console.error("그룹 나가기 실패:", error);
+      setToastMessage("그룹 나가기에 실패했습니다.");
+      setToastVisible(true);
+      
+      setTimeout(() => {
+        setToastVisible(false);
+      }, 3000);
+    }
   };
 
   const handlePokeUser = async (userId: string, nickname: string) => {
