@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useSafeRouter } from "@/hooks/useSafeRouter";
 import { useNotifications } from "@/api/hooks";
 import { NotificationIcon } from "@/components/icons/NotificationIcon";
@@ -16,11 +16,68 @@ const NOTIFICATION_TYPE_MESSAGES = {
 export default function NotificationPage() {
   const router = useSafeRouter();
   const [page, setPage] = useState(0);
+  const [allNotifications, setAllNotifications] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const pageSize = 20;
 
   const { data: notificationData, mutate } = useNotifications(page, pageSize);
-  const notifications = notificationData?.content ?? [];
   const totalCount = notificationData?.totalCount ?? 0;
+
+  // Update allNotifications when new data arrives
+  useEffect(() => {
+    if (notificationData?.content) {
+      if (page === 0) {
+        // First page - replace all notifications
+        setAllNotifications(notificationData.content);
+      } else {
+        // Additional page - append to existing notifications
+        setAllNotifications((prev) => {
+          const existingIds = new Set(prev.map((n) => n.id));
+          const newNotifications = (notificationData.content ?? []).filter(
+            (n) => !existingIds.has(n.id),
+          );
+          return [...prev, ...newNotifications];
+        });
+      }
+
+      // Check if there are more pages
+      const totalPages = Math.ceil(totalCount / pageSize);
+      setHasMore(page < totalPages - 1);
+      setIsLoading(false);
+    }
+  }, [notificationData, page, totalCount, pageSize]);
+
+  // Load next page function
+  const loadNextPage = useCallback(() => {
+    if (!isLoading && hasMore && notificationData) {
+      setIsLoading(true);
+      setPage((prev) => prev + 1);
+    }
+  }, [isLoading, hasMore, notificationData]);
+
+  // Scroll event handler
+  const handleScroll = useCallback(() => {
+    if (!scrollContainerRef.current) return;
+
+    const { scrollTop, scrollHeight, clientHeight } =
+      scrollContainerRef.current;
+    const threshold = 100; // Load more when 100px from bottom
+
+    if (scrollHeight - scrollTop - clientHeight < threshold) {
+      loadNextPage();
+    }
+  }, [loadNextPage]);
+
+  // Set up scroll listener
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
+    scrollContainer.addEventListener("scroll", handleScroll);
+    return () => scrollContainer.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
 
   const handleBackClick = () => {
     router.back();
@@ -117,7 +174,7 @@ export default function NotificationPage() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
         {/* Header with count and conditional mark all read button */}
         <div
           className={`flex items-center ${totalCount > 0 && "justify-between"} px-4 py-4`}
@@ -150,7 +207,7 @@ export default function NotificationPage() {
         ) : (
           /* Notification List */
           <div className="px-4 space-y-2">
-            {notifications.map((notification) => (
+            {allNotifications.map((notification) => (
               <div
                 key={notification.id}
                 className="flex items-center gap-2 bg-[#F7F7F8] rounded-lg p-3"
@@ -170,6 +227,13 @@ export default function NotificationPage() {
                 </div>
               </div>
             ))}
+
+            {/* Loading indicator */}
+            {isLoading && (
+              <div className="flex justify-center py-4">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#5D5FEF]"></div>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -178,4 +242,3 @@ export default function NotificationPage() {
     </div>
   );
 }
-
