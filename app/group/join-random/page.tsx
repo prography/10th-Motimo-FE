@@ -6,6 +6,7 @@ import { Button } from "@/components/shared/Button/Button";
 import { useEffect, useState, Suspense } from "react";
 import { useGoalDetail } from "@/api/hooks";
 import { api } from "@/api/service";
+import { Loading } from "@/components/shared";
 
 // Component that uses useSearchParams
 function JoinRandomGroupContent() {
@@ -172,24 +173,10 @@ function JoinRandomGroupContent() {
   );
 }
 
-// Loading component for Suspense fallback
-function LoadingPage() {
-  return (
-    <div className="min-h-screen bg-white flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-Color-primary-50 mx-auto mb-4"></div>
-        <p className="text-Color-gray-80 font-SUIT_Variable font-normal text-base">
-          로딩 중...
-        </p>
-      </div>
-    </div>
-  );
-}
-
 // Main page component wrapped in Suspense
 export default function JoinRandomGroupPage() {
   return (
-    <Suspense fallback={<LoadingPage />}>
+    <Suspense fallback={<Loading text="그룹이 정해지고 있어요!" size="lg" />}>
       <JoinRandomGroupContent />
     </Suspense>
   );
