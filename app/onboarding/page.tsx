@@ -99,7 +99,16 @@ export default function OnboardingPage() {
   if (!hasHydrated || (hasHydrated && isLoggedIn && (isLoading || (!goals && !error)))) {
     return (
       <div className="min-h-screen bg-background-normal flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+      </div>
+    );
+  }
+
+  // 로그인된 상태에서 goals가 있으면 빈 화면 표시 (redirect 준비)
+  if (hasHydrated && isLoggedIn && goals && goals.length > 0) {
+    return (
+      <div className="min-h-screen bg-background-normal flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
       </div>
     );
   }
