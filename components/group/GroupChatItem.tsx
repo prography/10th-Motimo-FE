@@ -23,7 +23,7 @@ export interface GroupChatItemProps {
   isChecked?: boolean;
   diaryText?: string;
   // fileUrl?: string;
-  fileName?:string;
+  fileName?: string;
   photoUrl?: string;
   reactionType?: ReactionTypes;
   className?: string;
@@ -110,8 +110,6 @@ export const GroupChatItem = ({
   id,
 }: GroupChatItemProps) => {
   const isMe = type === "me";
-
-  const 
 
   return (
     <div
@@ -210,14 +208,16 @@ export const GroupChatItem = ({
               </p>
             )}
 
-            {style==='todo' && fileName&&
-            <div className="pl-4 pr-3 py-2 relative bg-background-assistive rounded-lg inline-flex flex-col justify-center items-start gap-2 overflow
-            -hidden">
-              <p className="justify-start text-label-normal text-sm font-bold font-['SUIT_Variable'] leading-tight">
-                {fileName}
+            {style === "todo" && fileName && (
+              <div
+                className="pl-4 pr-3 py-2 relative bg-background-assistive rounded-lg inline-flex flex-col justify-center items-start gap-2 overflow
+            -hidden"
+              >
+                <p className="justify-start text-label-normal text-sm font-bold font-['SUIT_Variable'] leading-tight">
+                  {fileName}
                 </p>
               </div>
-              }
+            )}
 
             {/* Reaction illustration for reaction style */}
             {style === "reaction" && (

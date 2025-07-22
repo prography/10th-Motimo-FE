@@ -1,20 +1,26 @@
 "use client";
 import {
+  GetGroupChatParamsDirectionEnum,
+  GroupMessageContentRs,
+  GroupMessageItemRs,
   TodoCompletedContent,
   TodoResultSubmittedContent,
 } from "@/api/generated/motimo/Api";
 import { GroupChatItemProps, GroupChatItem } from "../../GroupChatItem";
 import useModal from "@/hooks/useModal";
 import ReactionModal from "../../ReactionModal";
-import { useGroupChat, useMyProfile } from "@/api/hooks";
+import { useMyProfile } from "@/api/hooks";
 import useSWRInfinite from "swr/infinite";
 import { groupApi } from "@/api/service";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   GroupChatRs,
   GroupMessageContentTypeEnum,
 } from "@/api/generated/motimo/Api";
-
+import useGroupChatInfinite from "@/hooks/queries/useGroupChatInfinite";
+import { useObservingExist } from "@/hooks/queries/useSubGoalTodosInfiniites";
+import { UpsertGroupReactionParamsTypeEnum } from "@/api/generated/motimo/Api";
+import ReactionTypes from "@/types/reactionTypes";
 interface GroupChatRoomProps {
   groupId: string;
 }
@@ -23,91 +29,99 @@ const GroupChatRoom = ({ groupId }: GroupChatRoomProps) => {
   const userId = myProfile?.id;
   const [page, setPage] = useState(1);
 
-  const { data } = useSWRInfinite<GroupChatRs>(
-    (pageIndex, prevPageData) => {
-      //test
-      console.log(
-        "pageIndex, prevPageData: ",
-        pageIndex,
-        prevPageData,
-        groupApi.getGroupChat,
-      );
-      return groupId;
-    },
-    async () => {
-      console.log("비동기동작");
-      return await groupApi.getGroupChat(groupId);
-    },
-    {
-      refreshInterval: 1000 * 60 * 5, // 5분마다 갱신
+  // 방향은 임시
+  const {
+    data,
+    isLoading,
+    isReachedFirst,
+    isReachedLast,
+    setSize,
+    size,
+    mutate,
+  } = useGroupChatInfinite(groupId, GetGroupChatParamsDirectionEnum.BEFORE);
+  const observingFirstRef = useRef(null);
+  const observingFirstExist = useObservingExist(
+    isLoading,
+    isReachedFirst,
+    observingFirstRef,
+    () => {
+      setSize(size + 1);
     },
   );
-
-  //test
-  console.log("DATA in groupchatroom: ", data);
-
-  // TODO : fileURL을 받으면 이걸로 HEAD로 이미지 타입 여부와 파일 이름을 알아내야 함.
 
   return (
     <>
       <section className="overflow-y-auto w-full flex flex-col items-center gap-5 ">
+        <div ref={observingFirstRef}>{/** 옵저버 */}</div>
         {data?.map((pageInfo) =>
-          pageInfo.messages?.map((messageInfo) => (
-            <MessageItem
-              // 임시
-              key={messageInfo.messageId}
-              messageType={messageInfo.message.content?.type || null}
-              // messageType={GroupMessageItemRsMessageTypeEnum.TODO}
-              contents={
-                messageInfo.message.content?.type ===
-                  GroupMessageContentTypeEnum.JOIN ||
-                messageInfo.message.content?.type ===
-                  GroupMessageContentTypeEnum.LEAVE
-                  ? { username: messageInfo.userName }
-                  : {
-                      username: messageInfo.userName,
-                      id: messageInfo.messageId,
-                      mainText:
-                        messageInfo.message.content?.type ===
-                        GroupMessageContentTypeEnum.TODO_COMPLETE
-                          ? "투두를 완료했어요!"
-                          : "투두 기록을 남겼어요!",
-                      style:
-                        messageInfo.message.content?.type ===
-                        GroupMessageContentTypeEnum.TODO_COMPLETE
-                          ? "todo"
+          pageInfo.messages?.map((messageInfo) => {
+            if (
+              messageInfo.message.type ===
+              GroupMessageContentTypeEnum.TODO_RESULT_SUBMIT
+            ) {
+              console.log(
+                "일단 주소 postman으로 찍어보자.: ",
+                (messageInfo.message.content as TodoResultSubmittedContent)
+                  .fileUrl,
+              );
+            }
+            return (
+              <MessageItem
+                // 임시
+                key={messageInfo.messageId}
+                messageType={messageInfo.message.content?.type || null}
+                id={messageInfo.messageId}
+                // messageType={GroupMessageItemRsMessageTypeEnum.TODO}
+                contents={
+                  messageInfo.message.content?.type ===
+                    GroupMessageContentTypeEnum.JOIN ||
+                  messageInfo.message.content?.type ===
+                    GroupMessageContentTypeEnum.LEAVE
+                    ? { username: messageInfo.userName }
+                    : {
+                        username: messageInfo.userName,
+                        id: messageInfo.messageId,
+                        mainText:
+                          messageInfo.message.content?.type ===
+                          GroupMessageContentTypeEnum.TODO_COMPLETE
+                            ? "투두를 완료했어요!"
+                            : "투두 기록을 남겼어요!",
+                        style: "todo",
+
+                        type: messageInfo.userId === userId ? "me" : "member",
+
+                        diaryText:
+                          (
+                            messageInfo.message
+                              .content as TodoResultSubmittedContent &
+                              TodoCompletedContent
+                          )?.content || undefined,
+                        hasReaction: messageInfo.hasUserReacted,
+                        reactionCount: messageInfo.reactionCount,
+                        reactionType: GroupMessageContentTypeEnum.TODO_COMPLETE
+                          ? undefined
                           : (
-                                messageInfo.message
-                                  .content as TodoResultSubmittedContent &
-                                  TodoCompletedContent
-                              )?.fileUrl
-                            ? "photo"
-                            : "diary",
-                      type: messageInfo.userId === userId ? "me" : "member",
-                      diaryText:
-                        (
+                              messageInfo.message
+                                .content as TodoResultSubmittedContent
+                            ).emotion,
+                        // fileName:'',
+
+                        // photoUrl:
+                        //   (
+                        //     messageInfo.message
+                        //       .content as TodoResultSubmittedContent &
+                        //       TodoCompletedContent
+                        //   )?.fileUrl || undefined,
+                        checkboxLabel: (
                           messageInfo.message
                             .content as TodoResultSubmittedContent &
                             TodoCompletedContent
-                        )?.content || undefined,
-                      hasReaction: messageInfo.hasUserReacted,
-                      reactionCount: messageInfo.reactionCount,
-                      reactionType: "best", // 임시
-                      photoUrl:
-                        (
-                          messageInfo.message
-                            .content as TodoResultSubmittedContent &
-                            TodoCompletedContent
-                        )?.fileUrl || undefined,
-                      checkboxLabel: (
-                        messageInfo.message
-                          .content as TodoResultSubmittedContent &
-                          TodoCompletedContent
-                      )?.todoTitle,
-                    }
-              }
-            />
-          )),
+                        )?.todoTitle,
+                      }
+                }
+              />
+            );
+          }),
         )}
       </section>
     </>
@@ -120,9 +134,10 @@ type GroupChatItemValueProps = Omit<GroupChatItemProps, "onReactionClick">;
 interface GroupMessage {
   messageType: GroupMessageContentTypeEnum | null;
   contents: GroupChatItemValueProps | EnterMessageProps;
+  id: string;
 }
 
-const MessageItem = ({ messageType, contents }: GroupMessage) => {
+const MessageItem = ({ messageType, contents, id }: GroupMessage) => {
   switch (messageType) {
     case GroupMessageContentTypeEnum.JOIN: {
       // 이름을 바꿔야 함. userName말고 더 명확하게 보이도록.
@@ -142,6 +157,15 @@ const MessageItem = ({ messageType, contents }: GroupMessage) => {
       const valueProps = contents as GroupChatItemValueProps;
       const isReaction = valueProps.style === "reaction";
       const { openModal, closeModal } = useModal();
+      const reactionTypeMaps: {
+        [componentType: ReactionTypes]: UpsertGroupReactionParamsTypeEnum;
+      } = {
+        good: "GOOD",
+        cool: "COOL",
+        cheerUp: "CHEER_UP",
+        best: "BEST",
+        love: "LIKE",
+      };
       return (
         <>
           <GroupChatItem
@@ -152,7 +176,15 @@ const MessageItem = ({ messageType, contents }: GroupMessage) => {
                     openModal(
                       <ReactionModal
                         onClose={() => closeModal()}
-                        onLeaveReaction={async () => {}}
+                        onLeaveReaction={async (selectedType) => {
+                          const res = await groupApi.upsertGroupReaction(id, {
+                            type: reactionTypeMaps[selectedType],
+                          });
+                          if (res) {
+                            closeModal();
+                            mutate();
+                          }
+                        }}
                       />,
                     );
                   }
