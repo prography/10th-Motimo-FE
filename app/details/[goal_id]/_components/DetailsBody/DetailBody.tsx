@@ -96,7 +96,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
             <div className="self-stretch w-full h-10 px-2 py-0.5 bg-Color-primary-5 rounded-lg inline-flex justify-start items-center gap-1">
               <div
                 data-property-1="Users_Group"
-                className="w-5 h-5 relative overflow-hidden"
+                className="w-5 h-5 relative overflow-hidden  text-label-primary"
               >
                 <PeopleSvg />
               </div>
