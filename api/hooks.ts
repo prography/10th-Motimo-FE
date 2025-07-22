@@ -141,11 +141,11 @@ export const useQuery = {
     useApiQuery("healthController", "health", [], undefined, config),
 
   // Notification API
-  notifications: (offset: number, limit: number, config?: SWRConfiguration) =>
+  notifications: (page: number = 0, size: number, config?: SWRConfiguration) =>
     useApiQuery(
       "알림Api",
       "getNotificationList",
-      [{ offset, limit }],
+      [{ page, size }],
       undefined,
       config,
     ),
