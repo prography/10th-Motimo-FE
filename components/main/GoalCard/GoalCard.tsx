@@ -2,7 +2,7 @@
 
 import useGoalStore from "@/stores/useGoalStore";
 import TodoList from "../TodoList/TodoList";
-import { useGoalWithSubGoals, useSubGoalTodos } from "@/api/hooks";
+import { useGoalWithSubGoals } from "@/api/hooks";
 import {
   GoalWithSubGoalTodoRs,
   TodoRsStatusEnum,
@@ -20,6 +20,12 @@ import { goalApi, subGoalApi, todoApi } from "@/api/service";
 import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
 import useModal from "@/hooks/useModal";
 import { date2StringWithSpliter } from "@/utils/date2String";
+import { calcLeftDay } from "@/utils/calcLeftDay";
+import TodoResultBottomSheet from "@/components/shared/BottomSheets/TodoResultBottomSheet/TodoResultBottomSheet";
+import { TodoResultRqEmotionEnum } from "@/api/generated/motimo/Api";
+import { useSubGoalTodosIncompleteOrTodayInfinite } from "@/hooks/queries/useSubGoalTodosInfiniites";
+import { subGoalTodo2TodoItemList } from "@/utils/subGoalTodo2TodoItemList";
+import { postTodoResult } from "@/lib/fetching/postTodoResult";
 
 // Define the converted data type
 type ConvertedGoalWithSubGoalTodo = Omit<GoalWithSubGoalTodoRs, "subGoals"> & {
@@ -36,19 +42,13 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
     fallbackData: initSubGoalTodo,
   });
 
-  // Convert raw goal data to the format expected by the component
+  // // Convert raw goal data to the format expected by the component
   const goalWithSubGoalTodo: ConvertedGoalWithSubGoalTodo = {
     ...rawGoalData,
     subGoals:
       rawGoalData?.subGoals?.map((subGoalInfo) => {
         const todosInSubGoal: TodoItemsInfo[] =
-          subGoalInfo.todos?.map((todoInfo) => ({
-            id: todoInfo.id ?? "",
-            title: todoInfo.title ?? "",
-            checked: todoInfo.status === TodoRsStatusEnum.COMPLETE,
-            reported: !!todoInfo.todoResultId,
-            targetDate: todoInfo.date ? new Date(todoInfo.date) : new Date(),
-          })) ?? [];
+          subGoalTodo2TodoItemList(subGoalInfo);
 
         return {
           subGoalId: subGoalInfo.id ?? "",
@@ -62,44 +62,72 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
       }) ?? [],
   } as ConvertedGoalWithSubGoalTodo;
 
-  const [newTodo, setNewTodo] = useState<TodoInfoForSubmission | null>(null);
-  const { mutate } = useSubGoalTodos(newTodo?.subGoalId ?? "");
+  const [newTodoForSubmission, setNewTodoForSubmission] = useState<Pick<
+    TodoInfoForSubmission,
+    "id" | "subGoalId"
+  > | null>(null);
+
+  const { mutate } = useSubGoalTodosIncompleteOrTodayInfinite(
+    newTodoForSubmission?.subGoalId ?? "",
+    {
+      revalidateAll: true,
+    },
+  );
   const { isActive, setIsActive, initContent } = useActiveTodoBottomSheet();
   const { isOpened: isModalOpened } = useModal();
+  const [todoResBottomSheetInfo, setTodoResBottomSheetInfo] = useState<{
+    open: boolean;
+    todoId: string | null;
+    subGoalId: string | null;
+  }>({
+    open: false,
+    todoId: null,
+    subGoalId: null,
+  });
 
-  // GoalInfo props 계산
-  const goalLeftDate = Math.floor(
-    (new Date(goalWithSubGoalTodo.dueDate ?? "").getTime() -
-      new Date().getTime()) /
-      1000 /
-      24 /
-      60 /
-      60,
-  );
+  const goalLeftDate = calcLeftDay(goalWithSubGoalTodo.dueDate ?? new Date());
 
-  const totalTodoLenInGoal = goalWithSubGoalTodo.subGoals.reduce(
-    (acc, subGoal) => acc + subGoal.initTodoTotalLen,
-    0,
-  );
-  const checkedTodoLenInGoal = goalWithSubGoalTodo.subGoals.reduce(
-    (acc, subGoal) => acc + (subGoal.initTodoCheckedLen ?? 0),
-    0,
-  );
+  const totalTodoLenInGoal =
+    goalWithSubGoalTodo.subGoals?.reduce(
+      (acc, subGoal) => acc + subGoal.initTodoTotalLen,
+      0,
+    ) ?? 0;
+  const checkedTodoLenInGoal =
+    goalWithSubGoalTodo.subGoals?.reduce(
+      (acc, subGoal) => acc + (subGoal.initTodoCheckedLen ?? 0),
+      0,
+    ) ?? 0;
   const goalLeftTodoNum = totalTodoLenInGoal - checkedTodoLenInGoal;
 
   // 투두 추가/변경에서 refetch
   useEffect(() => {
     mutate();
-  }, [newTodo, mutate]);
+  }, [newTodoForSubmission, mutate]);
 
   return (
     <>
       <div className="w-full flex-1 p-4 pb-38 bg-background-normal inline-flex flex-col justify-start items-start gap-2 ">
-        <GoalTitleArea goalTitle={goalWithSubGoalTodo.title ?? ""} />
+        <GoalTitleArea
+          goalTitle={goalWithSubGoalTodo.title ?? ""}
+          goalId={goalId || ""}
+        />
         <GoalInfo leftDateNum={goalLeftDate} leftTodoNum={goalLeftTodoNum} />
         <section className="flex flex-col gap-4 w-full">
           {goalWithSubGoalTodo?.subGoals?.map((subGoalInfo) => {
-            return <TodoList {...subGoalInfo} key={subGoalInfo.subGoalId} />;
+            return (
+              <TodoList
+                {...subGoalInfo}
+                goalId={goalId || ""}
+                key={subGoalInfo.subGoalId}
+                onReportedClick={(todoId) => {
+                  setTodoResBottomSheetInfo({
+                    open: true,
+                    todoId,
+                    subGoalId: subGoalInfo.subGoalId ?? null,
+                  });
+                }}
+              />
+            );
           })}
           <TodoList
             key={"new"}
@@ -114,13 +142,17 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
         isActivated={isActive}
         initTodoInfo={initContent}
         setIsActivated={setIsActive}
-        subGoals={goalWithSubGoalTodo?.subGoals.map((subGoalInfo) => ({
-          id: subGoalInfo.subGoalId ?? "",
-          title: subGoalInfo.subGoal ?? "",
-        }))}
+        subGoals={
+          goalWithSubGoalTodo.subGoals?.map((subGoalInfo) => ({
+            id: subGoalInfo.subGoalId ?? "",
+            title: subGoalInfo.subGoal ?? "",
+          })) ?? []
+        }
         // modal이 등장하면 bottomSheet는 닫기.
         openBottomSheet={
-          !isModalOpened && goalWithSubGoalTodo?.subGoals.length > 0
+          !isModalOpened &&
+          goalWithSubGoalTodo.subGoals !== undefined &&
+          goalWithSubGoalTodo.subGoals.length > 0
         }
         onSubmitTodo={async (newTodoInfo) => {
           const isCreating = newTodoInfo.id ? false : true;
@@ -143,10 +175,51 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
 
           const isFetchOk = fetchRes ? true : false;
           if (isFetchOk) {
-            setNewTodo(newTodoInfo);
+            setNewTodoForSubmission(newTodoInfo);
+            //test
+            console.log("투두 추가/수정");
+            // mutate();
           }
 
           return isFetchOk;
+        }}
+      />
+      <TodoResultBottomSheet
+        hasBottomTabBar={true}
+        openBottomSheet={todoResBottomSheetInfo.open}
+        setOpenBottomSheet={(nextIsOpen) =>
+          setTodoResBottomSheetInfo((prev) => ({ ...prev, open: nextIsOpen }))
+        }
+        onSubmit={async (todoResult) => {
+          const res = await postTodoResult(
+            todoResBottomSheetInfo.todoId ?? "",
+            todoResult.emotion as unknown as TodoResultRqEmotionEnum,
+            todoResult.memo,
+            todoResult.file || undefined,
+          );
+          // const res = await todoApi.upsertTodoResult(
+          //   todoResBottomSheetInfo.todoId ?? "",
+          //   {
+          //     request: {
+          //       content: todoResult.memo,
+          //       emotion:
+          //         todoResult.emotion as unknown as TodoResultRqEmotionEnum,
+          //     },
+          //     file: todoResult.file || undefined,
+          //   },
+          // );
+
+          if (res) {
+            setTodoResBottomSheetInfo({
+              open: false,
+              todoId: null,
+              subGoalId: null,
+            });
+            setNewTodoForSubmission({
+              subGoalId: todoResBottomSheetInfo.subGoalId ?? "",
+              id: todoResBottomSheetInfo.todoId ?? "",
+            });
+          }
         }}
       />
     </>

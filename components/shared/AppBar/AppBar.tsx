@@ -1,6 +1,7 @@
 import { cn } from "../utils/utils";
 import { BellIcon } from "../../icons/BellIcon";
 import { ChevronLeftIcon } from "../../icons/ChevronLeftIcon";
+import { MouseEvent } from "react";
 
 interface AppBarProps {
   type: "main" | "back" | "progress";
@@ -8,7 +9,7 @@ interface AppBarProps {
   points?: string;
   hasNotification?: boolean;
   progress?: number; // 0-100 for progress type
-  onBackClick?: () => void;
+  onBackClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   onNotificationClick?: () => void;
   className?: string;
 }
@@ -37,6 +38,7 @@ export const AppBar = ({
       {/* Back button - shown for back and progress types */}
       {(type === "back" || type === "progress") && (
         <button
+          type="button"
           className="flex items-center justify-center w-6 h-6 bg-transparent border-none cursor-pointer p-0 flex-shrink-0 hover:opacity-70"
           onClick={onBackClick}
           aria-label="뒤로 가기"

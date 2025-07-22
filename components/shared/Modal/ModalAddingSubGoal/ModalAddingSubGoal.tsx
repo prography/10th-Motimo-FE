@@ -38,7 +38,7 @@ const ModalAddingSubGoal = ({
                 <CloseSvg />
               </button>
             </div>
-            <Body onAddSubGoal={onAddSubGoal} />
+            <ModalBody onAddSubGoal={onAddSubGoal} />
           </div>
         }
         footerNode={[
@@ -59,7 +59,7 @@ const ModalAddingSubGoal = ({
 };
 export default ModalAddingSubGoal;
 
-const Body = ({
+const ModalBody = ({
   onAddSubGoal,
 }: {
   onAddSubGoal: ModalAddingSubGoalProps["onAddSubGoal"];
