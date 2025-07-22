@@ -22,7 +22,7 @@ const ModalCompletingGoal = ({
             onClose();
           },
         }}
-        bodyNode={<Body />}
+        bodyNode={<ModalBody />}
         footerNode={[
           <Modal.Button
             onClick={() => {
@@ -47,7 +47,7 @@ const ModalCompletingGoal = ({
 };
 export default ModalCompletingGoal;
 
-const Body = () => {
+const ModalBody = () => {
   return (
     <div className="pt-4 pb-6 flex flex-col gap-4 items-center">
       <div className="flex justify-center items-center">

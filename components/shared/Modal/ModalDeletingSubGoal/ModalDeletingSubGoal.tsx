@@ -18,7 +18,7 @@ const ModalDeletingSubGoal = ({
             onClose();
           },
         }}
-        bodyNode={<Body />}
+        bodyNode={<ModalBody />}
         footerNode={[
           <Modal.Button
             onClick={() => {
@@ -46,7 +46,7 @@ const ModalDeletingSubGoal = ({
 };
 export default ModalDeletingSubGoal;
 
-const Body = () => {
+const ModalBody = () => {
   return (
     <div className="flex flex-col justify-center items-center gap-[6px] p-6">
       <p className="text-center justify-start text-label-strong text-base font-bold font-['SUIT_Variable'] leading-tight">
