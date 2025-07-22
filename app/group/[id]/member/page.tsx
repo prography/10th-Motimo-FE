@@ -3,6 +3,8 @@
 import { use } from "react";
 import { useSafeRouter } from "@/hooks/useSafeRouter";
 import { useGroupMembers, useGroupDetail, useMyProfile } from "@/api/hooks";
+import { groupApi } from "@/api/service";
+import formatDate from "@/lib/date";
 
 interface GroupMemberPageProps {
   params: Promise<{
@@ -27,8 +29,7 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
   };
 
   const handlePokeUser = (userId: string, nickname: string) => {
-    console.log("찌르기 clicked for user:", userId, nickname);
-    // TODO: Implement poke user functionality
+    groupApi.sendPokeNotification(id, userId);
   };
 
   return (
@@ -64,7 +65,7 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
         <div className="space-y-4">
           {members.map((member) => {
             const isMe = member.nickname === myNickname;
-            
+
             return (
               <div
                 key={member.userId}
@@ -72,17 +73,24 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
               >
                 <div className="flex-1">
                   <div className="font-SUIT_Variable font-bold text-sm leading-[1.4] tracking-[-0.01em] text-[#1E2124]">
-                    {member.nickname}{isMe ? " (나)" : ""}
+                    {member.nickname}
+                    {isMe ? " (나)" : ""}
                   </div>
                   <div className="flex items-center text-sm leading-[1.4] tracking-[-0.01em] text-[#464C53]">
-                    <span className="font-SUIT_Variable font-medium">최근 접속일 : </span>
-                    <span className="font-SUIT_Variable font-medium">2025.06.12</span>
+                    <span className="font-SUIT_Variable font-medium">
+                      최근 접속일 :{" "}
+                    </span>
+                    <span className="font-SUIT_Variable font-medium">
+                      {formatDate(member.lastOnlineDate)}
+                    </span>
                   </div>
                 </div>
-                
+
                 {!isMe && (
                   <button
-                    onClick={() => handlePokeUser(member.userId, member.nickname)}
+                    onClick={() =>
+                      handlePokeUser(member.userId, member.nickname)
+                    }
                     className="bg-[#33363D] text-white px-3 py-1 rounded-lg text-sm font-Pretendard font-semibold"
                   >
                     찌르기
@@ -117,3 +125,4 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
     </div>
   );
 }
+
