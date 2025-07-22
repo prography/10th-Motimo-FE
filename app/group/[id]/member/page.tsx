@@ -6,6 +6,7 @@ import { useGroupMembers, useGroupDetail, useMyProfile } from "@/api/hooks";
 import { groupApi } from "@/api/service";
 import formatDate from "@/lib/date";
 import { Toast } from "@/components/shared/Toast/Toast";
+import Modal from "@/components/shared/Modal/_compound/Modal";
 
 interface GroupMemberPageProps {
   params: Promise<{
@@ -21,17 +22,18 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
   const { data: { nickname: myNickname } = {} } = useMyProfile();
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
 
   const handleBackClick = () => {
     router.push(`/group/${id}`);
   };
 
-  const handleLeaveGroup = async () => {
-    const confirmed = confirm("정말로 그룹을 나가시겠습니까?");
-    
-    if (!confirmed) {
-      return;
-    }
+  const handleLeaveGroup = () => {
+    setShowLeaveModal(true);
+  };
+
+  const handleLeaveConfirm = async () => {
+    setShowLeaveModal(false);
     
     try {
       await groupApi.exitGroup(id);
@@ -51,6 +53,10 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
         setToastVisible(false);
       }, 3000);
     }
+  };
+
+  const handleLeaveCancel = () => {
+    setShowLeaveModal(false);
   };
 
   const handlePokeUser = async (userId: string, nickname: string) => {
@@ -161,6 +167,34 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
         <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-50">
           <Toast text={toastMessage} />
         </div>
+      )}
+
+      {/* Leave Group Modal */}
+      {showLeaveModal && (
+        <Modal
+          backdropProps={{ onClick: handleLeaveCancel }}
+          bodyNode={
+            <div className="px-6 py-6 text-center">
+              <p className="font-SUIT_Variable font-medium text-base leading-[1.5] tracking-[-0.01em] text-[#1E2124]">
+                정말로 그룹을 나가시겠습니까?
+              </p>
+            </div>
+          }
+          footerNode={[
+            <Modal.Button
+              key="cancel"
+              color="alternative"
+              text="취소"
+              onClick={handleLeaveCancel}
+            />,
+            <Modal.Button
+              key="confirm"
+              color="negative"
+              text="나가기"
+              onClick={handleLeaveConfirm}
+            />,
+          ]}
+        />
       )}
 
       {/* Bottom Gesture Bar Placeholder */}
