@@ -13,6 +13,13 @@ import EditBody from "./_components/EditBody/EditBody";
 import TabMenu from "@/components/details/TabMenu/TabMenu";
 import EditInfo from "@/components/details/EditInfo/EditInfo";
 import { EditContents } from "./_components/EditBody/EditBody";
+import TodoResultBottomSheet from "@/components/shared/BottomSheets/TodoResultBottomSheet/TodoResultBottomSheet";
+import { postTodoResult } from "@/lib/fetching/postTodoResult";
+import {
+  TodoResultRqEmotionEnum,
+  TodoResultRsEmotionEnum,
+} from "@/api/generated/motimo/Api";
+import { useSubGoalTodosAllInfinite } from "@/hooks/queries/useSubGoalTodosInfiniites";
 
 const makeInitEditContents = (
   serverData: Partial<ConvertedGoalWithSubGoalTodo>,
@@ -37,6 +44,7 @@ export default function Edit() {
   const { data } = useGoalWithSubGoalTodo(goalId);
   const initData = makeInitEditContents(data);
   const [tab, setTab] = useState<"goal" | "subGoal">("goal");
+
   return (
     <>
       <div className="bg-background-alternative flex flex-col h-screen">

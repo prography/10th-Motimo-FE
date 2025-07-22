@@ -190,8 +190,7 @@ const TodoBottomSheet = ({
                         </button>
                       </form>
                       <div
-                        className={`grid transition-all translate-z-0  transform-3d duration-300 ease-out  overflow-hidden
-                          //  ${isActivated ? "h-[32px] " : "h-[0px] "}`}
+                        className={`grid transition-all translate-z-0  transform-3d duration-300 ease-out  overflow-hidden`}
                         style={{
                           // maxHeight: isActivated ? "auto" : "0",
                           // height: isActivated ? "auto" : "0",
