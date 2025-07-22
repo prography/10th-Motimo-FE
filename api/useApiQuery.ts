@@ -51,8 +51,9 @@ export function useApiQuery<
               ? methodFunction(...params)
               : methodFunction();
           } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
             throw new Error(
-              `Failed to call ${String(apiGroup)}.${String(method)}: ${error}`,
+              `Failed to call ${String(apiGroup)}.${String(method)}: ${errorMessage}`,
             );
           }
         },
