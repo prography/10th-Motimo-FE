@@ -15,17 +15,17 @@ export default function OnboardingPage() {
   const [hasHydrated, setHasHydrated] = useState(false);
   const { setHasCompletedOnboarding, isLoggedIn, hasCompletedOnboarding } =
     useAuthStore();
-  
+
   // 클라이언트 사이드에서만 hydration 체크
   useEffect(() => {
-    // 짧은 지연 후 hydration 완료로 간주 
+    // 짧은 지연 후 hydration 완료로 간주
     const timer = setTimeout(() => {
       setHasHydrated(true);
     }, 50);
-    
+
     return () => clearTimeout(timer);
   }, []);
-  
+
   console.log("hasHydrated:", hasHydrated);
   console.log("isLoggedIn:", isLoggedIn);
   console.log("hasCompletedOnboarding:", hasCompletedOnboarding);
@@ -38,8 +38,24 @@ export default function OnboardingPage() {
     }
   }, [hasHydrated, hasCompletedOnboarding, router]);
 
-  // 로그인된 상태에서만 goals를 가져옴
-  const { data: { goals } = {}, isLoading } = useGoals();
+  // goals 가져오기
+  const { data: { goals } = {}, isLoading, error, mutate } = useGoals({
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    shouldRetryOnError: false, // 401 에러 시 재시도 방지
+  });
+
+  // 로그인 상태가 true로 변경될 때 goals API 재호출
+  useEffect(() => {
+    if (hasHydrated && isLoggedIn && error) {
+      console.log("Retrying goals API after login...");
+      mutate();
+    }
+  }, [hasHydrated, isLoggedIn, error, mutate]);
+
+  console.log("goals:", goals);
+  console.log("isLoading:", isLoading);
+  console.log("error:", error);
 
   useEffect(() => {
     if (hasHydrated && isLoggedIn && goals && goals.length > 0) {
@@ -79,8 +95,8 @@ export default function OnboardingPage() {
     }
   };
 
-  // hydration이 완료되지 않았거나 로그인된 상태에서 goals 로딩 중이면 스피너 표시
-  if (!hasHydrated || (isLoggedIn && isLoading)) {
+  // hydration이 완료되지 않았거나 로그인된 상태에서 처리 중이면 스피너 표시
+  if (!hasHydrated || (hasHydrated && isLoggedIn && (isLoading || (!goals && !error)))) {
     return (
       <div className="min-h-screen bg-background-normal flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
