@@ -5,7 +5,7 @@ import ReactionTypes from "@/types/reactionTypes";
 export interface ChatMessage {
   id: string;
   type: "me" | "member";
-  style: "todo" | "photo" | "diary" | "reaction";
+  style: "todo" | "reaction";
   hasReaction?: boolean;
   reactionCount?: number;
   username: string;
@@ -24,16 +24,13 @@ interface GroupChatProps {
   onReactionClick?: (messageId: string) => void;
 }
 
-export const GroupChat = ({ 
-  messages, 
+export const GroupChat = ({
+  messages,
   className,
-  onReactionClick
+  onReactionClick,
 }: GroupChatProps) => {
   return (
-    <div className={cn(
-      "flex flex-col gap-4 w-full",
-      className
-    )}>
+    <div className={cn("flex flex-col gap-4 w-full", className)}>
       {messages.map((message) => (
         <GroupChatItem
           key={message.id}
@@ -54,4 +51,4 @@ export const GroupChat = ({
       ))}
     </div>
   );
-}; 
+};

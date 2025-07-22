@@ -28,7 +28,7 @@ const sampleMessages: ChatMessage[] = [
     hasReaction: false,
   },
   {
-    id: "2", 
+    id: "2",
     type: "me",
     style: "todo",
     username: "나",
@@ -41,7 +41,7 @@ const sampleMessages: ChatMessage[] = [
   {
     id: "3",
     type: "member",
-    style: "photo",
+    style: "todo",
     username: "이영희",
     mainText: "투두 기록을 남겼어요!",
     checkboxLabel: "운동하기",
@@ -53,12 +53,13 @@ const sampleMessages: ChatMessage[] = [
   {
     id: "4",
     type: "me",
-    style: "diary",
+    style: "todo",
     username: "나",
     mainText: "투두 기록을 남겼어요!",
     checkboxLabel: "책 읽기",
     isChecked: true,
-    diaryText: "다양한 툴을 익히기 위해 어쩌구저쩌구 짧은 기록이 여기에 다 보이게 됩니다.",
+    diaryText:
+      "다양한 툴을 익히기 위해 어쩌구저쩌구 짧은 기록이 여기에 다 보이게 됩니다.",
     hasReaction: false,
   },
   {
@@ -114,7 +115,7 @@ export const PhotoMessages: Story = {
       {
         id: "1",
         type: "member",
-        style: "photo",
+        style: "todo",
         username: "이영희",
         mainText: "투두 기록을 남겼어요!",
         checkboxLabel: "운동하기",
@@ -125,7 +126,7 @@ export const PhotoMessages: Story = {
       {
         id: "2",
         type: "me",
-        style: "photo",
+        style: "todo",
         username: "나",
         mainText: "투두 기록을 남겼어요!",
         checkboxLabel: "요리하기",
@@ -145,24 +146,26 @@ export const DiaryMessages: Story = {
       {
         id: "1",
         type: "member",
-        style: "diary",
+        style: "todo",
         username: "김민수",
         mainText: "투두 기록을 남겼어요!",
         checkboxLabel: "일기 쓰기",
         isChecked: true,
-        diaryText: "오늘은 정말 의미있는 하루였다. 새로운 것을 배우고 성장하는 느낌이 들었다.",
+        diaryText:
+          "오늘은 정말 의미있는 하루였다. 새로운 것을 배우고 성장하는 느낌이 들었다.",
         hasReaction: true,
         reactionCount: 4,
       },
       {
         id: "2",
         type: "me",
-        style: "diary",
+        style: "todo",
         username: "나",
         mainText: "투두 기록을 남겼어요!",
         checkboxLabel: "회고하기",
         isChecked: true,
-        diaryText: "이번 프로젝트를 통해 많은 것을 배웠다. 특히 협업의 중요성을 깨달았다.",
+        diaryText:
+          "이번 프로젝트를 통해 많은 것을 배웠다. 특히 협업의 중요성을 깨달았다.",
         hasReaction: false,
       },
     ],
@@ -247,7 +250,7 @@ export const AllVariations: Story = {
       {
         id: "5",
         type: "member",
-        style: "photo",
+        style: "todo",
         username: "이름(닉네임)",
         mainText: "투두 기록을 남겼어요!",
         checkboxLabel: "프레이머 공부하기",
@@ -258,7 +261,7 @@ export const AllVariations: Story = {
       {
         id: "6",
         type: "me",
-        style: "photo",
+        style: "todo",
         username: "이름(닉네임)",
         mainText: "투두 기록을 남겼어요!",
         checkboxLabel: "프레이머 공부하기",
@@ -269,7 +272,7 @@ export const AllVariations: Story = {
       {
         id: "7",
         type: "member",
-        style: "photo",
+        style: "todo",
         username: "이름(닉네임)",
         mainText: "투두 기록을 남겼어요!",
         checkboxLabel: "프레이머 공부하기",
@@ -281,7 +284,7 @@ export const AllVariations: Story = {
       {
         id: "8",
         type: "me",
-        style: "photo",
+        style: "todo",
         username: "이름(닉네임)",
         mainText: "투두 기록을 남겼어요!",
         checkboxLabel: "프레이머 공부하기",
@@ -294,46 +297,50 @@ export const AllVariations: Story = {
       {
         id: "9",
         type: "member",
-        style: "diary",
+        style: "todo",
         username: "이름(닉네임)",
         mainText: "투두 기록을 남겼어요!",
         checkboxLabel: "프레이머 공부하기",
         isChecked: true,
-        diaryText: "다양한 툴을 익히기 위해 어쩌구저쩌구 짧은 기록이 여기에 다 보이게 됩니다.",
+        diaryText:
+          "다양한 툴을 익히기 위해 어쩌구저쩌구 짧은 기록이 여기에 다 보이게 됩니다.",
         hasReaction: false,
       },
       {
         id: "10",
         type: "me",
-        style: "diary",
+        style: "todo",
         username: "이름(닉네임)",
         mainText: "투두 기록을 남겼어요!",
         checkboxLabel: "프레이머 공부하기",
         isChecked: true,
-        diaryText: "다양한 툴을 익히기 위해 어쩌구저쩌구 짧은 기록이 여기에 다 보이게 됩니다.",
+        diaryText:
+          "다양한 툴을 익히기 위해 어쩌구저쩌구 짧은 기록이 여기에 다 보이게 됩니다.",
         hasReaction: false,
       },
       {
         id: "11",
         type: "member",
-        style: "diary",
+        style: "todo",
         username: "이름(닉네임)",
         mainText: "투두 기록을 남겼어요!",
         checkboxLabel: "프레이머 공부하기",
         isChecked: true,
-        diaryText: "다양한 툴을 익히기 위해 어쩌구저쩌구 짧은 기록이 여기에 다 보이게 됩니다.",
+        diaryText:
+          "다양한 툴을 익히기 위해 어쩌구저쩌구 짧은 기록이 여기에 다 보이게 됩니다.",
         hasReaction: true,
         reactionCount: 2,
       },
       {
         id: "12",
         type: "me",
-        style: "diary",
+        style: "todo",
         username: "이름(닉네임)",
         mainText: "투두 기록을 남겼어요!",
         checkboxLabel: "프레이머 공부하기",
         isChecked: true,
-        diaryText: "다양한 툴을 익히기 위해 어쩌구저쩌구 짧은 기록이 여기에 다 보이게 됩니다.",
+        diaryText:
+          "다양한 툴을 익히기 위해 어쩌구저쩌구 짧은 기록이 여기에 다 보이게 됩니다.",
         hasReaction: true,
         reactionCount: 2,
       },
@@ -397,7 +404,7 @@ export const Interactive = () => {
     {
       id: "2",
       type: "me",
-      style: "photo",
+      style: "todo",
       username: "나",
       mainText: "투두 기록을 남겼어요!",
       checkboxLabel: "요리하기",
@@ -409,39 +416,38 @@ export const Interactive = () => {
   ]);
 
   const handleReactionClick = (messageId: string) => {
-    setMessages(prev => prev.map(message => {
-      if (message.id === messageId) {
-        const hasReaction = message.hasReaction;
-        const currentCount = message.reactionCount || 0;
-        
-        if (hasReaction) {
-          // 반응 제거
-          const newCount = Math.max(0, currentCount - 1);
-          return {
-            ...message,
-            hasReaction: newCount > 0,
-            reactionCount: newCount,
-          };
-        } else {
-          // 반응 추가
-          return {
-            ...message,
-            hasReaction: true,
-            reactionCount: currentCount + 1,
-          };
+    setMessages((prev) =>
+      prev.map((message) => {
+        if (message.id === messageId) {
+          const hasReaction = message.hasReaction;
+          const currentCount = message.reactionCount || 0;
+
+          if (hasReaction) {
+            // 반응 제거
+            const newCount = Math.max(0, currentCount - 1);
+            return {
+              ...message,
+              hasReaction: newCount > 0,
+              reactionCount: newCount,
+            };
+          } else {
+            // 반응 추가
+            return {
+              ...message,
+              hasReaction: true,
+              reactionCount: currentCount + 1,
+            };
+          }
         }
-      }
-      return message;
-    }));
+        return message;
+      }),
+    );
   };
 
   return (
     <div className="max-w-md mx-auto p-4">
       <h3 className="mb-4 font-bold">💡 하트 아이콘을 클릭해보세요!</h3>
-      <GroupChat 
-        messages={messages} 
-        onReactionClick={handleReactionClick}
-      />
+      <GroupChat messages={messages} onReactionClick={handleReactionClick} />
     </div>
   );
 };
@@ -504,4 +510,4 @@ export const Empty: Story = {
     messages: [],
     onReactionClick: action("reactionClicked"),
   },
-}; 
+};
