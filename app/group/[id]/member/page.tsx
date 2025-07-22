@@ -1,10 +1,11 @@
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import { useSafeRouter } from "@/hooks/useSafeRouter";
 import { useGroupMembers, useGroupDetail, useMyProfile } from "@/api/hooks";
 import { groupApi } from "@/api/service";
 import formatDate from "@/lib/date";
+import { Toast } from "@/components/shared/Toast/Toast";
 
 interface GroupMemberPageProps {
   params: Promise<{
@@ -18,6 +19,8 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
   const { data: { name: title } = {} } = useGroupDetail(id);
   const { data: members = [] } = useGroupMembers(id);
   const { data: { nickname: myNickname } = {} } = useMyProfile();
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   const handleBackClick = () => {
     router.push(`/group/${id}`);
@@ -28,8 +31,18 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
     // TODO: Implement leave group functionality
   };
 
-  const handlePokeUser = (userId: string, nickname: string) => {
-    groupApi.sendPokeNotification(id, userId);
+  const handlePokeUser = async (userId: string, nickname: string) => {
+    try {
+      await groupApi.sendPokeNotification(id, userId);
+      setToastMessage(`${nickname}님에게 찌르기를 보냈어요!`);
+      setToastVisible(true);
+      
+      setTimeout(() => {
+        setToastVisible(false);
+      }, 3000);
+    } catch (error) {
+      console.error("찌르기 전송 실패:", error);
+    }
   };
 
   return (
@@ -120,6 +133,13 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
           그룹 나가기
         </button>
       </div>
+
+      {/* Toast */}
+      {toastVisible && (
+        <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-50">
+          <Toast text={toastMessage} />
+        </div>
+      )}
 
       {/* Bottom Gesture Bar Placeholder */}
     </div>
