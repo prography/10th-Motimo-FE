@@ -31,7 +31,7 @@ export default function GroupDetailPage({ params }: GroupDetailPageProps) {
   const router = useSafeRouter();
 
   const handleBackClick = () => {
-    router.back();
+    router.push("/group");
   };
 
   const handleReactionClick = (messageId: string) => {

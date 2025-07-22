@@ -18,6 +18,13 @@ export const GroupItem = ({
   onClick,
   className,
 }: GroupItemProps) => {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}.${month}.${day}`;
+  };
   if (isJoined) {
     return (
       <div
@@ -49,7 +56,7 @@ export const GroupItem = ({
               최근 활동일 :
             </span>
             <span className="font-SUIT_Variable font-medium text-sm leading-[1.4] tracking-[-0.01em] text-Color-gray-60">
-              {lastActivityDate}
+              {formatDate(lastActivityDate)}
             </span>
           </div>
         )}
