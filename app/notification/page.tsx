@@ -5,6 +5,75 @@ import { useSafeRouter } from "@/hooks/useSafeRouter";
 import { useNotifications } from "@/api/hooks";
 import { NotificationIcon } from "@/components/icons/NotificationIcon";
 
+// Mock data for testing infinite scroll
+const generateMockNotifications = (page: number, size: number) => {
+  const startIndex = page * size;
+  const notifications = [];
+  
+  const types = ["REACTION", "POKE", "TODO_DUE_DAY", "GROUP_TODO_COMPLETED", "GROUP_TODO_RESULT_COMPLETED"];
+  const nicknames = ["김철수", "이영희", "박민수", "최지은", "정다은", "강호준", "서윤아", "조현우"];
+  
+  for (let i = 0; i < size; i++) {
+    const index = startIndex + i;
+    const type = types[index % types.length];
+    const nickname = nicknames[index % nicknames.length];
+    
+    let content = "";
+    switch (type) {
+      case "REACTION":
+        content = `${nickname}님이 리액션을 남겼습니다.`;
+        break;
+      case "POKE":
+        content = `${nickname}님이 찔렀어요!`;
+        break;
+      case "TODO_DUE_DAY":
+        content = `"${nickname}의 투두 ${index + 1}" 투두가 1일 남았어요!`;
+        break;
+      case "GROUP_TODO_COMPLETED":
+        content = `${nickname}님이 투두를 완료했어요!`;
+        break;
+      case "GROUP_TODO_RESULT_COMPLETED":
+        content = `${nickname}님이 기록을 남겼어요!`;
+        break;
+    }
+    
+    notifications.push({
+      id: `mock-${index}`,
+      type,
+      content,
+      isRead: Math.random() > 0.3, // 70% chance of being read
+      createdAt: new Date(Date.now() - index * 3600000).toISOString(), // 1 hour apart
+    });
+  }
+  
+  return notifications;
+};
+
+const useMockNotifications = (page: number, size: number) => {
+  const [data, setData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  useEffect(() => {
+    setIsLoading(true);
+    // Simulate API delay
+    const timer = setTimeout(() => {
+      const mockData = {
+        content: generateMockNotifications(page, size),
+        totalCount: 156, // Mock total count for testing
+        page,
+        size,
+        totalPages: Math.ceil(156 / size),
+      };
+      setData(mockData);
+      setIsLoading(false);
+    }, 300 + Math.random() * 200); // Random delay 300-500ms
+    
+    return () => clearTimeout(timer);
+  }, [page, size]);
+  
+  return { data, isLoading };
+};
+
 const NOTIFICATION_TYPE_MESSAGES = {
   REACTION: "님이 리액션을 남겼습니다.",
   POKE: "님이 찔렀어요!",
@@ -19,10 +88,15 @@ export default function NotificationPage() {
   const [allNotifications, setAllNotifications] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [useMockData, setUseMockData] = useState(true); // Toggle for testing
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const pageSize = 20;
 
-  const { data: notificationData, mutate } = useNotifications(page, pageSize);
+  // Use mock data for testing or real API
+  const { data: realNotificationData, mutate } = useNotifications(page, pageSize);
+  const { data: mockNotificationData } = useMockNotifications(page, pageSize);
+  
+  const notificationData = useMockData ? mockNotificationData : realNotificationData;
   const totalCount = notificationData?.totalCount ?? 0;
 
   // Update allNotifications when new data arrives
@@ -171,6 +245,18 @@ export default function NotificationPage() {
         <h1 className="flex-1 ml-5 font-SUIT_Variable font-bold text-xl leading-[1.2] tracking-[-0.01em] text-black">
           알림
         </h1>
+        
+        {/* Debug toggle for testing */}
+        <button
+          onClick={() => {
+            setUseMockData(!useMockData);
+            setPage(0);
+            setAllNotifications([]);
+          }}
+          className="px-2 py-1 text-xs bg-gray-200 rounded"
+        >
+          {useMockData ? "Mock" : "Real"}
+        </button>
       </div>
 
       {/* Main Content */}
