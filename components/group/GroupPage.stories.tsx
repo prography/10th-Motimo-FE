@@ -10,7 +10,6 @@ const meta: Meta<typeof GroupPage> = {
   },
   tags: ["autodocs"],
   argTypes: {
-    onJoinGroup: { action: "onJoinGroup" },
     onNotificationClick: { action: "onNotificationClick" },
   },
 };
