@@ -30,11 +30,13 @@ export const Primary: Story = {
     dDay: { control: "number" },
     goalName: { control: "text" },
     progress: { control: "number" },
+    isCompleted: { control: "boolean" },
   },
   args: {
     dDay: 0,
     goalName: "골 이름",
     progress: 50,
+    isCompleted: false,
     // Primary 스토리에만 적용될 Props
   },
 };
