@@ -41,7 +41,6 @@ function JoinRandomGroupContent() {
   const handleJoinRandomGroup = async () => {
     if (!goalId) {
       console.error("Goal ID is required for joining a group");
-      alert("목표 정보를 찾을 수 없습니다. 다시 시도해주세요.");
       return;
     }
 
@@ -52,19 +51,14 @@ function JoinRandomGroupContent() {
       const response = await api.그룹Api.joinRandomGroup({ goalId });
       const id = response.id;
       if (!id) {
-        alert("그룹 참여에 실패했습니다. 다시 시도해주세요.");
+        console.error("Failed to get group ID from response");
         return;
       }
-
-      // // TODO: API 오류로 인해 1 번 group 으로 임시 고정
-      // const id = "1";
-      alert("그룹에 성공적으로 참여했습니다!");
 
       // 성공 시 그룹 페이지로 이동
       router.push(`/group/${id}`);
     } catch (error) {
       console.error("Failed to join random group:", error);
-      alert("그룹 참여에 실패했습니다. 다시 시도해주세요.");
     } finally {
       setIsJoining(false);
     }

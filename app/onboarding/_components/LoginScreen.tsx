@@ -61,7 +61,7 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
 
     if (error) {
       console.error("OAuth 인증 오류:", error);
-      alert("로그인에 실패했습니다. 다시 시도해주세요.");
+      console.error("OAuth 로그인 실패");
       setIsLoading(false);
       return;
     }
@@ -73,7 +73,7 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
       // State 파라미터 검증 (CSRF 보호)
       if (state && oauthState && state !== oauthState) {
         console.error("State 파라미터가 일치하지 않습니다.");
-        alert("보안 오류가 발생했습니다. 다시 시도해주세요.");
+        console.error("OAuth state 파라미터 불일치");
         setIsLoading(false);
         return;
       }
