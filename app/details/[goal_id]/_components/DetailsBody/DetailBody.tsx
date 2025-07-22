@@ -70,8 +70,9 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
     );
   };
   useEffect(() => {
-    if (allSubGoalCompleted) openModalCompletingGoal();
-  }, [allSubGoalCompleted]);
+    if (allSubGoalCompleted && !goalDetail?.isJoinedGroup)
+      openModalCompletingGoal();
+  }, [allSubGoalCompleted, goalDetail?.isJoinedGroup]);
   return (
     <>
       <div className="flex flex-col flex-1">
