@@ -19,10 +19,10 @@ function JoinRandomGroupContent() {
 
   // 기본값 설정
   const goalInfo = {
-    title:
-      goalDetail?.title ||
-      "설정한 목표가 여기에 나오게됩니다.\n두줄이면 이렇게 보이게됩니다.",
-    period: goalDetail?.dueDate?.dueDate ? calculatePeriod(goalDetail.dueDate.dueDate) : "3개월",
+    title: goalDetail?.title || "무제",
+    period: goalDetail?.dueDate?.dueDate
+      ? calculatePeriod(goalDetail.dueDate.dueDate)
+      : "3개월",
   };
 
   // 목표 기간 계산 함수
