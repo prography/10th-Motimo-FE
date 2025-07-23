@@ -158,7 +158,7 @@ const TodoList = ({
         </header>
 
         <div
-          className={`transition-all duration-300 grid w-full`}
+          className={`transition-all duration-300 grid w-full pt-2`}
           style={{ gridTemplateRows: isFolded ? "0fr" : "1fr" }}
         >
           <div className="min-h-0 overflow-hidden">
@@ -281,7 +281,7 @@ const TodoArea = ({
   // 일반 케이스
   return (
     <>
-      <div className="self-stretch h-80 flex flex-col justify-start items-start  gap-2  overflow-y-auto overflow-x-hidden">
+      <div className="self-stretch max-h-80  flex flex-col justify-start items-start  gap-2  overflow-y-auto overflow-x-hidden">
         {todoItemsInfo.map((info) => {
           return (
             <TodoItemContainer
