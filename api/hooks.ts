@@ -40,6 +40,9 @@ export const useQuery = {
   goalsNotInGroup: (config?: SWRConfiguration) =>
     useApiQuery("목표Api", "getGoalNotJoinGroup", [], undefined, config),
 
+  completedGoals: (config?: SWRConfiguration) =>
+    useApiQuery("목표Api", "getCompletedGoals", [], undefined, config),
+
   // // Sub Goal API
   // subGoalTodos: (subGoalId: string | null, config?: SWRConfiguration) =>
   //   useApiQuery(
@@ -96,6 +99,7 @@ export const useGoals = useQuery.goals;
 export const useGoalDetail = useQuery.goalDetail;
 export const useGoalWithSubGoals = useQuery.goalWithSubGoals;
 export const useGoalsNotInGroup = useQuery.goalsNotInGroup;
+export const useCompletedGoals = useQuery.completedGoals;
 // export const useSubGoalTodos = useQuery.subGoalTodos;
 export const useMyProfile = useQuery.myProfile;
 export const useGroupMembers = useQuery.groupMembers;
