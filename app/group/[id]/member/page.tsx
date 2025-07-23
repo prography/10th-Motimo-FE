@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useState, useRef, useEffect } from "react";
 import { useSafeRouter } from "@/hooks/useSafeRouter";
 import { useGroupMembers, useGroupDetail, useMyProfile } from "@/api/hooks";
 import { groupApi } from "@/api/service";
@@ -23,6 +23,7 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout>();
 
   const handleBackClick = () => {
     router.push(`/group/${id}`);
@@ -40,7 +41,7 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
       setToastMessage("그룹을 나갔습니다.");
       setToastVisible(true);
       
-      setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         setToastVisible(false);
         router.push("/group");
       }, 2000);
@@ -49,9 +50,9 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
       setToastMessage("그룹 나가기에 실패했습니다.");
       setToastVisible(true);
       
-      setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         setToastVisible(false);
-      }, 3000);
+      }, 2000); // Consistent timeout duration
     }
   };
 
@@ -65,13 +66,22 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
       setToastMessage(`${nickname}님에게 찌르기를 보냈어요!`);
       setToastVisible(true);
       
-      setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         setToastVisible(false);
-      }, 3000);
+      }, 2000); // Consistent timeout duration
     } catch (error) {
       console.error("찌르기 전송 실패:", error);
     }
   };
+
+  // Cleanup timeout on component unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className="flex flex-col h-screen bg-white">
