@@ -14,7 +14,7 @@ const NOTIFICATION_TYPE_MESSAGES = {
 
 interface Notification {
   id: string;
-  type: string;
+  type: keyof typeof NOTIFICATION_TYPE_MESSAGES;
   content: string;
   isRead: boolean;
   createdAt: string;
@@ -88,49 +88,20 @@ export const NotificationContent = ({
     const type = notification.type;
     const content = notification.content || "";
 
-    // Extract nickname from content if possible
-    const nicknameMatch = content.match(/^([^님]+)님/);
-    const nickname = nicknameMatch ? nicknameMatch[1] : "닉네임";
-
     switch (type) {
       case "REACTION":
-        return (
-          <>
-            <span className="font-SUIT_Variable font-normal text-base leading-[1.4] tracking-[-0.01em] text-[#1E2124]">
-              {nickname}
-            </span>
-            <span className="font-SUIT_Variable font-normal text-base leading-[1.4] tracking-[-0.01em] text-[#1E2124]">
-              님이 리액션을 남겼습니다.
-            </span>
-          </>
-        );
       case "POKE":
+      case "GROUP_TODO_COMPLETED":
+      case "GROUP_TODO_RESULT_COMPLETED":
         return (
-          <>
-            <span className="font-SUIT_Variable font-normal text-base leading-[1.4] tracking-[-0.01em] text-[#1E2124]">
-              {nickname}
-            </span>
-            <span className="font-SUIT_Variable font-normal text-base leading-[1.4] tracking-[-0.01em] text-[#1E2124]">
-              님이 찔렀어요!
-            </span>
-          </>
+          <span className="font-SUIT_Variable font-normal text-base leading-[1.4] tracking-[-0.01em] text-[#1E2124]">
+            {content}
+          </span>
         );
       case "TODO_DUE_DAY":
         return (
           <span className="font-SUIT_Variable font-normal text-base leading-[1.4] tracking-[-0.01em] text-[#1E2124]">
             {content || '"투두 내용이 여기에" 투두가 1일 남았어요!'}
-          </span>
-        );
-      case "GROUP_TODO_COMPLETED":
-        return (
-          <span className="font-SUIT_Variable font-normal text-base leading-[1.4] tracking-[-0.01em] text-[#1E2124]">
-            {content || `${nickname}님이 투두를 완료했어요!`}
-          </span>
-        );
-      case "GROUP_TODO_RESULT_COMPLETED":
-        return (
-          <span className="font-SUIT_Variable font-normal text-base leading-[1.4] tracking-[-0.01em] text-[#1E2124]">
-            {content || `${nickname}님이 기록을 남겼어요!`}
           </span>
         );
       default:
