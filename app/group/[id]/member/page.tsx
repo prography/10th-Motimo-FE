@@ -71,6 +71,12 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
       }, 2000); // Consistent timeout duration
     } catch (error) {
       console.error("찌르기 전송 실패:", error);
+      setToastMessage("찌르기 전송에 실패했습니다.");
+      setToastVisible(true);
+      
+      timeoutRef.current = setTimeout(() => {
+        setToastVisible(false);
+      }, 2000);
     }
   };
 
