@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { AppBar } from "@/components/shared/AppBar/AppBar";
 import { Button } from "@/components/shared/Button/Button";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useGoalDetail } from "@/api/hooks";
 import { api } from "@/api/service";
 import { Loading } from "@/components/shared";
@@ -182,7 +182,11 @@ function JoinRandomGroupContent() {
   );
 }
 
-// Main page component
+// Main page component with Suspense boundary for useSearchParams
 export default function JoinRandomGroupPage() {
-  return <JoinRandomGroupContent />;
+  return (
+    <Suspense fallback={<Loading text="페이지를 불러오고 있어요!" size="lg" />}>
+      <JoinRandomGroupContent />
+    </Suspense>
+  );
 }
