@@ -23,7 +23,7 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [showLeaveModal, setShowLeaveModal] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleBackClick = () => {
     router.push(`/group/${id}`);
