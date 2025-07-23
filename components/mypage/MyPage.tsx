@@ -76,8 +76,6 @@ export function MyPage({ className = "" }: MyPageProps) {
       <AppBar
         title="마이페이지"
         type="main"
-        hasNotification={false}
-        onNotificationClick={() => console.log("Notification clicked")}
       />
 
       {/* Content */}

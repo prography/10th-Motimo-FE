@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { NotificationIcon } from "@/components/icons/NotificationIcon";
+import { CustomPageNotificationItemRs } from "@/api/generated/motimo/Api";
 
 const NOTIFICATION_TYPE_MESSAGES = {
   REACTION: "님이 리액션을 남겼습니다.",
@@ -19,18 +20,11 @@ interface Notification {
   createdAt: string;
 }
 
-interface NotificationData {
-  content: Notification[];
-  totalCount: number;
-  page: number;
-  size: number;
-}
-
 interface NotificationContentProps {
   onBackClick: () => void;
   onMarkAllRead: () => void;
   onLoadMore: (page: number) => void;
-  notificationData: NotificationData | null;
+  notificationData?: CustomPageNotificationItemRs;
   isLoading: boolean;
   allNotifications: Notification[];
   totalCount: number;
@@ -52,7 +46,7 @@ export const NotificationContent = ({
   // Load next page function
   const loadNextPage = useCallback(() => {
     if (!isLoading && hasMore && notificationData) {
-      const currentPage = notificationData.page;
+      const currentPage = notificationData.page ?? 0;
       const totalPages = Math.ceil(totalCount / pageSize);
       if (currentPage < totalPages - 1) {
         onLoadMore(currentPage + 1);
@@ -63,10 +57,11 @@ export const NotificationContent = ({
   // Scroll event handler
   const handleScroll = useCallback(() => {
     if (!scrollContainerRef.current) return;
-    
-    const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+
+    const { scrollTop, scrollHeight, clientHeight } =
+      scrollContainerRef.current;
     const threshold = 100; // Load more when 100px from bottom
-    
+
     if (scrollHeight - scrollTop - clientHeight < threshold) {
       loadNextPage();
     }
@@ -77,15 +72,15 @@ export const NotificationContent = ({
     const scrollContainer = scrollContainerRef.current;
     if (!scrollContainer) return;
 
-    scrollContainer.addEventListener('scroll', handleScroll);
-    return () => scrollContainer.removeEventListener('scroll', handleScroll);
+    scrollContainer.addEventListener("scroll", handleScroll);
+    return () => scrollContainer.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
   // Update hasMore when data changes
   useEffect(() => {
     if (notificationData) {
       const totalPages = Math.ceil(totalCount / pageSize);
-      setHasMore(notificationData.page < totalPages - 1);
+      setHasMore((notificationData.page ?? 0) < totalPages - 1);
     }
   }, [notificationData, totalCount, pageSize]);
 
@@ -228,7 +223,7 @@ export const NotificationContent = ({
                 </div>
               </div>
             ))}
-            
+
             {/* Loading indicator */}
             {isLoading && (
               <div className="flex justify-center py-4">
@@ -243,3 +238,4 @@ export const NotificationContent = ({
     </div>
   );
 };
+

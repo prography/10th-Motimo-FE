@@ -23,8 +23,6 @@ export function GroupPage({
       <AppBar
         title="그룹"
         type="main"
-        hasNotification={true}
-        onNotificationClick={onNotificationClick}
       />
 
       {/* Main Content */}

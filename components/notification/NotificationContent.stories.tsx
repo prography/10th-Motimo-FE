@@ -1,13 +1,20 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState } from "react";
 import { NotificationContent } from "./NotificationContent";
+import { NotificationItemRsTypeEnum } from "@/api/generated/motimo/Api";
 
 // Mock data generator
 const generateMockNotifications = (page: number, size: number) => {
   const startIndex = page * size;
   const notifications = [];
   
-  const types = ["REACTION", "POKE", "TODO_DUE_DAY", "GROUP_TODO_COMPLETED", "GROUP_TODO_RESULT_COMPLETED"];
+  const types = [
+    NotificationItemRsTypeEnum.REACTION,
+    NotificationItemRsTypeEnum.POKE,
+    NotificationItemRsTypeEnum.TODO_DUE_DAY,
+    NotificationItemRsTypeEnum.GROUP_TODO_COMPLETED,
+    NotificationItemRsTypeEnum.GROUP_TODO_RESULT_COMPLETED
+  ];
   const nicknames = ["김철수", "이영희", "박민수", "최지은", "정다은", "강호준", "서윤아", "조현우"];
   
   for (let i = 0; i < size; i++) {
@@ -17,19 +24,19 @@ const generateMockNotifications = (page: number, size: number) => {
     
     let content = "";
     switch (type) {
-      case "REACTION":
+      case NotificationItemRsTypeEnum.REACTION:
         content = `${nickname}님이 리액션을 남겼습니다.`;
         break;
-      case "POKE":
+      case NotificationItemRsTypeEnum.POKE:
         content = `${nickname}님이 찔렀어요!`;
         break;
-      case "TODO_DUE_DAY":
+      case NotificationItemRsTypeEnum.TODO_DUE_DAY:
         content = `"${nickname}의 투두 ${index + 1}" 투두가 1일 남았어요!`;
         break;
-      case "GROUP_TODO_COMPLETED":
+      case NotificationItemRsTypeEnum.GROUP_TODO_COMPLETED:
         content = `${nickname}님이 투두를 완료했어요!`;
         break;
-      case "GROUP_TODO_RESULT_COMPLETED":
+      case NotificationItemRsTypeEnum.GROUP_TODO_RESULT_COMPLETED:
         content = `${nickname}님이 기록을 남겼어요!`;
         break;
     }
@@ -80,7 +87,7 @@ const NotificationContentWithMockData = ({ totalCount }: { totalCount: number })
     totalCount,
     page: currentPage,
     size: pageSize,
-  } : null;
+  } : undefined;
 
   return (
     <NotificationContent
