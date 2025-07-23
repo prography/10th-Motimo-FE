@@ -10,6 +10,9 @@ import {
   useContext,
   useOptimistic,
   startTransition,
+  useRef,
+  useEffect,
+  RefObject,
 } from "react";
 import { KeyedMutator } from "swr";
 import { motion, useMotionValue } from "motion/react";
@@ -27,13 +30,21 @@ import TodoItem from "@/components/shared/TodoItem/TodoItem";
 import ModalAddingSubGoal from "@/components/shared/Modal/ModalAddingSubGoal/ModalAddingSubGoal";
 
 import useModal from "@/hooks/useModal";
-import { useSubGoalTodos, useGoalWithSubGoals } from "@/api/hooks";
+import { useGoalWithSubGoals } from "@/api/hooks";
 import useOptimisticToggle from "@/hooks/main/useOptimisticToggle";
 import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
 
 import { todoApi, goalApi } from "@/api/service";
 import { TodoRs, TodoRsStatusEnum } from "@/api/generated/motimo/Api";
+import Link from "next/link";
+import {
+  useObservingExist,
+  useSubGoalTodosIncompleteOrTodayInfinite,
+} from "@/hooks/queries/useSubGoalTodosInfiniites";
+import { SubGoalTodoInfinite } from "@/hooks/queries/useSubGoalTodosInfiniites";
+import { SWRInfiniteKeyedMutator } from "swr/dist/infinite";
 
+// import { useObservingInfiniteOffset } from "@/hooks/queries/useSubGoalTodosInfiniites";
 /** api generator로부터 받은 타입을 사용 */
 
 interface TodoListProps {
@@ -49,13 +60,20 @@ interface TodoListProps {
   subGoalId?: string;
   /** goal의 id */
   goalId?: string;
+  /** 외부에서 todoItem의 report관련 클릭 처리 */
+  onReportedClick?: (todoId: string) => void;
 }
 
 const TodoListContext = createContext<{
   subGoalTitle?: string;
   subGoalId?: string;
-  mutate?: KeyedMutator<TodoRs[]>;
+
+  mutate?: SWRInfiniteKeyedMutator<(SubGoalTodoInfinite | undefined)[]>;
   updateOptimisticCheckedLen?: (action: number) => void;
+  onReportedClick?: TodoListProps["onReportedClick"];
+  goalId?: string;
+  existObserver?: boolean;
+  observingRef: RefObject<HTMLDivElement | null>;
 } | null>(null);
 
 const TodoList = ({
@@ -65,23 +83,30 @@ const TodoList = ({
   initTodoItemsInfo,
   subGoalId,
   goalId,
+  onReportedClick,
 }: TodoListProps) => {
   // 펼친 상태가 기본
   const [isFolded, setIsFolded] = useState(false);
-  const { data: rawTodoData, mutate } = useSubGoalTodos(subGoalId ?? "", {
-    fallbackData: initTodoItemsInfo,
-  });
 
-  // Convert raw todo data to the format expected by the component
-  const todoItemsInfo: TodoItemsInfo[] | undefined = rawTodoData?.map(
-    (todoRs) => ({
-      id: todoRs.id ?? "",
-      title: todoRs.title ?? "",
-      checked: todoRs.status === TodoRsStatusEnum.COMPLETE,
-      reported: !!todoRs.todoResultId,
-      targetDate: todoRs.date ? new Date(todoRs.date) : undefined,
-    }),
+  // 아래는 무한 스크롤 관련
+  const observingRef = useRef<HTMLDivElement | null>(null);
+
+  const { data, mutate, isLoading, isReachedLast, size, setSize } =
+    useSubGoalTodosIncompleteOrTodayInfinite(subGoalId ?? "", {
+      fallbackData: [{ content: initTodoItemsInfo || [] }],
+    });
+
+  const existObserver = useObservingExist(
+    isLoading,
+    isReachedLast,
+    observingRef,
+    () => {
+      setSize(size + 1);
+    },
   );
+
+  // 데이터 추가 가공
+  const todoItemsInfo = data ?? [];
 
   const todoCheckedLen =
     todoItemsInfo?.filter((todoItem) => todoItem.checked).length ??
@@ -103,6 +128,7 @@ const TodoList = ({
       </>
     );
   const hasTodoItemsInfo = todoItemsInfo ? todoItemsInfo.length > 0 : false;
+
   return (
     <>
       <div
@@ -142,6 +168,10 @@ const TodoList = ({
                 subGoalId,
                 subGoalTitle: subGoal,
                 updateOptimisticCheckedLen,
+                onReportedClick,
+                goalId,
+                existObserver,
+                observingRef,
               }}
             >
               <TodoArea
@@ -228,6 +258,9 @@ const TodoArea = ({
   todoCheckedLen: number;
   todoTotalLen: number;
 }) => {
+  const nullableContext = useContext(TodoListContext);
+  const { existObserver, observingRef } = nullableContext || {};
+
   const [selectedTodoItem, setSelectedTodoItem] = useState<null | string>(null);
   // todo를 모두 완료했을 때.
   if (hasTodoItemsInfo && todoCheckedLen > 0 && todoCheckedLen === todoTotalLen)
@@ -259,6 +292,9 @@ const TodoArea = ({
             />
           );
         })}
+        {existObserver && (
+          <div ref={observingRef} className=" w-full h-1"></div>
+        )}
       </div>
     </>
   );
@@ -277,8 +313,13 @@ const TodoItemContainer = ({
 }) => {
   const x = useMotionValue(0);
   const contextContent = useContext(TodoListContext);
-  const { mutate, subGoalId, subGoalTitle, updateOptimisticCheckedLen } =
-    contextContent || {};
+  const {
+    mutate,
+    subGoalId,
+    subGoalTitle,
+    updateOptimisticCheckedLen,
+    onReportedClick,
+  } = contextContent || {};
 
   const [checked, toggleChecekdOptimistically] = useOptimisticToggle(
     info.checked ?? false,
@@ -324,13 +365,18 @@ const TodoItemContainer = ({
             {...info}
             checked={checked}
             onChecked={async () => {
-              startTransition(async () => {
-                toggleChecekdOptimistically();
-                await todoApi.toggleTodoCompletion(info.id);
+              toggleChecekdOptimistically();
+              const res = await todoApi.toggleTodoCompletion(info.id);
+
+              if (res) {
                 mutate && mutate();
-              });
-              // updateOptimisticCheckedLen &&
-              //   updateOptimisticCheckedLen(checked ? -1 : +1);
+              }
+
+              updateOptimisticCheckedLen &&
+                updateOptimisticCheckedLen(checked ? -1 : +1);
+            }}
+            onReportedClick={async () => {
+              onReportedClick && onReportedClick(info.id);
             }}
           />
         </motion.div>
@@ -364,6 +410,8 @@ const TodoItemContainer = ({
 const OptimizedTodoItem = memo(TodoItem);
 
 const AllTodoFinished = () => {
+  const nullableContext = useContext(TodoListContext);
+  const { goalId } = nullableContext || {};
   return (
     <>
       <div className="w-full self-stretch py-6 bg-background-normal rounded-lg inline-flex flex-col justify-center items-center gap-3 overflow-hidden">
@@ -378,25 +426,15 @@ const AllTodoFinished = () => {
             {"새로운 투두를 추가하시거나\n세부 목표를 달성하실 수 있어요."}
           </p>
         </div>
-        <div
-          data-leading-icon="false"
-          data-status="enabled"
-          data-type="filled"
-          className="px-4 py-2 relative bg-background-primary rounded-lg flex flex-col justify-center items-start gap-2 overflow-hidden"
-        >
-          <div className="self-stretch inline-flex justify-center items-center gap-2">
-            <button
-              type="button"
-              className="justify-start text-white text-sm font-semibold font-['Pretendard'] leading-tight"
-            >
-              목표 상세페이지로 이동
-            </button>
+        <Link href={`/details/${goalId}`}>
+          <div className="px-4 py-2 relative bg-background-primary rounded-lg flex flex-col justify-center items-start gap-2 overflow-hidden">
+            <div className="self-stretch inline-flex justify-center items-center gap-2">
+              <p className="justify-start text-white text-sm font-semibold font-['Pretendard'] leading-tight">
+                목표 상세페이지로 이동
+              </p>
+            </div>
           </div>
-          <div
-            data-type="normal"
-            className="w-40 h-9 left-0 top-0 absolute"
-          ></div>
-        </div>
+        </Link>
       </div>
     </>
   );
@@ -457,7 +495,7 @@ const DeleteButton = ({ onDelete }: DeleteButtonProps) => {
         type="button"
         className="w-10 h-14 px-1 py-2 bg-status-negative rounded-lg inline-flex flex-col justify-center items-center gap-0.5"
       >
-        <div className="w-5 h-5 relative overflow-hidden">
+        <div className="w-5 h-5 relative overflow-hidden text-white">
           <TrashCanSvg />
         </div>
         <div className="justify-center text-label-inverse text-xs font-medium font-['SUIT_Variable'] leading-none">

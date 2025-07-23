@@ -38,7 +38,7 @@ const nextConfig: NextConfig = {
           {
             loader: "@svgr/webpack",
             options: {
-              icon: true,
+              icon: false,
             },
           },
         ],
@@ -62,7 +62,16 @@ const nextConfig: NextConfig = {
             },
           ];
         }
-      : undefined,
+      : process.env.NODE_ENV === "production"
+        ? async () => {
+            return [
+              {
+                source: "/v1/:path*",
+                destination: `http://motimo.kro.kr:8080/v1/:path*`,
+              },
+            ];
+          }
+        : async () => [],
 };
 
 export default nextConfig;

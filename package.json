@@ -11,7 +11,7 @@
     "lint:fix": "next lint --fix",
     "lint:tsx": "eslint '**/*.{ts,tsx}' --max-warnings 0",
     "type-check": "tsc --noEmit",
-    "gen": "node api/generator.mjs",
+    "gen": "dotenv -e .env.dev -- node api/generator.mjs",
     "storybook": "storybook dev",
     "build-storybook": "storybook build",
     "build-storybook:shared": "STORYBOOK_SCOPE=shared storybook build -o storybook-static-shared",
@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.0.0",
+    "@netlify/plugin-nextjs": "^5.11.4",
     "@storybook/addon-designs": "^8.2.1",
     "@storybook/addon-docs": "^8.6.14",
     "@storybook/addon-essentials": "^8.6.14",
