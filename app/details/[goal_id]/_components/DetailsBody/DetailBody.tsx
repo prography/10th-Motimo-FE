@@ -53,6 +53,12 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
 
   const groupId = goalDetail?.groupId;
 
+  const fixedProgress = goalDetail?.progress
+    ? goalDetail?.progress === 0 || goalDetail?.progress === 100
+      ? goalDetail?.progress
+      : Number(goalDetail?.progress?.toFixed(2))
+    : 0;
+
   // 모든 세부목표 완료 시에 모달
   const openModalCompletingGoal = () => {
     openModal(
@@ -78,7 +84,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
       <div className="flex flex-col flex-1">
         <GoalData
           goalName={data.title ?? ""}
-          progress={goalDetail?.progress ?? 0}
+          progress={fixedProgress}
           dDay={dDay}
           isCompleted={goalDetail?.isCompleted ?? false}
         />

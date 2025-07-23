@@ -103,7 +103,13 @@ const GoalMenuContainer = ({}: GoalMenuContainerProps) => {
               <GoalMenu
                 key={goalMenuInfo.goalId}
                 goal={goalMenuInfo.goal}
-                percentage={goalMenuInfo.percentage}
+                percentage={
+                  // 0과 100을 제외하고 소수점 표기
+                  goalMenuInfo.percentage === 0 ||
+                  goalMenuInfo.percentage === 100
+                    ? goalMenuInfo.percentage
+                    : Number(goalMenuInfo.percentage.toFixed(2))
+                }
                 selected={idx === selectedGoalIdx}
                 onSelected={() => {
                   setSelectedGoalIdx(idx);
