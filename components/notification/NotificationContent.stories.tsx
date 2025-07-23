@@ -123,6 +123,19 @@ const meta: Meta<typeof NotificationContentWithMockData> = {
 export default meta;
 type Story = StoryObj<typeof NotificationContentWithMockData>;
 
+export const Primary: Story = {
+  args: {
+    totalCount: 25,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Default notification list with a moderate number of notifications showing typical usage.",
+      },
+    },
+  },
+};
+
 export const Empty: Story = {
   args: {
     totalCount: 0,
