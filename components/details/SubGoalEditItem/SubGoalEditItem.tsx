@@ -32,7 +32,7 @@ const SubGoalEditItem = ({
             type="button"
             className="w-8 h-8 p-2 bg-background-normal rounded inline-flex justify-center items-center gap-2"
           >
-            <div className="w-5 h-5 relative overflow-hidden text-background-strong">
+            <div className="w-5 h-5 relative  text-background-strong">
               <EditSvg />
             </div>
           </button>
@@ -41,7 +41,7 @@ const SubGoalEditItem = ({
             type="button"
             className="w-8 h-8 p-2 bg-background-normal rounded inline-flex justify-center items-center gap-2"
           >
-            <div className="w-5 h-5 relative overflow-hidden">
+            <div className="w-5 h-5 relative ">
               <TrashBinSvg />
             </div>
           </button>
