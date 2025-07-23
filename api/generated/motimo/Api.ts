@@ -342,16 +342,36 @@ export interface PointRs {
   point?: number;
 }
 
-export interface CustomSliceNotificationItemRs {
+export interface CustomPageNotificationItemRs {
   content?: NotificationItemRs[];
-  hasNext?: boolean;
+  /** @format int64 */
+  totalCount?: number;
   /** @format int32 */
-  offset?: number;
+  totalPage?: number;
+  /** @format int32 */
+  page?: number;
   /** @format int32 */
   size?: number;
 }
 
-export type NotificationItemRs = object;
+export interface NotificationItemRs {
+  /**
+   * 알림 아이디입니다.
+   * @format uuid
+   */
+  id?: string;
+  /** 알림 내용 전체입니다. */
+  content?: string;
+  /** 알림 타입입니다. */
+  type?: NotificationItemRsTypeEnum;
+  /**
+   * 알림과 연결되는 항목의 아이디입니다.
+   * @format uuid
+   */
+  referenceId?: string;
+  /** 읽음 여부입니다. */
+  isRead?: boolean;
+}
 
 export interface GroupDetailRs {
   /**
@@ -472,6 +492,12 @@ export interface GroupMessageItemRs {
    */
   sendAt: string;
 }
+
+export type MessageReactionContent = GroupMessageContent & {
+  /** @format uuid */
+  referenceMessageId?: string;
+  reactionType?: MessageReactionContentReactionTypeEnum;
+};
 
 export type TodoCompletedContent = GroupMessageContent & {
   /** @format uuid */
@@ -777,11 +803,21 @@ export enum TodoRsStatusEnum {
   INCOMPLETE = "INCOMPLETE",
 }
 
+/** 알림 타입입니다. */
+export enum NotificationItemRsTypeEnum {
+  REACTION = "REACTION",
+  POKE = "POKE",
+  TODO_DUE_DAY = "TODO_DUE_DAY",
+  GROUP_TODO_COMPLETED = "GROUP_TODO_COMPLETED",
+  GROUP_TODO_RESULT_COMPLETED = "GROUP_TODO_RESULT_COMPLETED",
+}
+
 export enum GroupMessageContentTypeEnum {
   JOIN = "JOIN",
   LEAVE = "LEAVE",
   TODO_COMPLETE = "TODO_COMPLETE",
   TODO_RESULT_SUBMIT = "TODO_RESULT_SUBMIT",
+  MESSAGE_REACTION = "MESSAGE_REACTION",
 }
 
 /**
@@ -796,6 +832,7 @@ interface BaseGroupMessageContentRs {
   content:
     | GroupJoinContent
     | GroupLeaveContent
+    | MessageReactionContent
     | TodoCompletedContent
     | TodoResultSubmittedContent;
 }
@@ -803,6 +840,14 @@ interface BaseGroupMessageContentRs {
 type BaseGroupMessageContentRsTypeMapping<Key, Type> = {
   type: Key;
 } & Type;
+
+export enum MessageReactionContentReactionTypeEnum {
+  GOOD = "GOOD",
+  COOL = "COOL",
+  CHEER_UP = "CHEER_UP",
+  BEST = "BEST",
+  LIKE = "LIKE",
+}
 
 export enum TodoResultSubmittedContentEmotionEnum {
   PROUD = "PROUD",
@@ -1998,18 +2043,21 @@ export class Api<SecurityDataType extends unknown> {
      * @summary 알림 목록 API
      * @request GET:/v1/notifications
      * @secure
-     * @response `200` `CustomSliceNotificationItemRs` OK
+     * @response `200` `CustomPageNotificationItemRs` OK
      */
     getNotificationList: (
       query: {
+        /**
+         * @format int32
+         * @default 0
+         */
+        page?: number;
         /** @format int32 */
-        offset: number;
-        /** @format int32 */
-        limit: number;
+        size: number;
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<CustomSliceNotificationItemRs, any>({
+      this.http.request<CustomPageNotificationItemRs, any>({
         path: `/v1/notifications`,
         method: "GET",
         query: query,
