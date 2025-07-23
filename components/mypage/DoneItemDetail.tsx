@@ -4,6 +4,12 @@ import React from "react";
 import { AppBar } from "../shared/AppBar/AppBar";
 import { CheckIcon } from "../icons/CheckIcon";
 import { useSafeRouter } from "../../hooks/useSafeRouter";
+import { useGoalDetail } from "@/api/hooks";
+import {
+  GoalWithSubGoalTodoRs,
+  SubGoalWithTodosRs,
+  TodoRs,
+} from "@/api/generated/motimo/Api";
 
 interface CompletedTodo {
   id: string;
@@ -29,70 +35,13 @@ interface DoneGoalDetail {
 }
 
 interface DoneItemDetailProps {
-  goalDetail?: DoneGoalDetail;
   className?: string;
+  goalDetail: GoalWithSubGoalTodoRs;
 }
 
-const defaultGoalDetail: DoneGoalDetail = {
-  id: "1",
-  title: "해외로 취업하자!",
-  subGoals: [
-    {
-      id: "1",
-      title: "포트폴리오 및 이력서 준비하기",
-      completedTodos: [
-        {
-          id: "1",
-          title: "투두 리스트 타이틀이 들어갑니다.",
-          completedDate: "2025.05.12",
-          attachment: {
-            type: "image",
-            url: "https://picsum.photos/200",
-          },
-        },
-        {
-          id: "2",
-          title: "투두 리스트 타이틀이 들어갑니다.",
-          completedDate: "2025.05.12",
-          attachment: {
-            type: "file",
-            url: "https://picsum.photos/200",
-            name: "파일명이 여기에.pdf",
-          },
-        },
-        {
-          id: "3",
-          title: "투두 리스트 타이틀이 들어갑니다.",
-          completedDate: "2025.05.12",
-        },
-      ],
-    },
-    {
-      id: "2",
-      title: "세부목표명이 여기에 들어갑니다.",
-      completedTodos: [
-        {
-          id: "4",
-          title: "투두 리스트 타이틀이 들어갑니다.",
-          completedDate: "2025.05.12",
-          attachment: {
-            type: "image",
-            url: "https://picsum.photos/200",
-          },
-        },
-        {
-          id: "5",
-          title: "투두 리스트 타이틀이 들어갑니다.",
-          completedDate: "2025.05.12",
-        },
-      ],
-    },
-  ],
-};
-
 export const DoneItemDetail: React.FC<DoneItemDetailProps> = ({
-  goalDetail = defaultGoalDetail,
   className = "",
+  goalDetail,
 }) => {
   const router = useSafeRouter();
 
@@ -109,7 +58,7 @@ export const DoneItemDetail: React.FC<DoneItemDetailProps> = ({
 
       {/* Sub Goals List */}
       <div className="flex-1 space-y-0">
-        {goalDetail.subGoals.map((subGoal, index) => (
+        {goalDetail.subGoals?.map((subGoal, index) => (
           <SubGoalSection key={subGoal.id} subGoal={subGoal} />
         ))}
       </div>
@@ -123,7 +72,7 @@ export const DoneItemDetail: React.FC<DoneItemDetailProps> = ({
 };
 
 interface SubGoalSectionProps {
-  subGoal: SubGoal;
+  subGoal: SubGoalWithTodosRs;
 }
 
 const SubGoalSection: React.FC<SubGoalSectionProps> = ({ subGoal }) => {
@@ -136,14 +85,14 @@ const SubGoalSection: React.FC<SubGoalSectionProps> = ({ subGoal }) => {
             세부목표
           </span>
         </div>
-        <h3 className="font-SUIT_Variable font-bold text-base leading-[1.2] tracking-[-0.02em] text-Color-black text-center">
+        <h3 className="font-SUIT_Variable font-bold text-base leading-[1.2] tracking-[-0.02em] text-Color-black">
           {subGoal.title}
         </h3>
       </div>
 
       {/* Completed Todos */}
       <div className="space-y-2">
-        {subGoal.completedTodos.map((todo) => (
+        {subGoal.todos?.map((todo) => (
           <CompletedTodoItem key={todo.id} todo={todo} />
         ))}
       </div>
@@ -152,7 +101,7 @@ const SubGoalSection: React.FC<SubGoalSectionProps> = ({ subGoal }) => {
 };
 
 interface CompletedTodoItemProps {
-  todo: CompletedTodo;
+  todo: TodoRs;
 }
 
 const CompletedTodoItem: React.FC<CompletedTodoItemProps> = ({ todo }) => {
@@ -170,21 +119,22 @@ const CompletedTodoItem: React.FC<CompletedTodoItemProps> = ({ todo }) => {
           </span>
         </div>
 
-        {/* Date */}
-        <div className="pl-6 pb-1">
-          <span className="font-SUIT_Variable font-medium text-xs leading-[1.2] tracking-[-0.02em] text-Color-gray-60">
-            {todo.completedDate}
-          </span>
-        </div>
+        {todo.date && (
+          <div className="pl-6 pb-1">
+            <span className="font-SUIT_Variable font-medium text-xs leading-[1.2] tracking-[-0.02em] text-Color-gray-60">
+              {todo.date}
+            </span>
+          </div>
+        )}
       </div>
 
-      {/* Attachment */}
-      {todo.attachment && (
+      {todo.todoResult?.fileUrl && (
         <div className="mt-2">
-          {todo.attachment.type === "image" ? (
+          {/* {todo.attachment.type === "image" ? ( TODO: how to distinguish image? */}
+          {false ? (
             <div className="w-[116px] h-[116px] border border-Color-gray-30 rounded-lg overflow-hidden">
               <img
-                src={todo.attachment.url}
+                src={todo.todoResult?.fileUrl}
                 alt="첨부 이미지"
                 className="w-full h-full object-cover"
               />
@@ -192,7 +142,7 @@ const CompletedTodoItem: React.FC<CompletedTodoItemProps> = ({ todo }) => {
           ) : (
             <div className="bg-Color-gray-10 rounded-lg px-4 py-2 inline-block">
               <span className="font-SUIT_Variable font-bold text-sm leading-[1.4] tracking-[-0.02em] text-Color-black">
-                {todo.attachment.name}
+                {todo.todoResult.fileUrl}
               </span>
             </div>
           )}
@@ -201,4 +151,3 @@ const CompletedTodoItem: React.FC<CompletedTodoItemProps> = ({ todo }) => {
     </div>
   );
 };
-

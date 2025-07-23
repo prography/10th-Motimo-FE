@@ -28,10 +28,10 @@ export const useQuery = {
       config,
     ),
 
-  goalWithSubGoals: (goalId: string | null, config?: SWRConfiguration) =>
+  goalWithSubGoal: (goalId: string | null, config?: SWRConfiguration) =>
     useApiQuery(
       "목표Api",
-      "getGoalWithSubGoalAndTodos",
+      "getGoalWithSubGoal",
       goalId ? [goalId] : null,
       undefined,
       config,
@@ -90,6 +90,15 @@ export const useQuery = {
 
   cheerPhrase: (config?: SWRConfiguration) =>
     useApiQuery("응원Api", "getCheerPhrase", [], undefined, config),
+
+  goalWithSubGoalAndTodos: (goalId: string | null, config?: SWRConfiguration) =>
+    useApiQuery(
+      "목표Api",
+      "getGoalWithSubGoalAndTodos",
+      goalId ? [goalId] : null,
+      undefined,
+      config,
+    ),
 };
 
 // Legacy hooks for backward compatibility (이전 방식과 호환성 유지)
@@ -97,7 +106,8 @@ export const useTodos = useQuery.myTodos;
 export const useTodoResult = useQuery.todoResult;
 export const useGoals = useQuery.goals;
 export const useGoalDetail = useQuery.goalDetail;
-export const useGoalWithSubGoals = useQuery.goalWithSubGoals;
+export const useGoalWithSubGoals = useQuery.goalWithSubGoal;
+export const useGoalWithSubGoalsAndTodos = useQuery.goalWithSubGoalAndTodos;
 export const useGoalsNotInGroup = useQuery.goalsNotInGroup;
 export const useCompletedGoals = useQuery.completedGoals;
 // export const useSubGoalTodos = useQuery.subGoalTodos;
