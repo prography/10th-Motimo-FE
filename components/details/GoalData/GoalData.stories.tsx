@@ -30,9 +30,7 @@ export const Primary: Story = {
     dDay: { control: "number" },
     goalName: { control: "text" },
     progress: { control: "number" },
-    isCompleted: {
-      control: "boolean",
-    },
+    isCompleted: { control: "boolean" },
   },
   args: {
     dDay: 0,
