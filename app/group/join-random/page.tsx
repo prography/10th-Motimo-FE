@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { AppBar } from "@/components/shared/AppBar/AppBar";
 import { Button } from "@/components/shared/Button/Button";
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState } from "react";
 import { useGoalDetail } from "@/api/hooks";
 import { api } from "@/api/service";
 import { Loading } from "@/components/shared";
@@ -72,6 +72,15 @@ function JoinRandomGroupContent() {
       router.push("/group");
     }
   }, [goalId, router]);
+
+  // Show loading while goal data is being fetched
+  if (isLoading) {
+    return <Loading text="목표 정보를 불러오고 있어요!" size="lg" />;
+  }
+
+  if (isJoining) {
+    return <Loading text="그룹 참여 중..." size="lg" />;
+  }
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -173,11 +182,7 @@ function JoinRandomGroupContent() {
   );
 }
 
-// Main page component wrapped in Suspense
+// Main page component
 export default function JoinRandomGroupPage() {
-  return (
-    <Suspense fallback={<Loading text="그룹이 정해지고 있어요!" size="lg" />}>
-      <JoinRandomGroupContent />
-    </Suspense>
-  );
+  return <JoinRandomGroupContent />;
 }
