@@ -8,6 +8,7 @@ import PeriodSelectionScreen from "./_components/PeriodSelectionScreen";
 import CompletionScreen from "./_components/CompletionScreen";
 import useAuthStore from "@/stores/useAuthStore";
 import { useGoals } from "@/api/hooks";
+import { Loading } from "@/components/shared/Loading/Loading";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -95,22 +96,14 @@ export default function OnboardingPage() {
     }
   };
 
-  // hydration이 완료되지 않았거나 로그인된 상태에서 처리 중이면 스피너 표시
-  if (!hasHydrated || (hasHydrated && isLoggedIn && (isLoading || (!goals && !error)))) {
-    return (
-      <div className="min-h-screen bg-background-normal flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
-      </div>
-    );
+  // hydration이 완료되지 않았으면 스피너 표시
+  if (!hasHydrated) {
+    return <Loading className="min-h-screen bg-background-normal" />;
   }
 
-  // 로그인된 상태에서 goals가 있으면 빈 화면 표시 (redirect 준비)
-  if (hasHydrated && isLoggedIn && goals && goals.length > 0) {
-    return (
-      <div className="min-h-screen bg-background-normal flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
-      </div>
-    );
+  // 로그인된 상태에서 처리 중이면 스피너 표시
+  if (hasHydrated && isLoggedIn && (isLoading || (!goals && !error) || (goals && goals.length > 0))) {
+    return <Loading className="min-h-screen bg-background-normal" />;
   }
 
   return (

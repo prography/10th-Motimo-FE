@@ -12,7 +12,6 @@ const meta: Meta<typeof AppBar> = {
     },
     title: { control: "text" },
     points: { control: "text" },
-    hasNotification: { control: "boolean" },
     progress: { 
       control: { type: "range", min: 0, max: 100, step: 1 }
     },
@@ -27,7 +26,6 @@ export const Main: Story = {
   args: {
     type: "main",
     points: "1,000P",
-    hasNotification: false,
   },
 };
 
@@ -35,7 +33,6 @@ export const MainWithNotification: Story = {
   args: {
     type: "main",
     points: "1,000P",
-    hasNotification: true,
   },
 };
 

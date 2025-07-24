@@ -32,6 +32,11 @@ export function useApiQuery<
       ? null
       : () => {
           const apiGroupInstance = api[apiGroup] as any;
+
+          if (!apiGroupInstance) {
+            throw new Error(`API group ${String(apiGroup)} not found`);
+          }
+
           const methodFunction = apiGroupInstance[method] as any;
 
           if (typeof methodFunction !== "function") {
@@ -41,9 +46,16 @@ export function useApiQuery<
           }
 
           // params가 배열이면 spread, 아니면 그대로 전달
-          return Array.isArray(params) && params.length > 0
-            ? methodFunction(...params)
-            : methodFunction();
+          try {
+            return Array.isArray(params) && params.length > 0
+              ? methodFunction(...params)
+              : methodFunction();
+          } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            throw new Error(
+              `Failed to call ${String(apiGroup)}.${String(method)}: ${errorMessage}`,
+            );
+          }
         },
     config,
   );
