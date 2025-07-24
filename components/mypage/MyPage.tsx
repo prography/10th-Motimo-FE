@@ -27,7 +27,7 @@ interface MyPageProps {
 
 export function MyPage({ className = "" }: MyPageProps) {
   const router = useSafeRouter();
-  const { isLoggedIn, login } = useAuthStore();
+  const { isLoggedIn, login, logout } = useAuthStore();
   const { data: user, isLoading, error } = useMyProfile();
 
   const handleLogin = () => {
@@ -56,6 +56,14 @@ export function MyPage({ className = "" }: MyPageProps) {
           hasIcon: false,
           onClick: () => {},
         },
+        {
+          label: "로그아웃",
+          hasIcon: false,
+          onClick: () => {
+            logout();
+            router.push("/");
+          },
+        },
       ]
     : [
         {
@@ -76,8 +84,6 @@ export function MyPage({ className = "" }: MyPageProps) {
       <AppBar
         title="마이페이지"
         type="main"
-        hasNotification={false}
-        onNotificationClick={() => console.log("Notification clicked")}
       />
 
       {/* Content */}

@@ -5,7 +5,8 @@ interface BellIconProps extends React.SVGProps<SVGSVGElement> {
   className?: string;
   width?: number;
   height?: number;
-  hasNotification?: boolean;
+  isNotificationActive?: boolean;
+  hasNewMessages?: boolean;
 }
 
 export const BellIcon = ({
@@ -13,7 +14,8 @@ export const BellIcon = ({
   className,
   width = 24,
   height = 24,
-  hasNotification = false,
+  isNotificationActive = true,
+  hasNewMessages = false,
   ...props
 }: BellIconProps) => {
   return (
@@ -34,15 +36,15 @@ export const BellIcon = ({
           strokeLinejoin="round"
         />
       </svg>
-      {hasNotification && (
-        <div 
+      {isNotificationActive && hasNewMessages && (
+        <div
           className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"
           style={{
-            backgroundColor: '#EA3429',
-            width: '10px',
-            height: '10px',
-            top: '1px',
-            right: '1px'
+            backgroundColor: "#EA3429",
+            width: "10px",
+            height: "10px",
+            top: "1px",
+            right: "1px",
           }}
         />
       )}
@@ -50,4 +52,4 @@ export const BellIcon = ({
   );
 };
 
-export default BellIcon; 
+export default BellIcon;
