@@ -77,11 +77,11 @@ const DoneGoalCard: React.FC<DoneGoalCardProps> = ({ goal }) => {
 
         {/* Statistics */}
         <div className="flex items-center gap-1">
-          <span className="font-SUIT_Variable font-medium text-sm leading-[1.4] tracking-[-0.02em] text-Color-gray-70">
+          <span className="flex-1 font-SUIT_Variable font-medium text-sm leading-[1.4] tracking-[-0.02em] text-Color-gray-70">
             총 투두 : {goal.todoCount}개
           </span>
-          <span className="font-SUIT_Variable font-medium text-sm leading-[1.4] tracking-[-0.02em] text-Color-gray-70">
-            총 기록 : {0}개
+          <span className="flex-1 font-SUIT_Variable font-medium text-sm leading-[1.4] tracking-[-0.02em] text-Color-gray-70">
+            총 기록 : {goal.todoResultCount}개
           </span>
         </div>
       </div>
