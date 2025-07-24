@@ -48,19 +48,16 @@ const useGroupChatInfinite = (
     },
   );
 
-  // test
-  console.log("datat in useGruopInifniteChat: ", data, groupId, direction);
-
   const sortedChatData = data
     // 날짜별로 정렬
     ?.sort(
       (dataA, dataB) =>
-        new Date(dataA.messages?.[0].sendAt || undefined).getTime() -
-        new Date(dataB.messages?.[0].sendAt || undefined).getTime(),
+        new Date(dataA.messages?.[0]?.sendAt || 0).getTime() -
+        new Date(dataB.messages?.[0]?.sendAt || 0).getTime(),
     )
     .map((info) => ({
       ...info,
-      messages: info.messages.sort(
+      messages: (info.messages ?? []).sort(
         (dataA, dataB) =>
           new Date(dataA.sendAt).getTime() - new Date(dataB.sendAt).getTime(),
       ),
