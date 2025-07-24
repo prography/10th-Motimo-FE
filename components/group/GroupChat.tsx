@@ -4,6 +4,7 @@ import {
   GroupMessageItemRs,
   TodoResultSubmittedContent,
 } from "@/api/generated/motimo/Api";
+import { useMyProfile } from "@/api/hooks";
 
 interface GroupChatProps {
   messages: GroupMessageItemRs[];
@@ -16,13 +17,16 @@ export const GroupChat = ({
   className,
   onReactionClick,
 }: GroupChatProps) => {
+  const { data } = useMyProfile();
+
   return (
     <div className={cn("flex flex-col gap-4 w-full", className)}>
       {messages.map((m) => (
         <GroupChatItem
           key={m.messageId}
           id={m.messageId}
-          userId={m.userId}
+          // userId={m.userId}
+          type={m.userId === data?.id ? "me" : "member"}
           style={"todo"}
           hasUserReacted={m.hasUserReacted}
           reactionCount={m.reactionCount}
