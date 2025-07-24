@@ -6,10 +6,13 @@ import { useRouter } from "next/navigation";
 
 interface GroupRoomHeaderProps {
   groupRoomName: string;
-  groupId: string;
+  routeToMember: () => void;
 }
 
-const GroupRoomHeader = ({ groupRoomName, groupId }: GroupRoomHeaderProps) => {
+const GroupRoomHeader = ({
+  groupRoomName,
+  routeToMember,
+}: GroupRoomHeaderProps) => {
   const router = useRouter();
   return (
     <>
@@ -23,7 +26,7 @@ const GroupRoomHeader = ({ groupRoomName, groupId }: GroupRoomHeaderProps) => {
         />
         <button
           onClick={() => {
-            router.push(`/group/${groupId}/member`);
+            routeToMember();
           }}
           type="button"
           className="w-10 h-10 text-label-alternative"
