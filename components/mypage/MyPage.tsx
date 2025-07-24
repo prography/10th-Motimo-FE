@@ -27,7 +27,7 @@ interface MyPageProps {
 
 export function MyPage({ className = "" }: MyPageProps) {
   const router = useSafeRouter();
-  const { isLoggedIn, login } = useAuthStore();
+  const { isLoggedIn, login, logout } = useAuthStore();
   const { data: user, isLoading, error } = useMyProfile();
 
   const handleLogin = () => {
@@ -55,6 +55,14 @@ export function MyPage({ className = "" }: MyPageProps) {
           label: "버전 정보 v1.0",
           hasIcon: false,
           onClick: () => {},
+        },
+        {
+          label: "로그아웃",
+          hasIcon: false,
+          onClick: () => {
+            logout();
+            router.push("/");
+          },
         },
       ]
     : [
