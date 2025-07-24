@@ -221,9 +221,12 @@ const TodoMessage = ({
             ? (message as TodoResultMessage).content.content
             : undefined
         }
-        // fileName={content["fileName"]}
-        // photoUrl=""
-
+        fileName={(message as TodoResultMessage).content.fileName}
+        photoUrl={
+          (message as TodoResultMessage).content.mimeType?.startsWith("image")
+            ? (message as TodoResultMessage).content.fileUrl
+            : undefined
+        }
         hasUserReacted={messageInfo.hasUserReacted}
         reactionCount={messageInfo.reactionCount}
         onReactionClick={

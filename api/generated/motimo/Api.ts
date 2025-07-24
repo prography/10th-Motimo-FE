@@ -291,6 +291,10 @@ export interface TodoResultRs {
   content?: string;
   /** 투두 기록 파일 url */
   fileUrl?: string;
+  /** 투두 기록 파일 이름 */
+  fileName?: string;
+  /** 투두 기록 파일 데이터 종류 */
+  fileMimeType?: string;
 }
 
 export interface TodoRs {
@@ -421,6 +425,12 @@ export interface GroupMemberRs {
   isActivePoke?: boolean;
 }
 
+export type GoalTitleUpdatedContent = GroupMessageContent & {
+  /** @format uuid */
+  goalId?: string;
+  goalTitle?: string;
+};
+
 /** 그룹 메시지 응답 */
 export interface GroupChatRs {
   /** 메시지 목록 */
@@ -514,6 +524,8 @@ export type TodoResultSubmittedContent = GroupMessageContent & {
   emotion?: TodoResultSubmittedContentEmotionEnum;
   content?: string;
   fileUrl?: string;
+  fileName?: string;
+  mimeType?: string;
 };
 
 export interface JoinedGroupRs {
@@ -817,6 +829,7 @@ export enum GroupMessageContentTypeEnum {
   LEAVE = "LEAVE",
   TODO_COMPLETE = "TODO_COMPLETE",
   TODO_RESULT_SUBMIT = "TODO_RESULT_SUBMIT",
+  GOAL_TITLE_UPDATE = "GOAL_TITLE_UPDATE",
   MESSAGE_REACTION = "MESSAGE_REACTION",
 }
 
@@ -830,6 +843,7 @@ export enum GroupMessageContentTypeEnum {
 interface BaseGroupMessageContentRs {
   /** 메시지 내용 */
   content:
+    | GoalTitleUpdatedContent
     | GroupJoinContent
     | GroupLeaveContent
     | MessageReactionContent
@@ -1966,7 +1980,7 @@ export class Api<SecurityDataType extends unknown> {
      * @summary 그룹 나가기 API
      * @request DELETE:/v1/groups/{groupId}/members/me
      * @secure
-     * @response `200` `void` OK
+     * @response `204` `void` No Content
      */
     exitGroup: (groupId: string, params: RequestParams = {}) =>
       this.http.request<void, any>({
