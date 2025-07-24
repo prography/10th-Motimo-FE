@@ -4,9 +4,9 @@ import { use, useState, useRef, useEffect } from "react";
 import { useSafeRouter } from "@/hooks/useSafeRouter";
 import { useGroupMembers, useGroupDetail, useMyProfile } from "@/api/hooks";
 import { groupApi } from "@/api/service";
-import formatDate from "@/lib/date";
 import { Toast } from "@/components/shared/Toast/Toast";
 import Modal from "@/components/shared/Modal/_compound/Modal";
+import GroupMemberList from "@/components/group/GroupMemberList";
 
 interface GroupMemberPageProps {
   params: Promise<{
@@ -60,25 +60,6 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
     setShowLeaveModal(false);
   };
 
-  const handlePokeUser = async (userId: string, nickname: string) => {
-    try {
-      await groupApi.sendPokeNotification(id, userId);
-      setToastMessage(`${nickname}님에게 찌르기를 보냈어요!`);
-      setToastVisible(true);
-      
-      timeoutRef.current = setTimeout(() => {
-        setToastVisible(false);
-      }, 2000); // Consistent timeout duration
-    } catch (error) {
-      console.error("찌르기 전송 실패:", error);
-      setToastMessage("찌르기 전송에 실패했습니다.");
-      setToastVisible(true);
-      
-      timeoutRef.current = setTimeout(() => {
-        setToastVisible(false);
-      }, 2000);
-    }
-  };
 
   // Cleanup timeout on component unmount
   useEffect(() => {
@@ -118,45 +99,11 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
 
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto px-4 pt-4">
-        {/* Members List */}
-        <div className="space-y-4">
-          {members.map((member) => {
-            const isMe = member.nickname === myNickname;
-
-            return (
-              <div
-                key={member.userId}
-                className="flex items-center justify-between bg-[#F7F7F8] rounded-lg p-3"
-              >
-                <div className="flex-1">
-                  <div className="font-SUIT_Variable font-bold text-sm leading-[1.4] tracking-[-0.01em] text-[#1E2124]">
-                    {member.nickname}
-                    {isMe ? " (나)" : ""}
-                  </div>
-                  <div className="flex items-center text-sm leading-[1.4] tracking-[-0.01em] text-[#464C53]">
-                    <span className="font-SUIT_Variable font-medium">
-                      최근 접속일 :{" "}
-                    </span>
-                    <span className="font-SUIT_Variable font-medium">
-                      {formatDate(member.lastOnlineDate)}
-                    </span>
-                  </div>
-                </div>
-
-                {!isMe && (
-                  <button
-                    onClick={() =>
-                      handlePokeUser(member.userId, member.nickname)
-                    }
-                    className="bg-[#33363D] text-white px-3 py-1 rounded-lg text-sm font-Pretendard font-semibold"
-                  >
-                    찌르기
-                  </button>
-                )}
-              </div>
-            );
-          })}
-        </div>
+        <GroupMemberList 
+          members={members} 
+          myNickname={myNickname || ""} 
+          groupId={id} 
+        />
       </div>
 
       {/* Leave Group Button */}

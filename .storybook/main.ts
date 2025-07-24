@@ -12,7 +12,10 @@ const config = {
           "../components/shared/**/*.stories.@(js|jsx|mjs|ts|tsx)",
           "../components/shared/**/*.mdx",
         ]
-      : ["../components/**/*.stories.@(js|jsx|mjs|ts|tsx)"]),
+      : [
+          "../components/**/*.stories.@(js|jsx|mjs|ts|tsx)",
+          "../app/**/*.stories.@(js|jsx|mjs|ts|tsx)"
+        ]),
   ],
   addons: [
     {
