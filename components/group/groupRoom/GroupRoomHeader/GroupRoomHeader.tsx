@@ -6,13 +6,14 @@ import { useRouter } from "next/navigation";
 
 interface GroupRoomHeaderProps {
   groupRoomName: string;
+  groupId: string;
 }
 
-const GroupRoomHeader = ({ groupRoomName }: GroupRoomHeaderProps) => {
+const GroupRoomHeader = ({ groupRoomName, groupId }: GroupRoomHeaderProps) => {
   const router = useRouter();
   return (
     <>
-      <header className="flex items-center  gap-5">
+      <header className="flex items-center  gap-5 fixed top-0 w-[360px] bg-white">
         <AppBar
           type="back"
           title={groupRoomName}
@@ -20,7 +21,13 @@ const GroupRoomHeader = ({ groupRoomName }: GroupRoomHeaderProps) => {
             router.back();
           }}
         />
-        <button type="button" className="w-10 h-10 text-label-alternative">
+        <button
+          onClick={() => {
+            router.push(`/group/${groupId}/member`);
+          }}
+          type="button"
+          className="w-10 h-10 text-label-alternative"
+        >
           <PeopleSvg />
         </button>
       </header>
