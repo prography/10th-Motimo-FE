@@ -12,7 +12,10 @@ const config = {
           "../components/shared/**/*.stories.@(js|jsx|mjs|ts|tsx)",
           "../components/shared/**/*.mdx",
         ]
-      : ["../components/**/*.stories.@(js|jsx|mjs|ts|tsx)"]),
+      : [
+          "../components/**/*.stories.@(js|jsx|mjs|ts|tsx)",
+          "../app/**/*.stories.@(js|jsx|mjs|ts|tsx)"
+        ]),
   ],
   addons: [
     {
@@ -28,7 +31,9 @@ const config = {
   ],
   framework: {
     name: "@storybook/nextjs",
-    options: {},
+    options: {
+      nextConfigPath: "../next.config.ts",
+    },
   },
   staticDirs: [path.resolve(__dirname, "../public")],
   typescript: {
@@ -54,6 +59,18 @@ const config = {
         use: ["@svgr/webpack"],
       },
     ];
+
+    // Mock Next.js navigation module
+    if (!config.resolve) {
+      config.resolve = {};
+    }
+    if (!config.resolve.alias) {
+      config.resolve.alias = {};
+    }
+    config.resolve.alias["next/navigation"] = path.resolve(
+      __dirname,
+      "nextjs-mock.ts",
+    );
 
     return config;
   },

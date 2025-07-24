@@ -2,15 +2,15 @@ import { cn } from "../utils/utils";
 import { BellIcon } from "../../icons/BellIcon";
 import { ChevronLeftIcon } from "../../icons/ChevronLeftIcon";
 import { MouseEvent } from "react";
+import { useNotifications } from "../../../api/hooks";
+import { useRouter } from "next/navigation";
 
 interface AppBarProps {
   type: "main" | "back" | "progress";
   title?: string;
   points?: string;
-  hasNotification?: boolean;
   progress?: number; // 0-100 for progress type
   onBackClick?: (e: MouseEvent<HTMLButtonElement>) => void;
-  onNotificationClick?: () => void;
   className?: string;
 }
 
@@ -18,12 +18,17 @@ export const AppBar = ({
   type,
   title,
   points,
-  hasNotification = false,
   progress = 50,
   onBackClick,
-  onNotificationClick,
   className,
 }: AppBarProps) => {
+  const router = useRouter();
+  const { data: { totalCount } = {} } = useNotifications(0, 1);
+  const hasNewMessages = totalCount && totalCount > 0 ? true : false;
+
+  const onNotificationClick = (e: MouseEvent<HTMLButtonElement>) => {
+    router.push("/notification");
+  };
   return (
     <div
       className={cn(
@@ -83,7 +88,7 @@ export const AppBar = ({
             onClick={onNotificationClick}
             aria-label="알림"
           >
-            <BellIcon hasNotification={hasNotification} />
+            <BellIcon hasNewMessages={hasNewMessages} />
           </button>
         </div>
       )}

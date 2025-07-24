@@ -69,7 +69,7 @@ export const WithModalExample: Story = {
         initialBio: "안녕하세요! 열심히 목표를 달성하고 있습니다.",
         profileImageUrl: "/profile-default.png",
         onDeleteAccount: () => {
-            alert("계정이 삭제되었습니다.");
+            // Account deletion logic would go here
         },
     },
 }; 
