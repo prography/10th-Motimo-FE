@@ -1,25 +1,12 @@
 import { cn } from "@/lib/utils";
 import { GroupChatItem } from "./GroupChatItem";
-import ReactionTypes from "@/types/reactionTypes";
-
-export interface ChatMessage {
-  id: string;
-  type: "me" | "member";
-  style: "todo" | "reaction";
-  hasReaction?: boolean;
-  reactionCount?: number;
-  username: string;
-  mainText: string;
-  checkboxLabel?: string;
-  isChecked?: boolean;
-  diaryText?: string;
-  photoUrl?: string;
-  reactionType?: ReactionTypes;
-  timestamp?: Date;
-}
+import {
+  GroupMessageItemRs,
+  TodoResultSubmittedContent,
+} from "@/api/generated/motimo/Api";
 
 interface GroupChatProps {
-  messages: ChatMessage[];
+  messages: GroupMessageItemRs[];
   className?: string;
   onReactionClick?: (messageId: string) => void;
 }
@@ -31,21 +18,21 @@ export const GroupChat = ({
 }: GroupChatProps) => {
   return (
     <div className={cn("flex flex-col gap-4 w-full", className)}>
-      {messages.map((message) => (
+      {messages.map((m) => (
         <GroupChatItem
-          key={message.id}
-          id={message.id}
-          type={message.type}
-          style={message.style}
-          hasReaction={message.hasReaction}
-          reactionCount={message.reactionCount}
-          username={message.username}
-          mainText={message.mainText}
-          checkboxLabel={message.checkboxLabel}
-          isChecked={message.isChecked}
-          diaryText={message.diaryText}
-          photoUrl={message.photoUrl}
-          reactionType={message.reactionType}
+          key={m.messageId}
+          id={m.messageId}
+          userId={m.userId}
+          style={"todo"}
+          hasUserReacted={m.hasUserReacted}
+          reactionCount={m.reactionCount}
+          userName={m.userName}
+          mainText={(m.message as TodoResultSubmittedContent).content ?? ""}
+          checkboxLabel={"checkboxLabel"}
+          isChecked={true}
+          diaryText={"다이어리 텍스트"}
+          photoUrl={"https://picsum.photos/200"}
+          reactionType={"good"}
           onReactionClick={onReactionClick}
         />
       ))}

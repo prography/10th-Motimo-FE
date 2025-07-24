@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { GroupList, GroupData } from "./GroupList";
+import { GroupList } from "./GroupList";
+import { JoinedGroupRs, GoalNotInGroupRs } from "@/api/generated/motimo/Api";
 
 const meta: Meta<typeof GroupList> = {
   title: "Group/GroupList",
@@ -7,67 +8,65 @@ const meta: Meta<typeof GroupList> = {
   tags: ["autodocs"],
   argTypes: {
     className: { control: "text" },
+    isJoined: { control: "boolean" },
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof GroupList>;
 
-const sampleGroups: GroupData[] = [
+// Mock data for joined groups
+const sampleJoinedGroups: JoinedGroupRs[] = [
   {
-    id: "1",
-    isJoined: true,
-    title: "아 그룹명뭐로하지",
-    lastActivityDate: "2025.05.12",
-    hasNotification: true,
+    groupId: "1",
+    name: "아 그룹명뭐로하지",
+    lastActiveDate: "2025.05.12",
+    isNotificationActive: true,
   },
   {
-    id: "2",
-    isJoined: false,
+    groupId: "2",
+    name: "프로그래밍 스터디 그룹",
+    lastActiveDate: "2025.05.15",
+    isNotificationActive: false,
+  },
+  {
+    groupId: "3",
+    name: "독서 클럽",
+    lastActiveDate: "2025.05.10",
+    isNotificationActive: true,
+  },
+];
+
+// Mock data for pending groups
+const samplePendingGroups: GoalNotInGroupRs[] = [
+  {
+    id: "1",
     title: "목표 이름이 여기에",
   },
   {
-    id: "3",
-    isJoined: true,
-    title: "프로그래밍 스터디 그룹",
-    lastActivityDate: "2025.05.15",
-    hasNotification: false,
-  },
-  {
-    id: "4",
-    isJoined: false,
+    id: "2",
     title: "건강한 생활 만들기",
-  },
-  {
-    id: "5",
-    isJoined: true,
-    title: "독서 클럽",
-    lastActivityDate: "2025.05.10",
-    hasNotification: true,
   },
 ];
 
 export const Primary: Story = {
   args: {
-    groups: sampleGroups,
-    onJoinGroup: (groupId: string) => {
-      console.log("Join group:", groupId);
-    },
+    groups: sampleJoinedGroups,
+    isJoined: true,
   },
 };
 
-export const JoinedGroupsOnly: Story = {
+export const JoinedGroups: Story = {
   args: {
-    groups: sampleGroups.filter(group => group.isJoined),
+    groups: sampleJoinedGroups,
+    isJoined: true,
   },
 };
 
-export const AvailableGroupsOnly: Story = {
+export const PendingGroups: Story = {
   args: {
-    groups: sampleGroups.filter(group => !group.isJoined),
-    onJoinGroup: (groupId: string) => {
-      console.log("Join group:", groupId);
-    },
+    groups: samplePendingGroups,
+    isJoined: false,
   },
 };
 
@@ -75,34 +74,32 @@ export const SingleJoinedGroup: Story = {
   args: {
     groups: [
       {
-        id: "1",
-        isJoined: true,
-        title: "UI/UX 디자인 스터디",
-        lastActivityDate: "2025.05.18",
-        hasNotification: true,
+        groupId: "1",
+        name: "UI/UX 디자인 스터디",
+        lastActiveDate: "2025.05.18",
+        isNotificationActive: true,
       },
-    ],
+    ] as JoinedGroupRs[],
+    isJoined: true,
   },
 };
 
-export const SingleAvailableGroup: Story = {
+export const SinglePendingGroup: Story = {
   args: {
     groups: [
       {
         id: "1",
-        isJoined: false,
         title: "새로운 습관 만들기 챌린지",
       },
-    ],
-    onJoinGroup: (groupId: string) => {
-      console.log("Join group:", groupId);
-    },
+    ] as GoalNotInGroupRs[],
+    isJoined: false,
   },
 };
 
 export const EmptyState: Story = {
   args: {
     groups: [],
+    isJoined: true,
   },
 };
 
@@ -110,56 +107,41 @@ export const WithNotifications: Story = {
   args: {
     groups: [
       {
-        id: "1",
-        isJoined: true,
         title: "알림이 있는 그룹 1",
-        lastActivityDate: "2025.05.20",
-        hasNotification: true,
+        lastActiveDate: "2025.05.20",
+        isNotificationActive: true,
       },
       {
-        id: "2",
-        isJoined: true,
-        title: "알림이 없는 그룹",
-        lastActivityDate: "2025.05.19",
-        hasNotification: false,
+        groupId: "2",
+        name: "알림이 없는 그룹",
+        lastActiveDate: "2025.05.19",
+        isNotificationActive: false,
       },
       {
-        id: "3",
-        isJoined: true,
         title: "알림이 있는 그룹 2",
-        lastActivityDate: "2025.05.18",
-        hasNotification: true,
+        lastActiveDate: "2025.05.18",
+        isNotificationActive: true,
       },
-    ],
+    ] as JoinedGroupRs[],
+    isJoined: true,
   },
 };
 
 export const ManyGroups: Story = {
   args: {
     groups: [
-      ...sampleGroups,
+      ...sampleJoinedGroups,
       {
-        id: "6",
-        isJoined: true,
         title: "운동 동기부여 그룹",
-        lastActivityDate: "2025.05.20",
-        hasNotification: false,
+        lastActiveDate: "2025.05.20",
+        isNotificationActive: false,
       },
       {
-        id: "7",
-        isJoined: false,
-        title: "코딩 테스트 준비",
-      },
-      {
-        id: "8",
-        isJoined: true,
         title: "창업 아이디어 공유",
-        lastActivityDate: "2025.05.14",
-        hasNotification: true,
+        lastActiveDate: "2025.05.14",
+        isNotificationActive: true,
       },
-    ],
-    onJoinGroup: (groupId: string) => {
-      console.log("Join group:", groupId);
-    },
+    ] as JoinedGroupRs[],
+    isJoined: true,
   },
-}; 
+};

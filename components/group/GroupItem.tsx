@@ -1,30 +1,38 @@
 import { cn } from "@/lib/utils";
 import { BellIcon } from "@/components/icons/BellIcon";
+import { useNewGroupMessages } from "@/api/hooks";
+import formatDate from "@/lib/date";
 
 interface GroupItemProps {
   isJoined: boolean;
+  groupId: string;
   title: string;
   lastActivityDate?: string;
-  hasNotification?: boolean;
-  onJoinClick?: () => void;
+  isNotificationActive?: boolean;
+  onClick?: () => void;
   className?: string;
 }
 
 export const GroupItem = ({
   isJoined,
+  groupId,
   title,
   lastActivityDate,
-  hasNotification = false,
-  onJoinClick,
+  isNotificationActive = true,
+  onClick,
   className,
 }: GroupItemProps) => {
+  const { data: { hasNewMessages } = { hasNewMessages: false } } =
+    useNewGroupMessages(groupId);
+  console.log("msg", hasNewMessages);
   if (isJoined) {
     return (
       <div
         className={cn(
-          "flex flex-col justify-center gap-1 p-3 w-[328px] bg-Color-white rounded",
+          "flex flex-col justify-center gap-1 p-3 w-[328px] bg-Color-white rounded hover:cursor-pointer",
           className,
         )}
+        onClick={onClick}
       >
         {/* Title and notification icon */}
         <div className="flex justify-between items-center gap-4 w-full">
@@ -36,7 +44,8 @@ export const GroupItem = ({
               width={20}
               height={20}
               color="#33363D"
-              hasNotification={hasNotification}
+              isNotificationActive={isNotificationActive}
+              hasNewMessages={hasNewMessages}
             />
           </div>
         </div>
@@ -48,7 +57,7 @@ export const GroupItem = ({
               최근 활동일 :
             </span>
             <span className="font-SUIT_Variable font-medium text-sm leading-[1.4] tracking-[-0.01em] text-Color-gray-60">
-              {lastActivityDate}
+              {formatDate(lastActivityDate)}
             </span>
           </div>
         )}
@@ -75,7 +84,7 @@ export const GroupItem = ({
           "hover:bg-Color-gray-70 transition-colors duration-200",
           "focus:outline-2 focus:outline-Color-gray-80 focus:outline-offset-2",
         )}
-        onClick={onJoinClick}
+        onClick={onClick}
       >
         <div className="flex justify-center items-center gap-2 w-full">
           <span className="font-Pretendard font-semibold text-sm leading-[1.5] tracking-[-0.01em] text-Color-white">

@@ -10,14 +10,19 @@ import ReactionCool from "@/components/shared/public/reactions/Reaction_Cool.svg
 import ReactionCheerUp from "@/components/shared/public/reactions/Reaction_CheerUp.svg";
 import ReactionLove from "@/components/shared/public/reactions/Reaction_Love.svg";
 import ReactionTypes from "@/types/reactionTypes";
+import { useMyProfile } from "@/api/hooks";
+import {
+  GroupMessageContentRs,
+  TodoResultSubmittedContent,
+} from "@/api/generated/motimo/Api";
 
-export interface GroupChatItemProps {
+interface GroupChatItemProps {
   type: "me" | "member";
   style: "todo" | "reaction";
-  // style: "todo" | "photo" | "diary" | "reaction";
-  hasReaction?: boolean;
+  hasUserReacted?: boolean;
   reactionCount?: number;
-  username: string;
+  userName: string;
+  // userId: string;
   mainText: string;
   checkboxLabel?: string;
   isChecked?: boolean;
@@ -93,11 +98,10 @@ const ReactionIllustration = ({ type = "best" }: { type?: ReactionTypes }) => {
 };
 
 export const GroupChatItem = ({
-  type,
   style,
-  hasReaction = false,
+  hasUserReacted: hasReaction = false,
   reactionCount = 2,
-  username,
+  userName: username,
   mainText,
   checkboxLabel = "프레이머 공부하기",
   isChecked = true,
@@ -108,7 +112,11 @@ export const GroupChatItem = ({
   className,
   onReactionClick,
   id,
+  type,
+  // userId: senderId,
 }: GroupChatItemProps) => {
+  const { data: myProfile } = useMyProfile();
+  // const isMe = myProfile?.id === senderId;
   const isMe = type === "me";
 
   return (
