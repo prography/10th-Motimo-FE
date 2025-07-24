@@ -96,8 +96,13 @@ export default function OnboardingPage() {
     }
   };
 
-  // hydration이 완료되지 않았거나 로그인된 상태에서 처리 중이면 스피너 표시
-  if (!hasHydrated || (hasHydrated && isLoggedIn && (isLoading || (!goals && !error) || (goals && goals.length > 0)))) {
+  // hydration이 완료되지 않았으면 스피너 표시
+  if (!hasHydrated) {
+    return <Loading className="min-h-screen bg-background-normal" />;
+  }
+
+  // 로그인된 상태에서 처리 중이면 스피너 표시
+  if (hasHydrated && isLoggedIn && (isLoading || (!goals && !error) || (goals && goals.length > 0))) {
     return <Loading className="min-h-screen bg-background-normal" />;
   }
 
