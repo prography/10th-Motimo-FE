@@ -42,6 +42,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
     UserUpdateRqInterestsEnum[]
   >((me?.interestTypes as unknown as UserUpdateRqInterestsEnum[]) ?? []);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -104,6 +105,8 @@ export const EditProfile: React.FC<EditProfileProps> = ({
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
     }
   };
 
@@ -122,8 +125,11 @@ export const EditProfile: React.FC<EditProfileProps> = ({
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
     };
-  }, []);
+  }, [previewUrl]);
 
   return (
     <div className="flex flex-col bg-Color-white w-[360px] h-screen relative">
@@ -166,7 +172,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
         <div className="relative">
           <div className="w-[100px] h-[100px] rounded-full bg-Color-gray-5 p-2.5 overflow-hidden">
             <img
-              src={me?.profileImageUrl || "/profile-default.png"}
+              src={previewUrl || me?.profileImageUrl || "/profile-default.png"}
               alt="프로필 이미지"
               className="w-20 h-20 rounded-full object-cover"
             />
