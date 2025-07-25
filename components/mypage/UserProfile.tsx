@@ -25,7 +25,9 @@ export function UserProfile({
   };
 
   return (
-    <div className={`flex flex-col items-center gap-4 ${className}`}>
+    <div
+      className={`flex flex-col items-center gap-4 bg-Color-gray-5 py-5 ${className} w-full`}
+    >
       {/* Profile Section */}
       <div className="flex flex-col items-center gap-2 relative">
         {/* Profile Picture */}
@@ -82,4 +84,3 @@ export function UserProfile({
     </div>
   );
 }
-
