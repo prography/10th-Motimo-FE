@@ -9,7 +9,9 @@ import {
   GoalWithSubGoalTodoRs,
   SubGoalWithTodosRs,
   TodoRs,
+  TodoRsStatusEnum,
 } from "@/api/generated/motimo/Api";
+import Checkbox from "../shared/Checkbox/Checkbox";
 
 interface CompletedTodo {
   id: string;
@@ -105,6 +107,7 @@ interface CompletedTodoItemProps {
 }
 
 const CompletedTodoItem: React.FC<CompletedTodoItemProps> = ({ todo }) => {
+  const checked = todo.status === TodoRsStatusEnum.COMPLETE;
   return (
     <div className="bg-Color-gray-5 rounded-lg p-3 space-y-2">
       {/* Todo Content */}
@@ -112,7 +115,7 @@ const CompletedTodoItem: React.FC<CompletedTodoItemProps> = ({ todo }) => {
         {/* Checkbox and Title */}
         <div className="flex items-center gap-2 py-1">
           <div className="w-4 h-4 bg-Color-black rounded flex items-center justify-center">
-            <CheckIcon className="w-3 h-3 text-white" />
+            <Checkbox id="todoItem" readOnly checked={checked} />
           </div>
           <span className="font-SUIT_Variable font-medium text-sm leading-[1.4] tracking-[-0.02em] text-Color-gray-60 flex-1">
             {todo.title}
@@ -130,8 +133,7 @@ const CompletedTodoItem: React.FC<CompletedTodoItemProps> = ({ todo }) => {
 
       {todo.todoResult?.fileUrl && (
         <div className="mt-2">
-          {/* {todo.attachment.type === "image" ? ( TODO: how to distinguish image? */}
-          {false ? (
+          {todo.todoResult.fileMimeType?.startsWith("image") ? (
             <div className="w-[116px] h-[116px] border border-Color-gray-30 rounded-lg overflow-hidden">
               <img
                 src={todo.todoResult?.fileUrl}
@@ -142,7 +144,7 @@ const CompletedTodoItem: React.FC<CompletedTodoItemProps> = ({ todo }) => {
           ) : (
             <div className="bg-Color-gray-10 rounded-lg px-4 py-2 inline-block">
               <span className="font-SUIT_Variable font-bold text-sm leading-[1.4] tracking-[-0.02em] text-Color-black">
-                {todo.todoResult.fileUrl}
+                {todo.todoResult.fileName}
               </span>
             </div>
           )}
