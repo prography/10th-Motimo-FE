@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useSafeRouter } from "../../hooks/useSafeRouter";
 import { AppBar } from "../shared/AppBar/AppBar";
 import { Button } from "../shared/Button/Button";
@@ -8,6 +8,7 @@ import TextField from "../shared/TextField/TextField";
 import { EditIcon } from "../icons/EditIcon";
 import { PlusIcon } from "../icons/PlusIcon";
 import ModalDeletingAccount from "../shared/Modal/ModalDeletingAccount/ModalDeletingAccount";
+import { Toast } from "../shared/Toast/Toast";
 import { UserUpdateRq } from "@/api/generated/motimo/Api";
 import { useMyProfile } from "@/api/hooks";
 
@@ -27,9 +28,25 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   const [userName, setUserName] = useState(me?.nickname ?? "");
   const [bio, setBio] = useState(me?.bio ?? "");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleBack = () => {
     router.back();
+  };
+
+  const showToast = (message: string, duration = 2000) => {
+    setToastMessage(message);
+    setToastVisible(true);
+    
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    
+    timeoutRef.current = setTimeout(() => {
+      setToastVisible(false);
+    }, duration);
   };
 
   const handleSave = () => {
@@ -39,6 +56,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
         bio,
         interests: [],
       });
+      showToast("저장 되었습니다");
     }
   };
 
@@ -62,6 +80,14 @@ export const EditProfile: React.FC<EditProfileProps> = ({
       onAddInterests();
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className="flex flex-col bg-Color-white w-[360px] h-screen relative">
@@ -180,6 +206,13 @@ export const EditProfile: React.FC<EditProfileProps> = ({
           onClose={handleCloseDeleteModal}
           onDeleteAccount={handleConfirmDeleteAccount}
         />
+      )}
+
+      {/* Toast */}
+      {toastVisible && (
+        <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-50">
+          <Toast text={toastMessage} />
+        </div>
       )}
     </div>
   );
