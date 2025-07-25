@@ -27,7 +27,11 @@ const ReactionModal = ({ onLeaveReaction, onClose }: ReactionModalProps) => {
               <p className="justify-start text-label-strong text-base font-bold font-['SUIT_Variable'] leading-tight">
                 리액션
               </p>
-              <button className="w-6 h-6 relative overflow-hidden">
+              <button
+                onClick={() => onClose()}
+                type="button"
+                className="w-6 h-6 relative overflow-hidden"
+              >
                 <CloseSvg />
               </button>
             </div>

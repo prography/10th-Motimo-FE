@@ -17,15 +17,18 @@ import {
 } from "@/api/generated/motimo/Api";
 
 interface GroupChatItemProps {
-  style: "todo" | "photo" | "diary" | "reaction";
+  type: "me" | "member";
+  style: "todo" | "reaction";
   hasUserReacted?: boolean;
   reactionCount?: number;
   userName: string;
-  userId: string;
-  mainText: TodoResultSubmittedContent;
+  // userId: string;
+  mainText: string;
   checkboxLabel?: string;
   isChecked?: boolean;
   diaryText?: string;
+  // fileUrl?: string;
+  fileName?: string;
   photoUrl?: string;
   reactionType?: ReactionTypes;
   className?: string;
@@ -104,14 +107,17 @@ export const GroupChatItem = ({
   isChecked = true,
   diaryText,
   photoUrl,
+  fileName,
   reactionType = "best",
   className,
   onReactionClick,
   id,
-  userId: senderId,
+  type,
+  // userId: senderId,
 }: GroupChatItemProps) => {
   const { data: myProfile } = useMyProfile();
-  const isMe = myProfile?.id === senderId;
+  // const isMe = myProfile?.id === senderId;
+  const isMe = type === "me";
 
   return (
     <div
@@ -165,9 +171,10 @@ export const GroupChatItem = ({
         <div
           className={cn(
             "bg-[#F7F7F8] rounded-lg",
-            style === "todo" && "py-3 px-4",
-            style === "photo" && "p-3 w-[248px]",
-            style === "diary" && "p-3 w-[248px]",
+            style === "todo" &&
+              `py-3 px-4 ${diaryText || photoUrl ? "w-[248px]" : ""}`,
+            // style === "photo" && "p-3 w-[248px]",
+            // style === "diary" && "p-3 w-[248px]",
             style === "reaction" && "py-3 px-4 w-[248px]",
           )}
         >
@@ -177,34 +184,51 @@ export const GroupChatItem = ({
             <div className="flex flex-col gap-1">
               {/* Main text */}
               <span className="font-SUIT_Variable font-bold text-sm leading-[1.4] tracking-[-0.01em] text-[#33363D]">
-                {mainText.content}
+                {mainText}
               </span>
 
               {/* Checkbox for todo, photo, and diary styles */}
-              {(style === "todo" || style === "photo" || style === "diary") &&
-                checkboxLabel && (
-                  <ChatCheckbox checked={isChecked} label={checkboxLabel} />
-                )}
+              {/* {(style === "todo" || style === "photo" || style === "diary") && */}
+              {style === "todo" && checkboxLabel && (
+                <ChatCheckbox checked={isChecked} label={checkboxLabel} />
+              )}
             </div>
 
             {/* Photo for photo style */}
-            {style === "photo" && photoUrl && (
+            {/* {style === "photo" && photoUrl && ( */}
+            {style === "todo" && photoUrl && (
               <div className="w-[116px] h-[116px] rounded-lg border border-[#CDD1D5] overflow-hidden">
-                <Image
-                  src={photoUrl}
-                  alt="첨부 이미지"
-                  width={116}
-                  height={116}
-                  className="w-full h-full object-cover"
-                />
+                {photoUrl.startsWith("http") ? (
+                  <Image
+                    src={photoUrl}
+                    alt="첨부 이미지"
+                    width={116}
+                    height={116}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <p className="font-['SUIT_Variable']"> Invalid URL path</p>
+                )}
               </div>
             )}
 
             {/* Diary text for diary style */}
-            {style === "diary" && diaryText && (
+            {/* {style === "diary" && diaryText && ( */}
+            {style === "todo" && diaryText && (
               <p className="font-SUIT_Variable font-medium text-sm leading-[1.4] tracking-[-0.01em] text-[#464C53]">
                 {diaryText}
               </p>
+            )}
+
+            {style === "todo" && fileName && (
+              <div
+                className="pl-4 pr-3 py-2 relative bg-background-assistive rounded-lg inline-flex flex-col justify-center items-start gap-2 overflow
+            -hidden"
+              >
+                <p className="justify-start text-label-normal text-sm font-bold font-['SUIT_Variable'] leading-tight">
+                  {fileName}
+                </p>
+              </div>
             )}
 
             {/* Reaction illustration for reaction style */}
