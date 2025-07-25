@@ -7,6 +7,7 @@ import { groupApi } from "@/api/service";
 import { Toast } from "@/components/shared/Toast/Toast";
 import Modal from "@/components/shared/Modal/_compound/Modal";
 import GroupMemberList from "@/components/group/GroupMemberList";
+import useToast from "@/hooks/useToast";
 
 interface GroupMemberPageProps {
   params: Promise<{
@@ -20,8 +21,9 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
   const { data: { name: title } = {} } = useGroupDetail(id);
   const { data: members = [] } = useGroupMembers(id);
   const { data: { nickname: myNickname } = {} } = useMyProfile();
-  const [toastVisible, setToastVisible] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
+  // const [toastVisible, setToastVisible] = useState(false);
+  // const [toastMessage, setToastMessage] = useState("");
+  const { setToast } = useToast();
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -35,31 +37,32 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
 
   const handleLeaveConfirm = async () => {
     setShowLeaveModal(false);
-    
+
     try {
       await groupApi.exitGroup(id);
-      setToastMessage("그룹을 나갔습니다.");
-      setToastVisible(true);
-      
-      timeoutRef.current = setTimeout(() => {
-        setToastVisible(false);
-        router.push("/group");
-      }, 2000);
+      // setToastMessage("그룹을 나갔습니다.");
+      // setToastVisible(true);
+      setToast("그룹에서 나왔습니다.");
+
+      // timeoutRef.current = setTimeout(() => {
+      //   setToastVisible(false);
+      //   router.push("/group");
+      // }, 2000);
     } catch (error) {
       console.error("그룹 나가기 실패:", error);
-      setToastMessage("그룹 나가기에 실패했습니다.");
-      setToastVisible(true);
-      
-      timeoutRef.current = setTimeout(() => {
-        setToastVisible(false);
-      }, 2000); // Consistent timeout duration
+      // setToastMessage("그룹 나가기에 실패했습니다.");
+      // setToastVisible(true);
+      setToast("그룹 나가기에 실패했습니다.");
+
+      // timeoutRef.current = setTimeout(() => {
+      //   setToastVisible(false);
+      // }, 2000); // Consistent timeout duration
     }
   };
 
   const handleLeaveCancel = () => {
     setShowLeaveModal(false);
   };
-
 
   // Cleanup timeout on component unmount
   useEffect(() => {
@@ -99,10 +102,10 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
 
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto px-4 pt-4">
-        <GroupMemberList 
-          members={members} 
-          myNickname={myNickname || ""} 
-          groupId={id} 
+        <GroupMemberList
+          members={members}
+          myNickname={myNickname || ""}
+          groupId={id}
         />
       </div>
 
@@ -126,11 +129,11 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
       </div>
 
       {/* Toast */}
-      {toastVisible && (
+      {/* {toastVisible && (
         <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-50">
           <Toast text={toastMessage} />
         </div>
-      )}
+      )} */}
 
       {/* Leave Group Modal */}
       {showLeaveModal && (
@@ -164,4 +167,3 @@ export default function GroupMemberPage({ params }: GroupMemberPageProps) {
     </div>
   );
 }
-
