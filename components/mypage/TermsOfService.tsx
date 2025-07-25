@@ -3,13 +3,16 @@
 import { AppBar } from "@/components/shared/AppBar/AppBar";
 
 interface TermsOfServiceProps {
-    onBack?: () => void;
-    className?: string;
+  onBack?: () => void;
+  className?: string;
 }
 
-export function TermsOfService({ onBack, className = "" }: TermsOfServiceProps) {
-    // Sample terms content - in a real app, this would come from an API or CMS
-    const termsContent = `모티모 서비스 이용약관
+export function TermsOfService({
+  onBack,
+  className = "",
+}: TermsOfServiceProps) {
+  // Sample terms content - in a real app, this would come from an API or CMS
+  const termsContent = `모티모 서비스 이용약관
 
 제1조 (목적)
 이 약관은 모티모(이하 "회사")가 제공하는 모티모 서비스(이하 "서비스")의 이용조건 및 절차, 회사와 이용자의 권리, 의무, 책임사항 및 기타 필요한 사항을 규정함을 목적으로 합니다.
@@ -54,36 +57,25 @@ export function TermsOfService({ onBack, className = "" }: TermsOfServiceProps) 
 
 본 약관은 2024년 1월 1일부터 시행됩니다.`;
 
-    return (
-        <div className={`min-h-screen bg-Color-white flex flex-col ${className}`}>
-            {/* Status Bar */}
-            <div className="flex justify-between items-end gap-[286px] px-6 py-[10px] h-[52px]">
-                <div className="text-sm font-medium text-Color-gray-90">9:30</div>
-                <div className="flex items-center gap-4">
-                    <div className="w-[46px] h-[17px]"></div>
-                </div>
-            </div>
+  return (
+    <div className={`min-h-screen bg-Color-white flex flex-col ${className}`}>
+      {/* App Bar */}
+      <AppBar type="back" title="서비스 이용약관" onBackClick={onBack} />
 
-            {/* App Bar */}
-            <AppBar
-                type="back"
-                title="서비스 이용약관"
-                onBackClick={onBack}
-            />
-
-            {/* Terms Content */}
-            <div className="flex-1 overflow-y-auto">
-                <div className="px-4 py-6">
-                    <div className="text-sm font-medium text-Color-gray-70 leading-relaxed whitespace-pre-line">
-                        {termsContent}
-                    </div>
-                </div>
-            </div>
-
-            {/* Gesture Bar */}
-            <div className="h-6 flex justify-center items-center">
-                <div className="w-[108px] h-1 bg-Color-gray-90 rounded-full"></div>
-            </div>
+      {/* Terms Content */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-4 py-6">
+          <div className="text-sm font-medium text-Color-gray-70 leading-relaxed whitespace-pre-line">
+            {termsContent}
+          </div>
         </div>
-    );
-} 
+      </div>
+
+      {/* Gesture Bar */}
+      <div className="h-6 flex justify-center items-center">
+        <div className="w-[108px] h-1 bg-Color-gray-90 rounded-full"></div>
+      </div>
+    </div>
+  );
+}
+
