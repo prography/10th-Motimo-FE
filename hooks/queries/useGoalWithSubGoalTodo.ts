@@ -6,15 +6,14 @@ import { TodoItemsInfo } from "@/types/todoList";
 import useSWR, { SWRConfiguration } from "swr";
 
 import { TodoListProps } from "@/components/main/TodoList/TodoList";
-import { useGoalWithSubGoals } from "@/api/hooks";
+import { useGoalWithSubGoalsAndTodos } from "@/api/hooks";
 
 type ConvertedGoalWithSubGoalTodo = Omit<GoalWithSubGoalTodoRs, "subGoals"> & {
   subGoals?: (TodoListProps & { isCompleted: boolean })[];
 };
 
 const useGoalWithSubGoalTodo = (goalId: string, options?: SWRConfiguration) => {
-  useGoalWithSubGoals;
-  const { data, mutate } = useGoalWithSubGoals(goalId, options);
+  const { data, mutate } = useGoalWithSubGoalsAndTodos(goalId, options);
 
   const convertedSubGoals:
     | (TodoListProps & { isCompleted: boolean })[]
