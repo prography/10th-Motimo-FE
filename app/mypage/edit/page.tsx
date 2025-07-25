@@ -6,6 +6,8 @@ import {
 } from "@/api/generated/motimo/Api";
 import { userApi } from "@/api/service";
 import { EditProfile } from "@/components/mypage";
+import useToast from "@/hooks/useToast";
+import useAuthStore from "@/stores/useAuthStore";
 import { useSearchParams } from "next/navigation";
 
 export default function EditProfilePage() {
@@ -18,8 +20,18 @@ export default function EditProfilePage() {
     });
   };
 
+  const { toastInfo, setToast } = useToast();
+  const { logout } = useAuthStore();
+
   const handleDeleteAccount = () => {
-    alert("삭제는 미구현입니다.");
+    userApi.deleteUser().then(() => {
+      setToast("User 가 삭제 되었습니다");
+      // wait 2 sec and redirect to home
+      setTimeout(() => {
+        logout();
+        window.location.href = "/";
+      }, 2000);
+    });
   };
 
   const handleAddInterests = () => {
