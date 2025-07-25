@@ -9,18 +9,6 @@ const meta: Meta<typeof EditProfile> = {
     },
     tags: ["autodocs"],
     argTypes: {
-        initialName: {
-            control: "text",
-            description: "Initial name value",
-        },
-        initialBio: {
-            control: "text",
-            description: "Initial bio value",
-        },
-        profileImageUrl: {
-            control: "text",
-            description: "Profile image URL",
-        },
         onSave: {
             action: "saved",
             description: "Called when save button is clicked",
@@ -40,34 +28,19 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
-    args: {
-        initialName: "홍길동",
-        initialBio: "",
-        profileImageUrl: "/profile-default.png",
-    },
+    args: {},
 };
 
 export const WithBio: Story = {
-    args: {
-        initialName: "홍길동",
-        initialBio: "안녕하세요! 열심히 목표를 달성하고 있습니다.",
-        profileImageUrl: "/profile-default.png",
-    },
+    args: {},
 };
 
 export const EmptyProfile: Story = {
-    args: {
-        initialName: "",
-        initialBio: "",
-        profileImageUrl: "/profile-default.png",
-    },
+    args: {},
 };
 
 export const WithModalExample: Story = {
     args: {
-        initialName: "홍길동",
-        initialBio: "안녕하세요! 열심히 목표를 달성하고 있습니다.",
-        profileImageUrl: "/profile-default.png",
         onDeleteAccount: () => {
             // Account deletion logic would go here
         },
