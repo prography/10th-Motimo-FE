@@ -95,7 +95,7 @@ export function MyPage({ className = "" }: MyPageProps) {
               <UserProfile
                 name={user?.nickname ?? ""}
                 profileImage={user?.profileImageUrl}
-                onAddInterests={() => console.log("Add interests")}
+                onAddInterests={() => router.push("/mypage/edit?openInterests=true")}
               />
             </div>
 

@@ -21,12 +21,14 @@ interface EditProfileProps {
   onSave?: (request: UserUpdateRq, file?: File) => void;
   onDeleteAccount?: () => void;
   onAddInterests?: () => void;
+  openInterests?: boolean;
 }
 
 export const EditProfile: React.FC<EditProfileProps> = ({
   onSave,
   onDeleteAccount,
   onAddInterests,
+  openInterests = false,
 }) => {
   const { data: me } = useMyProfile();
   const router = useSafeRouter();
@@ -95,6 +97,12 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   const handleCloseInterestBottomSheet = () => {
     setShowInterestBottomSheet(false);
   };
+
+  useEffect(() => {
+    if (openInterests) {
+      setShowInterestBottomSheet(true);
+    }
+  }, [openInterests]);
 
   useEffect(() => {
     return () => {

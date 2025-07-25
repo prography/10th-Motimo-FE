@@ -6,8 +6,11 @@ import {
 } from "@/api/generated/motimo/Api";
 import { userApi } from "@/api/service";
 import { EditProfile } from "@/components/mypage";
+import { useSearchParams } from "next/navigation";
 
 export default function EditProfilePage() {
+  const searchParams = useSearchParams();
+  const openInterests = searchParams.get("openInterests") === "true";
   const handleSave = (request: UserUpdateRq, file?: File) => {
     userApi.updateMyProfile({
       request,
@@ -29,6 +32,7 @@ export default function EditProfilePage() {
       onSave={handleSave}
       onDeleteAccount={handleDeleteAccount}
       onAddInterests={handleAddInterests}
+      openInterests={openInterests}
     />
   );
 }
