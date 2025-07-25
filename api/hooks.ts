@@ -29,10 +29,10 @@ export const useQuery = {
       config,
     ),
 
-  goalWithSubGoals: (goalId: string | null, config?: SWRConfiguration) =>
+  goalWithSubGoal: (goalId: string | null, config?: SWRConfiguration) =>
     useApiQuery(
       "목표Api",
-      "getGoalWithSubGoalAndTodos",
+      "getGoalWithSubGoal",
       goalId ? [goalId] : null,
       undefined,
       config,
@@ -41,6 +41,18 @@ export const useQuery = {
   goalsNotInGroup: (config?: SWRConfiguration) =>
     useApiQuery("목표Api", "getGoalNotJoinGroup", [], undefined, config),
 
+  completedGoals: (config?: SWRConfiguration) =>
+    useApiQuery("목표Api", "getCompletedGoals", [], undefined, config),
+
+  // // Sub Goal API
+  // subGoalTodos: (subGoalId: string | null, config?: SWRConfiguration) =>
+  //   useApiQuery(
+  //     "세부목표Api",
+  //     "getIncompleteOrTodayTodos",
+  //     subGoalId ? [subGoalId] : null,
+  //     undefined,
+  //     config,
+  //   ),
   // Sub Goal API
   subGoalTodos: (
     subGoalId: string | null,
@@ -132,9 +144,14 @@ export const useQuery = {
   cheerPhrase: (config?: SWRConfiguration) =>
     useApiQuery("응원Api", "getCheerPhrase", [], undefined, config),
 
-  // Completed Goals API
-  completedGoals: (config?: SWRConfiguration) =>
-    useApiQuery("목표Api", "getCompletedGoals", [], undefined, config),
+  goalWithSubGoalAndTodos: (goalId: string | null, config?: SWRConfiguration) =>
+    useApiQuery(
+      "목표Api",
+      "getGoalWithSubGoalAndTodos",
+      goalId ? [goalId] : null,
+      undefined,
+      config,
+    ),
 
   // Health API
   health: (config?: SWRConfiguration) =>
@@ -156,8 +173,11 @@ export const useTodos = useQuery.myTodos;
 export const useTodoResult = useQuery.todoResult;
 export const useGoals = useQuery.goals;
 export const useGoalDetail = useQuery.goalDetail;
-export const useGoalWithSubGoals = useQuery.goalWithSubGoals;
+export const useGoalWithSubGoals = useQuery.goalWithSubGoal;
+export const useGoalWithSubGoalsAndTodos = useQuery.goalWithSubGoalAndTodos;
 export const useGoalsNotInGroup = useQuery.goalsNotInGroup;
+export const useCompletedGoals = useQuery.completedGoals;
+// export const useSubGoalTodos = useQuery.subGoalTodos;
 export const useSubGoalTodos = useQuery.subGoalTodos;
 export const useMyProfile = useQuery.myProfile;
 export const useGroupMembers = useQuery.groupMembers;
@@ -168,6 +188,5 @@ export const useJoinedGroups = useQuery.joinedGroups;
 export const usePoints = useQuery.points;
 export const useCheerPhrase = useQuery.cheerPhrase;
 export const useNotifications = useQuery.notifications;
-export const useCompletedGoals = useQuery.completedGoals;
 export const useHealth = useQuery.health;
 export const useAllSubGoalTodos = useQuery.allSubGoalTodos;

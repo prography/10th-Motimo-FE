@@ -1182,6 +1182,25 @@ export class Api<SecurityDataType extends unknown> {
       }),
 
     /**
+     * No description
+     *
+     * @tags 사용자 API
+     * @name DeleteUser
+     * @summary 유저 탈퇴
+     * @request DELETE:/v1/users
+     * @secure
+     * @response `200` `void` 탈퇴 성공
+     * @response `401` `void` 인증되지 않은 사용자
+     */
+    deleteUser: (params: RequestParams = {}) =>
+      this.http.request<void, void>({
+        path: `/v1/users`,
+        method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+
+    /**
      * @description 사용자가 보유한 관심사를 수정합니다.
      *
      * @tags 사용자 API
@@ -1566,10 +1585,30 @@ export class Api<SecurityDataType extends unknown> {
       }),
 
     /**
-     * @description 목표 ID에 해당하는 목표 정보와 모든 세부 목표 및 오늘의 미완료 투두 목록을 조회합니다.
+     * @description 목표 ID에 해당하는 목표 정보와 모든 세부 목표 및 투두 목록을 조회합니다.
      *
      * @tags 목표 API
      * @name GetGoalWithSubGoalAndTodos
+     * @summary 목표 + 세부목표 + 투두 조회 API
+     * @request GET:/v1/goals/{goalId}/sub-goals/todos/all
+     * @secure
+     * @response `200` `GoalWithSubGoalTodoRs` 목표, 세부목표, 투두 목록 반환
+     * @response `401` `void` 인증되지 않은 사용자
+     * @response `404` `void` 해당 목표를 찾을 수 없음
+     */
+    getGoalWithSubGoalAndTodos: (goalId: string, params: RequestParams = {}) =>
+      this.http.request<GoalWithSubGoalTodoRs, void>({
+        path: `/v1/goals/${goalId}/sub-goals/todos/all`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description 목표 ID에 해당하는 목표 정보와 모든 세부 목표 및 오늘의 미완료 투두 목록을 조회합니다.
+     *
+     * @tags 목표 API
+     * @name GetGoalWithSubGoalAndIncompleteOrTodayTodos
      * @summary 목표 + 세부목표 + 오늘의 미완료 투두 조회 API
      * @request GET:/v1/goals/{goalId}/sub-goals/all
      * @secure
@@ -1577,7 +1616,10 @@ export class Api<SecurityDataType extends unknown> {
      * @response `401` `void` 인증되지 않은 사용자
      * @response `404` `void` 해당 목표를 찾을 수 없음
      */
-    getGoalWithSubGoalAndTodos: (goalId: string, params: RequestParams = {}) =>
+    getGoalWithSubGoalAndIncompleteOrTodayTodos: (
+      goalId: string,
+      params: RequestParams = {},
+    ) =>
       this.http.request<GoalWithSubGoalTodoRs, void>({
         path: `/v1/goals/${goalId}/sub-goals/all`,
         method: "GET",
