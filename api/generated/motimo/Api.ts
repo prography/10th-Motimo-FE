@@ -291,6 +291,10 @@ export interface TodoResultRs {
   content?: string;
   /** 투두 기록 파일 url */
   fileUrl?: string;
+  /** 투두 기록 파일 이름 */
+  fileName?: string;
+  /** 투두 기록 파일 데이터 종류 */
+  fileMimeType?: string;
 }
 
 export interface TodoRs {
@@ -421,6 +425,12 @@ export interface GroupMemberRs {
   isActivePoke?: boolean;
 }
 
+export type GoalTitleUpdatedContent = GroupMessageContent & {
+  /** @format uuid */
+  goalId?: string;
+  goalTitle?: string;
+};
+
 /** 그룹 메시지 응답 */
 export interface GroupChatRs {
   /** 메시지 목록 */
@@ -493,6 +503,12 @@ export interface GroupMessageItemRs {
   sendAt: string;
 }
 
+export type MessageReactionContent = GroupMessageContent & {
+  /** @format uuid */
+  referenceMessageId?: string;
+  reactionType?: MessageReactionContentReactionTypeEnum;
+};
+
 export type TodoCompletedContent = GroupMessageContent & {
   /** @format uuid */
   todoId?: string;
@@ -508,6 +524,8 @@ export type TodoResultSubmittedContent = GroupMessageContent & {
   emotion?: TodoResultSubmittedContentEmotionEnum;
   content?: string;
   fileUrl?: string;
+  fileName?: string;
+  mimeType?: string;
 };
 
 export interface JoinedGroupRs {
@@ -811,6 +829,8 @@ export enum GroupMessageContentTypeEnum {
   LEAVE = "LEAVE",
   TODO_COMPLETE = "TODO_COMPLETE",
   TODO_RESULT_SUBMIT = "TODO_RESULT_SUBMIT",
+  GOAL_TITLE_UPDATE = "GOAL_TITLE_UPDATE",
+  MESSAGE_REACTION = "MESSAGE_REACTION",
 }
 
 /**
@@ -823,8 +843,10 @@ export enum GroupMessageContentTypeEnum {
 interface BaseGroupMessageContentRs {
   /** 메시지 내용 */
   content:
+    | GoalTitleUpdatedContent
     | GroupJoinContent
     | GroupLeaveContent
+    | MessageReactionContent
     | TodoCompletedContent
     | TodoResultSubmittedContent;
 }
@@ -832,6 +854,14 @@ interface BaseGroupMessageContentRs {
 type BaseGroupMessageContentRsTypeMapping<Key, Type> = {
   type: Key;
 } & Type;
+
+export enum MessageReactionContentReactionTypeEnum {
+  GOOD = "GOOD",
+  COOL = "COOL",
+  CHEER_UP = "CHEER_UP",
+  BEST = "BEST",
+  LIKE = "LIKE",
+}
 
 export enum TodoResultSubmittedContentEmotionEnum {
   PROUD = "PROUD",
@@ -1148,6 +1178,25 @@ export class Api<SecurityDataType extends unknown> {
         body: data,
         secure: true,
         type: ContentType.FormData,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags 사용자 API
+     * @name DeleteUser
+     * @summary 유저 탈퇴
+     * @request DELETE:/v1/users
+     * @secure
+     * @response `200` `void` 탈퇴 성공
+     * @response `401` `void` 인증되지 않은 사용자
+     */
+    deleteUser: (params: RequestParams = {}) =>
+      this.http.request<void, void>({
+        path: `/v1/users`,
+        method: "DELETE",
+        secure: true,
         ...params,
       }),
 
@@ -1536,10 +1585,30 @@ export class Api<SecurityDataType extends unknown> {
       }),
 
     /**
-     * @description 목표 ID에 해당하는 목표 정보와 모든 세부 목표 및 오늘의 미완료 투두 목록을 조회합니다.
+     * @description 목표 ID에 해당하는 목표 정보와 모든 세부 목표 및 투두 목록을 조회합니다.
      *
      * @tags 목표 API
      * @name GetGoalWithSubGoalAndTodos
+     * @summary 목표 + 세부목표 + 투두 조회 API
+     * @request GET:/v1/goals/{goalId}/sub-goals/todos/all
+     * @secure
+     * @response `200` `GoalWithSubGoalTodoRs` 목표, 세부목표, 투두 목록 반환
+     * @response `401` `void` 인증되지 않은 사용자
+     * @response `404` `void` 해당 목표를 찾을 수 없음
+     */
+    getGoalWithSubGoalAndTodos: (goalId: string, params: RequestParams = {}) =>
+      this.http.request<GoalWithSubGoalTodoRs, void>({
+        path: `/v1/goals/${goalId}/sub-goals/todos/all`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * @description 목표 ID에 해당하는 목표 정보와 모든 세부 목표 및 오늘의 미완료 투두 목록을 조회합니다.
+     *
+     * @tags 목표 API
+     * @name GetGoalWithSubGoalAndIncompleteOrTodayTodos
      * @summary 목표 + 세부목표 + 오늘의 미완료 투두 조회 API
      * @request GET:/v1/goals/{goalId}/sub-goals/all
      * @secure
@@ -1547,7 +1616,10 @@ export class Api<SecurityDataType extends unknown> {
      * @response `401` `void` 인증되지 않은 사용자
      * @response `404` `void` 해당 목표를 찾을 수 없음
      */
-    getGoalWithSubGoalAndTodos: (goalId: string, params: RequestParams = {}) =>
+    getGoalWithSubGoalAndIncompleteOrTodayTodos: (
+      goalId: string,
+      params: RequestParams = {},
+    ) =>
       this.http.request<GoalWithSubGoalTodoRs, void>({
         path: `/v1/goals/${goalId}/sub-goals/all`,
         method: "GET",
@@ -1950,7 +2022,7 @@ export class Api<SecurityDataType extends unknown> {
      * @summary 그룹 나가기 API
      * @request DELETE:/v1/groups/{groupId}/members/me
      * @secure
-     * @response `200` `void` OK
+     * @response `204` `void` No Content
      */
     exitGroup: (groupId: string, params: RequestParams = {}) =>
       this.http.request<void, any>({
