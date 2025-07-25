@@ -30,15 +30,17 @@ export function UserProfile({
       <div className="flex flex-col items-center gap-2 relative">
         {/* Profile Picture */}
         <div className="relative">
-          <div className="w-[100px] h-[100px] bg-Color-gray-10 rounded-full border border-Color-gray-20 flex items-center justify-center overflow-hidden">
+          <div className="w-[100px] h-[100px] rounded-full flex items-center justify-center overflow-hidden">
             {profileImage ? (
               <img
                 src={profileImage}
                 alt={name}
-                className="w-20 h-20 rounded-full object-cover"
+                className="w-[100px] h-[100px] rounded-full object-cover"
               />
             ) : (
-              <UserIcon className="w-12 h-12 text-Color-gray-70" />
+              <div className="w-[100px] h-[100px] bg-Color-gray-10 rounded-full border border-Color-gray-20 flex items-center justify-center">
+                <UserIcon className="w-12 h-12 text-Color-gray-70" />
+              </div>
             )}
           </div>
 

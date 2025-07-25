@@ -170,11 +170,11 @@ export const EditProfile: React.FC<EditProfileProps> = ({
       {/* Profile Image Section */}
       <div className="flex flex-col items-center mt-16 mb-8">
         <div className="relative">
-          <div className="w-[100px] h-[100px] rounded-full bg-Color-gray-5 p-2.5 overflow-hidden">
+          <div className="w-[100px] h-[100px] rounded-full overflow-hidden">
             <img
               src={previewUrl || me?.profileImageUrl || "/profile-default.png"}
               alt="프로필 이미지"
-              className="w-20 h-20 rounded-full object-cover"
+              className="w-[100px] h-[100px] rounded-full object-cover"
             />
           </div>
           <button
