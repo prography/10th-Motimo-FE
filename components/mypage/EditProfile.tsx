@@ -9,7 +9,12 @@ import { EditIcon } from "../icons/EditIcon";
 import { PlusIcon } from "../icons/PlusIcon";
 import ModalDeletingAccount from "../shared/Modal/ModalDeletingAccount/ModalDeletingAccount";
 import { Toast } from "../shared/Toast/Toast";
-import { UserUpdateRq } from "@/api/generated/motimo/Api";
+import { InterestSelectionBottomSheet } from "../shared/BottomSheets/InterestSelectionBottomSheet";
+import {
+  UserUpdateRq,
+  UserUpdateRqInterestsEnum,
+} from "@/api/generated/motimo/Api";
+import { UserUpdateRqInterestsEnumToKr } from "@/lib/display";
 import { useMyProfile } from "@/api/hooks";
 
 interface EditProfileProps {
@@ -30,6 +35,10 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [showInterestBottomSheet, setShowInterestBottomSheet] = useState(false);
+  const [selectedInterests, setSelectedInterests] = useState<
+    UserUpdateRqInterestsEnum[]
+  >([]);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleBack = () => {
@@ -39,11 +48,11 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   const showToast = (message: string, duration = 2000) => {
     setToastMessage(message);
     setToastVisible(true);
-    
+
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
-    
+
     timeoutRef.current = setTimeout(() => {
       setToastVisible(false);
     }, duration);
@@ -54,7 +63,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
       onSave({
         userName,
         bio,
-        interests: [],
+        interests: selectedInterests,
       });
       showToast("저장 되었습니다");
     }
@@ -76,9 +85,15 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   };
 
   const handleAddInterests = () => {
-    if (onAddInterests) {
-      onAddInterests();
-    }
+    setShowInterestBottomSheet(true);
+  };
+
+  const handleSaveInterests = (interests: UserUpdateRqInterestsEnum[]) => {
+    setSelectedInterests(interests);
+  };
+
+  const handleCloseInterestBottomSheet = () => {
+    setShowInterestBottomSheet(false);
   };
 
   useEffect(() => {
@@ -177,17 +192,37 @@ export const EditProfile: React.FC<EditProfileProps> = ({
       <div className="w-full h-2 bg-Color-gray-5 mt-12 mb-6"></div>
 
       {/* Interests Section */}
-      <div className="px-4 flex items-center justify-between">
-        <span className="text-xl font-bold text-Color-black">관심사</span>
-        <Button
-          variant="filled"
-          size="m"
-          icon={<PlusIcon />}
-          className="bg-Color-gray-5 text-Color-black rounded-lg"
-          onClick={handleAddInterests}
-        >
-          추가
-        </Button>
+      <div className="px-4">
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-xl font-bold text-Color-black">관심사</span>
+          <Button
+            variant="filled"
+            size="m"
+            icon={<PlusIcon />}
+            className="bg-Color-gray-5 text-Color-black rounded-lg"
+            onClick={handleAddInterests}
+          >
+            추가
+          </Button>
+        </div>
+
+        {/* Selected Interests Display */}
+        {selectedInterests.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {selectedInterests.map((interest) => (
+              <span
+                key={interest}
+                className="px-3 py-2 bg-Color-primary-50 text-Color-white text-sm font-medium rounded-full"
+              >
+                {UserUpdateRqInterestsEnumToKr(interest)}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {selectedInterests.length === 0 && (
+          <p className="text-Color-gray-60 text-sm">관심사를 추가해보세요!</p>
+        )}
       </div>
 
       {/* Account Delete Button */}
@@ -214,6 +249,14 @@ export const EditProfile: React.FC<EditProfileProps> = ({
           <Toast text={toastMessage} />
         </div>
       )}
+
+      {/* Interest Selection Bottom Sheet */}
+      <InterestSelectionBottomSheet
+        isOpen={showInterestBottomSheet}
+        onClose={handleCloseInterestBottomSheet}
+        onSave={handleSaveInterests}
+        initialInterests={selectedInterests}
+      />
     </div>
   );
 };
