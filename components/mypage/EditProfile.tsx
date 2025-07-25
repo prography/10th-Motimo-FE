@@ -41,6 +41,8 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   const [selectedInterests, setSelectedInterests] = useState<
     UserUpdateRqInterestsEnum[]
   >((me?.interestTypes as unknown as UserUpdateRqInterestsEnum[]) ?? []);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleBack = () => {
@@ -66,7 +68,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
         userName,
         bio,
         interests: selectedInterests,
-      });
+      }, selectedFile || undefined);
       showToast("저장 되었습니다");
     }
   };
@@ -96,6 +98,17 @@ export const EditProfile: React.FC<EditProfileProps> = ({
 
   const handleCloseInterestBottomSheet = () => {
     setShowInterestBottomSheet(false);
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+    }
+  };
+
+  const handleEditImage = () => {
+    fileInputRef.current?.click();
   };
 
   useEffect(() => {
@@ -161,9 +174,18 @@ export const EditProfile: React.FC<EditProfileProps> = ({
           <button
             className="absolute bottom-0 right-0 w-6 h-6 bg-Color-white border border-Color-gray-30 rounded-full flex items-center justify-center hover:opacity-70"
             aria-label="프로필 이미지 편집"
+            onClick={handleEditImage}
           >
             <EditIcon />
           </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="hidden"
+            aria-label="프로필 이미지 파일 선택"
+          />
         </div>
       </div>
 
