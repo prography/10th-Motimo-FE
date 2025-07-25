@@ -24,6 +24,7 @@ import { TodoResultRqEmotionEnum } from "@/api/generated/motimo/Api";
 import TodoBottomSheet from "@/components/shared/BottomSheets/TodoBottomSheet/TodoBottomSheet";
 import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
 import { date2StringWithSpliter } from "@/utils/date2String";
+import useToast from "@/hooks/useToast";
 interface DetailBodyProps {
   goalId: string;
 }
@@ -41,7 +42,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
   );
 
   const { isActive, setIsActive, initContent } = useActiveTodoBottomSheet();
-
+  const { setToast } = useToast();
   const dDay = calcLeftDay(data?.dueDate ?? new Date());
 
   const allSubGoalCompleted =
@@ -67,8 +68,9 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
         onCompleteGoal={async () => {
           const res = await goalApi.goalComplete(goalId);
           if (res) {
-            // 토스트
+            setToast("목표를 모두 달성했습니다! 🎉");
             closeModal();
+            mutateForGoalProgress();
           }
         }}
         onWait={closeModal}
