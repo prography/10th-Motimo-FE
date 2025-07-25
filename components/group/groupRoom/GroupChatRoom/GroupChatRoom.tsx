@@ -40,7 +40,7 @@ const GroupChatRoom = ({ groupId }: GroupChatRoomProps) => {
   const userId = myProfile?.id;
   const lastMessageRef = useRef<HTMLDivElement | null>(null);
 
-  // 방향은 임시
+  // 방향은 일단 단방향만.
   const {
     data,
     isLoading,
@@ -90,9 +90,7 @@ const GroupChatRoom = ({ groupId }: GroupChatRoomProps) => {
             userId={userId ?? ""}
           />
         );
-      // return (
-      //   <TodoResultMessage messageInfo={messageInfo} userId={userId ?? ""} />
-      // );
+
       case GroupMessageContentTypeEnum.MESSAGE_REACTION: {
         const content = (messageInfo.message as TodoReactionMessage).content;
         const refId = content.referenceMessageId;

@@ -198,13 +198,17 @@ export const GroupChatItem = ({
             {/* {style === "photo" && photoUrl && ( */}
             {style === "todo" && photoUrl && (
               <div className="w-[116px] h-[116px] rounded-lg border border-[#CDD1D5] overflow-hidden">
-                <Image
-                  src={photoUrl}
-                  alt="첨부 이미지"
-                  width={116}
-                  height={116}
-                  className="w-full h-full object-cover"
-                />
+                {photoUrl.startsWith("http") ? (
+                  <Image
+                    src={photoUrl}
+                    alt="첨부 이미지"
+                    width={116}
+                    height={116}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <p className="font-['SUIT_Variable']"> Invalid URL path</p>
+                )}
               </div>
             )}
 
