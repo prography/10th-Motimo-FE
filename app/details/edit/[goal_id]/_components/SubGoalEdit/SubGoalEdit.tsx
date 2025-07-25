@@ -13,7 +13,7 @@ import { EditContext } from "../EditBody/EditBody";
 import ModalUpdatingSubGoal from "@/components/details/Modals/ModalUpdatingSubGoal/ModalUpdatingSubGoal";
 
 import PlusSvg from "@/components/shared/public/Add_Plus.svg";
-import { randomUUID } from "crypto";
+import useToast from "@/hooks/useToast";
 
 interface SubGoalEditProps {
   goalId: string;
@@ -22,6 +22,7 @@ const SubGoalEdit = ({ goalId }: SubGoalEditProps) => {
   const nullableContext = useContext(EditContext);
   const { editContents, setEditContents } = nullableContext || {};
   const { openModal, closeModal } = useModal();
+  const { setToast } = useToast();
 
   return (
     <>
@@ -122,6 +123,8 @@ const SubGoalEdit = ({ goalId }: SubGoalEditProps) => {
                               ...prev,
                               subGoals: newSubGoals,
                             }));
+
+                          setToast("세부 목표 텍스트 변경이 완료되었습니다.");
                         }}
                       />,
                     );
@@ -145,6 +148,7 @@ const SubGoalEdit = ({ goalId }: SubGoalEditProps) => {
                               subGoals: newSubGoals,
                             }));
                           closeModal();
+                          setToast("세부 목표가 삭제되었습니다.");
                         }}
                       />,
                     );

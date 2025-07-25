@@ -24,7 +24,7 @@ export default function AddingGoal() {
   });
   const [openBottomSheet, setOpenBottomSheet] = useState(false);
   return (
-    <div className="h-screen flex flex-col ">
+    <div className="h-screen flex flex-col items-center  ">
       <header className="bg-background-alternative">
         <AppBar
           type="back"
@@ -33,7 +33,7 @@ export default function AddingGoal() {
         />
       </header>
       <form
-        className="flex-1 flex flex-col"
+        className="flex-1 flex flex-col w-full"
         id="goalAdding"
         onSubmit={async () => {
           const res = await goalApi.createGoal({
@@ -59,7 +59,7 @@ export default function AddingGoal() {
           }
         }}
       >
-        <section className="pl-4 pr-4  flex flex-col gap-[21px] bg-background-alternative">
+        <section className="pl-4 pr-4 pt-6 pb-6 h-auto  flex flex-col gap-[21px] bg-background-alternative">
           <div className="flex flex-col gap-1">
             <div className="self-stretch inline-flex justify-start ">
               <h3 className="justify-start text-label-strong text-sm font-bold font-['SUIT'] leading-tight">
@@ -78,9 +78,9 @@ export default function AddingGoal() {
               placeholder="목표를 한 문장으로 입력해주세요."
             />
           </div>
-          <div className="flex justify-between h-10  items-center ">
-            <div className="flex ">
-              <h3 className="justify-start text-neutral-900 text-sm font-semibold font-['Pretendard'] leading-none">
+          <div className="flex justify-between h-10  items-center  ">
+            <div className="flex  items-center">
+              <h3 className=" justify-start text-neutral-900 text-sm font-semibold font-['Pretendard'] leading-none">
                 기간 설정
               </h3>
               <p className="justify-start text-red-600 text-sm font-semibold font-['Pretendard'] leading-none">

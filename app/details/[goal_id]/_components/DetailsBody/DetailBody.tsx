@@ -24,6 +24,7 @@ import { TodoResultRqEmotionEnum } from "@/api/generated/motimo/Api";
 import TodoBottomSheet from "@/components/shared/BottomSheets/TodoBottomSheet/TodoBottomSheet";
 import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
 import { date2StringWithSpliter } from "@/utils/date2String";
+import useToast from "@/hooks/useToast";
 interface DetailBodyProps {
   goalId: string;
 }
@@ -41,7 +42,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
   );
 
   const { isActive, setIsActive, initContent } = useActiveTodoBottomSheet();
-
+  const { setToast } = useToast();
   const dDay = calcLeftDay(data?.dueDate ?? new Date());
 
   const allSubGoalCompleted =
@@ -53,6 +54,12 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
 
   const groupId = goalDetail?.groupId;
 
+  const fixedProgress = goalDetail?.progress
+    ? goalDetail?.progress === 0 || goalDetail?.progress === 100
+      ? goalDetail?.progress
+      : Number(goalDetail?.progress?.toFixed(2))
+    : 0;
+
   // 모든 세부목표 완료 시에 모달
   const openModalCompletingGoal = () => {
     openModal(
@@ -61,8 +68,9 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
         onCompleteGoal={async () => {
           const res = await goalApi.goalComplete(goalId);
           if (res) {
-            // 토스트
+            setToast("목표를 모두 달성했습니다! 🎉");
             closeModal();
+            mutateForGoalProgress();
           }
         }}
         onWait={closeModal}
@@ -78,7 +86,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
       <div className="flex flex-col flex-1">
         <GoalData
           goalName={data.title ?? ""}
-          progress={goalDetail?.progress ?? 0}
+          progress={fixedProgress}
           dDay={dDay}
           isCompleted={goalDetail?.isCompleted ?? false}
         />
@@ -97,7 +105,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
               >
                 <div className="self-stretch inline-flex justify-center items-center gap-2">
                   <div className="w-6 h-6 relative overflow-hidden flex justify-center items-center text-label-strong">
-                    <CheckSvg />
+                    <CheckSvg width={24} height={24} />
                   </div>
 
                   <p className="justify-start text-label-strong text-base font-semibold font-['Pretendard'] leading-normal">

@@ -24,6 +24,7 @@ import SubGoalEdit from "../SubGoalEdit/SubGoalEdit";
 
 import { date2StringWithSpliter } from "@/utils/date2String";
 import { goalApi } from "@/api/service";
+import useToast from "@/hooks/useToast";
 
 // import { updateGoal } from "@/lib/fetching/goalFetching";
 
@@ -53,10 +54,10 @@ interface EditBodyProps {
 
 const EditBody = ({ goalId, initData, tab }: EditBodyProps) => {
   const router = useRouter();
-
-  const { closeModal, openModal } = useModal();
+  // const { closeModal, openModal } = useModal();
   const { mutate } = useGoalWithSubGoalTodo(goalId);
   const [editContents, setEditContents] = useState<EditContents>(initData);
+  const { setToast } = useToast();
   return (
     <>
       <EditContext.Provider value={{ editContents, setEditContents }}>
@@ -100,6 +101,7 @@ const EditBody = ({ goalId, initData, tab }: EditBodyProps) => {
             });
             if (res) {
               mutate();
+              setToast("변경이 완료되었습니다.");
               router.back();
             }
           }}

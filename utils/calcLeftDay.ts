@@ -1,9 +1,9 @@
 export const calcLeftDay = (
-  date: Date | string,
-  dueDate: Date | string = new Date(),
+  lateDate: Date | string,
+  earlyDate: Date | string = new Date(),
 ) => {
   return Math.floor(
-    (new Date(date).getTime() - new Date(dueDate).getTime()) /
+    (new Date(lateDate).getTime() - new Date(earlyDate).getTime()) /
       1000 /
       24 /
       60 /
