@@ -8,7 +8,7 @@ import TextField from "../shared/TextField/TextField";
 import { EditIcon } from "../icons/EditIcon";
 import { PlusIcon } from "../icons/PlusIcon";
 import ModalDeletingAccount from "../shared/Modal/ModalDeletingAccount/ModalDeletingAccount";
-import { Toast } from "../shared/Toast/Toast";
+import useToast from "@/hooks/useToast";
 import { InterestSelectionBottomSheet } from "../shared/BottomSheets/InterestSelectionBottomSheet";
 import {
   UserUpdateRq,
@@ -35,8 +35,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   const [userName, setUserName] = useState(me?.nickname ?? "");
   const [bio, setBio] = useState(me?.bio ?? "");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [toastVisible, setToastVisible] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
+  const { setToast } = useToast();
   const [showInterestBottomSheet, setShowInterestBottomSheet] = useState(false);
   const [selectedInterests, setSelectedInterests] = useState<
     UserUpdateRqInterestsEnum[]
@@ -44,24 +43,11 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleBack = () => {
     router.back();
   };
 
-  const showToast = (message: string, duration = 2000) => {
-    setToastMessage(message);
-    setToastVisible(true);
-
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    timeoutRef.current = setTimeout(() => {
-      setToastVisible(false);
-    }, duration);
-  };
 
   const handleSave = () => {
     if (onSave) {
@@ -73,7 +59,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
         },
         selectedFile || undefined,
       );
-      showToast("저장 되었습니다");
+      setToast("저장 되었습니다");
     }
   };
 
@@ -125,9 +111,6 @@ export const EditProfile: React.FC<EditProfileProps> = ({
 
   useEffect(() => {
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
       if (previewUrl) {
         URL.revokeObjectURL(previewUrl);
       }
@@ -268,12 +251,6 @@ export const EditProfile: React.FC<EditProfileProps> = ({
         />
       )}
 
-      {/* Toast */}
-      {toastVisible && (
-        <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-50">
-          <Toast text={toastMessage} />
-        </div>
-      )}
 
       {/* Interest Selection Bottom Sheet */}
       <InterestSelectionBottomSheet
