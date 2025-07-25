@@ -291,6 +291,10 @@ export interface TodoResultRs {
   content?: string;
   /** 투두 기록 파일 url */
   fileUrl?: string;
+  /** 투두 기록 파일 이름 */
+  fileName?: string;
+  /** 투두 기록 파일 데이터 종류 */
+  fileMimeType?: string;
 }
 
 export interface TodoRs {
@@ -342,16 +346,36 @@ export interface PointRs {
   point?: number;
 }
 
-export interface CustomSliceNotificationItemRs {
+export interface CustomPageNotificationItemRs {
   content?: NotificationItemRs[];
-  hasNext?: boolean;
+  /** @format int64 */
+  totalCount?: number;
   /** @format int32 */
-  offset?: number;
+  totalPage?: number;
+  /** @format int32 */
+  page?: number;
   /** @format int32 */
   size?: number;
 }
 
-export type NotificationItemRs = object;
+export interface NotificationItemRs {
+  /**
+   * 알림 아이디입니다.
+   * @format uuid
+   */
+  id?: string;
+  /** 알림 내용 전체입니다. */
+  content?: string;
+  /** 알림 타입입니다. */
+  type?: NotificationItemRsTypeEnum;
+  /**
+   * 알림과 연결되는 항목의 아이디입니다.
+   * @format uuid
+   */
+  referenceId?: string;
+  /** 읽음 여부입니다. */
+  isRead?: boolean;
+}
 
 export interface GroupDetailRs {
   /**
@@ -400,6 +424,12 @@ export interface GroupMemberRs {
   /** 찌르기 활성화 여부, 본인이면 null */
   isActivePoke?: boolean;
 }
+
+export type GoalTitleUpdatedContent = GroupMessageContent & {
+  /** @format uuid */
+  goalId?: string;
+  goalTitle?: string;
+};
 
 /** 그룹 메시지 응답 */
 export interface GroupChatRs {
@@ -473,6 +503,12 @@ export interface GroupMessageItemRs {
   sendAt: string;
 }
 
+export type MessageReactionContent = GroupMessageContent & {
+  /** @format uuid */
+  referenceMessageId?: string;
+  reactionType?: MessageReactionContentReactionTypeEnum;
+};
+
 export type TodoCompletedContent = GroupMessageContent & {
   /** @format uuid */
   todoId?: string;
@@ -488,6 +524,8 @@ export type TodoResultSubmittedContent = GroupMessageContent & {
   emotion?: TodoResultSubmittedContentEmotionEnum;
   content?: string;
   fileUrl?: string;
+  fileName?: string;
+  mimeType?: string;
 };
 
 export interface JoinedGroupRs {
@@ -777,11 +815,22 @@ export enum TodoRsStatusEnum {
   INCOMPLETE = "INCOMPLETE",
 }
 
+/** 알림 타입입니다. */
+export enum NotificationItemRsTypeEnum {
+  REACTION = "REACTION",
+  POKE = "POKE",
+  TODO_DUE_DAY = "TODO_DUE_DAY",
+  GROUP_TODO_COMPLETED = "GROUP_TODO_COMPLETED",
+  GROUP_TODO_RESULT_COMPLETED = "GROUP_TODO_RESULT_COMPLETED",
+}
+
 export enum GroupMessageContentTypeEnum {
   JOIN = "JOIN",
   LEAVE = "LEAVE",
   TODO_COMPLETE = "TODO_COMPLETE",
   TODO_RESULT_SUBMIT = "TODO_RESULT_SUBMIT",
+  GOAL_TITLE_UPDATE = "GOAL_TITLE_UPDATE",
+  MESSAGE_REACTION = "MESSAGE_REACTION",
 }
 
 /**
@@ -794,8 +843,10 @@ export enum GroupMessageContentTypeEnum {
 interface BaseGroupMessageContentRs {
   /** 메시지 내용 */
   content:
+    | GoalTitleUpdatedContent
     | GroupJoinContent
     | GroupLeaveContent
+    | MessageReactionContent
     | TodoCompletedContent
     | TodoResultSubmittedContent;
 }
@@ -803,6 +854,14 @@ interface BaseGroupMessageContentRs {
 type BaseGroupMessageContentRsTypeMapping<Key, Type> = {
   type: Key;
 } & Type;
+
+export enum MessageReactionContentReactionTypeEnum {
+  GOOD = "GOOD",
+  COOL = "COOL",
+  CHEER_UP = "CHEER_UP",
+  BEST = "BEST",
+  LIKE = "LIKE",
+}
 
 export enum TodoResultSubmittedContentEmotionEnum {
   PROUD = "PROUD",
@@ -1921,7 +1980,7 @@ export class Api<SecurityDataType extends unknown> {
      * @summary 그룹 나가기 API
      * @request DELETE:/v1/groups/{groupId}/members/me
      * @secure
-     * @response `200` `void` OK
+     * @response `204` `void` No Content
      */
     exitGroup: (groupId: string, params: RequestParams = {}) =>
       this.http.request<void, any>({
@@ -1998,18 +2057,21 @@ export class Api<SecurityDataType extends unknown> {
      * @summary 알림 목록 API
      * @request GET:/v1/notifications
      * @secure
-     * @response `200` `CustomSliceNotificationItemRs` OK
+     * @response `200` `CustomPageNotificationItemRs` OK
      */
     getNotificationList: (
       query: {
+        /**
+         * @format int32
+         * @default 0
+         */
+        page?: number;
         /** @format int32 */
-        offset: number;
-        /** @format int32 */
-        limit: number;
+        size: number;
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<CustomSliceNotificationItemRs, any>({
+      this.http.request<CustomPageNotificationItemRs, any>({
         path: `/v1/notifications`,
         method: "GET",
         query: query,

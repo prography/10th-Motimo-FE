@@ -131,7 +131,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
                   type="button"
                   className="w-6 h-6 relative overflow-hidden text-label-assistive"
                 >
-                  <Link href={`/group/${groupId}`}>
+                  <Link href={`/group/${groupId}?from=details`}>
                     <RightArrowSvg />
                   </Link>
                 </button>

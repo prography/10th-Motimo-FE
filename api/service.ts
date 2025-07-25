@@ -41,14 +41,15 @@ export type ApiMethodParams<
 > = ApiClient[T][M] extends (...args: infer P) => any ? P : never;
 
 // 개별 API 그룹들을 직접 export하여 사용하기 편하게 함
+export const userApi = api.사용자Api;
 export const todoApi = api.투두Api;
 export const goalApi = api.목표Api;
 export const subGoalApi = api.세부목표Api;
 export const groupApi = api.그룹Api;
-// export const pokeApi = api.찌르기Api;
 export const authApi = api.authController;
-export const userApi = api.사용자Api;
 export const pointApi = api.포인트Api;
+export const notificationApi = api.알림Api;
 export const cheerApi = api.응원Api;
+export const healthApi = api.healthController;
 
 export default api;

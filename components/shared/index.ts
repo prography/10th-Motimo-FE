@@ -6,5 +6,6 @@ import { SegmentedControl } from "./SegmentedControl/SegmentedControl";
 import { SnackBar } from "./SnackBar/SnackBar";
 import { Toast } from "./Toast/Toast";
 import { CupertinoPicker } from "./CupertinoPicker/CupertinoPicker";
+import { Loading } from "./Loading/Loading";
 
-export { Test, AppBar, BottomTabBar, ButtonRound, SegmentedControl, SnackBar, Toast, CupertinoPicker };
+export { Test, AppBar, BottomTabBar, ButtonRound, SegmentedControl, SnackBar, Toast, CupertinoPicker, Loading };

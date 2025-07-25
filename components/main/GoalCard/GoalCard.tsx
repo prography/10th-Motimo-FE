@@ -176,9 +176,6 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
           const isFetchOk = fetchRes ? true : false;
           if (isFetchOk) {
             setNewTodoForSubmission(newTodoInfo);
-            //test
-            console.log("투두 추가/수정");
-            // mutate();
           }
 
           return isFetchOk;
