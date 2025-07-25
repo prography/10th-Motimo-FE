@@ -1,46 +1,30 @@
 "use client";
 
-import { AppBar } from "@/components/shared/AppBar/AppBar";
-import { BottomTabBar } from "@/components/shared/BottomTabBar/BottomTabBar";
-import { BellIcon } from "@/components/icons/BellIcon";
-import Image from "next/image";
+import dynamic from "next/dynamic";
+import { FeedPage } from "@/components/feed";
 
-export default function FeedPage() {
+// 클라이언트에서만 렌더링되는 BottomTabBar (SSR 제외)
+const BottomTabBar = dynamic(
+  () =>
+    import("@/components/shared/BottomTabBar/BottomTabBar").then((mod) => ({
+      default: mod.BottomTabBar,
+    })),
+  { ssr: false },
+);
+
+export default function FeedRoute() {
+  const handleNotificationClick = () => {
+    console.log("Notification clicked");
+    // TODO: Implement notification logic
+  };
+
   return (
-    <div className="w-[360px] h-[800px] bg-white flex flex-col">
-      {/* App Bar */}
-      <AppBar
-        title="피드"
-        rightIcon={<BellIcon className="w-6 h-6" color="#1E2124" />}
-        className="h-14"
-      />
-
-      {/* Content */}
-      <div className="flex-1 flex flex-col items-center justify-center px-4">
-        <div className="flex flex-col items-center gap-3">
-          {/* Image */}
-          <div className="w-[100px] h-[115px] relative">
-            <Image
-              src="/images/feed-image-4e12a7.png"
-              alt="Feed coming soon"
-              fill
-              className="object-cover"
-            />
-          </div>
-
-          {/* Message Container */}
-          <div className="bg-[#F7F7F8] rounded px-2 py-4 w-full">
-            <p className="text-[#33363D] text-center font-SUIT_Variable font-bold text-base leading-[1.2] tracking-[-0.01em]">
-              피드는 아직 준비 중입니다.
-              <br />
-              나중에 만나요!
-            </p>
-          </div>
-        </div>
-      </div>
+    <>
+      <FeedPage onNotificationClick={handleNotificationClick} />
 
       {/* Bottom Tab Bar */}
-      <BottomTabBar type="3" className="mt-auto" />
-    </div>
+      <BottomTabBar type="3" />
+    </>
   );
 }
+
