@@ -119,18 +119,19 @@ const TodoBottomSheet = ({
           )}
 
           <TodoInfoContext.Provider value={{ todoInfo, setTodoInfo }}>
-            <div className="flex justify-center w-[100vw]  fixed bottom-0 z-30">
+            {/* <div className="flex justify-center w-[100vw]  fixed bottom-0 z-40"> */}
+            <div
+              className={`flex justify-center w-[100vw]  fixed ${hasBottomTabBar ? "bottom-14" : "bottom-0"} z-30`}
+            >
               <Drawer.Content
-                // bottom tab bar에 따라 위치 바뀌도록  ${hasBottomTabBar ? "pb-14" : "pb-0"}
-                // style={{ height: "auto !important" }}
-                className={`
-                ${
-                  hasBottomTabBar ? "bottom-14" : "bottom-0"
-                  // hasBottomTabBar ? "pb-14" : "pb-0"
-                }
-                h-auto
+                className={`              
                 w-[360px]
-               z-30 pl-4 pr-4  bg-white flex flex-col justify-start fixed  rounded-t-[10px]`}
+               z-30 pl-4 pr-4  bg-white flex flex-col justify-start   rounded-t-[10px]`}
+                style={{
+                  height: isActivated ? (showDate ? "382px" : "100px") : "66px", // 고정값 강제
+                  transition: "height 0.3s ",
+                  bottom: 0,
+                }}
               >
                 {showDate ? (
                   <BottomSheetDate setShowDate={setShowDate} />
@@ -197,7 +198,7 @@ const TodoBottomSheet = ({
                           gridTemplateRows: isActivated ? "1fr" : "0fr",
                         }}
                       >
-                        <div className="min-h-0 overflow-hidden flex w-full">
+                        <div className={`min-h-0 overflow-hidden flex w-full`}>
                           <div className="flex gap-2">
                             <button
                               onClick={() => setShowDate(true)}

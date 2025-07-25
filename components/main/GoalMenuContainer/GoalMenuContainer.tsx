@@ -79,7 +79,7 @@ const GoalMenuContainer = ({}: GoalMenuContainerProps) => {
             className="w-8 h-8 p-1.5 bg-background-normal rounded-[999px] inline-flex justify-center items-center gap-2"
           >
             <div className="w-5 h-5 relative overflow-hidden flex justify-center items-center">
-              <PlusSvg />
+              <PlusSvg width={20} height={20} />
             </div>
           </button>
         </div>
@@ -103,7 +103,13 @@ const GoalMenuContainer = ({}: GoalMenuContainerProps) => {
               <GoalMenu
                 key={goalMenuInfo.goalId}
                 goal={goalMenuInfo.goal}
-                percentage={goalMenuInfo.percentage}
+                percentage={
+                  // 0과 100을 제외하고 소수점 표기
+                  goalMenuInfo.percentage === 0 ||
+                  goalMenuInfo.percentage === 100
+                    ? goalMenuInfo.percentage
+                    : Number(goalMenuInfo.percentage.toFixed(2))
+                }
                 selected={idx === selectedGoalIdx}
                 onSelected={() => {
                   setSelectedGoalIdx(idx);

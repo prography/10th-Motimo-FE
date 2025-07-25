@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AppBar } from "@/components/shared/AppBar/AppBar";
 import Toggle from "@/components/shared/Toggle/Toggle";
 import { Toast } from "@/components/shared/Toast/Toast";
+import useToast from "@/hooks/useToast";
 
 interface NotificationSettings {
   todoDeadline: boolean;
@@ -29,9 +30,9 @@ export function NotificationSetup({
     nudgeNotifications: false,
     feedbackNotifications: false,
   });
-
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
+  const { setToast } = useToast();
+  // const [showToast, setShowToast] = useState(false);
+  // const [toastMessage, setToastMessage] = useState("");
 
   const deadlineOptions = ["1시간", "하루", "2일", "3일", "일주일"];
 
@@ -44,9 +45,10 @@ export function NotificationSetup({
 
     // Show toast when enabling group notifications
     if (key === "groupNotifications" && newValue) {
-      setToastMessage("그룹 알림을 활성화했습니다.");
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+      //   setToastMessage("그룹 알림을 활성화했습니다.");
+      //   setShowToast(true);
+      //   setTimeout(() => setShowToast(false), 3000);
+      setToast("그룹 알림을 활성화했습니다.");
     }
   };
 
@@ -56,6 +58,14 @@ export function NotificationSetup({
 
   return (
     <div className={`min-h-screen bg-Color-white flex flex-col ${className}`}>
+      {/* Status Bar */}
+      <div className="flex justify-between items-end gap-[286px] px-6 py-[10px] h-[52px]">
+        <div className="text-sm font-medium text-Color-gray-90">9:30</div>
+        <div className="flex items-center gap-4">
+          <div className="w-[46px] h-[17px]"></div>
+        </div>
+      </div>
+
       {/* App Bar */}
       <AppBar type="back" title="알림 설정" onBackClick={onBack} />
 
@@ -160,11 +170,11 @@ export function NotificationSetup({
       </div>
 
       {/* Toast */}
-      {showToast && (
+      {/* {showToast && (
         <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2">
           <Toast text={toastMessage} />
         </div>
-      )}
+      )} */}
 
       {/* Gesture Bar */}
       <div className="h-6 flex justify-center items-center">
@@ -173,4 +183,3 @@ export function NotificationSetup({
     </div>
   );
 }
-

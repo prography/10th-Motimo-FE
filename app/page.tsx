@@ -5,6 +5,8 @@ import GoalMenuContainer from "@/components/main/GoalMenuContainer/GoalMenuConta
 import GoalCard from "@/components/main/GoalCard/GoalCard";
 import MainHeader from "@/components/main/MainHeader/MainHeader";
 import { BottomTabBar } from "@/components/shared/BottomTabBar/BottomTabBar";
+import { useMyProfile } from "@/api/hooks";
+import { calcLeftDay } from "@/utils/calcLeftDay";
 
 // AuthGuard는 클라이언트에서만 렌더링 (localStorage 접근 필요)
 const AuthGuard = dynamic(() => import("./_components/AuthGuard"), {
@@ -12,7 +14,11 @@ const AuthGuard = dynamic(() => import("./_components/AuthGuard"), {
 });
 
 export default function Main() {
-  const tmpDaysOfServiceUse = 1;
+  const { data } = useMyProfile();
+  const tmpDaysOfServiceUse = calcLeftDay(
+    new Date(),
+    new Date(data?.createdAt ?? ""),
+  );
 
   return (
     <AuthGuard>

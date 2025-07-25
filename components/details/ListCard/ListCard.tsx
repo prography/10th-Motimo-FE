@@ -17,6 +17,7 @@ import {
   // useObservingInfiniteOffset,
   useSubGoalTodosAllInfinite,
 } from "@/hooks/queries/useSubGoalTodosInfiniites";
+import useToast from "@/hooks/useToast";
 interface ListCardProps {
   subGoalInfo: {
     name?: string;
@@ -65,6 +66,7 @@ const ListCard = ({
   const [openBottomSheet, setOpenBottomSheet] = useState(false);
   const todoItemsInfo = (fetchedTodoItemsInfo || initTodoInfoList) ?? [];
   const [todoIdForResult, setTodoIdForResult] = useState<null | string>(null);
+  const { setToast } = useToast();
 
   const isTodoAllChecked =
     todoItemsInfo.filter((todo) => todo.checked).length ===
@@ -131,6 +133,7 @@ const ListCard = ({
                     );
                     if (res) {
                       // setSubGoalCompleted(!subGoalCompleted);
+                      setToast("세부 목표를 달성했습니다!");
                       applyOnGoalData();
                     }
                   } else {
@@ -144,6 +147,7 @@ const ListCard = ({
                           );
                           if (res) {
                             // setSubGoalCompleted(!subGoalCompleted);
+                            setToast("세부 목표를 미완료 처리했습니다.");
                             applyOnGoalData();
                             closeModal();
                           }
