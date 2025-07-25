@@ -106,7 +106,7 @@ export const InterestSelectionBottomSheet: React.FC<
               onClick={handleSave}
               className="w-full h-14 bg-Color-gray-80 text-Color-white font-bold text-xl leading-[1.2] tracking-[-0.01em] rounded-full hover:opacity-90 transition-opacity"
             >
-              추가하기
+{initialInterests.length === 0 ? "추가하기" : "변경하기"}
             </button>
           </div>
         </Drawer.Content>
