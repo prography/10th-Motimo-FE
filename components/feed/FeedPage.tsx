@@ -10,22 +10,13 @@ interface FeedPageProps {
 
 export const FeedPage = ({ onNotificationClick }: FeedPageProps) => {
   return (
-    <div className="h-[calc(100vh-56px)] bg-Color-gray-5 flex flex-col">
+    <div className="h-[calc(100vh-56px)] bg-white flex flex-col">
       {/* App Bar */}
-      <AppBar
-        title="피드"
-        rightIcon={
-          <button onClick={onNotificationClick}>
-            <BellIcon className="w-6 h-6" color="#1E2124" />
-          </button>
-        }
-        className="h-14"
-        type="main"
-      />
+      <AppBar title="피드" type="main" />
 
       {/* Content */}
       <div className="flex-1 flex flex-col items-center justify-center px-4">
-        <div className="flex flex-col items-center gap-3">
+        <div className="flex flex-col items-center gap-3 w-full">
           {/* Image */}
           <div className="w-[100px] h-[115px] relative">
             <Image
@@ -49,3 +40,4 @@ export const FeedPage = ({ onNotificationClick }: FeedPageProps) => {
     </div>
   );
 };
+
