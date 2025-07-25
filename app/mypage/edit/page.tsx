@@ -16,8 +16,7 @@ export default function EditProfilePage() {
   };
 
   const handleDeleteAccount = () => {
-    console.log("Delete account requested");
-    // TODO: Implement account deletion logic
+    alert("삭제는 미구현입니다.");
   };
 
   const handleAddInterests = () => {
@@ -33,4 +32,3 @@ export default function EditProfilePage() {
     />
   );
 }
-
