@@ -103,7 +103,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
               >
                 <div className="self-stretch inline-flex justify-center items-center gap-2">
                   <div className="w-6 h-6 relative overflow-hidden flex justify-center items-center text-label-strong">
-                    <CheckSvg />
+                    <CheckSvg width={24} height={24} />
                   </div>
 
                   <p className="justify-start text-label-strong text-base font-semibold font-['Pretendard'] leading-normal">
