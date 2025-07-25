@@ -65,11 +65,14 @@ export const EditProfile: React.FC<EditProfileProps> = ({
 
   const handleSave = () => {
     if (onSave) {
-      onSave({
-        userName,
-        bio,
-        interests: selectedInterests,
-      }, selectedFile || undefined);
+      onSave(
+        {
+          userName,
+          bio,
+          interests: selectedInterests,
+        },
+        selectedFile || undefined,
+      );
       showToast("저장 되었습니다");
     }
   };
@@ -135,11 +138,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
     <div className="flex flex-col bg-Color-white w-[360px] h-screen relative">
       {/* AppBar */}
       <div className="relative">
-        <AppBar
-          type="back"
-          title="계정 설정"
-          onBackClick={handleBack}
-        />
+        <AppBar type="back" title="계정 설정" onBackClick={handleBack} />
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
           <Button
             variant="filled"
@@ -153,30 +152,35 @@ export const EditProfile: React.FC<EditProfileProps> = ({
       </div>
 
       {/* Profile Image Section */}
-      <div className="flex flex-col items-center mt-5 mb-8">
-        <div className="relative">
-          <div className="w-[100px] h-[100px] rounded-full overflow-hidden">
-            <img
-              src={previewUrl || me?.profileImageUrl || "/profile-default.png"}
-              alt="프로필 이미지"
-              className="w-[100px] h-[100px] rounded-full object-cover"
+      {/* <div className="flex flex-col items-center mt-5 mb-8"> */}
+      <div className="bg-Color-white py-5">
+        <div className={`flex flex-col items-center gap-4 py-5 w-full`}>
+          <div className="relative">
+            <div className="w-[100px] h-[100px] rounded-full overflow-hidden">
+              <img
+                src={
+                  previewUrl || me?.profileImageUrl || "/profile-default.png"
+                }
+                alt="프로필 이미지"
+                className="w-[100px] h-[100px] rounded-full object-cover"
+              />
+            </div>
+            <button
+              className="absolute bottom-0 right-0 w-6 h-6 bg-Color-white border border-Color-gray-30 rounded-full flex items-center justify-center hover:opacity-70"
+              aria-label="프로필 이미지 편집"
+              onClick={handleEditImage}
+            >
+              <EditIcon />
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+              aria-label="프로필 이미지 파일 선택"
             />
           </div>
-          <button
-            className="absolute bottom-0 right-0 w-6 h-6 bg-Color-white border border-Color-gray-30 rounded-full flex items-center justify-center hover:opacity-70"
-            aria-label="프로필 이미지 편집"
-            onClick={handleEditImage}
-          >
-            <EditIcon />
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            className="hidden"
-            aria-label="프로필 이미지 파일 선택"
-          />
         </div>
       </div>
 
