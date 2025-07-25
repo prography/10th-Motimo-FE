@@ -9,8 +9,9 @@ import { EditProfile } from "@/components/mypage";
 import useToast from "@/hooks/useToast";
 import useAuthStore from "@/stores/useAuthStore";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function EditProfilePage() {
+function EditProfileContent() {
   const searchParams = useSearchParams();
   const openInterests = searchParams.get("openInterests") === "true";
   const handleSave = (request: UserUpdateRq, file?: File) => {
@@ -46,5 +47,13 @@ export default function EditProfilePage() {
       onAddInterests={handleAddInterests}
       openInterests={openInterests}
     />
+  );
+}
+
+export default function EditProfilePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <EditProfileContent />
+    </Suspense>
   );
 }
