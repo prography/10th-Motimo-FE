@@ -134,41 +134,26 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   return (
     <div className="flex flex-col bg-Color-white w-[360px] h-screen relative">
       {/* AppBar */}
-      <div className="flex items-center px-3 h-14 bg-Color-white relative">
-        <button
-          className="flex items-center justify-center w-6 h-6 bg-transparent border-none cursor-pointer p-0 flex-shrink-0 hover:opacity-70"
-          onClick={handleBack}
-          aria-label="뒤로 가기"
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M15 18L9 12L15 6"
-              stroke="#33363D"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-
-        <div className="flex-1 ml-5">
-          <h1 className="font-SUIT_Variable font-bold text-xl leading-[1.2] tracking-[-0.02em] text-Color-black m-0">
-            계정 설정
-          </h1>
+      <div className="relative">
+        <AppBar
+          type="back"
+          title="계정 설정"
+          onBackClick={handleBack}
+        />
+        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+          <Button
+            variant="filled"
+            size="s"
+            className="bg-Color-primary-50 text-Color-white rounded-lg px-3 py-1 text-sm font-semibold"
+            onClick={handleSave}
+          >
+            저장
+          </Button>
         </div>
-
-        <Button
-          variant="filled"
-          size="s"
-          className="bg-Color-primary-50 text-Color-white rounded-lg px-3 py-1 text-sm font-semibold"
-          onClick={handleSave}
-        >
-          저장
-        </Button>
       </div>
 
       {/* Profile Image Section */}
-      <div className="flex flex-col items-center mt-16 mb-8">
+      <div className="flex flex-col items-center mt-5 mb-8">
         <div className="relative">
           <div className="w-[100px] h-[100px] rounded-full overflow-hidden">
             <img
