@@ -7,13 +7,14 @@ import { useRouter } from "next/navigation";
 interface GroupRoomHeaderProps {
   groupRoomName: string;
   routeToMember: () => void;
+  onBackClick: () => void;
 }
 
 const GroupRoomHeader = ({
   groupRoomName,
   routeToMember,
+  onBackClick,
 }: GroupRoomHeaderProps) => {
-  const router = useRouter();
   return (
     <>
       <header className="flex items-center  gap-5 fixed top-0 w-[360px] bg-white">
@@ -21,7 +22,7 @@ const GroupRoomHeader = ({
           type="back"
           title={groupRoomName}
           onBackClick={() => {
-            router.back();
+            onBackClick();
           }}
         />
         <button

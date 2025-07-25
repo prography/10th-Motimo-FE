@@ -32,6 +32,7 @@ export const Primary: Story = {
     // Primary 스토리에만 적용될 Props
     groupRoomName: "이름",
     routeToMember: () => console.log("멤버페이지로 이동"),
+    onBackClick: () => console.log("그룹페이지로 이동"),
   },
 };
 

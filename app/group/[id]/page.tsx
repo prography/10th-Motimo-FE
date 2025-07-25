@@ -12,6 +12,7 @@ export default function GroupRoom() {
     <main className="flex flex-col gap-4 bg-background-alternative min-h-screen pb-4 relative">
       <GroupRoomHeader
         groupRoomName={data?.name ?? ""}
+        onBackClick={() => router.push(`/group`)}
         routeToMember={() => router.push(`/group/${groupId}/member`)}
       />
       <GroupChatRoom groupId={groupId} />
