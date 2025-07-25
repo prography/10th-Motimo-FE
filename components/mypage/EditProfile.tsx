@@ -38,7 +38,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   const [showInterestBottomSheet, setShowInterestBottomSheet] = useState(false);
   const [selectedInterests, setSelectedInterests] = useState<
     UserUpdateRqInterestsEnum[]
-  >([]);
+  >((me?.interestTypes as unknown as UserUpdateRqInterestsEnum[]) ?? []);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleBack = () => {
