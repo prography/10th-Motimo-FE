@@ -8,27 +8,24 @@ import TextField from "../shared/TextField/TextField";
 import { EditIcon } from "../icons/EditIcon";
 import { PlusIcon } from "../icons/PlusIcon";
 import ModalDeletingAccount from "../shared/Modal/ModalDeletingAccount/ModalDeletingAccount";
+import { UserUpdateRq } from "@/api/generated/motimo/Api";
+import { useMyProfile } from "@/api/hooks";
 
 interface EditProfileProps {
-  initialName?: string;
-  initialBio?: string;
-  profileImageUrl?: string;
-  onSave?: (data: { name: string; bio: string }) => void;
+  onSave?: (request: UserUpdateRq, file?: File) => void;
   onDeleteAccount?: () => void;
   onAddInterests?: () => void;
 }
 
 export const EditProfile: React.FC<EditProfileProps> = ({
-  initialName = "",
-  initialBio = "",
-  profileImageUrl = "/profile-default.png",
   onSave,
   onDeleteAccount,
   onAddInterests,
 }) => {
+  const { data: me } = useMyProfile();
   const router = useSafeRouter();
-  const [name, setName] = useState(initialName);
-  const [bio, setBio] = useState(initialBio);
+  const [userName, setUserName] = useState(me?.nickname ?? "");
+  const [bio, setBio] = useState(me?.bio ?? "");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleBack = () => {
@@ -37,9 +34,12 @@ export const EditProfile: React.FC<EditProfileProps> = ({
 
   const handleSave = () => {
     if (onSave) {
-      onSave({ name, bio });
+      onSave({
+        userName,
+        bio,
+        interests: [],
+      });
     }
-    router.back();
   };
 
   const handleDeleteAccount = () => {
@@ -104,7 +104,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
         <div className="relative">
           <div className="w-[100px] h-[100px] rounded-full bg-Color-gray-5 p-2.5 overflow-hidden">
             <img
-              src={profileImageUrl}
+              src={me?.profileImageUrl || "/profile-default.png"}
               alt="프로필 이미지"
               className="w-20 h-20 rounded-full object-cover"
             />
@@ -126,9 +126,9 @@ export const EditProfile: React.FC<EditProfileProps> = ({
             이름
           </label>
           <TextField
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="홍길동"
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+            placeholder="유저명을 입력해 주세요"
             isError={false}
           />
         </div>
@@ -184,4 +184,3 @@ export const EditProfile: React.FC<EditProfileProps> = ({
     </div>
   );
 };
-
