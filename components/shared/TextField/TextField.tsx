@@ -32,26 +32,21 @@ const TextField = ({
           type="text"
           value={value}
           onChange={onChange}
-          className={`appearance-none self-stretch pr-10 h-12 px-3 py-2 relative bg-background-alternative rounded-lg 
+          className={`appearance-none self-stretch pr-10 h-12 px-3 py-2 relative bg-Color-white rounded-lg 
             inline-flex justify-center items-center gap-2 overflow-hidden
+            border-[1px] border-solid border-Color-gray-20
             
             ${
               isError
-                ? `outline-1  outline-offset-[-1px] outline-status-negative
-                    focus:outline-[1.50px] focus:outline-offset-[-1.50px]
-                `
-                : `outline-1 outline-offset-[-1px] outline-line-normal
-                    focus:outline-[1.50px] focus:outline-offset-[-1.50px] focus:outline-Color-gray-90 
-                disabled:bg-background-normal disabled:outline-line-disabled `
+                ? `!border-status-negative focus:!border-status-negative focus:outline-none focus:ring-1 focus:ring-status-negative`
+                : `focus:!border-Color-primary-50 focus:outline-none focus:ring-1 focus:ring-Color-primary-50
+                disabled:bg-background-normal disabled:!border-Color-gray-30`
             }
             
+            text-Color-gray-90 text-base font-normal font-['SUIT_Variable'] leading-snug
+             placeholder:text-Color-gray-70
+             disabled:text-Color-gray-40 disabled:placeholder:text-Color-gray-40
             
-            text-label-strong text-base font-normal font-['SUIT_Variable'] leading-snug
-             placeholder:text-label-alternative
-             disabled:text-label-disabled disabled:placeholder:text-label-disabled
-            
-
-             
              ${props.className ?? ""}`}
           onFocus={() => setIsFocus(true)}
           onBlur={() => setIsFocus(false)}
