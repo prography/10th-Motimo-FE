@@ -23,6 +23,17 @@ const meta = {
   args: {
     // 예시: label: 'TodoBottomSheet',
   },
+  render: (args) => {
+    return (
+      <>
+        {/* <Drawer.Root open>
+          <Drawer.Content> */}
+        <TodoBottomSheet {...args} />
+        {/* </Drawer.Content>
+        </Drawer.Root> */}
+      </>
+    );
+  },
 } satisfies Meta<typeof TodoBottomSheet>;
 
 export default meta;
@@ -34,9 +45,6 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
   argTypes: {
     // 예시: backgroundColor: { control: 'color', description: '컴포넌트 배경색' },
-    openBottomSheet: {
-      control: "boolean",
-    },
   },
   args: {
     // Primary 스토리에만 적용될 Props
@@ -47,8 +55,6 @@ export const Primary: Story = {
       { title: "2", id: "2" },
     ],
     onSubmitTodo: async () => true,
-    openBottomSheet: false,
-    hasBottomTabBar: false,
   },
 };
 
