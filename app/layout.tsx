@@ -5,6 +5,7 @@ import "./globals.css";
 import ModalRenderer from "./_components/ModalRenderer";
 import { MSWComponent } from "@/components/_mocks/MSWComponent";
 import ToastRenderer from "./_components/ToastRenderer";
+import BottomSheetRenderer from "./_components/BottomSheetRenderer";
 
 const customFont = localFont({
   src: "../public/fonts/SUIT-Variable.woff2",
@@ -40,6 +41,7 @@ export default function RootLayout({
           {/* {process.env.NODE_ENV === "development" && <MSWComponent />} */}
           <ModalRenderer />
           <ToastRenderer />
+          <BottomSheetRenderer />
           {children}
         </div>
       </body>
