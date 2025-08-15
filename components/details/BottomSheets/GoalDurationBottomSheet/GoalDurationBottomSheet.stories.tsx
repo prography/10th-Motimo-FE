@@ -29,7 +29,7 @@ const Wrapper = ({ args }: { args: typeof Primary.args }) => {
   return (
     <GoalDurationBottomSheet
       {...args}
-      openBottomSheet={open}
+      // openBottomSheet={open}
       setopenBottomSheet={setOpen}
     />
   );
@@ -53,7 +53,7 @@ export const Primary: Story = {
   },
   args: {
     onEdit: () => {},
-    openBottomSheet: true,
+    // openBottomSheet: true,
     setopenBottomSheet: () => {},
     // Primary 스토리에만 적용될 Props
     initDate: undefined,
