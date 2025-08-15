@@ -92,7 +92,7 @@ const ListCard = ({
       closeBottomSheet();
       return;
     }
-    const bottomSheetInfo = {
+    const bottomSheetInfo: Parameters<typeof openTodoRootBottomSheet>[0] = {
       bottomSheetFixerStyle: { bottom: "0px" },
       backdropProps: {
         onClick: () => {
