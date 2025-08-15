@@ -5,37 +5,34 @@ import { create } from "zustand";
 import { Overlay } from "vaul";
 
 interface BottomSheetStore<TContentProps> {
-  BottomSheetInfo: null | {
+  BottomSheetInfoHistory: {
+    id: string;
     ContentComponent: (params: TContentProps) => ReactNode;
     contentProps: TContentProps;
-    // BackdropComponent: (params: TBackdropProps) => ReactNode;
     hasBackdrop: boolean;
     backdropProps: Parameters<typeof Overlay>[0];
     bottomSheetFixerStyle?: HTMLAttributes<HTMLDivElement>["style"];
-  };
-  updateBottomSheetInfo: (
+  }[];
+  updateBottomSheetInfoHistory: (
     newBottomSheetInfoOrFunc:
-      | BottomSheetStore<TContentProps>["BottomSheetInfo"]
+      | BottomSheetStore<TContentProps>["BottomSheetInfoHistory"]
       | ((
-          prev: BottomSheetStore<TContentProps>["BottomSheetInfo"],
-        ) => BottomSheetStore<TContentProps>["BottomSheetInfo"]),
+          prev: BottomSheetStore<TContentProps>["BottomSheetInfoHistory"],
+        ) => BottomSheetStore<TContentProps>["BottomSheetInfoHistory"]),
   ) => void;
 }
 
 const useBottomSheetStore = create<BottomSheetStore<any>>((set) => ({
-  BottomSheetInfo: null,
-  updateBottomSheetInfo: (newBottomSheetInfoOrFunc) => {
-    let newBottomSheetInfo = null;
-
-    if (typeof newBottomSheetInfoOrFunc === "function") {
-      newBottomSheetInfo = newBottomSheetInfoOrFunc(
-        useBottomSheetStore.getState().BottomSheetInfo,
-      );
-    } else {
-      newBottomSheetInfo = newBottomSheetInfoOrFunc;
+  BottomSheetInfoHistory: [],
+  updateBottomSheetInfoHistory: (newBottomSheetInfoHistoryOrFunc) => {
+    if (typeof newBottomSheetInfoHistoryOrFunc === "function") {
+      const prev = useBottomSheetStore.getState().BottomSheetInfoHistory;
+      const newHistory = newBottomSheetInfoHistoryOrFunc(prev);
+      set({ BottomSheetInfoHistory: newHistory });
+      return;
     }
 
-    set({ BottomSheetInfo: newBottomSheetInfo });
+    set({ BottomSheetInfoHistory: newBottomSheetInfoHistoryOrFunc });
   },
 }));
 
