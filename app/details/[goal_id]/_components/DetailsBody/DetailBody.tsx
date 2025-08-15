@@ -89,29 +89,32 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
   }, [allSubGoalCompleted, goalDetail?.isJoinedGroup]);
 
   // 바텀시트 관리
-  const { renderBottomSheet, closeBottomSheet } =
-    useBottomSheet<TodoBottomSheetProps>();
-  const isOpendBottomSheet =
+  const {
+    checkRendered,
+    openBottomSheet,
+    updateBottomSheet,
+    closeBottomSheet,
+  } = useBottomSheet<TodoBottomSheetProps>();
+
+  const shouldBottomSheetOpened =
     // modal이 등장하면 bottomSheet는 닫기.
     !isModalOpened && data.subGoals !== undefined && data.subGoals.length > 0;
-  //test
-  console.log("isOPendBottomSheet: ", isOpendBottomSheet);
 
   useEffect(() => {
-    if (!isOpendBottomSheet) {
+    const isRendered = checkRendered();
+
+    if (!shouldBottomSheetOpened && isRendered) {
       closeBottomSheet();
       return;
     }
 
-    renderBottomSheet({
+    const bottomSheetInfo: Parameters<typeof openBottomSheet>[0] = {
       backdropProps: {
         onClick: () => {
           // 내용물을 초기화 해야 함. -> key값 바꿔도 애니메이션이나 바텀시트 높이 정상적일까?
-          renderBottomSheet((prev) => {
-            if (prev === null) {
-              return null;
-            }
-            setIsActive(false);
+
+          setIsActive(false);
+          updateBottomSheet((prev) => {
             return { ...prev, hasBackdrop: false };
           });
         },
@@ -139,44 +142,23 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
           );
           return res;
         },
-        // onSubmitTodo: async (newTodoInfo) => {
-        //   const isCreating = newTodoInfo.id ? false : true;
-        //   let fetchRes;
-        //   if (isCreating) {
-        //     fetchRes = await subGoalApi.createTodo(newTodoInfo.subGoalId, {
-        //       title: newTodoInfo.todo,
-        //       date: newTodoInfo?.date
-        //         ? date2StringWithSpliter(newTodoInfo?.date, "-")
-        //         : undefined,
-        //     });
-        //   } else {
-        //     fetchRes = await todoApi.updateTodo(newTodoInfo.id ?? "", {
-        //       date: newTodoInfo.date
-        //         ? date2StringWithSpliter(newTodoInfo.date, "-")
-        //         : undefined,
-        //       title: newTodoInfo.todo,
-        //     });
-        //   }
-
-        //   const isFetchOk = fetchRes ? true : false;
-        //   if (isFetchOk) {
-        //     mutate();
-        //     // 바텀시트 리셋
-        //     setIsActive(false);
-        //   }
-
-        //   return isFetchOk;
-        // },
       },
 
       hasBackdrop: isActive,
       bottomSheetFixerStyle: { bottom: "0px" },
-    });
+    };
 
-    // return () => {
-    //   closeBottomSheet();
-    // };
-  }, [isActive, initContent, setIsActive, data, isOpendBottomSheet]);
+    if (shouldBottomSheetOpened && !isRendered) {
+      openBottomSheet(bottomSheetInfo);
+      return;
+    }
+
+    updateBottomSheet(bottomSheetInfo);
+
+    return () => {
+      closeBottomSheet();
+    };
+  }, [isActive, initContent, data.subGoals?.length, shouldBottomSheetOpened]);
 
   return (
     <>

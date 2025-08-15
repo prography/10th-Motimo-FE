@@ -26,6 +26,7 @@ import { TodoResultRqEmotionEnum } from "@/api/generated/motimo/Api";
 import { useSubGoalTodosIncompleteOrTodayInfinite } from "@/hooks/queries/useSubGoalTodosInfiniites";
 import { subGoalTodo2TodoItemList } from "@/utils/subGoalTodo2TodoItemList";
 import { postTodoResult } from "@/lib/fetching/postTodoResult";
+import useBottomSheet from "@/hooks/useBottomSheet";
 
 // Define the converted data type
 type ConvertedGoalWithSubGoalTodo = Omit<GoalWithSubGoalTodoRs, "subGoals"> & {
@@ -104,6 +105,164 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
     mutate();
   }, [newTodoForSubmission, mutate]);
 
+  /**TodoBottomSheet 관리*/
+  const shouldTodoBottomSheetOpened =
+    !isModalOpened &&
+    goalWithSubGoalTodo.subGoals !== undefined &&
+    goalWithSubGoalTodo.subGoals.length > 0;
+
+  const {
+    openBottomSheet: openTodoBottomSheet,
+    updateBottomSheet: updateTodoBottomSheet,
+    closeBottomSheet: closeTodoBottomSheet,
+    checkRendered,
+  } = useBottomSheet<TodoBottomSheetProps>();
+
+  useEffect(() => {
+    const isRendered = checkRendered();
+
+    if (!shouldTodoBottomSheetOpened && isRendered) {
+      closeTodoBottomSheet();
+      return;
+    }
+
+    const bottomSheetInfo: Parameters<typeof openTodoBottomSheet>[0] = {
+      backdropProps: {
+        onClick: () => {
+          // 내용물을 초기화 해야 함. -> key값 바꿔도 애니메이션이나 바텀시트 높이 정상적일까?
+          setIsActive(false);
+          updateTodoBottomSheet((prev) => {
+            return { ...prev, hasBackdrop: false };
+          });
+        },
+        className: "fixed inset-0 bg-black/20 z-20",
+      },
+      ContentComponent: TodoBottomSheet,
+      contentProps: {
+        isActivated: isActive,
+        initTodoInfo: initContent,
+        setIsActivated: (newState: boolean) => {
+          // 애니메이션 순서 정해주려고
+
+          setTimeout(() => setIsActive(newState), 400);
+        },
+        subGoals:
+          goalWithSubGoalTodo.subGoals?.map((subGoalInfo) => ({
+            id: subGoalInfo.subGoalId ?? "",
+            title: subGoalInfo.subGoal ?? "",
+          })) ?? [],
+
+        // modal이 등장하면 bottomSheet는 닫기.
+
+        onSubmitTodo: async (newTodoInfo) => {
+          const afterSubmit = () => {
+            setNewTodoForSubmission(newTodoInfo);
+            // 바텀시트 리셋
+            setIsActive(false);
+          };
+          const res = await handleTodoBottomSheetSubmit(
+            newTodoInfo,
+            afterSubmit,
+          );
+          return res;
+        },
+      },
+      hasBackdrop: isActive,
+      bottomSheetFixerStyle: { bottom: "56px" },
+    };
+
+    if (shouldTodoBottomSheetOpened && !isRendered) {
+      openTodoBottomSheet(bottomSheetInfo);
+      return;
+    }
+
+    updateTodoBottomSheet(bottomSheetInfo);
+
+    return () => {
+      closeTodoBottomSheet();
+    };
+  }, [
+    shouldTodoBottomSheetOpened,
+    isActive,
+    initContent,
+    setIsActive,
+    // subGoals 이름은 이 컴포넌트 언마운트 상황에 발생하므로 길이만으로 충분
+    goalWithSubGoalTodo.subGoals.length,
+  ]);
+
+  /**TodoResultBottomSheet 관리*/
+  const shouldTodoResultBottomSheetOpened =
+    !isModalOpened && todoResBottomSheetInfo.open;
+
+  //test
+  console.log(
+    "shouldTodoResultBottomSheetOpened: ",
+    shouldTodoResultBottomSheetOpened,
+  );
+
+  const {
+    checkRendered: checkTodoResultBottomSheetRendered,
+    openBottomSheet: openTodoResultBottomSheet,
+    updateBottomSheet: updateTodoResultBottomSheet,
+    closeBottomSheet: closeTodoResultBottomSheet,
+  } = useBottomSheet<Parameters<typeof TodoResultBottomSheet>[0]>();
+  useEffect(() => {
+    const isRendered = checkTodoResultBottomSheetRendered();
+
+    if (!shouldTodoResultBottomSheetOpened && isRendered) {
+      closeTodoResultBottomSheet();
+      return;
+    }
+
+    const bottomSheetInfo: Parameters<typeof openTodoResultBottomSheet>[0] = {
+      bottomSheetFixerStyle: { bottom: "56px" },
+      backdropProps: {
+        onClick: () => {
+          closeTodoResultBottomSheet();
+        },
+        className: "fixed inset-0 bg-black/10 z-20",
+      },
+      hasBackdrop: false,
+      ContentComponent: TodoResultBottomSheet,
+      contentProps: {
+        openBottomSheet: shouldTodoResultBottomSheetOpened,
+        setOpenBottomSheet: (nextIsOpen) =>
+          setTodoResBottomSheetInfo((prev) => ({ ...prev, open: nextIsOpen })),
+
+        onSubmit: async (todoResult) => {
+          const res = await postTodoResult(
+            todoResBottomSheetInfo.todoId ?? "",
+            todoResult.emotion as unknown as TodoResultRqEmotionEnum,
+            todoResult.memo,
+            todoResult.file || undefined,
+          );
+
+          if (res) {
+            setTodoResBottomSheetInfo({
+              open: false,
+              todoId: null,
+              subGoalId: null,
+            });
+            setNewTodoForSubmission({
+              subGoalId: todoResBottomSheetInfo.subGoalId ?? "",
+              id: todoResBottomSheetInfo.todoId ?? "",
+            });
+          }
+        },
+      },
+    };
+
+    if (shouldTodoResultBottomSheetOpened && !isRendered) {
+      openTodoResultBottomSheet(bottomSheetInfo);
+      return;
+    }
+
+    updateTodoResultBottomSheet(bottomSheetInfo);
+
+    return () => {
+      closeTodoBottomSheet();
+    };
+  }, [shouldTodoResultBottomSheetOpened, todoResBottomSheetInfo]);
   return (
     <>
       <div className="w-full flex-1 p-4 pb-38 bg-background-normal inline-flex flex-col justify-start items-start gap-2 ">
@@ -137,7 +296,7 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
         </section>
       </div>
 
-      <TodoBottomSheet
+      {/* <TodoBottomSheet
         hasBottomTabBar={true}
         isActivated={isActive}
         initTodoInfo={initContent}
@@ -180,8 +339,8 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
 
           return isFetchOk;
         }}
-      />
-      <TodoResultBottomSheet
+      /> */}
+      {/* <TodoResultBottomSheet
         hasBottomTabBar={true}
         openBottomSheet={todoResBottomSheetInfo.open}
         setOpenBottomSheet={(nextIsOpen) =>
@@ -218,8 +377,38 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
             });
           }
         }}
-      />
+      /> */}
     </>
   );
 };
 export default GoalCard;
+
+const handleTodoBottomSheetSubmit: (
+  newTodoInfo: TodoInfoForSubmission,
+  afterSubmit: () => void,
+) => Promise<boolean> = async (newTodoInfo, afterSubmit: () => void) => {
+  const isCreating = newTodoInfo.id ? false : true;
+  let fetchRes;
+  if (isCreating) {
+    fetchRes = await subGoalApi.createTodo(newTodoInfo.subGoalId, {
+      title: newTodoInfo.todo,
+      date: newTodoInfo?.date
+        ? date2StringWithSpliter(newTodoInfo?.date, "-")
+        : undefined,
+    });
+  } else {
+    fetchRes = await todoApi.updateTodo(newTodoInfo.id ?? "", {
+      date: newTodoInfo.date
+        ? date2StringWithSpliter(newTodoInfo.date, "-")
+        : undefined,
+      title: newTodoInfo.todo,
+    });
+  }
+
+  const isFetchOk = fetchRes ? true : false;
+  if (isFetchOk) {
+    afterSubmit();
+  }
+
+  return isFetchOk;
+};
