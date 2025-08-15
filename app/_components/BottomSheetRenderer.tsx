@@ -5,16 +5,16 @@ import useBottomSheetStore from "@/stores/useBottomSheetStore";
 import { useEffect, useState } from "react";
 
 const BottomSheetRenderer = () => {
-  const bottomSheetInfo = useBottomSheetStore((state) => state.BottomSheetInfo);
+  const bottomSheetInfoHistory = useBottomSheetStore(
+    (state) => state.BottomSheetInfoHistory,
+  );
   const {
     hasBackdrop,
     backdropProps,
     ContentComponent,
     contentProps,
     bottomSheetFixerStyle,
-  } = bottomSheetInfo ?? {};
-  //test
-  console.log("bottomSheetInfo in Renderer: ", bottomSheetInfo);
+  } = bottomSheetInfoHistory?.[bottomSheetInfoHistory.length - 1] ?? {};
 
   const keyCandinates = ["one", "other"];
   const [keyIdx, setKeyIdx] = useState(0);
@@ -24,9 +24,44 @@ const BottomSheetRenderer = () => {
     if (!hasBackdrop) setKeyIdx((prev) => (prev + 1) % 2);
   }, [hasBackdrop]);
 
+  useEffect(() => {
+    if (!window?.visualViewport) return;
+
+    const handleMobileKeyboardResize = () => {
+      const bottomSheet = document.querySelector(
+        // "#fixer",
+        "#bottom-sheet",
+      ) as HTMLDivElement;
+      if (!bottomSheet) return;
+      const keyboardHeight = window.innerHeight - window.visualViewport!.height;
+
+      // 키보드가 올라온 경우
+      if (keyboardHeight > 0) {
+        bottomSheet.style.transform = `translateY(-${keyboardHeight}px)`;
+      }
+      // 키보드가 내려간 경우
+      else {
+        bottomSheet.style.transform = "translateY(0px)";
+      }
+    };
+    window.visualViewport.addEventListener(
+      "resize",
+      handleMobileKeyboardResize,
+    );
+    return () => {
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener(
+          "resize",
+          handleMobileKeyboardResize,
+        );
+      }
+    };
+  }, [bottomSheetFixerStyle?.bottom]);
+
   return (
     <>
       <Drawer.Root
+        key={`${ContentComponent}`}
         open={isBottomSheetOpen}
         defaultOpen={false}
         handleOnly
@@ -40,8 +75,9 @@ const BottomSheetRenderer = () => {
             }
             style={bottomSheetFixerStyle}
           >
-            <Drawer.Content>
+            <Drawer.Content id="bottom-sheet">
               <Drawer.Title className="invisible"></Drawer.Title>
+
               {isBottomSheetOpen && (
                 <ContentComponent
                   key={keyCandinates[keyIdx]}
