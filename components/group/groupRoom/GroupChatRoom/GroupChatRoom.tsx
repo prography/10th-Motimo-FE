@@ -142,6 +142,7 @@ const GroupChatRoom = ({ groupId }: GroupChatRoomProps) => {
 
             return (
               <div
+                className="w-full flex justify-center"
                 key={messageInfo.messageId}
                 ref={isLastMessage ? lastMessageRef : undefined}
               >
