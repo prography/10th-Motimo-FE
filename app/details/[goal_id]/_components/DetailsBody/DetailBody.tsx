@@ -1,6 +1,6 @@
 "use client";
 
-import GoalData from "@/components/details/GoalData/GoalData";
+import GoalData from "@/components/main/GoalData/GoalData";
 import ListCard from "@/components/details/ListCard/ListCard";
 // import useGoalWithSubGoalTodo from "@/hooks/main/queries/useGoalWithSubGoalTodo";
 import useModal from "@/hooks/useModal";
@@ -46,6 +46,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
   const dDay = calcLeftDay(data?.dueDate ?? new Date());
 
   const allSubGoalCompleted =
+    data.subGoals &&
     data.subGoals?.filter((subgoalInfo) => subgoalInfo.isCompleted).length ===
       data.subGoals?.length &&
     // 0개 달성이면 안됨.
@@ -59,6 +60,10 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
       ? goalDetail?.progress
       : Number(goalDetail?.progress?.toFixed(2))
     : 0;
+
+  const leftDay = goalDetail?.dueDate?.dueDate
+    ? calcLeftDay(goalDetail?.dueDate.dueDate)
+    : NaN;
 
   // 모든 세부목표 완료 시에 모달
   const openModalCompletingGoal = () => {
@@ -78,18 +83,38 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
     );
   };
   useEffect(() => {
-    if (allSubGoalCompleted && !goalDetail?.isJoinedGroup)
+    if (allSubGoalCompleted && !goalDetail?.isCompleted)
       openModalCompletingGoal();
-  }, [allSubGoalCompleted, goalDetail?.isJoinedGroup]);
+  }, [allSubGoalCompleted, goalDetail?.isCompleted]);
   return (
     <>
       <div className="flex flex-col flex-1">
-        <GoalData
+        {/* <GoalData
           goalName={data.title ?? ""}
           progress={fixedProgress}
           dDay={dDay}
           isCompleted={goalDetail?.isCompleted ?? false}
-        />
+        /> */}
+        <section className="w-full px-4 pt-3 pb-4 bg-background-alternative inline-flex flex-col justify-start items-start gap-4">
+          <div className="flex gap-1">
+            <h3 className="justify-center text-label-alternative text-base font-bold font-['SUIT_Variable'] leading-tight">
+              남은 기간
+            </h3>
+            <p className="justify-center text-label-primary text-base font-bold font-['SUIT_Variable'] leading-tight">{`D${leftDay >= 0 ? "-" : "+"}${leftDay !== 0 ? Math.abs(leftDay) : "Day"}`}</p>
+          </div>
+          <div className="w-full self-stretch inline-flex justify-start items-center gap-2">
+            <div className="flex-1 h-2 relative bg-background-normal rounded-[999px] overflow-hidden">
+              <div
+                className={` h-2 left-0 top-[0.50px] absolute bg-background-primary rounded-[999px]`}
+                style={{ width: `${goalDetail?.progress ?? 0}%` }}
+              ></div>
+            </div>
+            <p className="flex justify-center text-label-alternative text-sm font-medium font-['SUIT_Variable'] leading-none">
+              {`${goalDetail?.progress ?? 0}%`}
+            </p>
+          </div>
+        </section>
+
         <section className="flex flex-col gap-4 pl-4 pr-4 pb-4 bg-background-alternative">
           {allSubGoalCompleted && !goalDetail?.isCompleted && (
             <>
@@ -141,25 +166,37 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
             </>
           )}
         </section>
-        <section className="mt-2 mb-8 bg-background-alternative h-full">
-          <ListCard
+        <section className="mt-2  bg-background-alternative h-full">
+          {data.subGoals?.map((subGoalInfo) => (
+            <ListCard
+              initTodoInfoList={subGoalInfo?.initTodoItemsInfo}
+              subGoalInfo={{
+                id: subGoalInfo?.subGoalId,
+                // idx: targetSubGoalIdx,
+                name: subGoalInfo?.subGoal,
+                // totalSubGoalsLen: data.subGoals?.length ?? 0,
+                isCompleted: subGoalInfo?.isCompleted,
+              }}
+            />
+          ))}
+          {/* <ListCard
             initTodoInfoList={
               data.subGoals?.[targetSubGoalIdx]?.initTodoItemsInfo
             }
-            onLeft={() =>
-              setTargetSubGoalIdx((prev) => {
-                if (prev > 0) return prev - 1;
-                // 에러 방지
-                return prev;
-              })
-            }
-            onRight={() =>
-              setTargetSubGoalIdx((prev) => {
-                if (prev < (data.subGoals?.length ?? 0)) return prev + 1;
-                // 에러방지
-                return prev;
-              })
-            }
+            // onLeft={() =>
+            //   setTargetSubGoalIdx((prev) => {
+            //     if (prev > 0) return prev - 1;
+            //     // 에러 방지
+            //     return prev;
+            //   })
+            // }
+            // onRight={() =>
+            //   setTargetSubGoalIdx((prev) => {
+            //     if (prev < (data.subGoals?.length ?? 0)) return prev + 1;
+            //     // 에러방지
+            //     return prev;
+            //   })
+            // }
             subGoalInfo={{
               id: data?.subGoals?.[targetSubGoalIdx]?.subGoalId,
               idx: targetSubGoalIdx,
@@ -167,15 +204,15 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
               totalSubGoalsLen: data.subGoals?.length ?? 0,
               isCompleted: data.subGoals?.[targetSubGoalIdx]?.isCompleted,
             }}
-            applyOnGoalData={() => {
-              mutateForGoalProgress();
-              mutateForSubgoalCompleted();
-            }}
-          />
+            // applyOnGoalData={() => {
+            //   mutateForGoalProgress();
+            //   mutateForSubgoalCompleted();
+            // }}
+          /> */}
         </section>
       </div>
 
-      <TodoBottomSheet
+      {/* <TodoBottomSheet
         hasBottomTabBar={false}
         isActivated={isActive}
         initTodoInfo={initContent}
@@ -218,7 +255,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
 
           return isFetchOk;
         }}
-      />
+      /> */}
     </>
   );
 };

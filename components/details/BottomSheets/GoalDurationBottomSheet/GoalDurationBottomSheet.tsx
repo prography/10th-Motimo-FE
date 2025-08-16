@@ -38,16 +38,21 @@ const GoalDurationBottomSheet = ({
               setopenBottomSheet(false);
             }}
           />
-          <div className="flex justify-center w-[100vw] relative">
+          <div className="flex z-30 justify-center w-[100vw]  fixed bottom-0">
             <Drawer.Content
               className="
-          z-30
-          bottom-0
           w-[360px] h-[585px]  bg-background-alternative rounded-tl-lg rounded-tr-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.24)] overflow-hidden
           flex flex-col items-center
           pt-5 pl-4 pr-4 pb-6
-          fixed
           "
+              //     className="
+              // z-30
+              // bottom-0
+              // w-[360px] h-[585px]  bg-background-alternative rounded-tl-lg rounded-tr-lg shadow-[0px_0px_4px_0px_rgba(0,0,0,0.24)] overflow-hidden
+              // flex flex-col items-center
+              // pt-5 pl-4 pr-4 pb-6
+              // fixed
+              // "
             >
               <Drawer.Title className="invisible"></Drawer.Title>
               <div className="h-full flex flex-col justify-between">
