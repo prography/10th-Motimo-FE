@@ -13,7 +13,7 @@ const GoalData = ({ goalName, dDay, progress, isCompleted }: GoalDataProps) => {
           <div className="flex flex-col gap-1">
             <div className="w-fit px-2 py-1 bg-background-alternative rounded-[999px] outline-1 outline-offset-[-1px] outline-Color-primary-50 inline-flex justify-start items-center gap-0.5">
               <p className="justify-center text-label-primary text-sm font-semibold font-['SUIT_Variable'] leading-tight">
-                {`D-${dDay}`}
+                {`D${dDay >= 0 ? "-" : "+"}${dDay !== 0 ? Math.abs(dDay) : "Day"}`}
               </p>
             </div>
             <p className="w-full h-6 justify-center text-label-strong text-base font-bold font-['SUIT_Variable'] leading-normal">

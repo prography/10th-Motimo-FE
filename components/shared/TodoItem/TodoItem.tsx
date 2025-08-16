@@ -115,37 +115,23 @@ const Reported = ({ reported }: { reported: TodoItemProps["reported"] }) => {
     );
   /** figma에선 기존 check랑 다른 svg를 사용하고 있는데, 따로 관리 귀찮아서 이거로 퉁침 */
   return (
-    <>
+    <div className="self-stretch w-6 h-6 flex justify-center items-center relative bg-background-assistive rounded-full overflow-hidden">
       <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
+        width="18"
+        height="18"
+        viewBox="0 0 18 18"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <g clipPath="url(#clip0_54490_10219)">
-          <path
-            d="M0 12C0 5.37258 5.37258 0 12 0C18.6274 0 24 5.37258 24 12C24 18.6274 18.6274 24 12 24C5.37258 24 0 18.6274 0 12Z"
-            fill="#E6E8EA"
-          />
-          <path
-            d="M6 12H12M12 12H18M12 12V18M12 12V6"
-            stroke="#8A949E"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </g>
-        <defs>
-          <clipPath id="clip0_54490_10219">
-            <path
-              d="M0 12C0 5.37258 5.37258 0 12 0C18.6274 0 24 5.37258 24 12C24 18.6274 18.6274 24 12 24C5.37258 24 0 18.6274 0 12Z"
-              fill="white"
-            />
-          </clipPath>
-        </defs>
+        <path
+          d="M9 6.00009L3 12.0001V15.0001L6 15.0001L12 9.00008M9 6.00009L11.1515 3.8486L11.1528 3.84732C11.4489 3.55116 11.5973 3.40282 11.7683 3.34725C11.9189 3.29831 12.0812 3.29831 12.2318 3.34725C12.4027 3.40278 12.5509 3.55095 12.8466 3.84669L14.1515 5.15154C14.4485 5.44855 14.597 5.59713 14.6527 5.76837C14.7016 5.91901 14.7016 6.08127 14.6527 6.2319C14.5971 6.40302 14.4487 6.55137 14.1521 6.84796L14.1515 6.8486L12 9.00008M9 6.00009L12 9.00008"
+          stroke="#8A949E"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
-    </>
+    </div>
   );
 };
 

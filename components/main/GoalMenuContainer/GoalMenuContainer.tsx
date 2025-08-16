@@ -83,7 +83,7 @@ const GoalMenuContainer = ({}: GoalMenuContainerProps) => {
             </div>
           </button>
         </div>
-        <div
+        {/* <div
           ref={containerRef}
           className="flex gap-2 w-full justify-start overflow-x-hidden"
         >
@@ -118,7 +118,7 @@ const GoalMenuContainer = ({}: GoalMenuContainerProps) => {
               />
             ))}
           </motion.div>
-        </div>
+        </div> */}
       </div>
     </>
   );
