@@ -8,7 +8,7 @@ import GoalDurationBottomSheet from "@/components/details/BottomSheets/GoalDurat
 
 import TrashBin from "@/public/images/Trash_Full.svg";
 
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import useModal from "@/hooks/useModal";
 import { EditContext } from "../EditBody/EditBody";
 import { date2StringWithSpliter } from "@/utils/date2String";
@@ -53,7 +53,7 @@ const GoalEdit = ({
     closeBottomSheet,
     openBottomSheet: openGoalDurationBottomSheet,
     updateBottomSheet: updateGoalDurationBottomSheet,
-  } = useBottomSheet<typeof GoalDurationBottomSheet>();
+  } = useBottomSheet<Parameters<typeof GoalDurationBottomSheet>[0]>();
   useEffect(() => {
     if (!openBottomSheet) {
       closeBottomSheet();
