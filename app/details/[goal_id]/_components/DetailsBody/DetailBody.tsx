@@ -50,13 +50,23 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
   const { setToast } = useToast();
   const dDay = calcLeftDay(data?.dueDate ?? new Date());
 
-  const allSubGoalCompleted =
+  const allTodoCompleted =
     data.subGoals &&
-    data.subGoals?.filter((subgoalInfo) => subgoalInfo.isCompleted).length ===
-      data.subGoals?.length &&
-    // 0개 달성이면 안됨.
-    data.subGoals?.filter((subgoalInfo) => subgoalInfo.isCompleted).length !==
-      0;
+    data.subGoals.reduce((acc, cur) => {
+      const count =
+        cur.initTodoItemsInfo?.filter((info) => info.checked).length ?? 0;
+      return count + acc;
+    }, 0) ===
+      data.subGoals.reduce((acc, cur) => {
+        return acc + cur.initTodoTotalLen;
+      }, 0);
+  // const allSubGoalCompleted =
+  //   data.subGoals &&
+  //   data.subGoals?.filter((subgoalInfo) => subgoalInfo.isCompleted).length ===
+  //     data.subGoals?.length &&
+  //   // 0개 달성이면 안됨.
+  //   data.subGoals?.filter((subgoalInfo) => subgoalInfo.isCompleted).length !==
+  //     0;
 
   const groupId = goalDetail?.groupId;
 
@@ -76,6 +86,23 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
       <ModalCompletingGoal
         onClose={closeModal}
         onCompleteGoal={async () => {
+          const subGoalCompletingFeftches = data.subGoals?.map(
+            (subGoalInfo) => {
+              return subGoalApi.subGoalCompleteToggle(
+                subGoalInfo?.subGoalId ?? "",
+              );
+            },
+          );
+
+          const subGoalCompletion = await Promise.all(
+            subGoalCompletingFeftches ?? [],
+          ).then(
+            (resList) => resList.filter((res) => res).length === resList.length,
+          );
+          if (!subGoalCompletion) {
+            setToast("세부 목표 달성에 실패했습니다!");
+            return;
+          }
           const res = await goalApi.goalComplete(goalId);
           if (res) {
             setToast("목표를 모두 달성했습니다! 🎉");
@@ -89,9 +116,8 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
   };
 
   useEffect(() => {
-    if (allSubGoalCompleted && !goalDetail?.isCompleted)
-      openModalCompletingGoal();
-  }, [allSubGoalCompleted, goalDetail?.isCompleted]);
+    if (allTodoCompleted && !goalDetail?.isCompleted) openModalCompletingGoal();
+  }, [allTodoCompleted, goalDetail?.isCompleted]);
 
   // 바텀시트 관리
   const {
@@ -195,7 +221,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
         </section>
 
         <section className="flex flex-col gap-4 pl-4 pr-4 pb-4 bg-background-alternative">
-          {allSubGoalCompleted && !goalDetail?.isCompleted && (
+          {/* {allSubGoalCompleted && !goalDetail?.isCompleted && (
             <>
               <button
                 type="button"
@@ -218,7 +244,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
                 </div>
               </button>
             </>
-          )}
+          )} */}
           {groupId && (
             <>
               <div className="self-stretch w-full h-10 px-2 py-0.5 bg-Color-primary-5 rounded-lg inline-flex justify-start items-center gap-1">
@@ -248,6 +274,13 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
         <section className="mt-2  bg-background-alternative h-full">
           {data.subGoals?.map((subGoalInfo) => (
             <ListCard
+              onTodoCheck={async (todoId) => {
+                const res = await todoApi.toggleTodoCompletion(todoId);
+                if (res) {
+                  mutate();
+                  mutateForSubgoalCompleted();
+                }
+              }}
               key={subGoalInfo.subGoalId}
               initTodoInfoList={subGoalInfo?.initTodoItemsInfo}
               subGoalInfo={{

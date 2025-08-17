@@ -1,6 +1,6 @@
 import GoalData from "@/components/main/GoalData/GoalData";
 import { calcLeftDay } from "@/utils/calcLeftDay";
-import { useGoals } from "@/api/hooks";
+import { useGoalDetail, useGoals } from "@/api/hooks";
 import Link from "next/link";
 
 interface GoalDataWrapperProps {
@@ -8,6 +8,7 @@ interface GoalDataWrapperProps {
   percentage: number;
   goalId: string;
   dueDate: string;
+  isCompleted?: boolean;
 }
 
 const GoalDataContainer = () => {
@@ -32,6 +33,7 @@ const GoalDataContainer = () => {
               goal={goalDataInfo.goal}
               goalId={goalDataInfo.goalId}
               percentage={goalDataInfo.percentage}
+              isCompleted={goalDataInfo?.isCompleted}
               key={goalDataInfo.goalId}
             />
           );
@@ -47,8 +49,10 @@ const GoalDataWrapper = ({
   goal,
   goalId,
   percentage,
+  isCompleted,
 }: GoalDataWrapperProps) => {
   const goalLeftDate = dueDate ? calcLeftDay(dueDate) : NaN;
+  const { data } = useGoalDetail(goalId);
 
   return (
     <>
@@ -57,7 +61,7 @@ const GoalDataWrapper = ({
           <GoalData
             dDay={goalLeftDate}
             goalName={goal}
-            isCompleted={false}
+            isCompleted={isCompleted ?? data?.isCompleted ?? false}
             progress={percentage}
           />
         </div>

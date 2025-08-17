@@ -23,7 +23,10 @@ import ModalAddingTodo from "../Modals/ModalAddingTodo/ModalAddingTodo";
 
 import { TodoInfoForSubmission } from "@/components/shared/BottomSheets/TodoBottomSheet/TodoBottomSheet";
 
+import { date2StringWithSpliter } from "@/utils/date2String";
+
 import useBottomSheet from "@/hooks/useBottomSheet";
+import useGoalWithSubGoalTodo from "@/hooks/queries/useGoalWithSubGoalTodo";
 interface ListCardProps {
   subGoalInfo: {
     name?: string;
@@ -37,6 +40,7 @@ interface ListCardProps {
   // onLeft: () => void;
   // onRight: () => void;
   // applyOnGoalData: () => void;
+  onTodoCheck?: (todoId: string) => Promise<void>;
 }
 
 const ListCard = ({
@@ -45,6 +49,7 @@ const ListCard = ({
   // onLeft,
   // onRight,
   // applyOnGoalData,
+  onTodoCheck,
 }: ListCardProps) => {
   // 이 안에서도 subGoal에대한 todod들 가져오는 fetch있어야 함.
 
@@ -243,11 +248,14 @@ const ListCard = ({
               onClick={() => {
                 openModal(
                   <ModalAddingTodo
-                    onAddTodo={async (newTodo) => {
+                    onAddTodo={async (newTodo, date) => {
                       if (!subGoalInfo.id) return;
 
                       const res = await subGoalApi.createTodo(subGoalInfo.id, {
                         title: newTodo,
+                        date: date
+                          ? date2StringWithSpliter(date, "-")
+                          : undefined,
                       });
 
                       if (res) {
@@ -287,8 +295,9 @@ const ListCard = ({
               return (
                 <TodoItem
                   onChecked={async () => {
-                    const res = await todoApi.toggleTodoCompletion(todoInfo.id);
-                    if (res) mutate();
+                    onTodoCheck && onTodoCheck(todoInfo.id);
+                    // const res = await todoApi.toggleTodoCompletion(todoInfo.id);
+                    // if (res) mutate();
                   }}
                   title={todoInfo.title}
                   checked={todoInfo.checked}

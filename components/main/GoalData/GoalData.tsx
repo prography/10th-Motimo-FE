@@ -30,11 +30,11 @@ const GoalData = ({ goalName, dDay, progress, isCompleted }: GoalDataProps) => {
           <div className="flex-1 h-2 relative bg-background-normal rounded-[999px] overflow-hidden">
             <div
               className={` h-2 left-0 top-[0.50px] absolute bg-background-primary rounded-[999px]`}
-              style={{ width: `${progress}%` }}
+              style={{ width: `${progress.toFixed(2)}%` }}
             ></div>
           </div>
           <p className="flex justify-center text-label-alternative text-sm font-medium font-['SUIT_Variable'] leading-none">
-            {`${progress}%`}
+            {`${progress > 0 && progress < 100 ? progress.toFixed(2) : progress}%`}
           </p>
         </div>
       </section>
