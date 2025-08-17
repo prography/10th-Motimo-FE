@@ -31,16 +31,13 @@ export default function OnboardingPage() {
   console.log("isLoggedIn:", isLoggedIn);
   console.log("hasCompletedOnboarding:", hasCompletedOnboarding);
 
-  // hasCompletedOnboarding이 true면 즉시 redirect (hydration 후에만)
-  useEffect(() => {
-    if (hasHydrated && hasCompletedOnboarding) {
-      router.replace("/");
-      return;
-    }
-  }, [hasHydrated, hasCompletedOnboarding, router]);
-
   // goals 가져오기
-  const { data: { goals } = {}, isLoading, error, mutate } = useGoals({
+  const {
+    data: { goals } = {},
+    isLoading,
+    error,
+    mutate,
+  } = useGoals({
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
     shouldRetryOnError: false, // 401 에러 시 재시도 방지
@@ -58,12 +55,30 @@ export default function OnboardingPage() {
   console.log("isLoading:", isLoading);
   console.log("error:", error);
 
+  // 통합된 redirect 로직
   useEffect(() => {
-    if (hasHydrated && isLoggedIn && goals && goals.length > 0) {
+    if (!hasHydrated) return;
+
+    // 이미 온보딩을 완료했으면 redirect
+    if (hasCompletedOnboarding && isLoggedIn) {
+      router.replace("/");
+      return;
+    }
+
+    // 로그인된 상태에서 goals가 있으면 onboarding 완료 처리 후 redirect
+    if (isLoggedIn && goals && goals.length > 0) {
       setHasCompletedOnboarding(true);
       router.replace("/");
+      return;
     }
-  }, [hasHydrated, isLoggedIn, goals, setHasCompletedOnboarding, router]);
+  }, [
+    hasHydrated,
+    hasCompletedOnboarding,
+    isLoggedIn,
+    goals,
+    setHasCompletedOnboarding,
+    router,
+  ]);
 
   const nextStep = () => {
     setCurrentStep((prev) => prev + 1);
@@ -85,9 +100,7 @@ export default function OnboardingPage() {
         return (
           <CompletionScreen
             onComplete={() => {
-              // Navigate to main app
               setHasCompletedOnboarding(true);
-              router.replace("/");
             }}
           />
         );
@@ -102,7 +115,11 @@ export default function OnboardingPage() {
   }
 
   // 로그인된 상태에서 처리 중이면 스피너 표시
-  if (hasHydrated && isLoggedIn && (isLoading || (!goals && !error) || (goals && goals.length > 0))) {
+  if (
+    hasHydrated &&
+    isLoggedIn &&
+    (isLoading || (!goals && !error) || (goals && goals.length > 0))
+  ) {
     return <Loading className="min-h-screen bg-background-normal" />;
   }
 

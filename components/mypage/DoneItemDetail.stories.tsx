@@ -26,8 +26,22 @@ export const Primary: Story = {
   args: {
     goalDetail: {
       id: "1",
-      title: "타이틀",
-      subGoals: [],
+      title: "기본 목표",
+      dueDate: "2025-12-31",
+      subGoals: [
+        {
+          id: "1",
+          title: "기본 세부목표",
+          todos: [
+            {
+              id: "1",
+              title: "기본 할 일",
+              date: "2025.01.15",
+              status: "COMPLETE" as const,
+            },
+          ],
+        },
+      ],
     },
   },
 };
