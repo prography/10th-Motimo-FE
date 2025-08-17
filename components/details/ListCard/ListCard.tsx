@@ -23,6 +23,7 @@ import ModalAddingTodo from "../Modals/ModalAddingTodo/ModalAddingTodo";
 
 import { TodoInfoForSubmission } from "@/components/shared/BottomSheets/TodoBottomSheet/TodoBottomSheet";
 
+import useBottomSheet from "@/hooks/useBottomSheet";
 interface ListCardProps {
   subGoalInfo: {
     name?: string;
@@ -83,6 +84,66 @@ const ListCard = ({
   //   todoItemsInfo?.filter((todo) => todo.checked).length ?? 0;
 
   const [checkedMore, setCheckedMore] = useState(false);
+
+  // TodoResultBottomSheet 관리
+  const {
+    checkRendered,
+    checkOpened,
+    openBottomSheet: openTodoRootBottomSheet,
+    updateBottomSheet: updateTodoResultBottomSheet,
+    closeBottomSheet,
+  } = useBottomSheet<Parameters<typeof TodoResultBottomSheet>[0]>();
+  useEffect(() => {
+    const isRendered = checkRendered();
+    if (!openBottomSheet && isRendered) {
+      closeBottomSheet();
+      return;
+    }
+    const bottomSheetInfo: Parameters<typeof openTodoRootBottomSheet>[0] = {
+      bottomSheetFixerStyle: { bottom: "0px" },
+      backdropProps: {
+        onClick: () => {
+          // 내용물을 초기화 해야 함. -> key값 바꿔도 애니메이션이나 바텀시트 높이 정상적일까?
+
+          closeBottomSheet();
+        },
+        className: "fixed inset-0 bg-black/10 z-20",
+      },
+      hasBackdrop: false,
+      ContentComponent: TodoResultBottomSheet,
+      contentProps: {
+        onSubmit: async (todoResult) => {
+          if (todoIdForResult && todoResult.emotion !== null) {
+            const res = await postTodoResult(
+              todoIdForResult,
+              todoResult.emotion as TodoResultRqEmotionEnum,
+              todoResult.memo,
+              todoResult.file || undefined,
+            );
+
+            if (!res) return;
+            setOpenBottomSheet(false);
+            mutate();
+          }
+        },
+        openBottomSheet: openBottomSheet,
+        setOpenBottomSheet: setOpenBottomSheet,
+      },
+    };
+    const isOpened = checkOpened();
+    if (openBottomSheet && !isOpened) {
+      openTodoRootBottomSheet(bottomSheetInfo);
+      return;
+    }
+
+    if (isRendered) updateTodoResultBottomSheet(bottomSheetInfo);
+
+    return () => {
+      if (isOpened && !openBottomSheet) {
+        closeBottomSheet();
+      }
+    };
+  }, [openBottomSheet, todoIdForResult]);
 
   return (
     <>
@@ -265,7 +326,7 @@ const ListCard = ({
           )}
         </section>
       </main>
-      {openBottomSheet && (
+      {/* {openBottomSheet && (
         <TodoResultBottomSheet
           hasBottomTabBar={false}
           onSubmit={async (todoResult) => {
@@ -292,7 +353,7 @@ const ListCard = ({
           openBottomSheet={openBottomSheet}
           setOpenBottomSheet={setOpenBottomSheet}
         />
-      )}
+      )} */}
     </>
   );
 };

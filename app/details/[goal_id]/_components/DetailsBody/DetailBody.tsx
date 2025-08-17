@@ -21,10 +21,15 @@ import TodoResultBottomSheet from "@/components/shared/BottomSheets/TodoResultBo
 import { useSubGoalTodosAllInfinite } from "@/hooks/queries/useSubGoalTodosInfiniites";
 import { postTodoResult } from "@/lib/fetching/postTodoResult";
 import { TodoResultRqEmotionEnum } from "@/api/generated/motimo/Api";
-import TodoBottomSheet from "@/components/shared/BottomSheets/TodoBottomSheet/TodoBottomSheet";
+import TodoBottomSheet, {
+  TodoBottomSheetProps,
+} from "@/components/shared/BottomSheets/TodoBottomSheet/TodoBottomSheet";
 import useActiveTodoBottomSheet from "@/stores/useActiveTodoBottomSheet";
 import { date2StringWithSpliter } from "@/utils/date2String";
 import useToast from "@/hooks/useToast";
+import useBottomSheet from "@/hooks/useBottomSheet";
+import { TodoInfoForSubmission } from "@/components/shared/BottomSheets/TodoBottomSheet/TodoBottomSheet";
+
 interface DetailBodyProps {
   goalId: string;
 }
@@ -82,10 +87,84 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
       />,
     );
   };
+
   useEffect(() => {
     if (allSubGoalCompleted && !goalDetail?.isCompleted)
       openModalCompletingGoal();
   }, [allSubGoalCompleted, goalDetail?.isCompleted]);
+
+  // 바텀시트 관리
+  const {
+    checkRendered,
+    openBottomSheet,
+    updateBottomSheet,
+    closeBottomSheet,
+  } = useBottomSheet<TodoBottomSheetProps>();
+
+  const shouldBottomSheetOpened =
+    // modal이 등장하면 bottomSheet는 닫기.
+    !isModalOpened && data.subGoals !== undefined && data.subGoals.length > 0;
+
+  useEffect(() => {
+    const isRendered = checkRendered();
+
+    if (!shouldBottomSheetOpened && isRendered) {
+      closeBottomSheet();
+      return;
+    }
+
+    const bottomSheetInfo: Parameters<typeof openBottomSheet>[0] = {
+      backdropProps: {
+        onClick: () => {
+          // 내용물을 초기화 해야 함. -> key값 바꿔도 애니메이션이나 바텀시트 높이 정상적일까?
+
+          setIsActive(false);
+          updateBottomSheet((prev) => {
+            return { ...prev, hasBackdrop: false };
+          });
+        },
+        className: "fixed inset-0 bg-black/20 z-20",
+      },
+      ContentComponent: TodoBottomSheet,
+      contentProps: {
+        isActivated: isActive,
+        initTodoInfo: initContent,
+        setIsActivated: setIsActive,
+        subGoals:
+          data.subGoals?.map((subGoalInfo) => ({
+            id: subGoalInfo.subGoalId ?? "",
+            title: subGoalInfo.subGoal ?? "",
+          })) ?? [],
+        onSubmitTodo: async (newTodoInfo) => {
+          const afterSubmit = () => {
+            mutate();
+            // 바텀시트 리셋
+            setIsActive(false);
+          };
+          const res = await handleTodoBottomSheetSubmit(
+            newTodoInfo,
+            afterSubmit,
+          );
+          return res;
+        },
+      },
+
+      hasBackdrop: isActive,
+      bottomSheetFixerStyle: { bottom: "0px" },
+    };
+
+    if (shouldBottomSheetOpened && !isRendered) {
+      openBottomSheet(bottomSheetInfo);
+      return;
+    }
+
+    updateBottomSheet(bottomSheetInfo);
+
+    return () => {
+      closeBottomSheet();
+    };
+  }, [isActive, initContent, data.subGoals?.length, shouldBottomSheetOpened]);
+
   return (
     <>
       <div className="flex flex-col flex-1">
@@ -211,8 +290,8 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
           /> */}
         </section>
       </div>
-
-      {/* <TodoBottomSheet
+      {/* 
+      <TodoBottomSheet
         hasBottomTabBar={false}
         isActivated={isActive}
         initTodoInfo={initContent}
@@ -261,3 +340,33 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
 };
 
 export default DetailBody;
+
+const handleTodoBottomSheetSubmit: (
+  newTodoInfo: TodoInfoForSubmission,
+  afterSubmit: () => void,
+) => Promise<boolean> = async (newTodoInfo, afterSubmit: () => void) => {
+  const isCreating = newTodoInfo.id ? false : true;
+  let fetchRes;
+  if (isCreating) {
+    fetchRes = await subGoalApi.createTodo(newTodoInfo.subGoalId, {
+      title: newTodoInfo.todo,
+      date: newTodoInfo?.date
+        ? date2StringWithSpliter(newTodoInfo?.date, "-")
+        : undefined,
+    });
+  } else {
+    fetchRes = await todoApi.updateTodo(newTodoInfo.id ?? "", {
+      date: newTodoInfo.date
+        ? date2StringWithSpliter(newTodoInfo.date, "-")
+        : undefined,
+      title: newTodoInfo.todo,
+    });
+  }
+
+  const isFetchOk = fetchRes ? true : false;
+  if (isFetchOk) {
+    afterSubmit();
+  }
+
+  return isFetchOk;
+};
