@@ -17,6 +17,11 @@ const httpClient = new HttpClient({
       };
     }
 
+    const isGuest = useAuthStore.getState().isGuest;
+    if (isGuest) {
+      return { format: "json" };
+    }
+
     return {};
   },
 });
