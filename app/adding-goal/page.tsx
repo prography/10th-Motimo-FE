@@ -32,7 +32,7 @@ export default function AddingGoal() {
     closeBottomSheet,
     openBottomSheet: openGoalDurationBottomSheet,
     updateBottomSheet: updateGoalDurationBottomSheet,
-  } = useBottomSheet<typeof GoalDurationBottomSheet>();
+  } = useBottomSheet<Parameters<typeof GoalDurationBottomSheet>[0]>();
 
   useEffect(() => {
     if (!openBottomSheet) {

@@ -35,12 +35,12 @@ export const Primary: Story = {
     },
   },
   args: {
-    applyOnGoalData: () => {},
-    onLeft: () => {},
-    onRight: () => {},
+    // applyOnGoalData: () => {},
+    // onLeft: () => {},
+    // onRight: () => {},
     subGoalInfo: {
-      idx: 0,
-      totalSubGoalsLen: 4,
+      // idx: 0,
+      // totalSubGoalsLen: 4,
       id: "ididididi",
       isCompleted: false,
       name: "이름일음",
