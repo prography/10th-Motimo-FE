@@ -248,6 +248,7 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
         <section className="mt-2  bg-background-alternative h-full">
           {data.subGoals?.map((subGoalInfo) => (
             <ListCard
+              key={subGoalInfo.subGoalId}
               initTodoInfoList={subGoalInfo?.initTodoItemsInfo}
               subGoalInfo={{
                 id: subGoalInfo?.subGoalId,
