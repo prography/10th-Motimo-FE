@@ -112,7 +112,9 @@ const GuestGroup = ({ onClickLogin }: GuestGroupProps) => {
   const PreviewContentsComp = previewContents[previewIdx];
   return (
     <>
-      <div className={`min-h-screen bg-background-alternative flex flex-col`}>
+      <div
+        className={`min-h-screen pb-14 bg-background-alternative flex flex-col`}
+      >
         {/* App Bar */}
         <AppBar title="그룹" type="main" />
         <main className="w-full flex flex-col items-center pt-6 justify-between pb-6 flex-1">
@@ -163,7 +165,7 @@ const GuestGroup = ({ onClickLogin }: GuestGroupProps) => {
           </div>
           <Button
             onClick={() => onClickLogin()}
-            className="w-50"
+            className="w-50 cursor-pointer"
             size="l"
             type="button"
             variant="filled"
