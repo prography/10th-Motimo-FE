@@ -50,16 +50,18 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
   const { setToast } = useToast();
   const dDay = calcLeftDay(data?.dueDate ?? new Date());
 
+  const todoTotalLen =
+    data.subGoals?.reduce((acc, cur) => {
+      return acc + cur.initTodoTotalLen;
+    }, 0) ?? 0;
   const allTodoCompleted =
     data.subGoals &&
     data.subGoals.reduce((acc, cur) => {
       const count =
         cur.initTodoItemsInfo?.filter((info) => info.checked).length ?? 0;
       return count + acc;
-    }, 0) ===
-      data.subGoals.reduce((acc, cur) => {
-        return acc + cur.initTodoTotalLen;
-      }, 0);
+    }, 0) === todoTotalLen &&
+    todoTotalLen !== 0;
   // const allSubGoalCompleted =
   //   data.subGoals &&
   //   data.subGoals?.filter((subgoalInfo) => subgoalInfo.isCompleted).length ===
