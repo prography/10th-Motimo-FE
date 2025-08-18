@@ -9,6 +9,7 @@ import PlusSvg from "@/components/shared/public/Add_Plus.svg";
 import GoalDurationBottomSheet from "@/components/details/BottomSheets/GoalDurationBottomSheet/GoalDurationBottomSheet";
 import { goalApi } from "@/api/service";
 import useBottomSheet from "@/hooks/useBottomSheet";
+import { useGoals } from "@/api/hooks";
 
 export default function AddingGoal() {
   const router = useRouter();
@@ -24,6 +25,8 @@ export default function AddingGoal() {
     subGoals: [],
   });
   const [openBottomSheet, setOpenBottomSheet] = useState(false);
+
+  const { mutate } = useGoals();
 
   // GoalDurationBottomSheet 관리
   const {
@@ -93,7 +96,8 @@ export default function AddingGoal() {
       <form
         className="flex-1 flex flex-col w-full"
         id="goalAdding"
-        onSubmit={async () => {
+        onSubmit={async (e) => {
+          e.preventDefault();
           const res = await goalApi.createGoal({
             isPeriodByMonth: goalAddInfo.durationType === "month",
             title: goalAddInfo.goal,
@@ -113,6 +117,7 @@ export default function AddingGoal() {
             })),
           });
           if (res) {
+            mutate();
             router.back();
           }
         }}
