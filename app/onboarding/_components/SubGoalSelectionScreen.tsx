@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AppBar } from "@/components/shared/AppBar/AppBar";
 import { ButtonRound } from "@/components/shared/ButtonRound/ButtonRound";
 import OnboardingSubGoalEdit from "./OnboardingSubGoalEdit";
+import useOnboardingStore from "@/stores/useOnboardingStore";
 
 interface SubGoalSelectionScreenProps {
   onNext: () => void;
@@ -15,6 +16,7 @@ export default function SubGoalSelectionScreen({
   onBack,
 }: SubGoalSelectionScreenProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { subGoals } = useOnboardingStore();
 
   const handleSetupLater = async () => {
     if (isSubmitting) return;
@@ -52,10 +54,10 @@ export default function SubGoalSelectionScreen({
         </div>
       </div>
 
-      {/* Setup Later Button */}
+      {/* Next/Setup Later Button */}
       <div className="px-4 pb-14">
         <ButtonRound onClick={handleSetupLater} disabled={isSubmitting}>
-          {isSubmitting ? "처리 중..." : "나중에 설정하기"}
+          {isSubmitting ? "처리 중..." : subGoals.length > 0 ? "다음" : "나중에 설정하기"}
         </ButtonRound>
       </div>
     </div>
