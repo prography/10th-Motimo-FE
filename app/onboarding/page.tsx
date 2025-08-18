@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import LoginScreen from "./_components/LoginScreen";
 import GoalInputScreen from "./_components/GoalInputScreen";
 import PeriodSelectionScreen from "./_components/PeriodSelectionScreen";
+import SubGoalSelectionScreen from "./_components/SubGoalSelectionScreen";
 import CompletionScreen from "./_components/CompletionScreen";
 import useAuthStore from "@/stores/useAuthStore";
 import { useGoals } from "@/api/hooks";
@@ -98,6 +99,8 @@ export default function OnboardingPage() {
       case 2:
         return <PeriodSelectionScreen onNext={nextStep} onBack={prevStep} />;
       case 3:
+        return <SubGoalSelectionScreen onNext={nextStep} onBack={prevStep} />;
+      case 4:
         return (
           <CompletionScreen
             onComplete={() => {
