@@ -207,7 +207,11 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
             <h3 className="justify-center text-label-alternative text-base font-bold font-['SUIT_Variable'] leading-tight">
               남은 기간
             </h3>
-            <p className="justify-center text-label-primary text-base font-bold font-['SUIT_Variable'] leading-tight">{`D${leftDay >= 0 ? "-" : "+"}${leftDay !== 0 ? Math.abs(leftDay) : "Day"}`}</p>
+            <p className="justify-center text-label-primary text-base font-bold font-['SUIT_Variable'] leading-tight">
+              {Number.isNaN(leftDay)
+                ? ""
+                : `D${leftDay >= 0 ? "-" : "+"}${leftDay !== 0 ? Math.abs(leftDay) : "Day"}`}
+            </p>
           </div>
           <div className="w-full self-stretch inline-flex justify-start items-center gap-2">
             <div className="flex-1 h-2 relative bg-background-normal rounded-[999px] overflow-hidden">
