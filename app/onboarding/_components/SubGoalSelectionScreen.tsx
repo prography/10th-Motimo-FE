@@ -4,6 +4,9 @@ import { useState } from "react";
 import { AppBar } from "@/components/shared/AppBar/AppBar";
 import { ButtonRound } from "@/components/shared/ButtonRound/ButtonRound";
 import { PlusIcon } from "@/components/icons/PlusIcon";
+import useModal from "@/hooks/useModal";
+import ModalAddingSubGoal from "@/components/shared/Modal/ModalAddingSubGoal/ModalAddingSubGoal";
+import useOnboardingStore from "@/stores/useOnboardingStore";
 
 interface SubGoalSelectionScreenProps {
   onNext: () => void;
@@ -15,6 +18,8 @@ export default function SubGoalSelectionScreen({
   onBack,
 }: SubGoalSelectionScreenProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { openModal, closeModal } = useModal();
+  const { subGoals, addSubGoal, removeSubGoal } = useOnboardingStore();
 
   const handleSetupLater = async () => {
     if (isSubmitting) return;
@@ -29,8 +34,15 @@ export default function SubGoalSelectionScreen({
   };
 
   const handleAddSubGoal = () => {
-    // TODO: Implement add sub-goal functionality
-    console.log('Add sub-goal clicked');
+    openModal(
+      <ModalAddingSubGoal
+        onClose={closeModal}
+        onAddSubGoal={async (subGoalTitle: string) => {
+          addSubGoal(subGoalTitle);
+          closeModal();
+        }}
+      />
+    );
   };
 
   return (
@@ -69,6 +81,31 @@ export default function SubGoalSelectionScreen({
             </div>
           </button>
         </div>
+
+        {/* Sub-goals List */}
+        {subGoals.length > 0 && (
+          <div className="mb-6 space-y-2">
+            {subGoals.map((subGoal) => (
+              <div
+                key={subGoal.tmpKey}
+                className="bg-background-normal border border-border-normal rounded-lg p-3 flex items-center justify-between"
+              >
+                <span className="text-sm font-medium text-label-normal">
+                  {subGoal.title}
+                </span>
+                <button
+                  onClick={() => subGoal.tmpKey && removeSubGoal(subGoal.tmpKey)}
+                  disabled={isSubmitting}
+                  className={`text-label-alternative hover:text-label-normal ${
+                    isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Default Box Item */}
         <div className="mb-8">

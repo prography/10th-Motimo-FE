@@ -23,6 +23,7 @@ export default function PeriodSelectionScreen({
     periodType,
     monthCount,
     targetDate,
+    subGoals,
     setPeriodType,
     setMonthCount,
     setTargetDate,
@@ -282,7 +283,10 @@ export default function PeriodSelectionScreen({
                   isPeriodByMonth,
                   month: isPeriodByMonth ? monthCount : undefined,
                   dueDate,
-                  subGoals: [],
+                  subGoals: subGoals.map((subGoal, index) => ({
+                    title: subGoal.title,
+                    order: index + 1,
+                  })),
                 });
               }
               onNext();
