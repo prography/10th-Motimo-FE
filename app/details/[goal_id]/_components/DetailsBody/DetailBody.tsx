@@ -119,77 +119,77 @@ const DetailBody = ({ goalId }: DetailBodyProps) => {
     if (allTodoCompleted && !goalDetail?.isCompleted) openModalCompletingGoal();
   }, [allTodoCompleted, goalDetail?.isCompleted]);
 
-  // 바텀시트 관리
-  const {
-    checkRendered,
-    openBottomSheet,
-    updateBottomSheet,
-    closeBottomSheet,
-  } = useBottomSheet<TodoBottomSheetProps>();
+  // // 바텀시트 관리
+  // const {
+  //   checkRendered,
+  //   openBottomSheet,
+  //   updateBottomSheet,
+  //   closeBottomSheet,
+  // } = useBottomSheet<TodoBottomSheetProps>();
 
-  const shouldBottomSheetOpened =
-    // modal이 등장하면 bottomSheet는 닫기.
-    !isModalOpened && data.subGoals !== undefined && data.subGoals.length > 0;
+  // const shouldBottomSheetOpened =
+  //   // modal이 등장하면 bottomSheet는 닫기.
+  //   !isModalOpened && data.subGoals !== undefined && data.subGoals.length > 0;
 
-  useEffect(() => {
-    const isRendered = checkRendered();
+  // useEffect(() => {
+  //   const isRendered = checkRendered();
 
-    if (!shouldBottomSheetOpened && isRendered) {
-      closeBottomSheet();
-      return;
-    }
+  //   if (!shouldBottomSheetOpened && isRendered) {
+  //     closeBottomSheet();
+  //     return;
+  //   }
 
-    const bottomSheetInfo: Parameters<typeof openBottomSheet>[0] = {
-      backdropProps: {
-        onClick: () => {
-          // 내용물을 초기화 해야 함. -> key값 바꿔도 애니메이션이나 바텀시트 높이 정상적일까?
+  //   const bottomSheetInfo: Parameters<typeof openBottomSheet>[0] = {
+  //     backdropProps: {
+  //       onClick: () => {
+  //         // 내용물을 초기화 해야 함. -> key값 바꿔도 애니메이션이나 바텀시트 높이 정상적일까?
 
-          setIsActive(false);
-          updateBottomSheet((prev) => {
-            return { ...prev, hasBackdrop: false };
-          });
-        },
-        className: "fixed inset-0 bg-black/20 z-20",
-      },
-      ContentComponent: TodoBottomSheet,
-      contentProps: {
-        isActivated: isActive,
-        initTodoInfo: initContent,
-        setIsActivated: setIsActive,
-        subGoals:
-          data.subGoals?.map((subGoalInfo) => ({
-            id: subGoalInfo.subGoalId ?? "",
-            title: subGoalInfo.subGoal ?? "",
-          })) ?? [],
-        onSubmitTodo: async (newTodoInfo) => {
-          const afterSubmit = () => {
-            mutate();
-            // 바텀시트 리셋
-            setIsActive(false);
-          };
-          const res = await handleTodoBottomSheetSubmit(
-            newTodoInfo,
-            afterSubmit,
-          );
-          return res;
-        },
-      },
+  //         setIsActive(false);
+  //         updateBottomSheet((prev) => {
+  //           return { ...prev, hasBackdrop: false };
+  //         });
+  //       },
+  //       className: "fixed inset-0 bg-black/20 z-20",
+  //     },
+  //     ContentComponent: TodoBottomSheet,
+  //     contentProps: {
+  //       isActivated: isActive,
+  //       initTodoInfo: initContent,
+  //       setIsActivated: setIsActive,
+  //       subGoals:
+  //         data.subGoals?.map((subGoalInfo) => ({
+  //           id: subGoalInfo.subGoalId ?? "",
+  //           title: subGoalInfo.subGoal ?? "",
+  //         })) ?? [],
+  //       onSubmitTodo: async (newTodoInfo) => {
+  //         const afterSubmit = () => {
+  //           mutate();
+  //           // 바텀시트 리셋
+  //           setIsActive(false);
+  //         };
+  //         const res = await handleTodoBottomSheetSubmit(
+  //           newTodoInfo,
+  //           afterSubmit,
+  //         );
+  //         return res;
+  //       },
+  //     },
 
-      hasBackdrop: isActive,
-      bottomSheetFixerStyle: { bottom: "0px" },
-    };
+  //     hasBackdrop: isActive,
+  //     bottomSheetFixerStyle: { bottom: "0px" },
+  //   };
 
-    if (shouldBottomSheetOpened && !isRendered) {
-      openBottomSheet(bottomSheetInfo);
-      return;
-    }
+  //   if (shouldBottomSheetOpened && !isRendered) {
+  //     openBottomSheet(bottomSheetInfo);
+  //     return;
+  //   }
 
-    updateBottomSheet(bottomSheetInfo);
+  //   updateBottomSheet(bottomSheetInfo);
 
-    return () => {
-      closeBottomSheet();
-    };
-  }, [isActive, initContent, data.subGoals?.length, shouldBottomSheetOpened]);
+  //   return () => {
+  //     closeBottomSheet();
+  //   };
+  // }, [isActive, initContent, data.subGoals?.length, shouldBottomSheetOpened]);
 
   return (
     <>
