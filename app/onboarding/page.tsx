@@ -14,7 +14,7 @@ export default function OnboardingPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [hasHydrated, setHasHydrated] = useState(false);
-  const { setHasCompletedOnboarding, isLoggedIn, hasCompletedOnboarding } =
+  const { setHasCompletedOnboarding, isLoggedIn, hasCompletedOnboarding, isGuest } =
     useAuthStore();
 
   // 클라이언트 사이드에서만 hydration 체크
@@ -59,14 +59,14 @@ export default function OnboardingPage() {
   useEffect(() => {
     if (!hasHydrated) return;
 
-    // 이미 온보딩을 완료했으면 redirect
-    if (hasCompletedOnboarding && isLoggedIn) {
+    // 이미 온보딩을 완료했으면 redirect (게스트가 아닌 경우만)
+    if (hasCompletedOnboarding && isLoggedIn && !isGuest) {
       router.replace("/");
       return;
     }
 
-    // 로그인된 상태에서 goals가 있으면 onboarding 완료 처리 후 redirect
-    if (isLoggedIn && goals && goals.length > 0) {
+    // 로그인된 상태에서 goals가 있으면 onboarding 완료 처리 후 redirect (게스트가 아닌 경우만)
+    if (isLoggedIn && goals && goals.length > 0 && !isGuest) {
       setHasCompletedOnboarding(true);
       router.replace("/");
       return;
@@ -75,6 +75,7 @@ export default function OnboardingPage() {
     hasHydrated,
     hasCompletedOnboarding,
     isLoggedIn,
+    isGuest,
     goals,
     setHasCompletedOnboarding,
     router,
@@ -114,10 +115,11 @@ export default function OnboardingPage() {
     return <Loading className="min-h-screen bg-background-normal" />;
   }
 
-  // 로그인된 상태에서 처리 중이면 스피너 표시
+  // 로그인된 상태에서 처리 중이면 스피너 표시 (게스트가 아닌 경우만)
   if (
     hasHydrated &&
     isLoggedIn &&
+    !isGuest &&
     (isLoading || (!goals && !error) || (goals && goals.length > 0))
   ) {
     return <Loading className="min-h-screen bg-background-normal" />;

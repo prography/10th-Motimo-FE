@@ -172,7 +172,6 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
   };
 
   const handleBrowse = () => {
-    // TODO: Handle browse without login
     reset();
     login();
     setIsGuest(true);
