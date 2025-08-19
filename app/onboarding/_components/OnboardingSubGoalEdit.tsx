@@ -1,6 +1,6 @@
 "use client";
 import { motion, Reorder } from "motion/react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import useModal from "@/hooks/useModal";
 
@@ -17,6 +17,28 @@ const OnboardingSubGoalEdit = () => {
   const { openModal, closeModal } = useModal();
   const { setToast } = useToast();
   const { subGoals, setSubGoals, addSubGoal } = useOnboardingStore();
+  const hasInitialized = useRef(false);
+
+  // Add default "기본함" subGoal when component mounts if it doesn't exist
+  useEffect(() => {
+    if (hasInitialized.current) return;
+    
+    const hasDefaultSubGoal = subGoals.some(subGoal => subGoal.title === "기본함");
+    
+    if (!hasDefaultSubGoal) {
+      addSubGoal("기본함");
+      hasInitialized.current = true;
+    } else {
+      // Remove duplicate "기본함" subGoals, keep only the first one
+      const defaultSubGoals = subGoals.filter(subGoal => subGoal.title === "기본함");
+      if (defaultSubGoals.length > 1) {
+        const filteredSubGoals = subGoals.filter(subGoal => subGoal.title !== "기본함");
+        filteredSubGoals.unshift(defaultSubGoals[0]); // Keep the first "기본함" at the beginning
+        setSubGoals(filteredSubGoals);
+      }
+      hasInitialized.current = true;
+    }
+  }, [subGoals, addSubGoal, setSubGoals]);
 
   return (
     <>
@@ -76,46 +98,54 @@ const OnboardingSubGoalEdit = () => {
               >
                 <SubGoalEditItem
                   subGoalTitle={currentSubGoalInfo.title}
-                  onEdit={() => {
-                    openModal(
-                      <ModalUpdatingSubGoal
-                        initSubGoal={currentSubGoalInfo.title}
-                        onClose={closeModal}
-                        onUpdateSubGoal={async (newSubGoalTitle) => {
-                          const newSubGoals = subGoals.map((prevSubGoal) => {
-                            if (
-                              prevSubGoal.tmpKey === currentSubGoalInfo.tmpKey ||
-                              prevSubGoal.id === currentSubGoalInfo.id
-                            ) {
-                              return { ...prevSubGoal, title: newSubGoalTitle };
-                            }
-                            return prevSubGoal;
-                          });
+                  onEdit={
+                    currentSubGoalInfo.title === "기본함"
+                      ? undefined
+                      : () => {
+                          openModal(
+                            <ModalUpdatingSubGoal
+                              initSubGoal={currentSubGoalInfo.title}
+                              onClose={closeModal}
+                              onUpdateSubGoal={async (newSubGoalTitle) => {
+                                const newSubGoals = subGoals.map((prevSubGoal) => {
+                                  if (
+                                    prevSubGoal.tmpKey === currentSubGoalInfo.tmpKey ||
+                                    prevSubGoal.id === currentSubGoalInfo.id
+                                  ) {
+                                    return { ...prevSubGoal, title: newSubGoalTitle };
+                                  }
+                                  return prevSubGoal;
+                                });
 
-                          setSubGoals(newSubGoals);
-                          setToast("세부 목표 텍스트 변경이 완료되었습니다.");
-                        }}
-                      />,
-                    );
-                  }}
-                  onDelete={() => {
-                    openModal(
-                      <ModalDeletingSubGoal
-                        onClose={closeModal}
-                        onDeletSubGoale={async () => {
-                          const newSubGoals = subGoals.filter(
-                            (prevSubGoal) =>
-                              prevSubGoal.tmpKey !== currentSubGoalInfo.tmpKey &&
-                              prevSubGoal.id !== currentSubGoalInfo.id
+                                setSubGoals(newSubGoals);
+                                setToast("세부 목표 텍스트 변경이 완료되었습니다.");
+                              }}
+                            />,
                           );
+                        }
+                  }
+                  onDelete={
+                    currentSubGoalInfo.title === "기본함"
+                      ? undefined
+                      : () => {
+                          openModal(
+                            <ModalDeletingSubGoal
+                              onClose={closeModal}
+                              onDeletSubGoale={async () => {
+                                const newSubGoals = subGoals.filter(
+                                  (prevSubGoal) =>
+                                    prevSubGoal.tmpKey !== currentSubGoalInfo.tmpKey &&
+                                    prevSubGoal.id !== currentSubGoalInfo.id
+                                );
 
-                          setSubGoals(newSubGoals);
-                          closeModal();
-                          setToast("세부 목표 삭제가 완료되었습니다.");
-                        }}
-                      />,
-                    );
-                  }}
+                                setSubGoals(newSubGoals);
+                                closeModal();
+                                setToast("세부 목표 삭제가 완료되었습니다.");
+                              }}
+                            />,
+                          );
+                        }
+                  }
                 />
               </Reorder.Item>
             ))}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppBar } from "@/components/shared/AppBar/AppBar";
 import { ButtonRound } from "@/components/shared/ButtonRound/ButtonRound";
 import OnboardingSubGoalEdit from "./OnboardingSubGoalEdit";
@@ -18,8 +18,17 @@ export default function SubGoalSelectionScreen({
   onBack,
 }: SubGoalSelectionScreenProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { goal, periodType, monthCount, targetDate, subGoals } =
+  const { goal, periodType, monthCount, targetDate, subGoals, setSubGoals } =
     useOnboardingStore();
+
+  // Cleanup duplicate "기본함" subGoals when this screen loads
+  useEffect(() => {
+    const defaultSubGoals = subGoals.filter(subGoal => subGoal.title === "기본함");
+    if (defaultSubGoals.length > 1) {
+      const otherSubGoals = subGoals.filter(subGoal => subGoal.title !== "기본함");
+      setSubGoals([defaultSubGoals[0], ...otherSubGoals]);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSubmit = async () => {
     if (isSubmitting) return;

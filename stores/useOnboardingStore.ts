@@ -50,17 +50,24 @@ const useOnboardingStore = create<OnboardingState>((set) => ({
   setTargetDate: (targetDate) => set({ targetDate }),
   setSubGoals: (subGoals) => set({ subGoals }),
   addSubGoal: (title) =>
-    set((state) => ({
-      subGoals: [
-        ...state.subGoals,
-        {
-          id: null,
-          title,
-          order: state.subGoals.length + 1,
-          tmpKey: Date.now(),
-        },
-      ],
-    })),
+    set((state) => {
+      // Prevent adding duplicate "기본함" subGoals
+      if (title === "기본함" && state.subGoals.some(subGoal => subGoal.title === "기본함")) {
+        return state; // Don't add if "기본함" already exists
+      }
+      
+      return {
+        subGoals: [
+          ...state.subGoals,
+          {
+            id: null,
+            title,
+            order: state.subGoals.length + 1,
+            tmpKey: Date.now() + Math.random(),
+          },
+        ],
+      };
+    }),
   removeSubGoal: (tmpKey) =>
     set((state) => ({
       subGoals: state.subGoals.filter((subGoal) => subGoal.tmpKey !== tmpKey),
