@@ -119,9 +119,26 @@ const goalHandlers = [
   http.get("/v1/goals", async () => {
     try {
       const goals = (await dbService.getAll<DBGoal>("goals")) || [];
+      
+      // Calculate dueDate for month-based goals
+      const processedGoals = goals.map(goal => {
+        if (goal.isPeriodByMonth && goal.month && !goal.dueDate) {
+          // Calculate due date from creation date + months
+          const createdDate = new Date(goal.createdAt || new Date());
+          const dueDate = new Date(createdDate);
+          dueDate.setMonth(dueDate.getMonth() + goal.month);
+          
+          return {
+            ...goal,
+            dueDate: dueDate.toISOString().split('T')[0] // YYYY-MM-DD format
+          };
+        }
+        return goal;
+      });
+      
       //test
-      console.log("goal in handler: ", goals);
-      return HttpResponse.json({ goals } as GoalListRs, {
+      console.log("goal in handler: ", processedGoals);
+      return HttpResponse.json({ goals: processedGoals } as GoalListRs, {
         status: 200,
       });
     } catch (e) {
@@ -190,7 +207,29 @@ const goalHandlers = [
       )) as any;
       if (!goal)
         return HttpResponse.json({ message: "no data" }, { status: 404 });
-      return HttpResponse.json(goal as GoalDetailRs);
+      
+      // Process goal to ensure proper dueDate format for GoalDetailRs
+      let processedGoal = { ...goal };
+      
+      if (goal.isPeriodByMonth && goal.month) {
+        const createdDate = new Date(goal.createdAt || new Date());
+        const dueDate = new Date(createdDate);
+        dueDate.setMonth(dueDate.getMonth() + goal.month);
+        
+        // GoalDetailRs expects dueDate as GoalDueDateRs object
+        processedGoal.dueDate = {
+          isMonth: true,
+          month: goal.month,
+          dueDate: dueDate.toISOString().split('T')[0]
+        };
+      } else if (goal.dueDate) {
+        processedGoal.dueDate = {
+          isMonth: false,
+          dueDate: goal.dueDate
+        };
+      }
+      
+      return HttpResponse.json(processedGoal as GoalDetailRs);
     } catch (e) {
       return HttpResponse.json(
         { message: `${e}` + "api error" },

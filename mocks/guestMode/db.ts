@@ -1,5 +1,5 @@
 const DB_NAME = "motimo-guest";
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 type StoreName =
   | "users"
   | "goals"
@@ -48,6 +48,7 @@ class IndexedDBService {
           store.add({
             id: "me",
             email: "-",
+            createdAt: new Date().toISOString(),
           });
 
           // 'title'로 검색할 수 있도록 인덱스 생성 (선택 사항)
