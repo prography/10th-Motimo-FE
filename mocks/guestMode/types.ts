@@ -20,6 +20,8 @@ export interface DBGoal {
   id: ID;
   title: string;
   dueDate?: string; // YYYY-MM-DD
+  isPeriodByMonth?: boolean;
+  month?: number;
   progress?: number;
   isCompleted?: boolean;
   isJoinedGroup?: boolean;

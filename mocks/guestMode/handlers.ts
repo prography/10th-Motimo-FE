@@ -495,11 +495,12 @@ const todoHandlers = [
         file?: File;
       };
       const newResult = {
+        id: genId(),
         todoResultId: genId(),
         todoId: String(todoId),
         ...(body.request as any),
         createdAt: new Date().toISOString(),
-      } as TodoResultRs;
+      } as any;
       await dbService.add("todoResults", newResult);
       return HttpResponse.json({
         todoResultId: newResult.todoResultId,
