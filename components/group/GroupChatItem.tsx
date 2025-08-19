@@ -122,7 +122,8 @@ export const GroupChatItem = ({
   return (
     <div
       className={cn(
-        "flex flex-col gap-1 w-[328px]",
+        "flex flex-col gap-1 w-full",
+        // "flex flex-col gap-1 w-[328px]",
         isMe ? "items-end" : "items-start",
         className,
       )}

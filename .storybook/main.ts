@@ -4,6 +4,10 @@ const path = require("path");
 const STORYBOOK_SCOPE = process.env.STORYBOOK_SCOPE;
 
 const config = {
+  managerHead: (head) => `
+  ${head}
+  <link rel="icon" type="image/png" href="/app/icon.png" />
+  `,
   stories: [
     "./Introduction.mdx",
     "./CHANGELOG.mdx",
@@ -14,7 +18,7 @@ const config = {
         ]
       : [
           "../components/**/*.stories.@(js|jsx|mjs|ts|tsx)",
-          "../app/**/*.stories.@(js|jsx|mjs|ts|tsx)"
+          "../app/**/*.stories.@(js|jsx|mjs|ts|tsx)",
         ]),
   ],
   addons: [

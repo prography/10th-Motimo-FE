@@ -4,10 +4,12 @@ import { AppBar } from "@/components/shared";
 import TextField from "@/components/shared/TextField/TextField";
 import { date2StringWithSpliter } from "@/utils/date2String";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PlusSvg from "@/components/shared/public/Add_Plus.svg";
 import GoalDurationBottomSheet from "@/components/details/BottomSheets/GoalDurationBottomSheet/GoalDurationBottomSheet";
 import { goalApi } from "@/api/service";
+import useBottomSheet from "@/hooks/useBottomSheet";
+import { useGoals } from "@/api/hooks";
 
 export default function AddingGoal() {
   const router = useRouter();
@@ -23,6 +25,65 @@ export default function AddingGoal() {
     subGoals: [],
   });
   const [openBottomSheet, setOpenBottomSheet] = useState(false);
+
+  const { mutate } = useGoals();
+
+  // GoalDurationBottomSheet 관리
+  const {
+    checkOpened,
+    checkRendered,
+    closeBottomSheet,
+    openBottomSheet: openGoalDurationBottomSheet,
+    updateBottomSheet: updateGoalDurationBottomSheet,
+  } = useBottomSheet<Parameters<typeof GoalDurationBottomSheet>[0]>();
+
+  useEffect(() => {
+    if (!openBottomSheet) {
+      closeBottomSheet();
+    }
+
+    const bottomSheetInfo: Parameters<typeof openGoalDurationBottomSheet>[0] = {
+      backdropProps: {
+        className: "fixed inset-0 z-20 bg-neutral-700/50 ",
+        onClick: () => {
+          setOpenBottomSheet(false);
+        },
+      },
+      ContentComponent: GoalDurationBottomSheet,
+      hasBackdrop: true,
+      bottomSheetFixerStyle: {
+        bottom: 0,
+      },
+      contentProps: {
+        setopenBottomSheet: setOpenBottomSheet,
+        onEdit: async ({ type, value }) => {
+          setGoalAddInfo((prev) => ({
+            ...prev,
+            durationType: type,
+            durationValue: value,
+          }));
+          // 닫기
+          setOpenBottomSheet(false);
+        },
+      },
+    };
+    const isOpended = checkOpened();
+    if (openBottomSheet && !isOpended) {
+      openGoalDurationBottomSheet(bottomSheetInfo);
+      return;
+    }
+
+    if (openBottomSheet) {
+      updateGoalDurationBottomSheet(bottomSheetInfo);
+    }
+
+    return () => {
+      if (!openBottomSheet) {
+        closeBottomSheet();
+      }
+    };
+  }, [openBottomSheet]);
+
   return (
     <div className="h-screen flex flex-col items-center  ">
       <header className="bg-background-alternative">
@@ -35,7 +96,8 @@ export default function AddingGoal() {
       <form
         className="flex-1 flex flex-col w-full"
         id="goalAdding"
-        onSubmit={async () => {
+        onSubmit={async (e) => {
+          e.preventDefault();
           const res = await goalApi.createGoal({
             isPeriodByMonth: goalAddInfo.durationType === "month",
             title: goalAddInfo.goal,
@@ -55,6 +117,7 @@ export default function AddingGoal() {
             })),
           });
           if (res) {
+            mutate();
             router.back();
           }
         }}
@@ -174,7 +237,7 @@ export default function AddingGoal() {
         </button>
       </div>
 
-      <GoalDurationBottomSheet
+      {/* <GoalDurationBottomSheet
         openBottomSheet={openBottomSheet}
         setopenBottomSheet={setOpenBottomSheet}
         onEdit={async ({ type, value }) => {
@@ -186,7 +249,7 @@ export default function AddingGoal() {
           // 닫기
           setOpenBottomSheet(false);
         }}
-      />
+      /> */}
     </div>
   );
 }

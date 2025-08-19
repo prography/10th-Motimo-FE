@@ -27,7 +27,7 @@ interface MyPageProps {
 
 export function MyPage({ className = "" }: MyPageProps) {
   const router = useSafeRouter();
-  const { isLoggedIn, login, logout } = useAuthStore();
+  const { isLoggedIn, login, logout, isGuest } = useAuthStore();
   const { data: user, isLoading, error } = useMyProfile();
 
   const handleLogin = () => {
@@ -61,6 +61,7 @@ export function MyPage({ className = "" }: MyPageProps) {
           hasIcon: false,
           onClick: () => {
             logout();
+            // setIsGuest(false);
             router.push("/");
           },
         },
@@ -85,7 +86,8 @@ export function MyPage({ className = "" }: MyPageProps) {
 
       {/* Content */}
       <div className="flex-1 flex flex-col bg-white">
-        {isLoggedIn ? (
+        {/* {isLoggedIn ? ( */}
+        {!isGuest ? (
           <>
             {/* User Information Section */}
             <div className="bg-Color-white py-5">

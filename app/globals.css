@@ -56,3 +56,10 @@ body {
   overscroll-behavior-y: contain;
   scroll-behavior: smooth;
 }
+
+/* 바텀시트로인한 바텀태그 클릭 불능 방지 */
+@layer utilities {
+  [data-vaul-drawer][role="dialog"]::after {
+    pointer-events: none;
+  }
+}

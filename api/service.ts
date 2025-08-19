@@ -1,5 +1,6 @@
 import { Api, HttpClient } from "./generated/motimo/Api";
 import useAuthStore from "../stores/useAuthStore";
+import useToastStore from "@/stores/useToastStore";
 
 // HTTP 클라이언트 생성 시 인증 헤더를 자동으로 추가하는 securityWorker 설정
 const httpClient = new HttpClient({
@@ -16,9 +17,51 @@ const httpClient = new HttpClient({
       };
     }
 
+    const isGuest = useAuthStore.getState().isGuest;
+    if (isGuest) {
+      return { format: "json" };
+    }
+
     return {};
   },
 });
+
+// 비동기 에러 시 toast 띄우기
+const showToast = (content: string, createdAt: Date) => {
+  useToastStore.getState().updateToastInfo({ content, createdAt });
+};
+
+// Debouncer 감싸도 될 것 같은데?
+const debounceer = <T, E>(apiRequest: typeof httpClient.request<T, E>) => {
+  const timeLimit = 1000;
+  let timer: number;
+  let rejectTimer: (reason?: any) => void;
+  return (
+    requestParams: Parameters<typeof httpClient.request<T, E>>[0],
+  ): ReturnType<typeof httpClient.request<T>> => {
+    if (timer) {
+      clearTimeout(timer);
+      rejectTimer("debouncing");
+    }
+    const apiRes: Promise<T> = new Promise((resolve, reject) => {
+      rejectTimer = reject;
+      timer = Number(
+        setTimeout(async () => {
+          try {
+            const res = apiRequest(requestParams);
+            resolve(res);
+          } catch (error) {
+            console.error(error);
+            showToast(`API ERROR`, new Date());
+          }
+        }, timeLimit),
+      );
+    });
+    return apiRes;
+  };
+};
+
+httpClient.request = debounceer(httpClient.request);
 
 // API 클라이언트 인스턴스 생성
 export const api = new Api(httpClient);

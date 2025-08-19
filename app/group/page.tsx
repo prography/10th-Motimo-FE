@@ -3,6 +3,9 @@
 import dynamic from "next/dynamic";
 import { GroupPage, PendingGroup } from "@/components/group";
 import { useGoals, useGoalsNotInGroup, useJoinedGroups } from "@/api/hooks";
+import useAuthStore from "@/stores/useAuthStore";
+import GuestGroup from "@/components/group/Guest/GuestGroup/GuestGroup";
+import { useRouter } from "next/navigation";
 
 // 클라이언트에서만 렌더링되는 BottomTabBar (SSR 제외)
 const BottomTabBar = dynamic(
@@ -19,6 +22,10 @@ export default function GroupRoute() {
   const { data: joinedGroups } = useJoinedGroups();
   const { data: pendingGroups } = useGoalsNotInGroup();
 
+  // Guest처리
+  const { isGuest, setIsGuest, logout, reset } = useAuthStore();
+  const { push } = useRouter();
+
   const handleNotificationClick = () => {
     console.log("Notification clicked");
     // TODO: Implement notification logic
@@ -26,14 +33,28 @@ export default function GroupRoute() {
 
   return (
     <>
-      <GroupPage
-        pendingGroups={pendingGroups ?? []}
-        joinedGroups={joinedGroups ?? []}
-        onNotificationClick={handleNotificationClick}
-      />
+      {isGuest ? (
+        <>
+          <GuestGroup
+            onClickLogin={() => {
+              // setIsGuest(false);
+              // logout();
+              reset();
+              localStorage.removeItem("auth-storage");
+              push("/onboarding");
+            }}
+          />
+        </>
+      ) : (
+        <GroupPage
+          pendingGroups={pendingGroups ?? []}
+          joinedGroups={joinedGroups ?? []}
+          onNotificationClick={handleNotificationClick}
+        />
+      )}
 
       {/* Bottom Tab Bar */}
-      <BottomTabBar type="2" />
+      <BottomTabBar className="fixed bottom-0" type="2" />
     </>
   );
 }

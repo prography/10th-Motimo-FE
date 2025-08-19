@@ -27,6 +27,8 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
     setRefreshToken,
     login,
     clearOauthData,
+    setIsGuest,
+    reset,
   } = useAuthStore();
 
   // OAuth 콜백 처리 (URL 파라미터 방식)
@@ -171,6 +173,9 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
 
   const handleBrowse = () => {
     // TODO: Handle browse without login
+    reset();
+    login();
+    setIsGuest(true);
     onNext();
   };
 
