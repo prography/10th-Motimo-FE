@@ -1,5 +1,5 @@
 const DB_NAME = "motimo-guest";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 type StoreName =
   | "users"
   | "goals"
@@ -7,6 +7,9 @@ type StoreName =
   | "todos"
   | "todoResults"
   | "groups"
+  | "groupMembers"
+  | "groupMessages"
+  | "reactions"
   | "cheers"
   | "points";
 class IndexedDBService {
@@ -70,17 +73,15 @@ class IndexedDBService {
         if (!db.objectStoreNames.contains("goals")) {
           const store = db.createObjectStore("goals", {
             keyPath: "id",
-            autoIncrement: true,
           });
 
           // 'title'로 검색할 수 있도록 인덱스 생성 (선택 사항)
           store.createIndex("title_idx", "title", { unique: false });
         }
         // id를 keyPath로 지정하여 고유 키로 사용
-        if (!db.objectStoreNames.contains("sub-goals")) {
-          const store = db.createObjectStore("sub-goals", {
+        if (!db.objectStoreNames.contains("subGoals")) {
+          const store = db.createObjectStore("subGoals", {
             keyPath: "id",
-            autoIncrement: true,
           });
 
           // 'title'로 검색할 수 있도록 인덱스 생성 (선택 사항)
@@ -90,21 +91,33 @@ class IndexedDBService {
         if (!db.objectStoreNames.contains("todos")) {
           const store = db.createObjectStore("todos", {
             keyPath: "id",
-            autoIncrement: true,
           });
 
           // 'title'로 검색할 수 있도록 인덱스 생성 (선택 사항)
           store.createIndex("title_idx", "title", { unique: false });
         }
         // id를 keyPath로 지정하여 고유 키로 사용
-        if (!db.objectStoreNames.contains("todo-results")) {
-          const store = db.createObjectStore("todo-results", {
+        if (!db.objectStoreNames.contains("todoResults")) {
+          const store = db.createObjectStore("todoResults", {
             keyPath: "id",
-            autoIncrement: true,
           });
+        }
 
-          // 'title'로 검색할 수 있도록 인덱스 생성 (선택 사항)
-          //   store.createIndex("title_idx", "title", { unique: false });
+        // Create missing stores
+        if (!db.objectStoreNames.contains("groups")) {
+          db.createObjectStore("groups", { keyPath: "id" });
+        }
+        
+        if (!db.objectStoreNames.contains("groupMembers")) {
+          db.createObjectStore("groupMembers", { keyPath: "id" });
+        }
+        
+        if (!db.objectStoreNames.contains("groupMessages")) {
+          db.createObjectStore("groupMessages", { keyPath: "id" });
+        }
+        
+        if (!db.objectStoreNames.contains("reactions")) {
+          db.createObjectStore("reactions", { keyPath: "id" });
         }
       };
     });
@@ -121,7 +134,7 @@ class IndexedDBService {
   // --- CRUD 메서드 ---
 
   // 데이터 추가 (Create)
-  public async add<T>(storeName: StoreName, data: Omit<T, "id">): Promise<T> {
+  public async add<T extends { id: string }>(storeName: StoreName, data: T): Promise<T> {
     const db = await this.getDB();
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(storeName, "readwrite");
@@ -129,9 +142,8 @@ class IndexedDBService {
       const request = store.add(data);
 
       request.onsuccess = () => {
-        // 추가된 데이터의 ID를 포함하여 반환
-        const insertedId = request.result as number;
-        resolve({ ...data, id: insertedId } as T);
+        // 데이터를 그대로 반환 (ID는 이미 포함되어 있음)
+        resolve(data);
       };
       request.onerror = () => reject(request.error);
     });
