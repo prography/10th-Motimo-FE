@@ -5,6 +5,8 @@ import { AppBar } from "@/components/shared/AppBar/AppBar";
 import { ButtonRound } from "@/components/shared/ButtonRound/ButtonRound";
 import OnboardingSubGoalEdit from "./OnboardingSubGoalEdit";
 import useOnboardingStore from "@/stores/useOnboardingStore";
+import { goalApi } from "@/api/service";
+import { GoalCreateRq } from "@/api/generated/motimo/Api";
 
 interface SubGoalSelectionScreenProps {
   onNext: () => void;
@@ -16,16 +18,33 @@ export default function SubGoalSelectionScreen({
   onBack,
 }: SubGoalSelectionScreenProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { subGoals } = useOnboardingStore();
+  const { goal, periodType, monthCount, targetDate, subGoals } = useOnboardingStore();
 
-  const handleSetupLater = async () => {
+  const handleSubmit = async () => {
     if (isSubmitting) return;
 
     setIsSubmitting(true);
     try {
+      if (subGoals.length > 0) {
+        // Create goal with subgoals
+        const goalData: GoalCreateRq = {
+          title: goal,
+          isPeriodByMonth: periodType === "months",
+          ...(periodType === "months" 
+            ? { month: monthCount } 
+            : { dueDate: targetDate?.toISOString().split('T')[0] }
+          ),
+          subGoals: subGoals.map(subGoal => ({
+            title: subGoal.title
+          }))
+        };
+
+        await goalApi.createGoal(goalData);
+      }
+      
       onNext();
     } catch (error) {
-      console.error("Failed to proceed:", error);
+      console.error("Failed to create goal:", error);
       setIsSubmitting(false);
     }
   };
@@ -56,7 +75,7 @@ export default function SubGoalSelectionScreen({
 
       {/* Next/Setup Later Button */}
       <div className="px-4 pb-14">
-        <ButtonRound onClick={handleSetupLater} disabled={isSubmitting}>
+        <ButtonRound onClick={handleSubmit} disabled={isSubmitting}>
           {isSubmitting ? "처리 중..." : subGoals.length > 0 ? "다음" : "나중에 설정하기"}
         </ButtonRound>
       </div>
