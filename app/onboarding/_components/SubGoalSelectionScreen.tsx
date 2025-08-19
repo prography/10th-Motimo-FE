@@ -18,7 +18,8 @@ export default function SubGoalSelectionScreen({
   onBack,
 }: SubGoalSelectionScreenProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { goal, periodType, monthCount, targetDate, subGoals } = useOnboardingStore();
+  const { goal, periodType, monthCount, targetDate, subGoals } =
+    useOnboardingStore();
 
   const handleSubmit = async () => {
     if (isSubmitting) return;
@@ -30,18 +31,17 @@ export default function SubGoalSelectionScreen({
         const goalData: GoalCreateRq = {
           title: goal,
           isPeriodByMonth: periodType === "months",
-          ...(periodType === "months" 
-            ? { month: monthCount } 
-            : { dueDate: targetDate?.toISOString().split('T')[0] }
-          ),
-          subGoals: subGoals.map(subGoal => ({
-            title: subGoal.title
-          }))
+          ...(periodType === "months"
+            ? { month: monthCount }
+            : { dueDate: targetDate?.toISOString().split("T")[0] }),
+          subGoals: subGoals.map((subGoal) => ({
+            title: subGoal.title,
+          })),
         };
 
         await goalApi.createGoal(goalData);
       }
-      
+
       onNext();
     } catch (error) {
       console.error("Failed to create goal:", error);
@@ -76,10 +76,13 @@ export default function SubGoalSelectionScreen({
       {/* Next/Setup Later Button */}
       <div className="px-4 pb-14">
         <ButtonRound onClick={handleSubmit} disabled={isSubmitting}>
-          {isSubmitting ? "처리 중..." : subGoals.length > 0 ? "다음" : "나중에 설정하기"}
+          {isSubmitting
+            ? "처리 중..."
+            : subGoals.length > 0
+              ? "다음"
+              : "나중에 설정하기"}
         </ButtonRound>
       </div>
     </div>
   );
 }
-
