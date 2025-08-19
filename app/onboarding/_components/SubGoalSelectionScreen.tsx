@@ -23,9 +23,13 @@ export default function SubGoalSelectionScreen({
 
   // Cleanup duplicate "기본함" subGoals when this screen loads
   useEffect(() => {
-    const defaultSubGoals = subGoals.filter(subGoal => subGoal.title === "기본함");
+    const defaultSubGoals = subGoals.filter(
+      (subGoal) => subGoal.title === "기본함",
+    );
     if (defaultSubGoals.length > 1) {
-      const otherSubGoals = subGoals.filter(subGoal => subGoal.title !== "기본함");
+      const otherSubGoals = subGoals.filter(
+        (subGoal) => subGoal.title !== "기본함",
+      );
       setSubGoals([defaultSubGoals[0], ...otherSubGoals]);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -87,7 +91,7 @@ export default function SubGoalSelectionScreen({
         <ButtonRound onClick={handleSubmit} disabled={isSubmitting}>
           {isSubmitting
             ? "처리 중..."
-            : subGoals.length > 0
+            : subGoals.length > 1
               ? "다음"
               : "나중에 설정하기"}
         </ButtonRound>
