@@ -15,8 +15,12 @@ export default function OnboardingPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [hasHydrated, setHasHydrated] = useState(false);
-  const { setHasCompletedOnboarding, isLoggedIn, hasCompletedOnboarding, isGuest } =
-    useAuthStore();
+  const {
+    setHasCompletedOnboarding,
+    isLoggedIn,
+    hasCompletedOnboarding,
+    isGuest,
+  } = useAuthStore();
 
   // 클라이언트 사이드에서만 hydration 체크
   useEffect(() => {

@@ -119,26 +119,9 @@ const goalHandlers = [
   http.get("/v1/goals", async () => {
     try {
       const goals = (await dbService.getAll<DBGoal>("goals")) || [];
-      
-      // Calculate dueDate for month-based goals
-      const processedGoals = goals.map(goal => {
-        if (goal.isPeriodByMonth && goal.month && !goal.dueDate) {
-          // Calculate due date from creation date + months
-          const createdDate = new Date(goal.createdAt || new Date());
-          const dueDate = new Date(createdDate);
-          dueDate.setMonth(dueDate.getMonth() + goal.month);
-          
-          return {
-            ...goal,
-            dueDate: dueDate.toISOString().split('T')[0] // YYYY-MM-DD format
-          };
-        }
-        return goal;
-      });
-      
       //test
-      console.log("goal in handler: ", processedGoals);
-      return HttpResponse.json({ goals: processedGoals } as GoalListRs, {
+      console.log("goal in handler: ", goals);
+      return HttpResponse.json({ goals } as GoalListRs, {
         status: 200,
       });
     } catch (e) {
@@ -152,42 +135,14 @@ const goalHandlers = [
   http.post("/v1/goals", async ({ request }) => {
     try {
       const body = (await request.json()) as GoalCreateRq;
-      const goalId = genId();
       const newGoal = {
-        id: goalId,
-        title: body.title,
-        isPeriodByMonth: body.isPeriodByMonth,
-        month: body.month,
-        dueDate: body.dueDate,
-        isCompleted: false,
-        isJoinedGroup: false,
-        subGoals: [],
+        id: genId(),
+        ...body,
         createdAt: new Date().toISOString(),
       } as any;
       await dbService.add<DBGoal>("goals", newGoal);
 
-      // Create subGoals if provided
-      if (body.subGoals && body.subGoals.length > 0) {
-        const subGoalIds: string[] = [];
-        for (let i = 0; i < body.subGoals.length; i++) {
-          const subGoal = body.subGoals[i];
-          const subGoalId = genId();
-          const newSubGoal = {
-            id: subGoalId,
-            goalId: goalId,
-            title: subGoal.title,
-            todos: [],
-            isCompleted: false,
-            createdAt: new Date().toISOString(),
-          } as DBSubGoal;
-          await dbService.add<DBSubGoal>("subGoals", newSubGoal);
-          subGoalIds.push(subGoalId);
-        }
-        
-        // Update goal with subGoal IDs
-        newGoal.subGoals = subGoalIds;
-        await dbService.put("goals", newGoal);
-      }
+      // 기본 subgoal 추가
 
       return HttpResponse.json({ id: newGoal.id } as GoalIdRs, { status: 201 });
     } catch (e) {
@@ -207,29 +162,7 @@ const goalHandlers = [
       )) as any;
       if (!goal)
         return HttpResponse.json({ message: "no data" }, { status: 404 });
-      
-      // Process goal to ensure proper dueDate format for GoalDetailRs
-      let processedGoal = { ...goal };
-      
-      if (goal.isPeriodByMonth && goal.month) {
-        const createdDate = new Date(goal.createdAt || new Date());
-        const dueDate = new Date(createdDate);
-        dueDate.setMonth(dueDate.getMonth() + goal.month);
-        
-        // GoalDetailRs expects dueDate as GoalDueDateRs object
-        processedGoal.dueDate = {
-          isMonth: true,
-          month: goal.month,
-          dueDate: dueDate.toISOString().split('T')[0]
-        };
-      } else if (goal.dueDate) {
-        processedGoal.dueDate = {
-          isMonth: false,
-          dueDate: goal.dueDate
-        };
-      }
-      
-      return HttpResponse.json(processedGoal as GoalDetailRs);
+      return HttpResponse.json(goal as GoalDetailRs);
     } catch (e) {
       return HttpResponse.json(
         { message: `${e}` + "api error" },
@@ -495,12 +428,11 @@ const todoHandlers = [
         file?: File;
       };
       const newResult = {
-        id: genId(),
         todoResultId: genId(),
         todoId: String(todoId),
         ...(body.request as any),
         createdAt: new Date().toISOString(),
-      } as any;
+      } as TodoResultRs;
       await dbService.add("todoResults", newResult);
       return HttpResponse.json({
         todoResultId: newResult.todoResultId,

@@ -20,20 +20,20 @@ const GuestModeHandler = () => {
           // Stop MSW worker
           const { stopMsw } = await import("../../mocks/index");
           await stopMsw();
-          
+
           // Clear guest mode onboarding data
           resetOnboarding();
-          
+
           hasCleanedUp.current = true;
           console.log("Guest mode cleanup completed");
         } catch (error) {
           console.log("MSW cleanup error (likely already stopped):", error);
         }
       }, 100); // Small delay to let auth state stabilize
-      
+
       return () => clearTimeout(timeoutId);
     }
-    
+
     // Reset cleanup flag when entering guest mode again
     if (isGuest) {
       hasCleanedUp.current = false;
