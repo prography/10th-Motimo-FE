@@ -46,11 +46,11 @@ type TodoBottomSheetProps = {
   initTodoInfo?: undefined | TodoInfoForSubmission;
   subGoals: { title: string; id: string }[];
   onSubmitTodo: (todoInfo: TodoInfoForSubmission) => Promise<boolean>;
-  openBottomSheet: boolean;
+  // openBottomSheet: boolean;
   isActivated: boolean;
   setIsActivated: (newState: boolean) => void;
 } & {
-  hasBottomTabBar: boolean;
+  // hasBottomTabBar: boolean;
 };
 
 const makeDefaultTodoBottomSheetInfo = (
@@ -79,10 +79,10 @@ const TodoBottomSheet = ({
   initTodoInfo,
   subGoals,
   onSubmitTodo,
-  openBottomSheet,
+  // openBottomSheet,
   isActivated,
   setIsActivated,
-  hasBottomTabBar,
+  // hasBottomTabBar,
 }: TodoBottomSheetProps) => {
   const [todoInfo, setTodoInfo] = useState<TodoInfo>(
     makeDefaultTodoBottomSheetInfo(subGoals, initTodoInfo),
@@ -93,21 +93,29 @@ const TodoBottomSheet = ({
 
   const inputRef = useRef(null);
 
-  const resetBottomSheet = () => {
-    setIsActivated(false);
-    setVisibleSelect(false);
-    setShowDate(false);
-    setTodoInfo(makeDefaultTodoBottomSheetInfo(subGoals));
-    inputRef.current && (inputRef.current as HTMLInputElement).blur();
-  };
+  // const resetBottomSheet = () => {
+  //   setIsActivated(false);
+  //   setVisibleSelect(false);
+  //   setShowDate(false);
+  //   setTodoInfo(makeDefaultTodoBottomSheetInfo(subGoals));
+  //   inputRef.current && (inputRef.current as HTMLInputElement).blur();
+  // };
 
   useEffect(() => {
     setTodoInfo(makeDefaultTodoBottomSheetInfo(subGoals, initTodoInfo));
-  }, [initTodoInfo, openBottomSheet]);
+  }, [
+    initTodoInfo,
+    // openBottomSheet
+  ]);
 
   return (
     <>
-      <Drawer.Root open={openBottomSheet} defaultOpen={false}>
+      {/* <Drawer.Root
+        open={openBottomSheet}
+        defaultOpen={false}
+        handleOnly
+        disablePreventScroll={openBottomSheet && !isActivated}
+      >
         <Drawer.Portal>
           {isActivated && (
             <Drawer.Overlay
@@ -116,127 +124,129 @@ const TodoBottomSheet = ({
               }}
               className="fixed inset-0 bg-black/20 z-20"
             />
-          )}
+          )} */}
 
-          <TodoInfoContext.Provider value={{ todoInfo, setTodoInfo }}>
-            {/* <div className="flex justify-center w-[100vw]  fixed bottom-0 z-40"> */}
-            <div
-              className={`flex justify-center w-[100vw]  fixed ${hasBottomTabBar ? "bottom-14" : "bottom-0"} z-30`}
-            >
-              <Drawer.Content
-                className={`              
+      <TodoInfoContext.Provider value={{ todoInfo, setTodoInfo }}>
+        {/* <div
+          className={`flex justify-center w-[100vw]  fixed ${hasBottomTabBar ? "bottom-14" : "bottom-0"} z-30`}
+        > */}
+        <div
+          // <Drawer.Content
+          className={`              
                 w-[360px]
                z-30 pl-4 pr-4  bg-white flex flex-col justify-start   rounded-t-[10px]`}
-                style={{
-                  height: isActivated ? (showDate ? "382px" : "100px") : "66px", // 고정값 강제
-                  transition: "height 0.3s ",
-                  bottom: 0,
-                }}
-              >
-                {showDate ? (
-                  <BottomSheetDate setShowDate={setShowDate} />
-                ) : (
-                  <>
-                    {visibleSelect && (
-                      <div className="relative h-0">
-                        <BottomSheetSelectList
-                          subGoals={subGoals}
-                          setVisibleSelect={setVisibleSelect}
-                        />
-                      </div>
-                    )}
-                    <Drawer.Title className="invisible"></Drawer.Title>
-                    <section className="w-full h-auto pt-3 pb-3 gap-2 flex flex-col justify-start">
-                      {/** title은 접근성 에러 때문에 넣고 invisible 설정함 */}
+          style={{
+            height: isActivated ? (showDate ? "382px" : "100px") : "66px", // 고정값 강제
+            transition: "height 0.3s ",
+            bottom: 0,
+          }}
+        >
+          {showDate ? (
+            <BottomSheetDate setShowDate={setShowDate} />
+          ) : (
+            <>
+              {visibleSelect && (
+                <div className="relative h-0">
+                  <BottomSheetSelectList
+                    subGoals={subGoals}
+                    setVisibleSelect={setVisibleSelect}
+                  />
+                </div>
+              )}
+              {/* <Drawer.Title className="invisible"></Drawer.Title> */}
+              <section className="w-full h-auto pt-3 pb-3 gap-2 flex flex-col justify-start">
+                {/** title은 접근성 에러 때문에 넣고 invisible 설정함 */}
 
-                      <form
-                        className="w-auto h-auto relative flex items-center"
-                        // ref={inputRef}
-                        onSubmit={async (e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          if (todoInfo.subGoalTitle) {
-                            const submitRes = await onSubmitTodo(
-                              todoInfo as TodoInfoForSubmission,
-                            );
+                <form
+                  className="w-auto h-auto relative flex items-center"
+                  // ref={inputRef}
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (todoInfo.subGoalTitle) {
+                      // const submitRes = await onSubmitTodo(
+                      //   todoInfo as TodoInfoForSubmission,
+                      // );
+                      await onSubmitTodo(todoInfo as TodoInfoForSubmission);
 
-                            submitRes && resetBottomSheet();
-                          }
-                          // else의 경우 에러 메시지를 넣어야 할 수도 있음
-                        }}
+                      // submitRes && resetBottomSheet();
+                    }
+                    // else의 경우 에러 메시지를 넣어야 할 수도 있음
+                  }}
+                >
+                  <TextField
+                    ref={inputRef}
+                    onClick={(e) => {
+                      todoInfo.id || setIsActivated(true);
+                    }}
+                    id="buttomSheetTodoTextField"
+                    isError={false}
+                    value={todoInfo.todo}
+                    placeholder="투두를 추가해보세요!"
+                    onChange={(e) =>
+                      setTodoInfo((prev) => ({
+                        ...prev,
+                        todo: e.target.value,
+                      }))
+                    }
+                  />
+                  <button
+                    type="submit"
+                    className="w-8 h-8 right-3 absolute bg-background-primary rounded-[999px] inline-flex justify-center items-center"
+                  >
+                    <div className="w-4 h-4 relative overflow-hidden">
+                      <PaperPlaneSvg />
+                    </div>
+                  </button>
+                </form>
+                <div
+                  className={`grid transition-all translate-z-0  transform-3d duration-300 ease-out  overflow-hidden`}
+                  style={{
+                    // maxHeight: isActivated ? "auto" : "0",
+                    // height: isActivated ? "auto" : "0",
+                    gridTemplateRows: isActivated ? "1fr" : "0fr",
+                  }}
+                >
+                  <div className={`min-h-0 overflow-hidden flex w-full`}>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setShowDate(true)}
+                        type="button"
+                        className=" h-8 px-2 py-1 bg-background-alternative rounded  outline-1 outline-offset-[-1px] outline-Color-gray-10 inline-flex justify-start items-center gap-[2px]"
                       >
-                        <TextField
-                          ref={inputRef}
-                          onClick={(e) => {
-                            todoInfo.id || setIsActivated(true);
-                          }}
-                          id="buttomSheetTodoTextField"
-                          isError={false}
-                          value={todoInfo.todo}
-                          placeholder="투두를 추가해보세요!"
-                          onChange={(e) =>
-                            setTodoInfo((prev) => ({
-                              ...prev,
-                              todo: e.target.value,
-                            }))
-                          }
-                        />
-                        <button
-                          type="submit"
-                          className="w-8 h-8 right-3 absolute bg-background-primary rounded-[999px] inline-flex justify-center items-center"
-                        >
-                          <div className="w-4 h-4 relative overflow-hidden">
-                            <PaperPlaneSvg />
-                          </div>
-                        </button>
-                      </form>
-                      <div
-                        className={`grid transition-all translate-z-0  transform-3d duration-300 ease-out  overflow-hidden`}
-                        style={{
-                          // maxHeight: isActivated ? "auto" : "0",
-                          // height: isActivated ? "auto" : "0",
-                          gridTemplateRows: isActivated ? "1fr" : "0fr",
-                        }}
-                      >
-                        <div className={`min-h-0 overflow-hidden flex w-full`}>
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => setShowDate(true)}
-                              type="button"
-                              className=" h-8 px-2 py-1 bg-background-alternative rounded  outline-1 outline-offset-[-1px] outline-Color-gray-10 inline-flex justify-start items-center gap-[2px]"
-                            >
-                              <div className="w-4 h-4 relative overflow-hidden">
-                                <CalendarSvg />
-                              </div>
-                              <p className="items-center flex text-label-normal text-xs font-normal font-['SUIT_Variable'] leading-none">
-                                {todoInfo.date
-                                  ? date2stringSplitByDot(todoInfo.date)
-                                  : "날짜 추가"}
-                              </p>
-                            </button>
-                            <button
-                              className="self-stretch h-8 w-56 px-3 py-1 bg-background-alternative rounded  outline-1 outline-offset-[-1px] outline-Color-gray-10 inline-flex items-center gap-[2px]"
-                              onClick={() => {
-                                setVisibleSelect((prev) => !prev);
-                              }}
-                            >
-                              <p className="flex-1 flex justify-start text-label-strong text-xs font-medium font-['SUIT_Variable'] leading-none">
-                                {todoInfo.subGoalTitle}
-                              </p>
-                              <div className="w-4 h-4 relative overflow-hidden"></div>
-                              <ArrowDownSvg />
-                            </button>
-                          </div>
+                        <div className="w-4 h-4 relative overflow-hidden">
+                          <CalendarSvg />
                         </div>
-                      </div>
-                    </section>
-                  </>
-                )}
-              </Drawer.Content>
-            </div>
-          </TodoInfoContext.Provider>
-        </Drawer.Portal>
-      </Drawer.Root>
+                        <p className="items-center flex text-label-normal text-xs font-normal font-['SUIT_Variable'] leading-none">
+                          {todoInfo.date
+                            ? date2stringSplitByDot(todoInfo.date)
+                            : "날짜 추가"}
+                        </p>
+                      </button>
+                      <button
+                        className="self-stretch h-8 w-56 px-3 py-1 bg-background-alternative rounded  outline-1 outline-offset-[-1px] outline-Color-gray-10 inline-flex items-center gap-[2px]"
+                        onClick={() => {
+                          setVisibleSelect((prev) => !prev);
+                        }}
+                      >
+                        <p className="flex-1 flex justify-start text-label-strong text-xs font-medium font-['SUIT_Variable'] leading-none">
+                          {todoInfo.subGoalTitle}
+                        </p>
+                        <div className="w-4 h-4 relative overflow-hidden"></div>
+                        <ArrowDownSvg />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </>
+          )}
+        </div>
+        {/* </Drawer.Content> */}
+        {/* </div> */}
+      </TodoInfoContext.Provider>
+      {/* </Drawer.Portal>
+      </Drawer.Root> */}
     </>
   );
 };

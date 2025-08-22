@@ -8,13 +8,15 @@ import GoalDurationBottomSheet from "@/components/details/BottomSheets/GoalDurat
 
 import TrashBin from "@/public/images/Trash_Full.svg";
 
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import useModal from "@/hooks/useModal";
 import { EditContext } from "../EditBody/EditBody";
 import { date2StringWithSpliter } from "@/utils/date2String";
 import { goalApi } from "@/api/service";
 import { useRouter } from "next/navigation";
 import { useGoals } from "@/api/hooks";
+
+import useBottomSheet from "@/hooks/useBottomSheet";
 
 interface GoalEditProps {
   // initGoalTitle: string;
@@ -43,6 +45,58 @@ const GoalEdit = ({
     editContents?.durationType === "month"
       ? `개월 수 - ${editContents?.durationValue ?? " "}개월`
       : `완료 날짜 - ${editContents?.durationValue ? date2StringWithSpliter(editContents?.durationValue as Date, "-") : ""}`;
+
+  // GoalDurationBottomSheet 관리
+  const {
+    checkOpened,
+    checkRendered,
+    closeBottomSheet,
+    openBottomSheet: openGoalDurationBottomSheet,
+    updateBottomSheet: updateGoalDurationBottomSheet,
+  } = useBottomSheet<Parameters<typeof GoalDurationBottomSheet>[0]>();
+  useEffect(() => {
+    if (!openBottomSheet) {
+      closeBottomSheet();
+    }
+
+    const bottomSheetInfo: Parameters<typeof openGoalDurationBottomSheet>[0] = {
+      backdropProps: {
+        className: "fixed inset-0 z-20 bg-neutral-700/50 ",
+        onClick: () => {
+          setOpenBottomSheet(false);
+        },
+      },
+      ContentComponent: GoalDurationBottomSheet,
+      hasBackdrop: true,
+      bottomSheetFixerStyle: {
+        bottom: 0,
+      },
+      contentProps: {
+        setopenBottomSheet: setOpenBottomSheet,
+        onEdit: async ({ type, value }) => {
+          setEditContents &&
+            setEditContents((prev) => ({
+              ...prev,
+              durationType: type,
+              durationValue: value,
+            }));
+          // 닫기
+          setOpenBottomSheet(false);
+        },
+      },
+    };
+    const isOpended = checkOpened();
+    if (openBottomSheet && !isOpended) {
+      openGoalDurationBottomSheet(bottomSheetInfo);
+      return;
+    }
+
+    if (openBottomSheet) updateGoalDurationBottomSheet(bottomSheetInfo);
+
+    return () => {
+      if (!openBottomSheet) closeBottomSheet();
+    };
+  }, [openBottomSheet]);
 
   return (
     <>
@@ -113,7 +167,7 @@ const GoalEdit = ({
         </div>
       </main>
 
-      <GoalDurationBottomSheet
+      {/* <GoalDurationBottomSheet
         openBottomSheet={openBottomSheet}
         setopenBottomSheet={setOpenBottomSheet}
         onEdit={async ({ type, value }) => {
@@ -126,7 +180,7 @@ const GoalEdit = ({
           // 닫기
           setOpenBottomSheet(false);
         }}
-      />
+      /> */}
     </>
   );
 };

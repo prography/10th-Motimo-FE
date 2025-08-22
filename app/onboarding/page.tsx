@@ -32,7 +32,12 @@ export default function OnboardingPage() {
   console.log("hasCompletedOnboarding:", hasCompletedOnboarding);
 
   // goals 가져오기
-  const { data: { goals } = {}, isLoading, error, mutate } = useGoals({
+  const {
+    data: { goals } = {},
+    isLoading,
+    error,
+    mutate,
+  } = useGoals({
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
     shouldRetryOnError: false, // 401 에러 시 재시도 방지
@@ -55,7 +60,7 @@ export default function OnboardingPage() {
     if (!hasHydrated) return;
 
     // 이미 온보딩을 완료했으면 redirect
-    if (hasCompletedOnboarding) {
+    if (hasCompletedOnboarding && isLoggedIn) {
       router.replace("/");
       return;
     }
@@ -66,7 +71,14 @@ export default function OnboardingPage() {
       router.replace("/");
       return;
     }
-  }, [hasHydrated, hasCompletedOnboarding, isLoggedIn, goals, setHasCompletedOnboarding, router]);
+  }, [
+    hasHydrated,
+    hasCompletedOnboarding,
+    isLoggedIn,
+    goals,
+    setHasCompletedOnboarding,
+    router,
+  ]);
 
   const nextStep = () => {
     setCurrentStep((prev) => prev + 1);
@@ -103,7 +115,11 @@ export default function OnboardingPage() {
   }
 
   // 로그인된 상태에서 처리 중이면 스피너 표시
-  if (hasHydrated && isLoggedIn && (isLoading || (!goals && !error) || (goals && goals.length > 0))) {
+  if (
+    hasHydrated &&
+    isLoggedIn &&
+    (isLoading || (!goals && !error) || (goals && goals.length > 0))
+  ) {
     return <Loading className="min-h-screen bg-background-normal" />;
   }
 

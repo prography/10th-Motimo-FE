@@ -16,6 +16,9 @@ interface AuthState {
   // User state
   isLoggedIn: boolean;
   hasCompletedOnboarding: boolean;
+
+  // Guest
+  isGuest: boolean;
 }
 
 interface AuthActions {
@@ -37,6 +40,9 @@ interface AuthActions {
   logout: () => void;
   clearOauthData: () => void;
   reset: () => void;
+
+  // Guest
+  setIsGuest: (status: boolean) => void;
 }
 
 type AuthStore = AuthState & AuthActions;
@@ -52,6 +58,7 @@ const useAuthStore = create<AuthStore>()(
       oauthReturnStep: null,
       isLoggedIn: false,
       hasCompletedOnboarding: false,
+      isGuest: false,
 
       // Token setters
       setAccessToken: (token) => set({ accessToken: token }),
@@ -97,7 +104,12 @@ const useAuthStore = create<AuthStore>()(
           oauthReturnStep: null,
           isLoggedIn: false,
           hasCompletedOnboarding: false,
+          // guest
+          isGuest: false,
         }),
+
+      // Guest
+      setIsGuest: (newVal) => set({ isGuest: newVal }),
     }),
     {
       name: "auth-storage",
@@ -109,6 +121,9 @@ const useAuthStore = create<AuthStore>()(
         isLoggedIn: state.isLoggedIn,
         hasCompletedOnboarding: state.hasCompletedOnboarding,
         // OAuth 임시 데이터는 제외
+
+        // Guest
+        isGuest: state.isGuest,
       }),
     },
   ),

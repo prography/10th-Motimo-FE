@@ -1,10 +1,10 @@
 // plop-templates/story.tsx.hbs
 import type { Meta, StoryObj } from "@storybook/react";
-import ListCard from "./ListCard"; // 실제 컴포넌트 파일 임포트
+import GuestGroup from "./GuestGroup"; // 실제 컴포넌트 파일 임포트
 
 const meta = {
-  title: "Details/ListCard", // Storybook 사이드바 경로 (프로젝트 규칙에 맞게 수정)
-  component: ListCard,
+  title: "Components/GuestGroup", // Storybook 사이드바 경로 (프로젝트 규칙에 맞게 수정)
+  component: GuestGroup,
   parameters: {
     // Canvas 레이아웃을 중앙으로 정렬하거나 패딩을 추가할 수 있습니다.
     layout: "centered",
@@ -14,9 +14,9 @@ const meta = {
   // Controls Addon에서 Props를 어떻게 제어할지, 설명을 추가합니다.
   // 모든 스토리에 적용될 기본 Props (선택 사항)
   args: {
-    // 예시: label: 'ListCard',
+    // 예시: label: 'GuestGroup',
   },
-} satisfies Meta<typeof ListCard>;
+} satisfies Meta<typeof GuestGroup>;
 
 export default meta;
 
@@ -27,26 +27,10 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
   argTypes: {
     // 예시: backgroundColor: { control: 'color', description: '컴포넌트 배경색' },
-    subGoalInfo: {
-      control: "object",
-    },
-    initTodoInfoList: {
-      description: "이건 일단 스토리북에선 일단 비워둠.",
-    },
   },
   args: {
-    // applyOnGoalData: () => {},
-    // onLeft: () => {},
-    // onRight: () => {},
-    subGoalInfo: {
-      // idx: 0,
-      // totalSubGoalsLen: 4,
-      id: "ididididi",
-      isCompleted: false,
-      name: "이름일음",
-    },
-    initTodoInfoList: [],
     // Primary 스토리에만 적용될 Props
+    onClickLogin: () => console.log("클릭하면 로그인으로 이동"),
   },
 };
 
@@ -55,14 +39,14 @@ export const Primary: Story = {
 // 추가적인 스토리 예시:
 export const Secondary: Story = {
   args: {
-    label: 'Secondary ListCard',
+    label: 'Secondary GuestGroup',
   },
 };
 
 export const Large: Story = {
   args: {
     size: 'large',
-    label: 'Large ListCard',
+    label: 'Large GuestGroup',
   },
 };
 */

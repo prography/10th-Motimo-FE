@@ -4,7 +4,7 @@ import React from "react";
 import { AppBar } from "../shared/AppBar/AppBar";
 import { CheckIcon } from "../icons/CheckIcon";
 import { useSafeRouter } from "../../hooks/useSafeRouter";
-import { useGoalDetail } from "@/api/hooks";
+// import { useGoalDetail } from "@/api/hooks";
 import {
   GoalWithSubGoalTodoRs,
   SubGoalWithTodosRs,
