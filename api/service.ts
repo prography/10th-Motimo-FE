@@ -33,19 +33,23 @@ const showToast = (content: string, createdAt: Date) => {
 
 // Debouncer 감싸도 될 것 같은데?
 const debounceer = <T, E>(apiRequest: typeof httpClient.request<T, E>) => {
-  const timeLimit = 1000;
-  let timer: number;
+  const timeLimit = 300;
+  const timerDictionary: { [apiFullUrl: string]: number } = {};
   let rejectTimer: (reason?: any) => void;
   return (
     requestParams: Parameters<typeof httpClient.request<T, E>>[0],
   ): ReturnType<typeof httpClient.request<T>> => {
+    const apiFullUrl = `${requestParams.path}?${requestParams.query}`;
+    const timer = timerDictionary[apiFullUrl];
+
     if (timer) {
       clearTimeout(timer);
       rejectTimer("debouncing");
     }
     const apiRes: Promise<T> = new Promise((resolve, reject) => {
       rejectTimer = reject;
-      timer = Number(
+      timerDictionary[apiFullUrl] = Number(
+        // timer = Number(
         setTimeout(async () => {
           try {
             const res = apiRequest(requestParams);
