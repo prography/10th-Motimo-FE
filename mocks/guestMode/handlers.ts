@@ -135,6 +135,7 @@ const goalHandlers = [
   http.post("/v1/goals", async ({ request }) => {
     try {
       const body = (await request.json()) as GoalCreateRq;
+      const goalId = genId();
       const newGoal = {
         id: genId(),
         ...body,
@@ -143,6 +144,29 @@ const goalHandlers = [
       await dbService.add<DBGoal>("goals", newGoal);
 
       // 기본 subgoal 추가
+      // Create subGoals if provided
+      if (body.subGoals && body.subGoals.length > 0) {
+        const subGoalIds: string[] = [];
+
+        for (let i = 0; i < body.subGoals.length; i++) {
+          const subGoal = body.subGoals[i];
+          const subGoalId = genId();
+          const newSubGoal = {
+            id: subGoalId,
+            goalId: goalId,
+            title: subGoal.title,
+            todos: [],
+            isCompleted: false,
+            createdAt: new Date().toISOString(),
+          } as DBSubGoal;
+          await dbService.add<DBSubGoal>("subGoals", newSubGoal);
+          subGoalIds.push(subGoalId);
+        }
+
+        // Update goal with subGoal IDs
+        newGoal.subGoals = subGoalIds;
+        await dbService.put("goals", newGoal);
+      }
 
       return HttpResponse.json({ id: newGoal.id } as GoalIdRs, { status: 201 });
     } catch (e) {
