@@ -1,10 +1,14 @@
 "use client";
 
+import useAuthStore from "@/stores/useAuthStore";
 import { useEffect, useState } from "react";
 
-export const MSWComponent = () => {
+const MSWComponent = () => {
   const [mswReady, setMswReady] = useState(false);
+  const { isGuest } = useAuthStore();
+
   useEffect(() => {
+    if (!isGuest) return;
     const init = async () => {
       const initMsw = await import("../../mocks/index").then(
         (res) => res.initMsw,
@@ -16,7 +20,13 @@ export const MSWComponent = () => {
     if (!mswReady) {
       init();
     }
+
+    return () => {
+      import("../../mocks/index").then((res) => res.closeMSW());
+    };
   }, [mswReady]);
 
   return null;
 };
+
+export default MSWComponent;
