@@ -347,7 +347,7 @@ const ListCard = ({
               },
             )}
           </AnimatePresence>
-          {!checkedMore && todoItemsInfo.length > 0 && (
+          {!checkedMore && todoItemsInfo.length > 5 && (
             <button
               type="button"
               className="w-full h-8 px-2 py-1 flex justify-center items-center"
