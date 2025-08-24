@@ -82,44 +82,43 @@ const useSubGoalTodosAllInfinite = (
   subGoalId: string,
   option?: SWRInfiniteConfiguration,
 ) => {
-  const { data, mutate, isLoading, size, setSize } = useInfiniteSWR<
-    SubGoalTodoInfinite | undefined
-  >(
-    (pageIndex, previousPageData) => {
-      if (!subGoalId || (previousPageData && !previousPageData?.hasNext))
-        return null;
+  const { data, mutate, isLoading, size, setSize, isValidating } =
+    useInfiniteSWR<SubGoalTodoInfinite | undefined>(
+      (pageIndex, previousPageData) => {
+        if (!subGoalId || (previousPageData && !previousPageData?.hasNext))
+          return null;
 
-      return [
-        `/v1/sub-goals/${subGoalId}/todos`,
-        // subGoalId,
-        pageIndex,
-        previousPageData
-          ? (previousPageData.offset as number) + previousPageData.size
-          : 0,
-      ] as const;
-    },
-    async (key) => {
-      if (!subGoalId) return undefined;
-      // subGoalApi.getTodosBySubGoalIdWithSlice(subGoalId, {
-      //   offset,
-      //   size: 10,
-      // });
-      const offset = key[2];
-      return await templateFetch<SubGoalTodoInfinite | undefined>({
-        apiUrl: `/v1/sub-goals/${subGoalId}/todos?offset=${offset}&size=10`,
-        method: "GET",
-        options: {
-          credentials: "same-origin",
-          redirect: "follow",
-          referrerPolicy: "no-referrer",
-        },
-      });
-    },
+        return [
+          `/v1/sub-goals/${subGoalId}/todos`,
+          // subGoalId,
+          pageIndex,
+          previousPageData
+            ? (previousPageData.offset as number) + previousPageData.size
+            : 0,
+        ] as const;
+      },
+      async (key) => {
+        if (!subGoalId) return undefined;
+        // subGoalApi.getTodosBySubGoalIdWithSlice(subGoalId, {
+        //   offset,
+        //   size: 10,
+        // });
+        const offset = key[2];
+        return await templateFetch<SubGoalTodoInfinite | undefined>({
+          apiUrl: `/v1/sub-goals/${subGoalId}/todos?offset=${offset}&size=10`,
+          method: "GET",
+          options: {
+            credentials: "same-origin",
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+          },
+        });
+      },
 
-    {
-      ...option,
-    },
-  );
+      {
+        ...option,
+      },
+    );
 
   const todoItemList: TodoItemsInfo[] | undefined = data?.flatMap(
     (pageInfo) =>
@@ -141,6 +140,7 @@ const useSubGoalTodosAllInfinite = (
     isLoading,
     size,
     setSize,
+    isValidating,
   };
 };
 
