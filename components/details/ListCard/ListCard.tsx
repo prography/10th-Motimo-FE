@@ -28,6 +28,7 @@ import { date2StringWithSpliter } from "@/utils/date2String";
 
 import useBottomSheet from "@/hooks/useBottomSheet";
 import useGoalWithSubGoalTodo from "@/hooks/queries/useGoalWithSubGoalTodo";
+import { AnimatePresence, motion } from "motion/react";
 interface ListCardProps {
   subGoalInfo: {
     name?: string;
@@ -55,7 +56,6 @@ const ListCard = ({
   // 이 안에서도 subGoal에대한 todod들 가져오는 fetch있어야 함.
 
   const observingRef = useRef<HTMLDivElement | null>(null);
-
   const {
     data: fetchedTodoItemsInfo,
     mutate,
@@ -63,6 +63,7 @@ const ListCard = ({
     isReachedLast,
     size,
     setSize,
+    isValidating,
   } = useSubGoalTodosAllInfinite(subGoalInfo.id ?? "");
 
   const existObserver = useObservingExist(
@@ -153,7 +154,9 @@ const ListCard = ({
 
   return (
     <>
-      <main className="w-full flex-1 p-4  inline-flex flex-col justify-start items-center gap-5 overflow-hidden">
+      <main
+        className={`w-full flex-1 p-4  inline-flex flex-col justify-start items-center gap-5 overflow-hidden ${isLoading ? "opacity-50" : ""}`}
+      >
         {/* <section className="flex items-center gap-2 w-full justify-between">
           <button
             onClick={() => onLeft()}
@@ -290,45 +293,60 @@ const ListCard = ({
           </div>
         </section>
 
-        <section className="flex-1 w-full h-full gap-2 flex flex-col">
-          {(!checkedMore ? todoItemsInfo.slice(0, 5) : todoItemsInfo).map(
-            (todoInfo) => {
-              const optimisticDataCallback = makeSubgoalInfiniteOptimisticData(
-                todoInfo.id,
-              );
+        <section
+          className={`flex-1 w-full h-full gap-2 flex flex-col transition-opacity duration-300 ${isValidating ? "opacity-50" : ""}`}
+        >
+          <AnimatePresence>
+            {(!checkedMore ? todoItemsInfo.slice(0, 5) : todoItemsInfo).map(
+              (todoInfo) => {
+                const optimisticDataCallback =
+                  makeSubgoalInfiniteOptimisticData(todoInfo.id);
 
-              return (
-                <TodoItem
-                  onChecked={async () => {
-                    await mutate(
-                      optimisticDataCallback,
+                return (
+                  <motion.div
+                    key={todoInfo.id}
+                    layout
+                    transition={{ duration: 0.3 }}
+                    initial={{ opacity: 0, scale: 0.8 }} // 나타날 때 시작 상태
+                    animate={{ opacity: 1, scale: 1 }} // 나타날 때 최종 상태
+                    exit={{ opacity: 0, scale: 0.8 }} // 사라질 때 최종 상태
+                  >
+                    <TodoItem
+                      onChecked={async () => {
+                        await mutate(
+                          optimisticDataCallback,
+                          // undefined,
 
-                      {
-                        // optimisticData: optimisticDataCallback,
-                        populateCache: true,
-                        revalidate: false,
-                        rollbackOnError: true,
-                      },
-                    );
-                    onTodoCheck && onTodoCheck(todoInfo.id);
-                    // const res = await todoApi.toggleTodoCompletion(todoInfo.id);
-                    // if (res) mutate();
-                  }}
-                  title={todoInfo.title}
-                  checked={todoInfo.checked}
-                  key={todoInfo.id}
-                  onReportedClick={async () => {
-                    // 일단 모달을 띄워야 함.
-                    // postTodoResult(todoInfo.id);
-                    setOpenBottomSheet(true);
-                    setTodoIdForResult(todoInfo.id);
-                  }}
-                  reported={todoInfo.reported}
-                  targetDate={todoInfo.targetDate}
-                />
-              );
-            },
-          )}
+                          {
+                            // optimisticData: optimisticDataCallback,
+                            populateCache: false,
+                            revalidate: false,
+                            rollbackOnError: true,
+                          },
+                        );
+
+                        onTodoCheck && onTodoCheck(todoInfo.id);
+
+                        // const res = await todoApi.toggleTodoCompletion(todoInfo.id);
+                        // if (res) mutate();
+                      }}
+                      title={todoInfo.title}
+                      checked={todoInfo.checked}
+                      key={todoInfo.id}
+                      onReportedClick={async () => {
+                        // 일단 모달을 띄워야 함.
+                        // postTodoResult(todoInfo.id);
+                        setOpenBottomSheet(true);
+                        setTodoIdForResult(todoInfo.id);
+                      }}
+                      reported={todoInfo.reported}
+                      targetDate={todoInfo.targetDate}
+                    />
+                  </motion.div>
+                );
+              },
+            )}
+          </AnimatePresence>
           {!checkedMore && todoItemsInfo.length > 0 && (
             <button
               type="button"
