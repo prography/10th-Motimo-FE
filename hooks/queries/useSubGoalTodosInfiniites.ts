@@ -7,7 +7,6 @@ import { TodoRs, TodoRsStatusEnum } from "@/api/generated/motimo/Api";
 import { TodoItemsInfo } from "@/types/todoList";
 import { templateFetch } from "@/lib/fetching/template/fetchTemplate";
 import { Ref, RefObject, useEffect, useState } from "react";
-import { subGoalApi } from "@/api/service";
 
 type SubGoalTodoInfinite = {
   content: TodoRs[];
@@ -27,7 +26,8 @@ const useSubGoalTodosIncompleteOrTodayInfinite = (
       if (!subGoalId) return null;
 
       return [
-        subGoalId,
+        // subGoalId,
+        `/v1/sub-goals/${subGoalId}/todos/incomplete-or-date`,
         pageIndex,
 
         // previousPageData?.offset ? previousPageData.offset + 1 : 0,
@@ -90,7 +90,8 @@ const useSubGoalTodosAllInfinite = (
         return null;
 
       return [
-        subGoalId,
+        `/v1/sub-goals/${subGoalId}/todos`,
+        // subGoalId,
         pageIndex,
         previousPageData
           ? (previousPageData.offset as number) + previousPageData.size
@@ -181,7 +182,40 @@ const useObservingExist = (
   return exist;
 };
 
+const makeSubgoalInfiniteOptimisticData =
+  (todoId: string) =>
+  (currentCache: (SubGoalTodoInfinite | undefined)[] | undefined) => {
+    if (!currentCache) return [];
+
+    const res = currentCache.map((cache) => {
+      if (!cache) return cache;
+      const targetTodoIdx = cache.content.findIndex(
+        (todoInfo) => todoInfo.id === todoId,
+      );
+      // 못찾았다면
+      if (targetTodoIdx < 0) return cache;
+
+      // 찾았다면
+      const mutatedContent = cache.content.map((info, idx) => {
+        if (idx !== targetTodoIdx) return info;
+        return {
+          ...info,
+          status:
+            info.status === TodoRsStatusEnum.COMPLETE
+              ? TodoRsStatusEnum.INCOMPLETE
+              : TodoRsStatusEnum.COMPLETE,
+        };
+      });
+
+      return { ...cache, content: mutatedContent };
+    });
+
+    return res;
+  };
+
 export {
+  // useMutateSubGoalInfinite,
+  makeSubgoalInfiniteOptimisticData,
   useSubGoalTodosIncompleteOrTodayInfinite,
   useSubGoalTodosAllInfinite,
   useObservingExist,

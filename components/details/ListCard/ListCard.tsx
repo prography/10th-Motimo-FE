@@ -14,6 +14,7 @@ import { TodoResultRqEmotionEnum } from "@/api/generated/motimo/Api";
 import { subGoalApi, todoApi } from "@/api/service";
 import { postTodoResult } from "@/lib/fetching/postTodoResult";
 import {
+  makeSubgoalInfiniteOptimisticData,
   useObservingExist,
   // useObservingInfiniteOffset,
   useSubGoalTodosAllInfinite,
@@ -292,9 +293,23 @@ const ListCard = ({
         <section className="flex-1 w-full h-full gap-2 flex flex-col">
           {(!checkedMore ? todoItemsInfo.slice(0, 5) : todoItemsInfo).map(
             (todoInfo) => {
+              const optimisticDataCallback = makeSubgoalInfiniteOptimisticData(
+                todoInfo.id,
+              );
+
               return (
                 <TodoItem
                   onChecked={async () => {
+                    await mutate(
+                      optimisticDataCallback,
+
+                      {
+                        // optimisticData: optimisticDataCallback,
+                        populateCache: true,
+                        revalidate: false,
+                        rollbackOnError: true,
+                      },
+                    );
                     onTodoCheck && onTodoCheck(todoInfo.id);
                     // const res = await todoApi.toggleTodoCompletion(todoInfo.id);
                     // if (res) mutate();
