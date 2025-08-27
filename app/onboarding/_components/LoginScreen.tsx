@@ -10,6 +10,7 @@ import {
 } from "@/lib/constants";
 import MotimoLogoBlack from "@/components/shared/public/MOTIMO_LOGO_BLACK.svg";
 import useAuthStore from "@/stores/useAuthStore";
+import { DB_NAME } from "@/mocks/guestMode/db";
 
 interface LoginScreenProps {
   onNext: () => void;
@@ -29,6 +30,7 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
     clearOauthData,
     setIsGuest,
     reset,
+    setHasCompletedOnboarding,
   } = useAuthStore();
 
   // OAuth 콜백 처리 (URL 파라미터 방식)
@@ -171,12 +173,18 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
     window.location.href = `${OAUTH_ENDPOINTS.KAKAO_AUTHORIZE}?redirect_uri=${redirect_uri}&state=${state}`;
   };
 
-  const handleBrowse = () => {
+  const handleBrowse = async () => {
     // TODO: Handle browse without login
     reset();
+
+    // 게스트모드 로그인 기록 확인
+    const dbs = await indexedDB.databases();
+    const hasGuestDB = dbs.find((db) => db.name === DB_NAME);
+    if (hasGuestDB) setHasCompletedOnboarding(true);
+
     login();
     setIsGuest(true);
-    onNext();
+    // onNext();
   };
 
   return (
