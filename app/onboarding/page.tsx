@@ -64,8 +64,9 @@ export default function OnboardingPage() {
   useEffect(() => {
     if (!hasHydrated) return;
 
-    // 이미 온보딩을 완료했으면 redirect (게스트가 아닌 경우만)
-    if (hasCompletedOnboarding && isLoggedIn && !isGuest) {
+    // 이미 온보딩을 완료했으면 redirect (게스트도 포함)
+    if (hasCompletedOnboarding && isLoggedIn) {
+      // if (hasCompletedOnboarding && isLoggedIn && !isGuest) {
       router.replace("/");
       return;
     }

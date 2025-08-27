@@ -39,7 +39,7 @@ export async function stopMsw() {
     const { worker } = await import("../mocks/browser");
     worker.stop();
   }
-  
+
   mswState.isRunning = false;
 }
 
@@ -47,12 +47,12 @@ export function getMswState() {
   return { ...mswState };
 }
 
-export async function closeMSW() {
-  if (typeof window === "undefined") {
-    const { server } = await import("../mocks/server");
-    server.close();
-  } else {
-    const { worker } = await import("../mocks/browser");
-    worker.stop();
-  }
-}
+// export async function closeMSW() {
+//   if (typeof window === "undefined") {
+//     const { server } = await import("../mocks/server");
+//     server.close();
+//   } else {
+//     const { worker } = await import("../mocks/browser");
+//     worker.stop();
+//   }
+// }

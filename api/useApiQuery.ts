@@ -6,6 +6,7 @@ import {
   ApiMethodReturnType,
   ApiMethodParams,
 } from "./service";
+import useAuthStore from "@/stores/useAuthStore";
 
 // SWR Key 타입
 type SWRKey = readonly unknown[];
@@ -27,7 +28,11 @@ export function useApiQuery<
 
   return useSWR<ApiMethodReturnType<TApiGroup, TMethod>>(
     // params가 null이면 요청하지 않음 (조건부 fetching)
-    params === null ? null : key,
+    params === null
+      ? null
+      : useAuthStore.getState().isGuest
+        ? `${key}, guest`
+        : key,
     params === null
       ? null
       : () => {
@@ -51,7 +56,8 @@ export function useApiQuery<
               ? methodFunction(...params)
               : methodFunction();
           } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : String(error);
+            const errorMessage =
+              error instanceof Error ? error.message : String(error);
             throw new Error(
               `Failed to call ${String(apiGroup)}.${String(method)}: ${errorMessage}`,
             );
