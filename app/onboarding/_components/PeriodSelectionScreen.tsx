@@ -7,6 +7,7 @@ import { ButtonRound } from "@/components/shared/ButtonRound/ButtonRound";
 import { CupertinoPicker } from "@/components/shared/CupertinoPicker/CupertinoPicker";
 import api, { goalApi } from "@/api/service";
 import useOnboardingStore from "@/stores/useOnboardingStore";
+import useAuthStore from "@/stores/useAuthStore";
 
 interface PeriodSelectionScreenProps {
   onNext: () => void;
@@ -22,10 +23,13 @@ export default function PeriodSelectionScreen({
     periodType,
     monthCount,
     targetDate,
+    subGoals,
     setPeriodType,
     setMonthCount,
     setTargetDate,
   } = useOnboardingStore();
+  
+  const { isGuest } = useAuthStore();
 
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
@@ -272,17 +276,23 @@ export default function PeriodSelectionScreen({
               })();
 
             try {
-              await goalApi.createGoal({
-                title: goal,
-                isPeriodByMonth,
-                month: isPeriodByMonth ? monthCount : undefined,
-                dueDate,
-                subGoals: [],
-              });
+              // Skip API call for guests
+              if (!isGuest) {
+                await goalApi.createGoal({
+                  title: goal,
+                  isPeriodByMonth,
+                  month: isPeriodByMonth ? monthCount : undefined,
+                  dueDate,
+                  subGoals: subGoals.map((subGoal, index) => ({
+                    title: subGoal.title,
+                    order: index + 1,
+                  })),
+                });
+              }
               onNext();
             } catch (error) {
               console.error('Failed to create goal:', error);
-            setIsSubmitting(false);
+              setIsSubmitting(false);
               // Handle error appropriately (show toast, etc.)
             }
           }}

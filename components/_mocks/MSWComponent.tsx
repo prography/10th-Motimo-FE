@@ -1,22 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 
 export const MSWComponent = () => {
-  const [mswReady, setMswReady] = useState(false);
+  const hasInitialized = useRef(false);
+  
   useEffect(() => {
+    if (hasInitialized.current) return;
+    
     const init = async () => {
-      const initMsw = await import("../../mocks/index").then(
-        (res) => res.initMsw,
-      );
+      const { initMsw } = await import("../../mocks/index");
       await initMsw();
-      setMswReady(true);
+      hasInitialized.current = true;
     };
 
-    if (!mswReady) {
-      init();
-    }
-  }, [mswReady]);
+    init();
+
+    // Cleanup is handled by GuestModeHandler to avoid duplicate stops
+  }, []);
 
   return null;
 };
