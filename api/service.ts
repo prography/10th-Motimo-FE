@@ -1,4 +1,4 @@
-import { Api, HttpClient } from "./generated/motimo/Api";
+import { Api, HttpClient, HttpResponse } from "./generated/motimo/Api";
 import useAuthStore from "../stores/useAuthStore";
 import useToastStore from "@/stores/useToastStore";
 
@@ -7,6 +7,8 @@ const httpClient = new HttpClient({
   baseUrl: process.env.NEXT_PUBLIC_API_URL || "",
   securityWorker: () => {
     const token = useAuthStore.getState().accessToken;
+    //test
+    console.log("아 이거 한번만하냐?: ", token);
 
     if (token) {
       return {
@@ -18,10 +20,12 @@ const httpClient = new HttpClient({
     }
 
     const isGuest = useAuthStore.getState().isGuest;
-    if (isGuest) {
+    // 게스트거나 토큰 만료의 경우
+    if (isGuest || !token) {
       return { format: "json" };
     }
 
+    // 임의의 경우를 위해 남겨둠.
     return {};
   },
 });
@@ -61,10 +65,41 @@ const debounceer = <T, E>(apiRequest: typeof httpClient.request<T, E>) => {
         }, timeLimit),
       );
     });
+
+    // 토큰 재발급 처리
+    tokenHandler(apiRes);
+
     return apiRes;
   };
 };
+// 토큰 처리
+const tokenHandler = async <T, E>(
+  apiRes: ReturnType<typeof httpClient.request<T, E>>,
+) => {
+  return apiRes.catch(async (e) => {
+    if (e.status === 401) {
+      const token = useAuthStore.getState().refreshToken;
 
+      if (!token) {
+        api.authController.logout();
+        throw new Error("no refresh token");
+      }
+      const tokenRes = await api.authController.reissue({
+        refreshToken: token,
+      });
+
+      if (!tokenRes?.accessToken || !tokenRes?.refreshToken) {
+        throw new Error("token reissue error");
+      }
+
+      useAuthStore.setState((states) => ({
+        ...states,
+        accessToken: tokenRes.accessToken,
+        refreshToken: tokenRes.refreshToken,
+      }));
+    }
+  });
+};
 httpClient.request = debounceer(httpClient.request);
 
 // API 클라이언트 인스턴스 생성
