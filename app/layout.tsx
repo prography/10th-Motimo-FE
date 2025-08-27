@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import ModalRenderer from "./_components/ModalRenderer";
-import { MSWComponent } from "@/components/_mocks/MSWComponent";
 import ToastRenderer from "./_components/ToastRenderer";
 import BottomSheetRenderer from "./_components/BottomSheetRenderer";
 import GuestModeHandler from "./_components/GuestModeHandler";

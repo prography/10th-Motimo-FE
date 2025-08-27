@@ -7,7 +7,6 @@ import { TodoRs, TodoRsStatusEnum } from "@/api/generated/motimo/Api";
 import { TodoItemsInfo } from "@/types/todoList";
 import { templateFetch } from "@/lib/fetching/template/fetchTemplate";
 import { Ref, RefObject, useEffect, useState } from "react";
-import { subGoalApi } from "@/api/service";
 
 type SubGoalTodoInfinite = {
   content: TodoRs[];
@@ -27,7 +26,8 @@ const useSubGoalTodosIncompleteOrTodayInfinite = (
       if (!subGoalId) return null;
 
       return [
-        subGoalId,
+        // subGoalId,
+        `/v1/sub-goals/${subGoalId}/todos/incomplete-or-date`,
         pageIndex,
 
         // previousPageData?.offset ? previousPageData.offset + 1 : 0,
@@ -82,43 +82,43 @@ const useSubGoalTodosAllInfinite = (
   subGoalId: string,
   option?: SWRInfiniteConfiguration,
 ) => {
-  const { data, mutate, isLoading, size, setSize } = useInfiniteSWR<
-    SubGoalTodoInfinite | undefined
-  >(
-    (pageIndex, previousPageData) => {
-      if (!subGoalId || (previousPageData && !previousPageData?.hasNext))
-        return null;
+  const { data, mutate, isLoading, size, setSize, isValidating } =
+    useInfiniteSWR<SubGoalTodoInfinite | undefined>(
+      (pageIndex, previousPageData) => {
+        if (!subGoalId || (previousPageData && !previousPageData?.hasNext))
+          return null;
 
-      return [
-        subGoalId,
-        pageIndex,
-        previousPageData
-          ? (previousPageData.offset as number) + previousPageData.size
-          : 0,
-      ] as const;
-    },
-    async (key) => {
-      if (!subGoalId) return undefined;
-      // subGoalApi.getTodosBySubGoalIdWithSlice(subGoalId, {
-      //   offset,
-      //   size: 10,
-      // });
-      const offset = key[2];
-      return await templateFetch<SubGoalTodoInfinite | undefined>({
-        apiUrl: `/v1/sub-goals/${subGoalId}/todos?offset=${offset}&size=10`,
-        method: "GET",
-        options: {
-          credentials: "same-origin",
-          redirect: "follow",
-          referrerPolicy: "no-referrer",
-        },
-      });
-    },
+        return [
+          `/v1/sub-goals/${subGoalId}/todos`,
+          // subGoalId,
+          pageIndex,
+          previousPageData
+            ? (previousPageData.offset as number) + previousPageData.size
+            : 0,
+        ] as const;
+      },
+      async (key) => {
+        if (!subGoalId) return undefined;
+        // subGoalApi.getTodosBySubGoalIdWithSlice(subGoalId, {
+        //   offset,
+        //   size: 10,
+        // });
+        const offset = key[2];
+        return await templateFetch<SubGoalTodoInfinite | undefined>({
+          apiUrl: `/v1/sub-goals/${subGoalId}/todos?offset=${offset}&size=10`,
+          method: "GET",
+          options: {
+            credentials: "same-origin",
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+          },
+        });
+      },
 
-    {
-      ...option,
-    },
-  );
+      {
+        ...option,
+      },
+    );
 
   const todoItemList: TodoItemsInfo[] | undefined = data?.flatMap(
     (pageInfo) =>
@@ -140,6 +140,7 @@ const useSubGoalTodosAllInfinite = (
     isLoading,
     size,
     setSize,
+    isValidating,
   };
 };
 
@@ -181,7 +182,40 @@ const useObservingExist = (
   return exist;
 };
 
+const makeSubgoalInfiniteOptimisticData =
+  (todoId: string) =>
+  (currentCache: (SubGoalTodoInfinite | undefined)[] | undefined) => {
+    if (!currentCache) return [];
+
+    const res = currentCache.map((cache) => {
+      if (!cache) return cache;
+      const targetTodoIdx = cache.content.findIndex(
+        (todoInfo) => todoInfo.id === todoId,
+      );
+      // 못찾았다면
+      if (targetTodoIdx < 0) return cache;
+
+      // 찾았다면
+      const mutatedContent = cache.content.map((info, idx) => {
+        if (idx !== targetTodoIdx) return info;
+        return {
+          ...info,
+          status:
+            info.status === TodoRsStatusEnum.COMPLETE
+              ? TodoRsStatusEnum.INCOMPLETE
+              : TodoRsStatusEnum.COMPLETE,
+        };
+      });
+
+      return { ...cache, content: mutatedContent };
+    });
+
+    return res;
+  };
+
 export {
+  // useMutateSubGoalInfinite,
+  makeSubgoalInfiniteOptimisticData,
   useSubGoalTodosIncompleteOrTodayInfinite,
   useSubGoalTodosAllInfinite,
   useObservingExist,

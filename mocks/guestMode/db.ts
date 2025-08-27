@@ -1,4 +1,4 @@
-const DB_NAME = "motimo-guest";
+export const DB_NAME = "motimo-guest";
 const DB_VERSION = 1;
 type StoreName =
   | "users"
