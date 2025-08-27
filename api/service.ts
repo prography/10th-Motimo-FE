@@ -7,8 +7,6 @@ const httpClient = new HttpClient({
   baseUrl: process.env.NEXT_PUBLIC_API_URL || "",
   securityWorker: () => {
     const token = useAuthStore.getState().accessToken;
-    //test
-    console.log("아 이거 한번만하냐?: ", token);
 
     if (token) {
       return {
