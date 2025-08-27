@@ -77,8 +77,8 @@ class IndexedDBService {
           store.createIndex("title_idx", "title", { unique: false });
         }
         // id를 keyPath로 지정하여 고유 키로 사용
-        if (!db.objectStoreNames.contains("sub-goals")) {
-          const store = db.createObjectStore("sub-goals", {
+        if (!db.objectStoreNames.contains("subGoals")) {
+          const store = db.createObjectStore("subGoals", {
             keyPath: "id",
             autoIncrement: true,
           });

@@ -16,10 +16,9 @@ const AuthGuard = dynamic(() => import("./_components/AuthGuard"), {
 
 export default function Main() {
   const { data } = useMyProfile();
-  const tmpDaysOfServiceUse = calcLeftDay(
-    new Date(),
-    new Date(data?.createdAt ?? ""),
-  );
+  const tmpDaysOfServiceUse = data?.createdAt 
+    ? calcLeftDay(new Date(), new Date(data.createdAt))
+    : 0;
 
   return (
     <AuthGuard>

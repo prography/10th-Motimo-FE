@@ -61,7 +61,10 @@ const useAuthStore = create<AuthStore>()(
       isGuest: false,
 
       // Token setters
-      setAccessToken: (token) => set({ accessToken: token }),
+      setAccessToken: (token) => set((state) => ({ 
+        accessToken: token,
+        isGuest: token ? false : state.isGuest
+      })),
       setRefreshToken: (token) => set({ refreshToken: token }),
 
       // OAuth setters
@@ -70,12 +73,15 @@ const useAuthStore = create<AuthStore>()(
       setOauthReturnStep: (step) => set({ oauthReturnStep: step }),
 
       // User state setters
-      setIsLoggedIn: (status) => set({ isLoggedIn: status }),
+      setIsLoggedIn: (status) => set((state) => ({ 
+        isLoggedIn: status, 
+        isGuest: status ? false : state.isGuest 
+      })),
       setHasCompletedOnboarding: (status) =>
         set({ hasCompletedOnboarding: status }),
 
       // Utility functions
-      login: () => set({ isLoggedIn: true }),
+      login: () => set({ isLoggedIn: true, isGuest: false }),
 
       logout: () =>
         set({
