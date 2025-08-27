@@ -4,8 +4,8 @@ import EditSvg from "@/public/images/Edit_Pencil_01.svg";
 import TrashBinSvg from "@/public/images/Trash_Full.svg";
 import DraggableSvg from "@/public/images/Draggable.svg";
 interface SubGoalEditItemProps {
-  onEdit: () => void;
-  onDelete: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
   subGoalTitle: string;
 }
 
@@ -27,24 +27,28 @@ const SubGoalEditItem = ({
           {subGoalTitle}
         </p>
         <div className="flex justify-end gap-1">
-          <button
-            onClick={() => onEdit()}
-            type="button"
-            className="w-8 h-8 p-2 bg-background-normal rounded inline-flex justify-center items-center gap-2"
-          >
-            <div className="w-5 h-5 relative  text-background-strong">
-              <EditSvg />
-            </div>
-          </button>
-          <button
-            onClick={() => onDelete()}
-            type="button"
-            className="w-8 h-8 p-2 bg-background-normal rounded inline-flex justify-center items-center gap-2"
-          >
-            <div className="w-5 h-5 relative ">
-              <TrashBinSvg />
-            </div>
-          </button>
+          {onEdit && (
+            <button
+              onClick={() => onEdit()}
+              type="button"
+              className="w-8 h-8 p-2 bg-background-normal rounded inline-flex justify-center items-center gap-2"
+            >
+              <div className="w-5 h-5 relative  text-background-strong">
+                <EditSvg />
+              </div>
+            </button>
+          )}
+          {onDelete && (
+            <button
+              onClick={() => onDelete()}
+              type="button"
+              className="w-8 h-8 p-2 bg-background-normal rounded inline-flex justify-center items-center gap-2"
+            >
+              <div className="w-5 h-5 relative ">
+                <TrashBinSvg />
+              </div>
+            </button>
+          )}
         </div>
       </div>
     </>

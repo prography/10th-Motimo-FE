@@ -1,32 +1,25 @@
 "use client";
 
-import useAuthStore from "@/stores/useAuthStore";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 
-const MSWComponent = () => {
-  const [mswReady, setMswReady] = useState(false);
-  const { isGuest } = useAuthStore();
+export const MSWComponent = () => {
+  const hasInitialized = useRef(false);
 
   useEffect(() => {
-    if (!isGuest) return;
+    if (hasInitialized.current) return;
+
     const init = async () => {
-      const initMsw = await import("../../mocks/index").then(
-        (res) => res.initMsw,
-      );
+      const { initMsw } = await import("../../mocks/index");
       await initMsw();
-      setMswReady(true);
+      hasInitialized.current = true;
     };
 
-    if (!mswReady) {
-      init();
-    }
+    init();
 
-    return () => {
-      import("../../mocks/index").then((res) => res.closeMSW());
-    };
-  }, [mswReady]);
+    // Cleanup is handled by GuestModeHandler to avoid duplicate stops
+  }, []);
 
   return null;
 };
 
-export default MSWComponent;
+// export default MSWComponent;
