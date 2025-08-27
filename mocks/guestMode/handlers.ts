@@ -31,6 +31,7 @@ import type {
   GroupMessageIdRs,
 } from "../../api/generated/motimo/Api";
 import { DBGoal, DBSubGoal, DBTodo, DBTodoResult } from "./types";
+import { date2StringWithSpliter } from "@/utils/date2String";
 
 const genId = () => String(Date.now() + Math.floor(Math.random() * 1000));
 
@@ -136,9 +137,19 @@ const goalHandlers = [
     try {
       const body = (await request.json()) as GoalCreateRq;
       const goalId = genId();
+
+      // dueDate처리
+      const dueDate = new Date(new Date().setMonth(new Date().getMonth() + 3));
+
       const newGoal = {
-        id: genId(),
+        id: goalId,
+        ...{
+          dueDate: body.dueDate
+            ? undefined
+            : date2StringWithSpliter(dueDate, "-"),
+        },
         ...body,
+
         createdAt: new Date().toISOString(),
       } as any;
       await dbService.add<DBGoal>("goals", newGoal);
@@ -245,7 +256,11 @@ const goalHandlers = [
     try {
       const { goalId } = params as { goalId: string };
       const subs = (await dbService.getAll<DBSubGoal>("subGoals")) || [];
-      const subsForGoal = subs.filter((s) => s.goalId === String(goalId));
+      const subsForGoal = subs.filter((s) => {
+        //test
+        console.log("s.goalId, goalId: ", s.goalId, goalId);
+        return s.goalId === String(goalId);
+      });
       const todos = (await dbService.getAll<DBTodo>("todos")) || [];
       const subWithTodos = subsForGoal.map((s) => ({
         ...s,
