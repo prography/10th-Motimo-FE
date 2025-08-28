@@ -79,7 +79,8 @@ const tokenHandler = async <T, E>(
       const token = useAuthStore.getState().refreshToken;
 
       if (!token) {
-        api.authController.logout();
+        // api.authController.logout();
+        // window.location.href = "/";
         throw new Error("no refresh token");
       }
       const tokenRes = await api.authController.reissue({
