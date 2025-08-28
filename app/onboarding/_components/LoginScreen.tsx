@@ -184,7 +184,8 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
 
     login();
     setIsGuest(true);
-    // onNext();
+
+    if (!hasGuestDB) onNext();
   };
 
   return (
