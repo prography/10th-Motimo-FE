@@ -13,6 +13,13 @@ RUN npm install
 # 프로젝트의 모든 파일을 작업 디렉토리로 복사합니다.
 COPY . .
 
+
+############## 빌드 시점 환경 변수 주입하기.
+ARG NEXT_PUBLIC_FRONTEND_BASE_URL
+
+ENV NEXT_PUBLIC_FRONTEND_BASE_URL=$NEXT_PUBLIC_FRONTEND_BASE_URL
+
+
 # Next.js 애플리케이션을 빌드합니다.
 RUN npm run build
 
