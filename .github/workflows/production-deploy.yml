@@ -48,6 +48,9 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            # 사용하지 않는 도커 자원을 정리하여 공간 확보
+            sudo docker system prune -a -f
+
             # EC2에서 Docker Hub 이미지 pull
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/motimo-fe-production:${{ github.sha }}
 
