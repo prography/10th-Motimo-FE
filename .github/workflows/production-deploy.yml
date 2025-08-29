@@ -5,8 +5,8 @@ name: Deploy to EC2 using Docker Hub
 on:
   push:
     branches:
-      # - main
-      - ec2-deploy
+      - main
+      # - ec2-deploy
 
 jobs:
   deploy:
