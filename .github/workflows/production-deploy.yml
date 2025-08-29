@@ -23,6 +23,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+
       # # 2. Docker 이미지 빌드, 태그, 푸시 (이미지 이름 형식 변경)
       # - name: Build and push to Docker Hub
       #   run: |
@@ -39,6 +40,7 @@ jobs:
           # 여기에 빌드 시점에 필요한 환경 변수를 전달합니다.
           build-args: |
             NEXT_PUBLIC_FRONTEND_BASE_URL=${{ secrets.NEXT_PUBLIC_FRONTEND_BASE_URL }}
+
 
       # 3. EC2에 접속하여 배포
       - name: Deploy to EC2 instance
