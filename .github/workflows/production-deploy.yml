@@ -1,0 +1,50 @@
+# .github/workflows/deploy.yml
+
+name: Deploy to EC2 using Docker Hub
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      # 1. Docker Hub에 로그인 (ECR 로그인 대신)
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 2. Docker 이미지 빌드, 태그, 푸시 (이미지 이름 형식 변경)
+      - name: Build and push to Docker Hub
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/motimo-fe-production:${{ github.sha }} .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/motimo-fe-production:${{ github.sha }}
+
+      # 3. EC2에 접속하여 배포
+      - name: Deploy to EC2 instance
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # EC2에서 Docker Hub 이미지 pull
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/motimo-fe-production:${{ github.sha }}
+
+            # 기존 컨테이너 중지 및 삭제
+            if [ $(docker ps -q -f name=motimo-fe-production) ]; then
+              docker stop motimo-fe-production
+              docker rm motimo-fe-production
+            fi
+
+            # 새 컨테이너 실행
+            docker run -d --name motimo-fe-production -p 3000:3000 --restart always --env-file ./production.env ${{ secrets.DOCKERHUB_USERNAME }}/motimo-fe-production:${{ github.sha }}
+
