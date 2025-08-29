@@ -280,9 +280,9 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
       </div>
 
       {/* Gesture bar */}
-      <div className="h-6 flex justify-center items-center">
+      {/* <div className="h-6 flex justify-center items-center">
         <div className="w-[108px] h-1 bg-label-normal rounded-full"></div>
-      </div>
+      </div> */}
     </div>
   );
 }
