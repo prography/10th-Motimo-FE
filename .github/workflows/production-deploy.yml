@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - main
+      # - ec2-deploy
 
 jobs:
   deploy:
@@ -22,11 +23,24 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 2. Docker 이미지 빌드, 태그, 푸시 (이미지 이름 형식 변경)
-      - name: Build and push to Docker Hub
-        run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/motimo-fe-production:${{ github.sha }} .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/motimo-fe-production:${{ github.sha }}
+
+      # # 2. Docker 이미지 빌드, 태그, 푸시 (이미지 이름 형식 변경)
+      # - name: Build and push to Docker Hub
+      #   run: |
+      #     sudo docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/motimo-fe-production:${{ github.sha }} .
+      #     sudo docker push ${{ secrets.DOCKERHUB_USERNAME }}/motimo-fe-production:${{ github.sha }}
+
+      # 2. [수정됨] Docker Build and Push 통합 액션 사용
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/motimo-fe-production:${{ github.sha }}
+          # 여기에 빌드 시점에 필요한 환경 변수를 전달합니다.
+          build-args: |
+            NEXT_PUBLIC_FRONTEND_BASE_URL=${{ secrets.NEXT_PUBLIC_FRONTEND_BASE_URL }}
+
 
       # 3. EC2에 접속하여 배포
       - name: Deploy to EC2 instance
@@ -36,15 +50,17 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            # 사용하지 않는 도커 자원을 정리하여 공간 확보
+            sudo docker system prune -a -f
+
             # EC2에서 Docker Hub 이미지 pull
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/motimo-fe-production:${{ github.sha }}
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/motimo-fe-production:${{ github.sha }}
 
             # 기존 컨테이너 중지 및 삭제
-            if [ $(docker ps -q -f name=motimo-fe-production) ]; then
-              docker stop motimo-fe-production
-              docker rm motimo-fe-production
+            if [ $(sudo docker ps -q -f name=motimo-fe-production) ]; then
+              sudo docker stop motimo-fe-production
+              sudo docker rm motimo-fe-production
             fi
 
             # 새 컨테이너 실행
-            docker run -d --name motimo-fe-production -p 3000:3000 --restart always --env-file ./production.env ${{ secrets.DOCKERHUB_USERNAME }}/motimo-fe-production:${{ github.sha }}
-
+            sudo docker run -d --name motimo-fe-production -p 3000:3000 --restart always --env-file ./production.env ${{ secrets.DOCKERHUB_USERNAME }}/motimo-fe-production:${{ github.sha }}
