@@ -107,7 +107,7 @@ const ListCard = ({
       return;
     }
     const bottomSheetInfo: Parameters<typeof openTodoRootBottomSheet>[0] = {
-      bottomSheetFixerStyle: { bottom: "0px" },
+      bottomSheetFixerStyle: { bottom: "0px", zIndex: "40" },
       backdropProps: {
         onClick: () => {
           // 내용물을 초기화 해야 함. -> key값 바꿔도 애니메이션이나 바텀시트 높이 정상적일까?
