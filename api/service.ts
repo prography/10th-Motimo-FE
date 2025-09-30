@@ -1,11 +1,26 @@
 import { Api, HttpClient, HttpResponse } from "./generated/motimo/Api";
 import useAuthStore from "../stores/useAuthStore";
 import useToastStore from "@/stores/useToastStore";
+import { cookies } from "next/headers";
+import { getToken } from "./getToken";
 
 // HTTP 클라이언트 생성 시 인증 헤더를 자동으로 추가하는 securityWorker 설정
 const httpClient = new HttpClient({
-  baseUrl: process.env.NEXT_PUBLIC_API_URL || "",
-  securityWorker: () => {
+  baseUrl: (() => {
+    return process.env.API_URL || "";
+    // return process.env.NEXT_PUBLIC_API_URL || process.env.API_URL;
+  })(),
+  securityWorker: async () => {
+    if (typeof window === "undefined") {
+      const token = await getToken();
+      return {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        format: "json",
+      };
+    }
+
     const token = useAuthStore.getState().accessToken;
 
     if (token) {

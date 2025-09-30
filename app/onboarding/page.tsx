@@ -11,6 +11,8 @@ import useAuthStore from "@/stores/useAuthStore";
 import { useGoals } from "@/api/hooks";
 import { Loading } from "@/components/shared/Loading/Loading";
 
+import cookies from "js-cookie";
+
 export default function OnboardingPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
@@ -20,6 +22,7 @@ export default function OnboardingPage() {
     isLoggedIn,
     hasCompletedOnboarding,
     isGuest,
+    accessToken,
   } = useAuthStore();
 
   // 클라이언트 사이드에서만 hydration 체크
@@ -67,6 +70,10 @@ export default function OnboardingPage() {
     // 이미 온보딩을 완료했으면 redirect (게스트도 포함)
     if (hasCompletedOnboarding && isLoggedIn) {
       // if (hasCompletedOnboarding && isLoggedIn && !isGuest) {
+      if (!isGuest && accessToken) {
+        // const accessToken = accessToken;
+        cookies.set("accessToken", accessToken);
+      }
       router.replace("/");
       return;
     }
