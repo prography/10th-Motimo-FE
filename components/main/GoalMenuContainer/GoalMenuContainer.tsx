@@ -8,7 +8,7 @@ import PlusSvg from "@/components/shared/public/Add_Plus.svg";
 import useModal from "@/hooks/useModal";
 import ModalAddingGoal from "@/components/shared/Modal/ModalAddingGoal/ModalAddingGoal";
 import { useRouter } from "next/navigation";
-import { motion, useMotionValue } from "motion/react";
+// import { motion, useMotionValue } from "motion/react";
 
 type GoalMenuInfo = Pick<GoalMenuProps, "goal" | "percentage"> & {
   goalId: string;
@@ -38,7 +38,7 @@ const GoalMenuContainer = ({}: GoalMenuContainerProps) => {
   const [contentW, setContentW] = useState(0);
 
   const router = useRouter();
-  const x = useMotionValue(0);
+  // const x = useMotionValue(0);
 
   useEffect(() => {
     updateGoalId(goalMenuInfoList[selectedGoalIdx]?.goalId ?? null);
