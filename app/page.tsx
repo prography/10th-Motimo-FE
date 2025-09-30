@@ -87,15 +87,28 @@ export default async function MainPage() {
 }
 
 const MainHydration = async () => {
-  const initUserData = await api.사용자Api.getMyProfile();
-  const initCheerData = await api.응원Api.getCheerPhrase();
-  const initPointData = await api.포인트Api.getPoint();
-  const initGoalsData = await api.목표Api.getGoalList();
+  const userRequest = api.사용자Api.getMyProfile();
+  const cheerRequest = api.응원Api.getCheerPhrase();
+  const pointRequest = api.포인트Api.getPoint();
+  const goalsRequest = api.목표Api.getGoalList();
 
   const profileKey = JSON.stringify(queryArgs.myProfile);
   const cheerKey = JSON.stringify(queryArgs.cheerPhrase);
   const pointKey = JSON.stringify(queryArgs.points);
   const goalsKey = JSON.stringify(queryArgs.goals);
+
+  const initData = await Promise.allSettled([
+    userRequest,
+    cheerRequest,
+    pointRequest,
+    goalsRequest,
+  ]).then((result) => {
+    return result.map((eachRes) => {
+      if (eachRes.status === "fulfilled") return eachRes.value;
+
+      return undefined;
+    });
+  });
 
   // const { data: cheerData } = useCheerPhrase();
   //   const { data: pointData } = usePoints();
@@ -104,10 +117,10 @@ const MainHydration = async () => {
     <>
       <FallbackProvider
         fallback={{
-          [profileKey]: initUserData,
-          [cheerKey]: initCheerData,
-          [pointKey]: initPointData,
-          [goalsKey]: initGoalsData,
+          [profileKey]: initData[0],
+          [cheerKey]: initData[1],
+          [pointKey]: initData[2],
+          [goalsKey]: initData[3],
         }}
       >
         <Main />
