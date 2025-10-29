@@ -6,6 +6,6 @@ export { GroupList } from "./GroupList";
 export { GroupPage } from "./GroupPage";
 export { PendingGroupCard } from "./PendingGroupCard";
 export { PendingGroupList } from "./PendingGroupList";
-export { default as ReactionModal } from "./ReactionModal";
+// export { default as ReactionModal } from "./ReactionModal";
 export { SystemMessage } from "./SystemMessage";
 export type { PendingGroup } from "./PendingGroupList";

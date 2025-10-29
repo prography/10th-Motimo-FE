@@ -12,6 +12,8 @@ import MotimoLogoBlack from "@/components/shared/public/MOTIMO_LOGO_BLACK.svg";
 import useAuthStore from "@/stores/useAuthStore";
 import { DB_NAME } from "@/mocks/guestMode/db";
 
+import Cookies from "js-cookie";
+
 interface LoginScreenProps {
   onNext: () => void;
 }
@@ -97,6 +99,9 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
       // URL 파라미터에서 토큰 저장
       if (accessTokenFromUrl) {
         setAccessToken(accessTokenFromUrl);
+
+        Cookies.set("accessToken", accessTokenFromUrl);
+
         console.log("✅ Access Token 저장됨:", accessTokenFromUrl);
       }
 

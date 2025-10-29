@@ -2,8 +2,9 @@ import GoalData from "@/components/main/GoalData/GoalData";
 import { calcLeftDay } from "@/utils/calcLeftDay";
 import { useGoalDetail, useGoals } from "@/api/hooks";
 import Link from "next/link";
+import { ReactNode, Suspense } from "react";
 
-interface GoalDataWrapperProps {
+export interface GoalDataWrapperProps {
   goal: string;
   percentage: number;
   goalId: string;
@@ -28,14 +29,27 @@ const GoalDataContainer = () => {
       <div className="flex flex-col items-center justify-start gap-2">
         {goalDataInfoList.map((goalDataInfo) => {
           return (
-            <GoalDataWrapper
-              dueDate={goalDataInfo.dueDate}
-              goal={goalDataInfo.goal}
-              goalId={goalDataInfo.goalId}
-              percentage={goalDataInfo.percentage}
-              isCompleted={goalDataInfo?.isCompleted}
+            <Suspense
+              fallback={
+                <div className="w-82 h-[130px] bg-gray-200 px-4 flex flex-col justify-center gap-4">
+                  <div className="flex flex-col gap-1">
+                    <div className="h-[26px] w-15 bg-gray-300"></div>
+                    <div className="h-[24px] w-full bg-gray-300"></div>
+                  </div>
+                  <div className="bg-gray-300 w-full h-[14px]"></div>
+                </div>
+              }
               key={goalDataInfo.goalId}
-            />
+            >
+              <GoalDataWrapper
+                // key={goalDataInfo.goalId}
+                dueDate={goalDataInfo.dueDate}
+                goal={goalDataInfo.goal}
+                goalId={goalDataInfo.goalId}
+                percentage={goalDataInfo.percentage}
+                isCompleted={goalDataInfo?.isCompleted}
+              />
+            </Suspense>
           );
         })}
       </div>
@@ -44,7 +58,7 @@ const GoalDataContainer = () => {
 };
 export default GoalDataContainer;
 
-const GoalDataWrapper = ({
+export const GoalDataWrapper = ({
   dueDate,
   goal,
   goalId,
@@ -52,7 +66,8 @@ const GoalDataWrapper = ({
   isCompleted,
 }: GoalDataWrapperProps) => {
   const goalLeftDate = dueDate ? calcLeftDay(dueDate) : NaN;
-  const { data } = useGoalDetail(goalId);
+  // const { data } = useGoalDetail(goalId);
+  const { data } = useGoalDetail(goalId, { suspense: true });
 
   return (
     <>
