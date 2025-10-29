@@ -51,7 +51,7 @@ const showToast = (content: string, createdAt: Date) => {
 // Debouncer 감싸도 될 것 같은데?
 const debounceer = <T, E>(apiRequest: typeof httpClient.request<T, E>) => {
   const timeLimit = 300;
-  const timerDictionary: { [apiFullUrl: string]: number } = {};
+  const timerDictionary: { [apiFullUrl: string]: number | undefined } = {};
   let rejectTimer: (reason?: any) => void;
   return (
     requestParams: Parameters<typeof httpClient.request<T, E>>[0],
@@ -70,6 +70,7 @@ const debounceer = <T, E>(apiRequest: typeof httpClient.request<T, E>) => {
         setTimeout(async () => {
           try {
             const res = apiRequest(requestParams);
+            timerDictionary[apiFullUrl] = undefined; // timer비워주기..
             resolve(res);
           } catch (error) {
             console.error(error);
