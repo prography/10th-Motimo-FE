@@ -1,9 +1,13 @@
 // "use client";
-
+import { unstable_serialize } from "swr";
 import api from "@/api/service";
 import Main, { FallbackProvider } from "./Main";
 import { queryArgs } from "@/api/queries";
 import ServerAuthGuard from "./_components/ServerAuthGuard";
+import { BottomTabBar } from "@/components/shared";
+import Banner from "@/components/shared/Banner/Banner";
+import AsyncBanner from "@/components/main/MainHeader/AsyncBanner";
+import AsyncGoalDataSpreader from "@/components/main/GoalDataContainer/AsyncGoalDataContainer";
 
 // import dynamic from "next/dynamic";
 // import GoalMenuContainer from "@/components/main/GoalMenuContainer/GoalMenuContainer";
@@ -88,14 +92,16 @@ export default async function MainPage() {
 
 const MainHydration = async () => {
   const userRequest = api.사용자Api.getMyProfile();
-  const cheerRequest = api.응원Api.getCheerPhrase();
+  const cheerRequest = api.응원Api.getCheerPhrase({
+    next: { revalidate: 3600 * 12 },
+  });
   const pointRequest = api.포인트Api.getPoint();
   const goalsRequest = api.목표Api.getGoalList();
 
-  const profileKey = JSON.stringify(queryArgs.myProfile);
-  const cheerKey = JSON.stringify(queryArgs.cheerPhrase);
-  const pointKey = JSON.stringify(queryArgs.points);
-  const goalsKey = JSON.stringify(queryArgs.goals);
+  const profileKey = unstable_serialize(queryArgs.myProfile().slice(0, 2));
+  const cheerKey = unstable_serialize(queryArgs.cheerPhrase().slice(0, 2));
+  const pointKey = unstable_serialize(queryArgs.points().slice(0, 2));
+  const goalsKey = unstable_serialize(queryArgs.goals().slice(0, 2));
 
   const initData = await Promise.allSettled([
     userRequest,
@@ -104,26 +110,37 @@ const MainHydration = async () => {
     goalsRequest,
   ]).then((result) => {
     return result.map((eachRes) => {
+      // return eachRes;
       if (eachRes.status === "fulfilled") return eachRes.value;
-
+      console.error(eachRes);
       return undefined;
     });
   });
 
-  // const { data: cheerData } = useCheerPhrase();
-  //   const { data: pointData } = usePoints();
-  //   const { data: rawGoalData, mutate } = useGoals();
   return (
     <>
       <FallbackProvider
         fallback={{
           [profileKey]: initData[0],
           [cheerKey]: initData[1],
-          [pointKey]: initData[2],
-          [goalsKey]: initData[3],
+          [pointKey]: initData[1],
+          [goalsKey]: initData[2],
         }}
       >
-        <Main />
+        <Main>
+          <AsyncBanner />
+        </Main>
+        {/* <section className="w-full h-full ">
+          <div
+            data-icon="false"
+            data-type="main"
+            className="w-full h-full min-h-screen pb-14 relative bg-white inline-flex flex-col flex-1 justify-start  gap-1"
+          >
+            <MainHeader daysOfServiceUse={tmpDaysOfServiceUse} />
+            <Main />
+          </div>
+        </section>
+        <BottomTabBar className="fixed z-40 bottom-0" type="1" /> */}
       </FallbackProvider>
     </>
   );

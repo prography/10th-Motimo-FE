@@ -34,13 +34,13 @@ export default function RootLayout({
   return (
     <html lang="ko" className={`${customFont.className} w-full h-full`}>
       <head>
-        <link
+        {/* <link
           rel="preload"
           href="/fonts/SUIT-Variable.woff2"
           as="font"
           type="font/woff2" // 폰트 파일 형식에 맞게 (woff, ttf 등)
           crossOrigin="anonymous" // 일반적으로 폰트에는 추가하는 것이 좋음
-        />
+        /> */}
       </head>
       <body
         className={`${customFont.variable} antialiased bg-background-alternative`}

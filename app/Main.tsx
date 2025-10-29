@@ -16,28 +16,35 @@ const AuthGuard = dynamic(() => import("./_components/AuthGuard"), {
   ssr: false,
 });
 
-export default function Main() {
-  const { data } = useMyProfile();
-  const tmpDaysOfServiceUse = data?.createdAt
-    ? calcLeftDay(new Date(), new Date(data.createdAt))
-    : 0;
+export default function Main({ children }: { children: ReactNode }) {
+  // const { data } = useMyProfile();
+  // const tmpDaysOfServiceUse = data?.createdAt
+  //   ? calcLeftDay(new Date(), new Date(data.createdAt))
+  //   : 0;
 
   return (
     <AuthGuard>
-      <section className="w-full h-full ">
-        <div
-          data-icon="false"
-          data-type="main"
-          className="w-full h-full min-h-screen pb-14 relative bg-white inline-flex flex-col flex-1 justify-start  gap-1"
-        >
-          <MainHeader daysOfServiceUse={tmpDaysOfServiceUse} />
-          <GoalMenuContainer />
-          {/* <GoalCard /> */}
-          <GoalDataContainer />
-        </div>
-      </section>
-      <BottomTabBar className="fixed z-40 bottom-0" type="1" />
+      <>
+        <section className="w-full h-full ">
+          <div
+            data-icon="false"
+            data-type="main"
+            className="w-full h-full min-h-screen pb-14 relative bg-white inline-flex flex-col flex-1 justify-start  gap-1"
+          >
+            <MainHeader>{children}</MainHeader>
+            {/* <MainHeader daysOfServiceUse={tmpDaysOfServiceUse} /> */}
+            <GoalMenuContainer />
+            {/* <GoalCard /> */}
+            <GoalDataContainer />
+          </div>
+        </section>
+        <BottomTabBar className="fixed z-40 bottom-0" type="1" />
+      </>
     </AuthGuard>
+    // <AuthGuard>
+    //   <GoalMenuContainer />
+    //   <GoalDataContainer />
+    // </AuthGuard>
   );
 }
 
