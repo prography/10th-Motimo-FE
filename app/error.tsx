@@ -19,15 +19,14 @@ export default function Error({
     <div className="flex flex-col items-center justify-center gap-10 h-screen">
       <div className="flex flex-col items-center gap-4">
         <svg
-          width="102"
+          width="101"
           height="115"
-          viewBox="0 0 102 115"
+          viewBox="0 0 101 115"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           xmlnsXlink="http://www.w3.org/1999/xlink"
         >
           <rect
-            x="0.980469"
             width="100.039"
             height="115"
             fill="url(#pattern0_54772_14310)"
@@ -41,7 +40,7 @@ export default function Error({
             >
               <use
                 xlinkHref="#image0_54772_14310"
-                transform="matrix(0.00223214 0 0 0.00194175 -1.21875 0)"
+                transform="matrix(0.001 0 0 0.001 -0.01 0)"
               />
             </pattern>
             <image
@@ -53,6 +52,7 @@ export default function Error({
             />
           </defs>
         </svg>
+
         <section className="w-80 inline-flex flex-col justify-start items-center gap-2">
           <h3 className="self-stretch text-center justify-center text-label-normal text-xl font-bold font-['SUIT_Variable'] leading-normal">
             이용에 불편을 드려 죄송합니다.
