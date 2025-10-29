@@ -7,7 +7,7 @@ import ServerAuthGuard from "./_components/ServerAuthGuard";
 import { BottomTabBar } from "@/components/shared";
 import Banner from "@/components/shared/Banner/Banner";
 import AsyncBanner from "@/components/main/MainHeader/AsyncBanner";
-import AsyncGoalDataSpreader from "@/components/main/GoalDataContainer/AsyncGoalDataContainer";
+// import AsyncGoalDataSpreader from "@/components/main/GoalDataContainer/AsyncGoalDataContainer";
 
 // import dynamic from "next/dynamic";
 // import GoalMenuContainer from "@/components/main/GoalMenuContainer/GoalMenuContainer";
@@ -92,9 +92,9 @@ export default async function MainPage() {
 
 const MainHydration = async () => {
   const userRequest = api.사용자Api.getMyProfile();
-  const cheerRequest = api.응원Api.getCheerPhrase({
-    next: { revalidate: 3600 * 12 },
-  });
+  // const cheerRequest = api.응원Api.getCheerPhrase({
+  //   next: { revalidate: 3600 * 12 },
+  // });
   const pointRequest = api.포인트Api.getPoint();
   const goalsRequest = api.목표Api.getGoalList();
 
@@ -105,7 +105,7 @@ const MainHydration = async () => {
 
   const initData = await Promise.allSettled([
     userRequest,
-    cheerRequest,
+    // cheerRequest,
     pointRequest,
     goalsRequest,
   ]).then((result) => {
@@ -122,7 +122,7 @@ const MainHydration = async () => {
       <FallbackProvider
         fallback={{
           [profileKey]: initData[0],
-          [cheerKey]: initData[1],
+          // [cheerKey]: initData[1],
           [pointKey]: initData[1],
           [goalsKey]: initData[2],
         }}

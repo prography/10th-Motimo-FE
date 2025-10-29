@@ -17,7 +17,7 @@ const AsyncBanner = async () => {
   ] as const);
 
   //test
-  console.log("cheerRes, userRes: ", cheerRes, userRes);
+  // console.log("cheerRes, userRes: ", cheerRes, userRes);
 
   const cheerData =
     cheerRes.status === "fulfilled" ? cheerRes.value : undefined;

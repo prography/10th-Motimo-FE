@@ -15,19 +15,19 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   // Webpack configuration for SVG handling (production builds)
   webpack: (config, options) => {
-    const { dev, isServer } = options;
-    if (!dev && !isServer) {
-      config.plugins.push(
-        new StatsWriterPlugin({
-          filename: "../webpack-stats.json",
-          stats: {
-            assets: true,
-            chunks: true,
-            modules: true,
-          },
-        }),
-      );
-    }
+    // const { dev, isServer } = options;
+    // if (!dev && !isServer) {
+    //   config.plugins.push(
+    //     new StatsWriterPlugin({
+    //       filename: "../webpack-stats.json",
+    //       stats: {
+    //         assets: true,
+    //         chunks: true,
+    //         modules: true,
+    //       },
+    //     }),
+    //   );
+    // }
 
     // Find the existing rule that handles SVG
     const fileLoaderRule = config.module.rules.find((rule: any) =>
