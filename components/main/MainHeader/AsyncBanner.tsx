@@ -11,17 +11,27 @@ const AsyncBanner = async () => {
   const userRequest = api.사용자Api.getMyProfile({
     next: { revalidate: 3600 },
   });
-  const [cheerRes, userRes] = await Promise.allSettled([
-    cheerRequest,
-    userRequest,
-  ] as const);
+  let cheerRes, userRes;
+  try {
+    const res = await Promise.allSettled([cheerRequest, userRequest] as const);
+    cheerRes = res[0];
+    userRes = res[1];
+  } catch (e) {
+    console.error("AsyncBanner hydration failed: ", e);
+  }
+
+  // const [cheerRes, userRes] = await Promise.allSettled([
+  //   cheerRequest,
+  //   userRequest,
+  // ] as const);
 
   //test
   // console.log("cheerRes, userRes: ", cheerRes, userRes);
 
   const cheerData =
-    cheerRes.status === "fulfilled" ? cheerRes.value : undefined;
-  const userData = userRes.status === "fulfilled" ? userRes.value : undefined;
+    cheerRes && cheerRes.status === "fulfilled" ? cheerRes.value : undefined;
+  const userData =
+    userRes && userRes.status === "fulfilled" ? userRes.value : undefined;
 
   const cheerPhrase = cheerData?.cheerPhrase ?? "로딩중...";
   const createdAt = userData?.createdAt;
