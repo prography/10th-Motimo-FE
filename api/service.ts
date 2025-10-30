@@ -61,10 +61,17 @@ const debounceer = <T, E>(apiRequest: typeof httpClient.request<T, E>) => {
 
     if (timer) {
       clearTimeout(timer);
-      rejectTimer("debouncing");
+      rejectTimer();
+      // rejectTimer("debouncing");
     }
     const apiRes: Promise<T> = new Promise((resolve, reject) => {
-      rejectTimer = reject;
+      rejectTimer =
+        typeof window === "undefined"
+          ? () => {
+              console.error("Debouncing On Server");
+              resolve(undefined as T); // 서버 환경에서 에러 무시
+            }
+          : () => reject("debouncing");
       timerDictionary[apiFullUrl] = Number(
         // timer = Number(
         setTimeout(async () => {
@@ -136,6 +143,7 @@ const tokenHandler = async <T, E>(
     throw e;
   });
 };
+
 httpClient.request = debounceer(httpClient.request);
 
 // API 클라이언트 인스턴스 생성
