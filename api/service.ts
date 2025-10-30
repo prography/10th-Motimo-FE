@@ -92,26 +92,44 @@ const tokenHandler = async <T, E>(
 ) => {
   return apiRes.catch(async (e) => {
     if (e.status === 401) {
-      const token = useAuthStore.getState().refreshToken;
+      let token;
+      if (typeof window === "undefined") {
+        token = await getToken();
+      } else {
+        token = useAuthStore.getState().refreshToken;
+      }
 
       if (!token) {
         // api.authController.logout();
         // window.location.href = "/";
         throw new Error("no refresh token");
       }
-      const tokenRes = await api.authController.reissue({
-        refreshToken: token,
-      });
 
-      if (!tokenRes?.accessToken || !tokenRes?.refreshToken) {
+      // 웹뷰용 처리
+      // if (window.ReactNativeWebView) {
+      //   handleWebViewReissueToken(token);
+      //   return;
+      // }
+
+      // 웹용 처리
+      try {
+        const tokenRes = await api.authController.reissue({
+          refreshToken: token || undefined,
+        });
+
+        if (!tokenRes?.accessToken || !tokenRes?.refreshToken) {
+          throw new Error("token reissue error");
+        }
+
+        useAuthStore.setState((states) => ({
+          ...states,
+          accessToken: tokenRes.accessToken,
+          refreshToken: tokenRes.refreshToken,
+        }));
+      } catch (e) {
+        console.error("token reisuue error:", e);
         throw new Error("token reissue error");
       }
-
-      useAuthStore.setState((states) => ({
-        ...states,
-        accessToken: tokenRes.accessToken,
-        refreshToken: tokenRes.refreshToken,
-      }));
     }
   });
 };
