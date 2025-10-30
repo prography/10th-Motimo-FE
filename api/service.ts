@@ -81,7 +81,8 @@ const debounceer = <T, E>(apiRequest: typeof httpClient.request<T, E>) => {
             resolve(res);
           } catch (error) {
             console.error(error);
-            showToast(`API ERROR`, new Date());
+            if (typeof window !== "undefined")
+              showToast(`API ERROR`, new Date());
           }
         }, timeLimit),
       );
