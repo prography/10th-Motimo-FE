@@ -137,7 +137,7 @@ const tokenHandler = async <T, E>(
       } catch (e) {
         console.error("token reisuue error:", e);
         if (typeof window !== "undefined")
-          throw new Error("token reissue error");
+          throw new Error("token reissue error On Client");
       }
     }
     throw e;

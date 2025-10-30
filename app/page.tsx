@@ -103,6 +103,8 @@ const MainHydration = async () => {
   const pointKey = unstable_serialize(queryArgs.points().slice(0, 2));
   const goalsKey = unstable_serialize(queryArgs.goals().slice(0, 2));
 
+  const keyList = [profileKey, cheerKey, pointKey, goalsKey];
+
   let initData = await Promise.allSettled([
     userRequest,
     // cheerRequest,
@@ -117,7 +119,10 @@ const MainHydration = async () => {
         return undefined;
       });
     })
-    .catch((e) => console.error("root hydration failed: ", e));
+    .catch((e) => {
+      console.error("root hydration failed: ", e);
+      return undefined;
+    });
   // const initData = await Promise.allSettled([
   //   userRequest,
   //   // cheerRequest,
@@ -131,21 +136,20 @@ const MainHydration = async () => {
   //     return undefined;
   //   });
   // });
+  const fallback: Record<string, NonNullable<typeof initData>[number]> =
+    initData
+      ? initData.reduce(
+          (acc, initRes, idx) => {
+            if (!initRes) return acc;
+            return { ...acc, [keyList[idx]]: initRes };
+          },
+          {} as Record<string, (typeof initData)[number]>,
+        )
+      : {};
 
   return (
     <>
-      <FallbackProvider
-        fallback={
-          initData
-            ? {
-                [profileKey]: initData[0],
-                // [cheerKey]: initData[1],
-                [pointKey]: initData[1],
-                [goalsKey]: initData[2],
-              }
-            : {}
-        }
-      >
+      <FallbackProvider fallback={fallback}>
         <Main>
           <AsyncBanner />
         </Main>
