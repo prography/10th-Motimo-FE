@@ -3,6 +3,7 @@ import useAuthStore from "../stores/useAuthStore";
 import useToastStore from "@/stores/useToastStore";
 import { cookies } from "next/headers";
 import { getToken } from "./getToken";
+import { getRefreshToken } from "./getRefreshToken";
 
 // HTTP 클라이언트 생성 시 인증 헤더를 자동으로 추가하는 securityWorker 설정
 const httpClient = new HttpClient({
@@ -100,14 +101,14 @@ const tokenHandler = async <T, E>(
 ) => {
   return apiRes.catch(async (e) => {
     if (e.status === 401) {
-      let token;
+      let refreshToken;
       if (typeof window === "undefined") {
-        token = await getToken();
+        refreshToken = await getRefreshToken();
       } else {
-        token = useAuthStore.getState().refreshToken;
+        refreshToken = useAuthStore.getState().refreshToken;
       }
 
-      if (!token) {
+      if (!refreshToken) {
         // api.authController.logout();
         // window.location.href = "/";
 
@@ -123,7 +124,7 @@ const tokenHandler = async <T, E>(
       // 웹용 처리
       try {
         const tokenRes = await api.authController.reissue({
-          refreshToken: token || undefined,
+          refreshToken: refreshToken || undefined,
         });
 
         if (!tokenRes?.accessToken || !tokenRes?.refreshToken) {
