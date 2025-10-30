@@ -107,6 +107,7 @@ export default function LoginScreen({ onNext }: LoginScreenProps) {
 
       if (refreshTokenFromUrl) {
         setRefreshToken(refreshTokenFromUrl);
+        Cookies.set("refreshToken", refreshTokenFromUrl);
         console.log("✅ Refresh Token 저장됨:", refreshTokenFromUrl);
       }
 

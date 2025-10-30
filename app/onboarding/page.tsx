@@ -23,6 +23,7 @@ export default function OnboardingPage() {
     hasCompletedOnboarding,
     isGuest,
     accessToken,
+    refreshToken,
   } = useAuthStore();
 
   // 클라이언트 사이드에서만 hydration 체크
@@ -74,6 +75,9 @@ export default function OnboardingPage() {
         // const accessToken = accessToken;
         cookies.set("accessToken", accessToken);
       }
+      if (!isGuest && refreshToken) {
+        cookies.set("refreshToken", refreshToken);
+      }
       router.replace("/");
       return;
     }
@@ -92,6 +96,7 @@ export default function OnboardingPage() {
     goals,
     setHasCompletedOnboarding,
     router,
+    refreshToken,
   ]);
 
   const nextStep = () => {
