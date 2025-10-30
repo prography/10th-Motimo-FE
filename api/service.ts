@@ -122,9 +122,12 @@ const tokenHandler = async <T, E>(
 
       // 웹용 처리
       try {
-        const tokenRes = await api.authController.reissue({
-          refreshToken: token || undefined,
-        });
+        const tokenRes = await api.authController.reissue(
+          {
+            refreshToken: token || undefined,
+          },
+          { secure: false },
+        );
 
         if (!tokenRes?.accessToken || !tokenRes?.refreshToken) {
           throw new Error("token reissue error");
