@@ -103,29 +103,48 @@ const MainHydration = async () => {
   const pointKey = unstable_serialize(queryArgs.points().slice(0, 2));
   const goalsKey = unstable_serialize(queryArgs.goals().slice(0, 2));
 
-  const initData = await Promise.allSettled([
+  let initData = await Promise.allSettled([
     userRequest,
     // cheerRequest,
     pointRequest,
     goalsRequest,
-  ]).then((result) => {
-    return result.map((eachRes) => {
-      // return eachRes;
-      if (eachRes.status === "fulfilled") return eachRes.value;
-      console.error(eachRes);
-      return undefined;
-    });
-  });
+  ])
+    .then((result) => {
+      return result.map((eachRes) => {
+        // return eachRes;
+        if (eachRes.status === "fulfilled") return eachRes.value;
+        console.error(eachRes);
+        return undefined;
+      });
+    })
+    .catch((e) => console.error("root hydration failed: ", e));
+  // const initData = await Promise.allSettled([
+  //   userRequest,
+  //   // cheerRequest,
+  //   pointRequest,
+  //   goalsRequest,
+  // ]).then((result) => {
+  //   return result.map((eachRes) => {
+  //     // return eachRes;
+  //     if (eachRes.status === "fulfilled") return eachRes.value;
+  //     console.error(eachRes);
+  //     return undefined;
+  //   });
+  // });
 
   return (
     <>
       <FallbackProvider
-        fallback={{
-          [profileKey]: initData[0],
-          // [cheerKey]: initData[1],
-          [pointKey]: initData[1],
-          [goalsKey]: initData[2],
-        }}
+        fallback={
+          initData
+            ? {
+                [profileKey]: initData[0],
+                // [cheerKey]: initData[1],
+                [pointKey]: initData[1],
+                [goalsKey]: initData[2],
+              }
+            : {}
+        }
       >
         <Main>
           <AsyncBanner />
