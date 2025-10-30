@@ -81,9 +81,9 @@ const debounceer = <T, E>(apiRequest: typeof httpClient.request<T, E>) => {
     });
 
     // 토큰 재발급 처리
-    tokenHandler(apiRes);
+    return tokenHandler(apiRes);
 
-    return apiRes;
+    // return apiRes;
   };
 };
 // 토큰 처리
@@ -102,6 +102,7 @@ const tokenHandler = async <T, E>(
       if (!token) {
         // api.authController.logout();
         // window.location.href = "/";
+
         throw new Error("no refresh token");
       }
 
@@ -131,6 +132,7 @@ const tokenHandler = async <T, E>(
         throw new Error("token reissue error");
       }
     }
+    throw e;
   });
 };
 httpClient.request = debounceer(httpClient.request);
