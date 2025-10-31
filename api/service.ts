@@ -1,9 +1,17 @@
-import { Api, HttpClient, HttpResponse } from "./generated/motimo/Api";
+import {
+  Api,
+  HttpClient,
+  HttpResponse,
+  TokenResponse,
+} from "./generated/motimo/Api";
 import useAuthStore from "../stores/useAuthStore";
 import useToastStore from "@/stores/useToastStore";
 import { cookies } from "next/headers";
 import { getToken } from "./getToken";
 import { getRefreshToken } from "./getRefreshToken";
+import { http } from "msw";
+import { cache } from "react";
+import { redirect } from "next/navigation";
 
 // HTTP 클라이언트 생성 시 인증 헤더를 자동으로 추가하는 securityWorker 설정
 const httpClient = new HttpClient({
@@ -92,20 +100,55 @@ const debounceer = <T, E>(apiRequest: typeof httpClient.request<T, E>) => {
     });
 
     // 토큰 재발급 처리
-    return tokenHandler(apiRes);
+    return tokenHandler(apiRes, requestParams, apiRequest);
 
     // return apiRes;
   };
 };
+
+/** 토큰 재발급 처리 */
+export interface tokens {
+  accessToken: string;
+  refreshToken: string;
+}
+const getTokensStore: () => {
+  newTokens: undefined | tokens;
+  refreshTokenPromise: undefined | Promise<tokens>;
+} = cache(() => {
+  return { newTokens: undefined, refreshTokenPromise: undefined };
+});
+
+export const pushTokens = (tokens: tokens) => {
+  getTokensStore().newTokens = tokens;
+};
+export const popTokens = () => {
+  const tokens = getTokensStore().newTokens;
+  getTokensStore().newTokens = undefined;
+  return tokens;
+};
+export const getRefreshTokenPromise = () => {
+  return getTokensStore().refreshTokenPromise;
+};
+export const setRefreshTokenPromise = (
+  promise: Promise<tokens> | undefined,
+) => {
+  getTokensStore().refreshTokenPromise = promise;
+};
+
 // 토큰 처리
 const tokenHandler = async <T, E>(
   apiRes: ReturnType<typeof httpClient.request<T, E>>,
+  requestParams: Parameters<typeof httpClient.request<T, E>>[0],
+  apiRequest: typeof httpClient.request<T, E>,
 ) => {
   return apiRes.catch(async (e) => {
     if (e.status === 401) {
       let refreshToken;
       if (typeof window === "undefined") {
-        refreshToken = await getRefreshToken();
+        /** RSC환경에서 병렬 요청에 대해 race condition */
+
+        refreshToken =
+          getTokensStore().newTokens?.refreshToken || (await getRefreshToken());
       } else {
         refreshToken = useAuthStore.getState().refreshToken;
       }
@@ -113,7 +156,9 @@ const tokenHandler = async <T, E>(
       if (!refreshToken) {
         // api.authController.logout();
         // window.location.href = "/";
-
+        if (typeof window === "undefined") {
+          redirect("/onboarding");
+        }
         throw new Error("no refresh token");
       }
 
@@ -125,20 +170,76 @@ const tokenHandler = async <T, E>(
 
       // 웹용 처리
       try {
-        const tokenRes = await api.authController.reissue({
-          refreshToken: refreshToken || undefined,
-        });
+        let tokenRes;
+
+        if (typeof window === "undefined") {
+          let refreshTokenPromise = getRefreshTokenPromise();
+
+          if (!refreshTokenPromise) {
+            refreshTokenPromise = api.authController
+              .reissue({
+                refreshToken: refreshToken,
+              })
+              .then((newTokens) => {
+                const nonNullableNewTokens = {
+                  accessToken: "",
+                  refreshToken: "",
+                  ...newTokens,
+                };
+                pushTokens(nonNullableNewTokens);
+                return nonNullableNewTokens;
+              })
+              .finally(() => {
+                setRefreshTokenPromise(undefined);
+              });
+            setRefreshTokenPromise(refreshTokenPromise);
+          }
+
+          tokenRes = await refreshTokenPromise;
+          pushTokens({
+            accessToken: tokenRes.accessToken,
+            refreshToken: tokenRes.refreshToken,
+          });
+        } else {
+          // 클라이언트 환경에서.
+          tokenRes = await api.authController.reissue({
+            refreshToken: refreshToken || undefined,
+          });
+        }
 
         if (!tokenRes?.accessToken || !tokenRes?.refreshToken) {
           throw new Error("token reissue error");
         }
 
-        useAuthStore.setState((states) => ({
-          ...states,
-          accessToken: tokenRes.accessToken,
-          refreshToken: tokenRes.refreshToken,
-        }));
+        return apiRequest({
+          ...requestParams,
+          secure: false,
+          headers: {
+            ...requestParams.headers,
+            Authorization: `Bearer ${tokenRes.accessToken}`,
+          },
+        }).then((res) => {
+          // if (typeof res === "object" && res && typeof window === "undefined") {
+          //   return Object.assign(res, {
+          //     newTokens: {
+          //       accessToken: tokenRes.accessToken,
+          //       refreshToken: tokenRes.refreshToken,
+          //     },
+          //   });
+          // }
+          if (typeof window !== "undefined") {
+            // 클라 환경 or res가 object 아닐 경우
+            useAuthStore.setState((states) => ({
+              ...states,
+              accessToken: tokenRes.accessToken,
+              refreshToken: tokenRes.refreshToken,
+            }));
+          }
+
+          return res;
+        });
       } catch (e) {
+        // 원래는 로그아웃 처리도 해야 한다는데? RSC에서는 뭘 해야하나
         console.error("token reisuue error:", e);
         if (typeof window !== "undefined")
           throw new Error("token reissue error On Client");
