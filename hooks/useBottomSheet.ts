@@ -104,7 +104,7 @@ const useBottomSheet = <TContentProps>() => {
       if (prev.length === 0) return prev;
       const newHistory = [...prev].filter((info) => info.id !== id);
       //test
-      console.log("newHistory: ", newHistory);
+      // console.log("newHistory: ", newHistory);
       setId(undefined);
       // const newHistory = [...prev].slice(0, prev.length - 1);
       return newHistory;

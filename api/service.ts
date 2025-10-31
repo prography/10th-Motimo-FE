@@ -23,7 +23,7 @@ const httpClient = new HttpClient({
     if (typeof window === "undefined") {
       const token = await getToken();
       //tset
-      console.log("베리어 넣기");
+      // console.log("베리어 넣기");
       return {
         headers: {
           Authorization: `Bearer ${token}`,
