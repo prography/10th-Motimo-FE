@@ -195,10 +195,10 @@ const GoalCard = ({ initSubGoalTodo }: GoalCardProps) => {
     !isModalOpened && todoResBottomSheetInfo.open;
 
   //test
-  console.log(
-    "shouldTodoResultBottomSheetOpened: ",
-    shouldTodoResultBottomSheetOpened,
-  );
+  // console.log(
+  //   "shouldTodoResultBottomSheetOpened: ",
+  //   shouldTodoResultBottomSheetOpened,
+  // );
 
   const {
     checkRendered: checkTodoResultBottomSheetRendered,

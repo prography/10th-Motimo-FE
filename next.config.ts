@@ -1,10 +1,34 @@
 import type { NextConfig } from "next";
 
+const { StatsWriterPlugin } = require("webpack-stats-plugin");
+
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+});
+
 const nextConfig: NextConfig = {
   /* config options here */
+
+  experimental: {
+    webpackBuildWorker: true,
+  },
   reactStrictMode: true,
   // Webpack configuration for SVG handling (production builds)
-  webpack: (config) => {
+  webpack: (config, options) => {
+    // const { dev, isServer } = options;
+    // if (!dev && !isServer) {
+    //   config.plugins.push(
+    //     new StatsWriterPlugin({
+    //       filename: "../webpack-stats.json",
+    //       stats: {
+    //         assets: true,
+    //         chunks: true,
+    //         modules: true,
+    //       },
+    //     }),
+    //   );
+    // }
+
     // Find the existing rule that handles SVG
     const fileLoaderRule = config.module.rules.find((rule: any) =>
       rule.test?.test?.(".svg"),
@@ -74,4 +98,4 @@ const nextConfig: NextConfig = {
         : async () => [],
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);

@@ -1,48 +1,47 @@
-import { SWRConfiguration } from "swr";
-import { useApiQuery } from "./useApiQuery";
+import type { SWRConfiguration } from "swr";
 import { GetGroupChatParamsDirectionEnum } from "./generated/motimo/Api";
 
-export const useQuery = {
+export const queryArgs = {
   // Todo API
   myTodos: (config?: SWRConfiguration) =>
-    useApiQuery("투두Api", "getMyTodos", [], undefined, config),
+    ["투두Api", "getMyTodos", [], undefined, config] as const,
 
   todoResult: (todoId: string | null, config?: SWRConfiguration) =>
-    useApiQuery(
+    [
       "투두Api",
       "getTodoResult",
       todoId ? [todoId] : null,
       undefined,
       config,
-    ),
+    ] as const,
 
   // Goal API
   goals: (config?: SWRConfiguration) =>
-    useApiQuery("목표Api", "getGoalList", [], undefined, config),
+    ["목표Api", "getGoalList", [], undefined, config] as const,
 
   goalDetail: (goalId: string | null, config?: SWRConfiguration) =>
-    useApiQuery(
+    [
       "목표Api",
       "getGoalDetail",
       goalId ? [goalId] : null,
       undefined,
       config,
-    ),
+    ] as const,
 
   goalWithSubGoal: (goalId: string | null, config?: SWRConfiguration) =>
-    useApiQuery(
+    [
       "목표Api",
       "getGoalWithSubGoal",
       goalId ? [goalId] : null,
       undefined,
       config,
-    ),
+    ] as const,
 
   goalsNotInGroup: (config?: SWRConfiguration) =>
-    useApiQuery("목표Api", "getGoalNotJoinGroup", [], undefined, config),
+    ["목표Api", "getGoalNotJoinGroup", [], undefined, config] as const,
 
   completedGoals: (config?: SWRConfiguration) =>
-    useApiQuery("목표Api", "getCompletedGoals", [], undefined, config),
+    ["목표Api", "getCompletedGoals", [], undefined, config] as const,
 
   // // Sub Goal API
   // subGoalTodos: (subGoalId: string | null, config?: SWRConfiguration) =>
@@ -60,13 +59,13 @@ export const useQuery = {
     size: number = 10,
     config?: SWRConfiguration,
   ) =>
-    useApiQuery(
+    [
       "세부목표Api",
       "getIncompleteOrTodayTodosWithSlice",
       subGoalId ? [subGoalId, { offset, size }] : null,
       undefined,
       config,
-    ),
+    ] as const,
 
   // Sub Goal API - All todos (complete and incomplete)
   allSubGoalTodos: (
@@ -75,27 +74,27 @@ export const useQuery = {
     size: number = 10,
     config?: SWRConfiguration,
   ) =>
-    useApiQuery(
+    [
       "세부목표Api",
       "getTodosBySubGoalIdWithSlice",
       subGoalId ? [subGoalId, { offset, size }] : null,
       undefined,
       config,
-    ),
+    ] as const,
 
   // User API
   myProfile: (config?: SWRConfiguration) =>
-    useApiQuery("사용자Api", "getMyProfile", [], undefined, config),
+    ["사용자Api", "getMyProfile", [], undefined, config] as const,
 
   // Group API
   groupMembers: (groupId: string | null, config?: SWRConfiguration) =>
-    useApiQuery(
+    [
       "그룹Api",
       "getGroupMembers",
       groupId ? [groupId] : null,
       undefined,
       config,
-    ),
+    ] as const,
 
   groupChat: (
     groupId: string | null,
@@ -104,90 +103,66 @@ export const useQuery = {
     direction?: GetGroupChatParamsDirectionEnum,
     config?: SWRConfiguration,
   ) =>
-    useApiQuery(
+    [
       "그룹Api",
       "getGroupChat",
       groupId ? [groupId, { limit, cursor, direction }] : null,
       undefined,
       config,
-    ),
+    ] as const,
 
   groupDetail: (groupId: string | null, config?: SWRConfiguration) =>
-    useApiQuery(
+    [
       "그룹Api",
       "getGroupDetail",
       groupId ? [groupId] : null,
       undefined,
       config,
-    ),
+    ] as const,
 
   newGroupMessages: (
     groupId: string | null,
     latestCursor?: string,
     config?: SWRConfiguration,
   ) =>
-    useApiQuery(
+    [
       "그룹Api",
       "getNewGroupMessages",
       groupId ? [groupId, { latestCursor }] : null,
       undefined,
       config,
-    ),
+    ] as const,
 
   joinedGroups: (config?: SWRConfiguration) =>
-    useApiQuery("그룹Api", "getJoinedGroups", [], undefined, config),
+    ["그룹Api", "getJoinedGroups", [], undefined, config] as const,
 
   // Point & Cheer API
   points: (config?: SWRConfiguration) =>
-    useApiQuery("포인트Api", "getPoint", [], undefined, config),
+    ["포인트Api", "getPoint", [], undefined, config] as const,
 
   cheerPhrase: (config?: SWRConfiguration) =>
-    useApiQuery("응원Api", "getCheerPhrase", [], undefined, config),
+    ["응원Api", "getCheerPhrase", [], undefined, config] as const,
 
   goalWithSubGoalAndTodos: (goalId: string | null, config?: SWRConfiguration) =>
-    useApiQuery(
+    [
       "목표Api",
       "getGoalWithSubGoalAndTodos",
       goalId ? [goalId] : null,
       undefined,
       config,
-    ),
+    ] as const,
 
   // Health API
   health: (config?: SWRConfiguration) =>
-    useApiQuery("healthController", "health", [], undefined, config),
+    ["healthController", "health", [], undefined, config] as const,
 
   // Notification API
   notifications: (page: number = 0, size: number, config?: SWRConfiguration) =>
-    useApiQuery(
+    [
       "알림Api",
       "getNotificationList",
       [{ page, size }],
       undefined,
       config,
-    ),
+    ] as const,
 };
-
-// Legacy hooks for backward compatibility (이전 방식과 호환성 유지)
-export const useTodos = useQuery.myTodos;
-export const useTodoResult = useQuery.todoResult;
-export const useGoals = useQuery.goals;
-export const useGoalDetail = useQuery.goalDetail;
-export const useGoalWithSubGoals = useQuery.goalWithSubGoal;
-export const useGoalWithSubGoalsAndTodos = useQuery.goalWithSubGoalAndTodos;
-export const useGoalsNotInGroup = useQuery.goalsNotInGroup;
-// export const useSubGoalTodos = useQuery.subGoalTodos;
-export const useCompletedGoals = useQuery.completedGoals;
-// export const useSubGoalTodos = useQuery.subGoalTodos;
-export const useSubGoalTodos = useQuery.subGoalTodos;
-export const useMyProfile = useQuery.myProfile;
-export const useGroupMembers = useQuery.groupMembers;
-export const useGroupChat = useQuery.groupChat;
-export const useGroupDetail = useQuery.groupDetail;
-export const useNewGroupMessages = useQuery.newGroupMessages;
-export const useJoinedGroups = useQuery.joinedGroups;
-export const usePoints = useQuery.points;
-export const useCheerPhrase = useQuery.cheerPhrase;
-export const useNotifications = useQuery.notifications;
-export const useHealth = useQuery.health;
-export const useAllSubGoalTodos = useQuery.allSubGoalTodos;

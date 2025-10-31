@@ -11,6 +11,7 @@ import useAuthStore from "@/stores/useAuthStore";
 import dynamic from "next/dynamic";
 import { useApiQuery } from "@/api/useApiQuery";
 import { useMyProfile } from "@/api/hooks";
+// import { handleWebViewLogout } from "@/app/_components/WebViewHandler";
 
 // 클라이언트에서만 렌더링되는 BottomTabBar (SSR 제외)
 const BottomTabBar = dynamic(
@@ -62,6 +63,7 @@ export function MyPage({ className = "" }: MyPageProps) {
           onClick: () => {
             logout();
             // setIsGuest(false);
+            // handleWebViewLogout(); // 웹뷰 처리
             router.push("/");
           },
         },

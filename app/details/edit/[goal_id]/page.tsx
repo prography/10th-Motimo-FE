@@ -44,7 +44,6 @@ export default function Edit() {
   const { data } = useGoalWithSubGoalTodo(goalId);
   const initData = makeInitEditContents(data);
   const [tab, setTab] = useState<"goal" | "subGoal">("goal");
-
   return (
     <>
       <div className="bg-background-alternative flex flex-col h-screen">
