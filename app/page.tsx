@@ -1,12 +1,13 @@
 // "use client";
 import { unstable_serialize } from "swr";
-import api from "@/api/service";
+import api, { popTokens } from "@/api/service";
 import Main, { FallbackProvider } from "./Main";
 import { queryArgs } from "@/api/queries";
 import ServerAuthGuard from "./_components/ServerAuthGuard";
 import { BottomTabBar } from "@/components/shared";
 import Banner from "@/components/shared/Banner/Banner";
 import AsyncBanner from "@/components/main/MainHeader/AsyncBanner";
+import { UserRs } from "@/api/generated/motimo/Api";
 // import AsyncGoalDataSpreader from "@/components/main/GoalDataContainer/AsyncGoalDataContainer";
 
 // import dynamic from "next/dynamic";
@@ -114,7 +115,26 @@ const MainHydration = async () => {
     .then((result) => {
       return result.map((eachRes) => {
         // return eachRes;
-        if (eachRes.status === "fulfilled") return eachRes.value;
+        if (eachRes.status === "fulfilled") {
+          // return Object.keys(eachRes.value).reduce((acc, key) => {
+          //   if (key === "newTokens") return acc;
+          //   return { ...acc, [key]: eachRes.value[key] };
+          // }, {});
+          // type optionalResVal = typeof eachRes.value &
+          //   (
+          //     | undefined
+          //     | {
+          //         newTokens: tokens;
+          //       }
+          //   );
+
+          // if ((eachRes.value as optionalResVal)?.newTokens) {
+          //   const { newTokens, ...remain } = eachRes.value as optionalResVal;
+          //   reissuedTokens = newTokens || undefined;
+          //   return remain;
+          // }
+          return eachRes.value;
+        }
         console.error(eachRes);
         return undefined;
       });
@@ -147,10 +167,11 @@ const MainHydration = async () => {
         )
       : {};
 
+  const reissuedTokens = popTokens();
   return (
     <>
       <FallbackProvider fallback={fallback}>
-        <Main>
+        <Main reissuedTokens={reissuedTokens}>
           <AsyncBanner />
         </Main>
         {/* <section className="w-full h-full ">

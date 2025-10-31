@@ -10,20 +10,27 @@ import { calcLeftDay } from "@/utils/calcLeftDay";
 import GoalDataContainer from "@/components/main/GoalDataContainer/GoalDataContainer";
 import { ReactNode } from "react";
 import { SWRConfig } from "swr";
+import { tokens } from "@/api/service";
 
 // AuthGuard는 클라이언트에서만 렌더링 (localStorage 접근 필요)
 const AuthGuard = dynamic(() => import("./_components/AuthGuard"), {
   ssr: false,
 });
 
-export default function Main({ children }: { children: ReactNode }) {
+export default function Main({
+  children,
+  reissuedTokens,
+}: {
+  children: ReactNode;
+  reissuedTokens?: tokens;
+}) {
   // const { data } = useMyProfile();
   // const tmpDaysOfServiceUse = data?.createdAt
   //   ? calcLeftDay(new Date(), new Date(data.createdAt))
   //   : 0;
 
   return (
-    <AuthGuard>
+    <AuthGuard reissuedTokens={reissuedTokens}>
       <>
         <section className="w-full h-full ">
           <div
